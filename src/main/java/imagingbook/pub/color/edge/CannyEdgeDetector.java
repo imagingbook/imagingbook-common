@@ -24,17 +24,17 @@ import java.util.Stack;
 /**
  * This class implements a Canny edge detector for grayscale and RGB images.
  * @author W. Burger
- * @version 2013/05/30
+ * @version 2016/05/04
  */
 public class CannyEdgeDetector extends ColorEdgeDetector {
 	
 	public static class Parameters {
 		/** Gaussian sigma (scale) */
-		public float gSigma = 2.0f;
+		public double gSigma = 2.0f;
 		/** High threshold (20% of max. edge magnitude) */
-		public float hiThr  = 20.0f;
+		public double hiThr  = 20.0f;
 		/** Low threshold (5% of max. edge magnitude) */
-		public float loThr  = 5.0f;
+		public double loThr = 5.0f;
 		/** Set true to normalize gradient magnitude */
 		public boolean normGradMag = true;	
 		
@@ -43,18 +43,19 @@ public class CannyEdgeDetector extends ColorEdgeDetector {
 		 * @return true if any invalid condition is found
 		 */
 		public boolean isInValid () { 
-			return gSigma < 0.1f || loThr >hiThr;
+			return gSigma < 0.1f || loThr > hiThr;
 		}
 	}
 	
-	Parameters params;
-	ImageProcessor I;				// original image
-	int M, N;						// width and height of I
-	FloatProcessor Emag;			// gradient magnitude
-	FloatProcessor Enms;			// non-max suppressed gradient magnitude
-	FloatProcessor Ex, Ey;			// edge normal vectors
-	ByteProcessor Ebin;				// final (binary) edge image
-	List<List<Point>> traceList;	// list of edge traces
+	final Parameters params;
+	final ImageProcessor I;				// original image
+	final int M, N;						// width and height of I
+	
+	FloatProcessor Emag = null;				// gradient magnitude
+	FloatProcessor Enms = null;				// non-max suppressed gradient magnitude
+	FloatProcessor Ex = null, Ey = null;	// edge normal vectors
+	ByteProcessor Ebin = null;				// final (binary) edge image
+	List<List<Point>> traceList = null;		// list of edge traces
 	
 	// Constructor with default parameters:
 	public CannyEdgeDetector(ImageProcessor ip) {
@@ -66,27 +67,29 @@ public class CannyEdgeDetector extends ColorEdgeDetector {
 		if (params.isInValid()) throw new IllegalArgumentException();
 		this.params = params;
 		this.I = I;
+		M = I.getWidth();
+		N = I.getHeight();
 		findEdges();
 	}
 	
 	// do the work ...
 	void findEdges() {
-		M = I.getWidth();
-		N = I.getHeight();
 		if (I instanceof ColorProcessor) 
 			makeGradientsAndMagnitudeColor();
 		else
 			makeGradientsAndMagnitudeGray();
 		nonMaxSuppression();
-		detectAndTraceEdges();
+		//detectAndTraceEdges();
 	}
 	
 	//---------------------------------------------------------------------------
 	
 	void makeGradientsAndMagnitudeGray() {
-		FloatProcessor If = (I instanceof FloatProcessor) ? 
-				(FloatProcessor) I.duplicate() :
-				(FloatProcessor) I.convertToFloat();
+//		FloatProcessor If = (I instanceof FloatProcessor) ? 
+//				(FloatProcessor) I.duplicate() :
+//				(FloatProcessor) I.convertToFloat();
+		
+		FloatProcessor If = I.convertToFloatProcessor();	// always makes a copy
 				
 		// apply a separable Gaussian filter to I
 		float[] gaussKernel = makeGaussKernel1d(params.gSigma);
@@ -142,7 +145,7 @@ public class CannyEdgeDetector extends ColorEdgeDetector {
 		// calculate the gradients in X- and Y-direction for each RGB channel
 		float[] gradKernel = {-0.5f, 0, 0.5f};
 		conv.setNormalize(false);
-		for (int i=0; i<Irgb.length; i++) {
+		for (int i = 0; i < Irgb.length; i++) {
 			FloatProcessor Ix = Ixrgb[i];
 			FloatProcessor Iy = Iyrgb[i];
 			conv.convolve(Ix, gradKernel, gradKernel.length, 1);
@@ -181,26 +184,29 @@ public class CannyEdgeDetector extends ColorEdgeDetector {
 	//---------------------------------------------------------------------------
 	
 	void nonMaxSuppression() {
-		// perform non-maximum suppression along gradient direction	
+		// perform non-maximum suppression along gradient direction
 		Enms = new FloatProcessor(M, N);
-		for (int v = 1; v < N-1; v++) {
-			for (int u = 1; u < M-1; u++) {
+		for (int v = 1; v < N - 1; v++) {
+			for (int u = 1; u < M - 1; u++) {
 				int s_theta = getOrientationSector(Ex.getf(u, v), Ey.getf(u, v));
-				if (isLocalMaximum(Emag, u, v, s_theta, params.loThr)) {
-					Enms.setf(u, v, Emag.getf(u, v));	// keep local maximum only
+				if (isLocalMaximum(Emag, u, v, s_theta, (float) params.loThr)) {
+					Enms.setf(u, v, Emag.getf(u, v)); // keep local maximum only
 				}
 			}
 		}
 	}
 	
 	void detectAndTraceEdges() {
+		if (Enms == null) {
+			nonMaxSuppression();
+		}
 		Ebin = new ByteProcessor(M, N);
 		int color = 255;
 		traceList = new LinkedList<List<Point>>();
 		for (int v = 0; v < N; v++) {
 			for (int u = 0; u < M; u++) {
 				if (Enms.getf(u, v) >= params.hiThr && Ebin.get(u, v) == 0) { // unmarked edge point
-					List<Point> trace = traceAndThreshold(u, v, params.loThr, color);
+					List<Point> trace = traceAndThreshold(u, v, (float) params.loThr, color);
 					traceList.add(trace);
 				}
 			}
@@ -325,10 +331,16 @@ public class CannyEdgeDetector extends ColorEdgeDetector {
 	}
 	
 	public ByteProcessor getEdgeBinary() {
+		if (Ebin == null) {
+			detectAndTraceEdges();
+		}
 		return Ebin;
 	}
 	
 	public List<List<Point>> getEdgeTraces() {
+		if (traceList == null) {
+			detectAndTraceEdges();
+		}
 		return traceList;
 	}
 	
