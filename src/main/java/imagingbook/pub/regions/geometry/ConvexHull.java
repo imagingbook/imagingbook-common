@@ -65,7 +65,7 @@ public class ConvexHull {
 	private Collection<Vector2D> collectPointList(BinaryRegion r) {
 //		IJ.log("making hull from all region points");
 		Collection<Vector2D> points = new ArrayList<Vector2D>();
-		for (Point p : r.getRegionPoints()) {
+		for (Point p : r) {
 			points.add(new Vector2D(p.x, p.y));
 		}
 		return points;

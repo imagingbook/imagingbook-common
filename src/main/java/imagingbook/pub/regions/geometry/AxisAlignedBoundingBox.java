@@ -50,7 +50,7 @@ public class AxisAlignedBoundingBox {
 		double bmin = Double.POSITIVE_INFINITY;
 		double bmax = Double.NEGATIVE_INFINITY;
 		
-		for (Point p : r.getRegionPoints()) {
+		for (Point p : r) {
 			double a = p.x * xa + p.y * ya;	// project (x,y) on the major axis vector
 			double b = p.x * ya - p.y * xa;	// project (x,y) on perpendicular vector
 			amin = Math.min(a, amin);
@@ -79,7 +79,7 @@ public class AxisAlignedBoundingBox {
 		double mu11 = 0;
 		double mu20 = 0;
 		double mu02 = 0;
-		for (Point p : r.getRegionPoints()) {
+		for (Point p : r) {
 			double dx = (p.x - xc);
 			double dy = (p.y - yc);
 			mu11 = mu11 + dx * dy;

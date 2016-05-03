@@ -14,7 +14,9 @@ import ij.ImagePlus;
 import ij.WindowManager;
 import ij.gui.GenericDialog;
 import ij.io.OpenDialog;
+import ij.process.ColorProcessor;
 import ij.process.FloatProcessor;
+import ij.process.ImageProcessor;
 
 import java.util.Arrays;
 import java.util.Comparator;
@@ -170,6 +172,37 @@ public abstract class IjUtils {
 			}
 		}
 		return new ImagePlus(title, fp);
+	}
+	
+	/**
+	 * Sets the weighing factors for the color components used
+	 * in RGB-to-grayscale conversion for the specified image {@code ip}.
+	 * Note that this method can be applied to any {@link ImageProcessor}
+	 * instance but has no effect unless {@code ip} is of type
+	 * {@link ColorProcessor}. Applies standard (ITU-709) weights.
+	 * 
+	 * @param ip The affected image
+	 */
+	public static void setRgbConversionWeights(ImageProcessor ip) {
+		setRgbConversionWeights(ip, 0.299, 0.587, 0.114);
+	}
+	
+	/**
+	 * Sets the weighing factors for the color components used
+	 * in RGB-to-grayscale conversion for the specified image {@code ip}.
+	 * Note that this method can be applied to any {@link ImageProcessor}
+	 * instance but has no effect unless {@code ip} is of type
+	 * {@link ColorProcessor}.
+	 * 
+	 * @param ip The affected image
+	 * @param wr Red weight
+	 * @param wg Green weight
+	 * @param wb Blue weight
+	 */
+	public static void setRgbConversionWeights(ImageProcessor ip, double wr, double wg, double wb) {
+		if (ip instanceof ColorProcessor) {
+			((ColorProcessor) ip).setRGBWeights(wr, wg, wb);
+		}
 	}
 
 }
