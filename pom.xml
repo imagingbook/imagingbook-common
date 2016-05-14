@@ -4,7 +4,7 @@
 		<groupId>com.imagingbook</groupId>
 		<artifactId>_parent</artifactId>
 		<version>FIXED</version>
-		<relativePath>../_parent</relativePath>
+		<relativePath>../imagingbook-parent</relativePath>
 	</parent>
 	<artifactId>imagingbook-common</artifactId>
 	<packaging>jar</packaging>
