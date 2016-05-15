@@ -61,6 +61,16 @@ public abstract class Matrix {
 		return new float[rows][columns];
 	}
 	
+	// Matrix creation
+	
+	public static double[][] createIdentityMatrix(int size) {
+		double[][] A = new double[size][size];
+		for (int i = 0; i < size; i++) {
+			A[i][i] = 1;
+		}
+		return A;
+	}
+	
 	// Matrix properties -------------------------------------
 
 	public static int getNumberOfRows(double[][] A) {
