@@ -88,6 +88,21 @@ public abstract class Matrix {
 	public static int getNumberOfColumns(float[][] A) {
 		return A[0].length;
 	}
+	
+	// extract rows or columns
+	
+	public static double[] getRow(double[][] A, int r) {
+		return A[r].clone();
+	}
+	
+	public static double[] getColumn(double[][] A, int c) {
+		final int rows = A.length;
+		double[] col = new double[rows];
+		for (int r = 0; r < rows; r++) {
+			col[r] = A[r][c];
+		}
+		return col;
+	}
 
 	// Matrix and vector duplication ------------------------------
 
