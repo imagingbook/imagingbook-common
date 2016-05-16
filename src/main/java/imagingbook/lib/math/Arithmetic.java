@@ -58,6 +58,22 @@ public abstract class Arithmetic {
 		return a - b * Math.floor(a / b);
 	}
 	
+	/**
+	 * Test for zero (float version).
+	 * @param x quantity to be tested
+	 * @return true if argument is close to zero
+	 */
+	public static boolean isZero(float x) {
+		return Math.abs(x) < Arithmetic.EPSILON_FLOAT;
+	}
 	
+	/**
+	 * Test for zero (double version).
+	 * @param x quantity to be tested
+	 * @return true if argument is close to zero
+	 */
+	public static boolean isZero(double x) {
+		return Math.abs(x) < Arithmetic.EPSILON_DOUBLE;
+	}
 
 }

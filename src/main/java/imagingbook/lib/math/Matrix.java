@@ -61,9 +61,13 @@ public abstract class Matrix {
 		return new float[rows][columns];
 	}
 	
-	// Matrix creation
+	// vector/matrix creation:
 	
-	public static double[][] createIdentityMatrix(int size) {
+	public static double[] zeroVector(int size) {
+		return new double[size];
+	}
+	
+	public static double[][] idMatrix(int size) {
 		double[][] A = new double[size][size];
 		for (int i = 0; i < size; i++) {
 			A[i][i] = 1;
