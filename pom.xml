@@ -2,9 +2,9 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>com.imagingbook</groupId>
-		<artifactId>_parent</artifactId>
-		<version>FIXED</version>
-		<relativePath>../imagingbook-parent</relativePath>
+		<artifactId>_public</artifactId>
+		<version>0.0.3-SNAPSHOT</version>
+		<relativePath>../pom-public</relativePath>
 	</parent>
 	<artifactId>imagingbook-common</artifactId>
 	<packaging>jar</packaging>
