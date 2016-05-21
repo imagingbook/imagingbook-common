@@ -4,7 +4,7 @@
 		<groupId>com.imagingbook</groupId>
 		<artifactId>_public</artifactId>
 		<version>1.3-SNAPSHOT</version>
-		<relativePath>../_public</relativePath>
+		<relativePath>../pom</relativePath>
 	</parent>
 	<artifactId>imagingbook-common</artifactId>
 	<packaging>jar</packaging>
