@@ -11,6 +11,7 @@
 
 	<properties>
 		<myproject.root>${basedir}/../..</myproject.root>
+		<main.basedir>${project.parent.basedir}</main.basedir>
 		<!-- <javadoc-doctitle>ImagingBook common library</javadoc-doctitle> -->
 	</properties>
 
