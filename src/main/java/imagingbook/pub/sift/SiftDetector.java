@@ -102,7 +102,7 @@ public class SiftDetector {
 	}
 
 	public SiftDetector(FloatProcessor fp, Parameters params) {
-		normalize(fp);
+		//normalize(fp);	// was destructive, delegated to ScaleLevel.getValues()
 		this.params = params;
 		nhSize = params.nhType.size;
 		G = new GaussianScaleSpace(fp, params.sigma_s, params.sigma_0, params.P, params.Q, -1, params.Q+1);
@@ -535,13 +535,13 @@ public class SiftDetector {
 		double[] gradPol = new double[2]; // gradient magnitude/orientation
 
 		for (int u = u_min; u <= u_max; u++) {
-			double dx = u - x;											// distance to feature's center
+			double dx = u - x;					// distance to feature's center
 			for (int v = v_min; v <= v_max; v++) {
 				double dy = v - y;
 				double r2 = dx * dx + dy * dy;	// squared distance from center
-				if (r2 < r_w2) {					// inside limiting circle
+				if (r2 < r_w2) {				// inside limiting circle
 					Gpq.getGradientPolar(u, v, gradPol);
-					double E = gradPol[0], phi = gradPol[1];						// gradient magnitude/orientation
+					double E = gradPol[0], phi = gradPol[1];				// gradient magnitude/orientation
 					double wG = Math.exp(-(dx*dx + dy*dy)/sigma_w22);		// Gaussian weight
 					double z = E * wG;
 					double k_phi = n_phi * phi / (2 * Math.PI);				// continuous histogram bin index
@@ -700,7 +700,7 @@ public class SiftDetector {
 		final double norm = normL2(x);
 		if (norm > EPSILON_F) {
 			final float s = (float) (1.0 / norm);
-			for (int i=0; i<x.length; i++) {
+			for (int i = 0; i < x.length; i++) {
 				x[i] = s * x[i];
 			}
 		}
@@ -724,12 +724,12 @@ public class SiftDetector {
 
 	//  auxiliary methods -------------------------
 	
-	private void normalize(FloatProcessor fp) {	// TODO:  make more efficient / safer
-		double minVal = fp.getMin();
-		double maxVal = fp.getMax();
-		fp.add(-minVal);
-		fp.multiply(1.0 / (maxVal - minVal));
-	}
+//	private void normalize(FloatProcessor fp) {	// replaced by method in class ScaleLevel
+//		double minVal = fp.getMin();
+//		double maxVal = fp.getMax();
+//		fp.add(-minVal);
+//		fp.multiply(1.0 / (maxVal - minVal));
+//	}
 
 	// also in imagingbook.math.Arithmetic.java
 	private float sqr(float x) {

@@ -29,11 +29,27 @@ public class ScaleLevel extends FloatProcessor {	// TODO: make IJ independent, u
 	}
 	
 	public ScaleLevel(FloatProcessor fp, double absoluteScale) {
-		this(fp.getWidth(), fp.getHeight(), ((float[]) fp.getPixels()).clone(), absoluteScale);
+//		this(fp.getWidth(), fp.getHeight(), ((float[]) fp.getPixels()).clone(), absoluteScale);
+		this(fp.getWidth(), fp.getHeight(), getValues(fp, true), absoluteScale);
 	}
 	
 	public ScaleLevel(ScaleLevel level) {
-		this(level.getWidth(), level.getHeight(), ((float[]) level.getPixels()).clone(), level.absoluteScale);
+//		this(level.getWidth(), level.getHeight(), ((float[]) level.getPixels()).clone(), level.absoluteScale);
+		this(level.getWidth(), level.getHeight(), getValues(level, false), level.absoluteScale);
+	}
+	
+	private static float[] getValues(FloatProcessor fp, boolean normalize) {
+		final double minVal = fp.getMin();
+		final double maxVal = fp.getMax();
+		final float offset = (float) -minVal;
+		final float scale = (float) (1.0 / (maxVal - minVal));
+		final float[] values = (float[]) fp.getPixelsCopy();
+		if (normalize) {
+			for (int i = 0; i < values.length; i++) {
+				values[i] = (values[i] + offset) * scale; 
+			}
+		}
+		return values;
 	}
 	
 	// ------------------------------
