@@ -13,6 +13,7 @@ package imagingbook.lib.util;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.FileSystem;
@@ -71,6 +72,70 @@ public abstract class FileUtils {
 			return url.getPath();
 		}
 	}
+	
+	// New: to allow reading from JAR files.
+//	public static URI getResourceURI(Class<?> clazz, String name) {
+//		URL url = clazz.getResource(name);
+//		URI uri = null;
+//		if (url != null) {
+//			try {
+//				uri = url.toURI();
+//			} catch (URISyntaxException e) {}
+//			
+//		}
+//		return uri;
+//	}
+	
+	public static Path getResourcePath2(Class<?> theClass, String relPath) {
+		URI uri = null;
+		try {
+			uri = theClass.getResource(relPath).toURI();
+			//IJ.log("uri = " + uri.getPath().toString());
+		} catch (Exception e) {
+			System.err.println(e);
+			return null;
+		}
+		Path resourcePath = null;
+		String scheme = uri.getScheme();
+		
+		switch (scheme) {
+		case "file": {	// resource in ordinary file system
+			resourcePath = Paths.get(uri);
+			break;
+		}
+		case "jar":	{	// resource inside a JAR file
+			FileSystem fs = null;
+			try {
+				// wilbur: check if this FileSystem already exists (can't create twice!)
+				fs = FileSystems.getFileSystem(uri);
+			} catch (Exception e) {}
+
+			if (fs == null) {	// FileSystem does not yet exist in this runtime
+				try {
+					fs = FileSystems.newFileSystem(uri, Collections.<String, Object>emptyMap());
+				} catch (IOException e) { }
+			}
+			
+			if (fs == null) {	// FileSystem could not be created for some reason
+				return null;
+			}
+			String ssp = uri.getSchemeSpecificPart();
+			int start = ssp.lastIndexOf('!');
+			String inJarPath = ssp.substring(start + 1);  // remove leading part including the last '!'
+			//System.out.println("[listResources] inJarPath = "  + inJarPath);
+			resourcePath = fs.getPath(inJarPath);
+			break;
+		}
+		default:
+			throw new IllegalArgumentException("Cannot handle this path type: " + scheme);
+		}
+		
+		return resourcePath;
+	}
+		
+	
+	
+	
 
 	/**
 	 * Finds a resource relative to the location of class clazz and returns
@@ -203,6 +268,8 @@ public abstract class FileUtils {
 		if (!Files.isDirectory(resourcePath)) {
 			return null; 	// cannot list if no directory
 		}
+		
+		// Path 'resourcePath' is a directory
 
 		List<Path> rlst = new ArrayList<Path>();
 		// with help from http://stackoverflow.com/questions/1429172/how-do-i-list-the-files-inside-a-jar-file, #10
