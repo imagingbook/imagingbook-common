@@ -10,6 +10,8 @@
 
 package imagingbook.lib.util;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -85,55 +87,6 @@ public abstract class FileUtils {
 //		}
 //		return uri;
 //	}
-	
-	public static Path getResourcePath2(Class<?> theClass, String relPath) {
-		URI uri = null;
-		try {
-			uri = theClass.getResource(relPath).toURI();
-			//IJ.log("uri = " + uri.getPath().toString());
-		} catch (Exception e) {
-			System.err.println(e);
-			return null;
-		}
-		Path resourcePath = null;
-		String scheme = uri.getScheme();
-		
-		switch (scheme) {
-		case "file": {	// resource in ordinary file system
-			resourcePath = Paths.get(uri);
-			break;
-		}
-		case "jar":	{	// resource inside a JAR file
-			FileSystem fs = null;
-			try {
-				// wilbur: check if this FileSystem already exists (can't create twice!)
-				fs = FileSystems.getFileSystem(uri);
-			} catch (Exception e) {}
-
-			if (fs == null) {	// FileSystem does not yet exist in this runtime
-				try {
-					fs = FileSystems.newFileSystem(uri, Collections.<String, Object>emptyMap());
-				} catch (IOException e) { }
-			}
-			
-			if (fs == null) {	// FileSystem could not be created for some reason
-				return null;
-			}
-			String ssp = uri.getSchemeSpecificPart();
-			int start = ssp.lastIndexOf('!');
-			String inJarPath = ssp.substring(start + 1);  // remove leading part including the last '!'
-			//System.out.println("[listResources] inJarPath = "  + inJarPath);
-			resourcePath = fs.getPath(inJarPath);
-			break;
-		}
-		default:
-			throw new IllegalArgumentException("Cannot handle this path type: " + scheme);
-		}
-		
-		return resourcePath;
-	}
-		
-	
 	
 	
 
@@ -322,4 +275,11 @@ public abstract class FileUtils {
 		} catch (IOException ignore) { }
 		return manifest;
 	}
+	
+	
+	// new stuff:
+
+
+	
+
 }
