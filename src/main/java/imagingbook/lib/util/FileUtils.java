@@ -10,12 +10,9 @@
 
 package imagingbook.lib.util;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.FileSystem;
@@ -35,12 +32,36 @@ import ij.IJ;
 
 public abstract class FileUtils {
 
-	// from: http://www.java2s.com/Tutorial/Java/0180__File/StripFileExtension.htm
-	public static String stripFileExtension(String fileName) {
-		int dotInd = fileName.lastIndexOf('.');
+	/**
+	 * Removes the extension part of a pathname.
+	 * Examples:<br>
+	 * "foo.txt" &rarr; "foo",
+	 * "foo" &rarr; "foo",
+	 * "foo." &rarr; "foo.",
+	 * ".txt" &rarr; ".txt".
+	 * @param name the pathname
+	 * @return the pathname without the extension (if valid)
+	 */
+	public static String stripFileExtension(String name) {
+		int dotInd = name.lastIndexOf('.');
 		// if dot is in the first position,
 		// we are dealing with a hidden file rather than an DefaultFileExtension
-		return (dotInd > 0) ? fileName.substring(0, dotInd) : fileName;
+		return (dotInd > 0) ? name.substring(0, dotInd) : name;
+	}
+	
+	/**
+	 * Extracts the extension part of a pathname as a string.
+	 * Examples:<br>
+	 * "foo.txt" &rarr; "txt",
+	 * "foo" &rarr; "",
+	 * "foo." &rarr; "",
+	 * ".txt" &rarr; "".
+	 * @param name the pathname
+	 * @return the extension or an empty string
+	 */
+	public static String getFileExtension(String name) {
+		int dotInd = name.lastIndexOf('.');
+		return (dotInd > 0) ? name.substring(dotInd + 1) : "";
 	}
 
 	/**
@@ -277,9 +298,12 @@ public abstract class FileUtils {
 	}
 	
 	
-	// new stuff:
-
-
+	public static void main(String[] args) {
+		String fileName = ".txt";
+		System.out.println("name = " + fileName);
+		System.out.println("stripped = " + stripFileExtension(fileName));
+		System.out.println("ext = " + getFileExtension(fileName));
+	}
 	
 
 }
