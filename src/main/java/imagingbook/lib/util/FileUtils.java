@@ -10,6 +10,8 @@
 
 package imagingbook.lib.util;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -28,8 +30,16 @@ import java.util.jar.Manifest;
 import java.util.stream.Stream;
 
 import ij.IJ;
+import ij.ImagePlus;
+import ij.io.Opener;
 
 
+/**
+ * This class defines various static methods for managing
+ * file-based resources and JAR manifest files.
+ * 
+ * @author W. Burger
+ */
 public abstract class FileUtils {
 
 	/**
@@ -71,7 +81,7 @@ public abstract class FileUtils {
 	 * if the class is anonymous).
 	 */   
 	public static String getClassPath(Class<?> clazz) {
-		return getResourcePath(clazz, "");
+		return getResourcePath(clazz, "").toString();
 	}
 
 	/**
@@ -82,31 +92,67 @@ public abstract class FileUtils {
 	 * is obtained by 
 	 * String path = getResourcePath(C.class, "resources/lenna.jpg");
 	 * 
+	 * 2016-06-03: modified to return proper path to resource inside 
+	 * a JAR file.
+	 * 
 	 * @param clazz anchor class 
-	 * @param name name of the resource to be found
-	 * @return the path for the resource or null if not found.
+	 * @param relPath the path of the resource to be found (relative to the location of the anchor class)
+	 * @return the path to the specified resource
 	 */
-	public static String getResourcePath(Class<?> clazz, String name) {
-		URL url = clazz.getResource(name);
-		if (url == null) {
+	public static Path getResourcePath(Class<?> clazz, String relPath) {
+		URI uri = null;
+		try {
+			uri = clazz.getResource(relPath).toURI();
+			//IJ.log("uri = " + uri.getPath().toString());
+		} catch (Exception e) {
+			System.err.println(e);
 			return null;
 		}
-		else {
-			return url.getPath();
+		Path path = null;
+		String scheme = uri.getScheme();
+		
+		switch (scheme) {
+		case "file": {	// resource in ordinary file system
+			path = Paths.get(uri);
+			break;
 		}
+		case "jar":	{	// resource inside a JAR file
+			FileSystem fs = null;
+			try {
+				// check if this FileSystem already exists (can't create twice!)
+				fs = FileSystems.getFileSystem(uri);
+			} catch (Exception e) { }
+
+			if (fs == null) {	// FileSystem does not yet exist in this runtime
+				try {
+					fs = FileSystems.newFileSystem(uri, Collections.<String, Object>emptyMap());
+				} catch (IOException e) { }
+			}
+			
+			if (fs == null) {	// FileSystem could not be created for some reason
+				throw new RuntimeException("FileSystem could not be created");
+			}
+			String ssp = uri.getSchemeSpecificPart();
+			int start = ssp.lastIndexOf('!');
+			String inJarPath = ssp.substring(start + 1);  // remove leading part including the last '!'
+			path = fs.getPath(inJarPath);
+			break;
+		}
+		default:
+			throw new IllegalArgumentException("Cannot handle path type: " + scheme);
+		}
+		return path;
 	}
 	
-	// New: to allow reading from JAR files.
-//	public static URI getResourceURI(Class<?> clazz, String name) {
+	// old version
+//	public static String getResourcePath(Class<?> clazz, String name) {
 //		URL url = clazz.getResource(name);
-//		URI uri = null;
-//		if (url != null) {
-//			try {
-//				uri = url.toURI();
-//			} catch (URISyntaxException e) {}
-//			
+//		if (url == null) {
+//			return null;
 //		}
-//		return uri;
+//		else {
+//			return url.getPath();
+//		}
 //	}
 	
 	
@@ -131,6 +177,64 @@ public abstract class FileUtils {
 		return clazz.getResourceAsStream(relativePath);
 	}
 	
+	/**
+	 * Opens an image from the specified resource. 
+	 * If the resource is contained inside a JAR file, it is first
+	 * extracted to a temporary file and subsequently opened
+	 * with ImageJ's {@code Opener} class. 
+	 * 
+	 * @param clazz the anchor class
+	 * @param directory the directory relative to the anchor class
+	 * @param name the (file) name of the image resource
+	 * @return the opened image or {@code null} if not successful.
+	 * @throws IOException if anything goes wrong
+	 */
+	public static ImagePlus openImageFromResource(Class<?> clazz, String directory, String name) 
+		throws IOException {
+		final String relPath = directory + name;
+		final Path path = getResourcePath(clazz, relPath);
+		
+		if (path == null) {
+			return null;	// resource does not exist
+		}
+		
+		final URI uri = path.toUri();
+		final String scheme = uri.getScheme();
+		
+		switch (scheme) {
+		case "file": {	// resource in ordinary file system
+			//IJ.log("opening image from file");
+			return new Opener().openImage(path.toString());
+		}
+		case "jar": { // resource in JAR
+			//IJ.log("opening image from JAR");
+			String ext = getFileExtension(name);
+			// create a temporary file:
+			File tmpFile = File.createTempFile("img", "." + ext);
+			if (tmpFile == null) {
+				return null;
+			}
+			tmpFile.deleteOnExit();
+						
+			//IJ.log("copying to tmp file: " + tmpFile.getPath());
+			InputStream inStrm = clazz.getResourceAsStream(relPath);
+			ImagePlus im = null;
+				
+			copyToFile(inStrm, tmpFile);
+			im = new Opener().openImage(tmpFile.getPath());
+			tmpFile.deleteOnExit();
+
+			if (im != null) {
+				im.setTitle(name);
+			}
+			return im;
+		}
+		default:
+			throw new IllegalArgumentException("Cannot handle this path type: " + scheme);
+		}
+	}
+	
+	
 	// ----------------------------------------------------------------
 
 	/**
@@ -142,7 +246,6 @@ public abstract class FileUtils {
 		for (URL url : urls) {
 			System.out.println(url.getPath());
 		}
-
 	}
 	
 	// ----------------------------------------------------------------
@@ -273,6 +376,38 @@ public abstract class FileUtils {
 	
 	// ----------------------------------------------------------------
 	
+	// from https://bukkit.org/threads/extracting-file-from-jar.16962/
+	/**
+	 * Reads all data from the given input stream and copies them
+	 * to to a file.
+	 * @param in the input stream
+	 * @param file the output file
+	 * @throws IOException if anything goes wrong
+	 */
+	public static void copyToFile(InputStream in, File file) throws IOException {
+		FileOutputStream out = new FileOutputStream(file);
+		try {
+			byte[] buf = new byte[1024];
+			int i = 0;
+			while ((i = in.read(buf)) != -1) {
+				out.write(buf, 0, i);
+			}
+		} catch (IOException e) {
+			throw e;
+		} finally {
+			if (in != null) {
+				in.close();
+			}
+			if (out != null) {
+				out.close();
+			}
+		}
+	}
+	
+	
+	
+	// ----------------------------------------------------------------
+	
 	/**
 	 * Finds the manifest (from META-INF/MANIFEST.MF) of the JAR file
 	 * from which {@literal clazz} was loaded.
@@ -296,6 +431,9 @@ public abstract class FileUtils {
 		} catch (IOException ignore) { }
 		return manifest;
 	}
+	
+	
+	// ----------------------------------------------------
 	
 	
 	public static void main(String[] args) {
