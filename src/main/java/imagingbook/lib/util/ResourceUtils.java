@@ -256,6 +256,7 @@ public class ResourceUtils {
 			if (im != null) {
 				im.setTitle(resName);
 			}
+			tmpFile.delete();
 			break;
 		}
 		default:
