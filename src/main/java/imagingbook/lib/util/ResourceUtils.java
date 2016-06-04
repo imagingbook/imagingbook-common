@@ -24,6 +24,12 @@ import ij.io.Opener;
 
 /**
  * This class defines static methods for accessing resources.
+ * What makes things somewhat complex is the requirement that
+ * we want to retrieve resources located in the file system or
+ * contained inside a JAR file.
+ *  
+ * A typical URI for a JAR-embedded file:
+ * "jar:file:/C:/PROJEC~2/parent/IM1D84~1/ImageJ/jars/jarWithResources.jar!/jarWithResouces/resources/clown.jpg"
  *
  * @author W. Burger
  * @version 2016/06/04
@@ -32,13 +38,13 @@ import ij.io.Opener;
 public class ResourceUtils {
 	
 	/**
-	 * Determines if the specified clazz was loaded from
+	 * Determines if the specified class was loaded from
 	 * a JAR file or a .class file in the file system.
 	 * 
 	 * @param clazz the class
-	 * @return true if contained in a JAR file
+	 * @return true if contained in a JAR file, false otherwise
 	 */
-	public static boolean isInJar(Class<?> clazz) {
+	public static boolean isInsideJar(Class<?> clazz) {
 		URL url = clazz.getProtectionDomain().getCodeSource().getLocation();
 		String path = url.getPath();
 		File file = new File(path);
@@ -51,14 +57,15 @@ public class ResourceUtils {
 	 * inside a JAR file.
 	 * 
 	 * @param clazz the anchor class
-	 * @param resPath the resource path relative to the anchor class
+	 * @param relPath the resource path relative to the anchor class
 	 * @return the URI or {@code null} if the resource was not found
 	 */
 	public static URI getResourceUri(Class<?> clazz, String  relPath) {
 		URI uri = null;
-		if (isInJar(clazz)) {
+		if (isInsideJar(clazz)) {
 			String classPath = clazz.getProtectionDomain().getCodeSource().getLocation().getFile();
-			String packagePath = clazz.getPackage().getName().replace('.', File.separatorChar);
+			//String packagePath = clazz.getPackage().getName().replace('.', File.separatorChar);
+			String packagePath = clazz.getPackage().getName().replace('.', '/');
 			String compPath = "jar:file:" + classPath + "!/" + packagePath + "/" + relPath;
 			try {
 				uri = new URI(compPath);
@@ -66,8 +73,7 @@ public class ResourceUtils {
 				throw new RuntimeException("getResourceURI: " + e.toString());
 			}	
 		}
-		else {
-			System.out.println("regular file path");
+		else {	// regular file path
 			try {
 				uri = clazz.getResource(relPath).toURI();
 			} catch (Exception e) {
@@ -102,32 +108,41 @@ public class ResourceUtils {
 		}
 	}
 	
+	/**
+	 * Converts an URI to a Path for locations that are either
+	 * in the file system or inside a JAR file.
+	 * 
+	 * @param uri the specified location
+	 * @return the associated path
+	 */
 	public static Path uriToPath(URI uri) {
 		Path path = null;
 		String scheme = uri.getScheme();
 		switch (scheme) {
-		case "file": {	// resource in ordinary file system
-			path = Paths.get(uri);
-			break;
-		}
 		case "jar":	{	// resource inside JAR file
 			FileSystem fs = null;
-			try { // check if this FileSystem already exists (can't create twice!)
+			try { // check if this FileSystem already exists 
 				fs = FileSystems.getFileSystem(uri);
 			} catch (FileSystemNotFoundException e) {
 				// that's OK to happen, the file system is not created automatically
 			}
-
-			try {
-				fs = FileSystems.newFileSystem(uri, Collections.<String, Object>emptyMap());
-			} catch (IOException e) {
-				throw new RuntimeException("uriToPath: " + e.toString());
+			
+			if (fs == null) {	// must not create the file system twice
+				try {
+					fs = FileSystems.newFileSystem(uri, Collections.<String, Object>emptyMap());
+				} catch (IOException e) {
+					throw new RuntimeException("uriToPath: " + e.toString());
+				}
 			}
 			
 			String ssp = uri.getSchemeSpecificPart();
 			int startIdx = ssp.lastIndexOf('!');
 			String inJarPath = ssp.substring(startIdx + 1);  // in-Jar path (after the last '!')
 			path = fs.getPath(inJarPath);
+			break;
+		}
+		case "file": {	// resource in ordinary file system
+			path = Paths.get(uri);
 			break;
 		}
 		default:
@@ -148,7 +163,8 @@ public class ResourceUtils {
 	 * as well as a (possibly nested) JAR file.
 	 * 
 	 * @param path path to a directory (may be contained in a JAR file) 
-	 * @return a sequence of paths or {@code null} if the specified path is not a directory
+	 * @return a sequence of paths or {@code null} if the specified path 
+	 * is not a directory
 	 */
 	public static Path[] listResources(Path path) {
 		// with help from http://stackoverflow.com/questions/1429172/how-do-i-list-the-files-inside-a-jar-file, #10
@@ -248,93 +264,7 @@ public class ResourceUtils {
 		return im;
 	}
 	
-	// OLD from HERE ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-	
-	/**
-	 * Finds the URI for a resource relative to a specified class.
-	 * The resource may be located in the file system or
-	 * onside a JAR file.
-	 * 
-	 * @param clazz the anchor class
-	 * @param resDir the directory relative to the anchor class
-	 * @param resName the (file) name of the resource
-	 * @return the URI or {@code null} if the resource was not found
-	 * @deprecated
-	 */
-//	public static URI getResourceURI(Class<?> clazz, String resDir, String resName) {
-//		String relPath = resDir + resName;
-//		URL url = clazz.getResource(relPath);
-//		if (url == null) {
-//			return null;
-//		}
-//		URI uri = null;
-//		try {
-//			uri = url.toURI();
-//		} catch (URISyntaxException e) { }
-//		return uri;
-//	}
 
-	/**
-	 * Find the path to a resource relative to the location of class c.
-	 * Example: Assume class C was loaded from file someLocation/C.class
-	 * and there is a subfolder someLocation/resources/ that contains 
-	 * an image 'lenna.jpg'. Then the absolute path to this image
-	 * is obtained by 
-	 * String path = getResourcePath(C.class, "resources/lenna.jpg");
-	 * 
-	 * 2016-06-03: modified to return proper path to resource inside 
-	 * a JAR file.
-	 * 
-	 * @param clazz anchor class 
-	 * @param relPath the path of the resource to be found (relative to the location of the anchor class)
-	 * @return the path to the specified resource
-	 */
-//	public static Path getResourcePath(Class<?> clazz, String relPath) {
-//		URI uri = null;
-//		try {
-//			uri = clazz.getResource(relPath).toURI();
-//		} catch (Exception e) {
-//			System.err.println(e);
-//			return null;
-//		}
-//		
-//		IJ.log("getResourcePath(): uri = " + uri.toString());
-//		Path path = null;
-//		//IJ.log("getResourcePath(): path = " + path);
-//		String scheme = uri.getScheme();
-//		
-//		switch (scheme) {
-//		case "file": {	// resource in ordinary file system
-//			path = Paths.get(uri);
-//			break;
-//		}
-//		case "jar":	{	// resource inside a JAR file
-//			FileSystem fs = null;
-//			try {
-//				// check if this FileSystem already exists (can't create twice!)
-//				fs = FileSystems.getFileSystem(uri);
-//			} catch (Exception e) { }
-//	
-//			if (fs == null) {	// FileSystem does not yet exist in this runtime
-//				try {
-//					fs = FileSystems.newFileSystem(uri, Collections.<String, Object>emptyMap());
-//				} catch (IOException e) { }
-//			}
-//			
-//			if (fs == null) {	// FileSystem could not be created for some reason
-//				throw new RuntimeException("FileSystem could not be created");
-//			}
-//			String ssp = uri.getSchemeSpecificPart();
-//			int startIdx = ssp.lastIndexOf('!');
-//			String inJarPath = ssp.substring(startIdx + 1);  // in-Jar path (after the last '!')
-//			path = fs.getPath(inJarPath);
-//			break;
-//		}
-//		default:
-//			throw new IllegalArgumentException("Cannot handle path type: " + scheme);
-//		}
-//		return path;
-//	}
 
 //	/**
 //	 * Checks 'by name' of a particular resource exists.
@@ -354,84 +284,6 @@ public class ResourceUtils {
 //		} catch (Exception e) {	}
 //		IJ.log(logStr + "ERROR");
 //		return false;
-//	}
-
-	
-	
-	/**
-	 * Finds a resource relative to the location of class clazz and returns
-	 * a stream to read from.
-	 * Example: Assume class C was loaded from file someLocation/C.class
-	 * and there is a subfolder someLocation/resources/ that contains 
-	 * an image 'lenna.jpg'. Then the input stream for reading this this image
-	 * is obtained by
-	 * 
-	 * InputStream strm = getResourceStream(C.class, "resources/lenna.jpg");
-	 * 
-	 * This should access resources stored in the file system or inside a JAR file!
-	 * 
-	 * @param clazz anchor class 
-	 * @param relativePath Path to the resource to be found (relative to the location of {@literal clazz}.
-	 * @return A stream for reading the resource or null if not found.
-	 * @deprecated
-	 */
-//	public static InputStream getResourceStream(Class<?> clazz, String relativePath) {
-//		return clazz.getResourceAsStream(relativePath);
-//	}
-
-
-
-
-
-
-
-	
-//	public static ImagePlus openImageFromResource(Class<?> clazz, String resDir, String resName) {
-//		URI uri = getResourceUri(clazz, resDir + resName);
-//		if (uri == null) {
-//			IJ.error("resource not found: " + clazz.getName() + " | " + resDir  + " | " + resName);
-//			return null;
-//		}
-//		
-//		String scheme = uri.getScheme();
-//		switch (scheme) {
-//		case "file": {	// resource in ordinary file system
-//			Path path = Paths.get(uri);
-//			//IJ.log("opening image from file");
-//			return new Opener().openImage(path.toString());
-//		}
-//		case "jar": { // resource inside JAR
-//			// create a temporary file:
-//			String ext = FileUtils.getFileExtension(resName);
-//			File tmpFile = null;
-//			try {
-//				tmpFile = File.createTempFile("img", "." + ext);
-//				tmpFile.deleteOnExit();
-//			} 
-//			catch (IOException e) {
-//				IJ.error("Could not create temporary file");
-//				return null;
-//			}
-//						
-//			//IJ.log("copying to tmp file: " + tmpFile.getPath());
-//			String relPath = resDir + resName;
-//			InputStream inStrm = clazz.getResourceAsStream(relPath);
-//			ImagePlus im = null;
-//			try {
-//				FileUtils.copyToFile(inStrm, tmpFile);
-//			} catch (IOException e) {
-//				IJ.error("Could not copy stream to temporary file");
-//				return null;
-//			}
-//			im = new Opener().openImage(tmpFile.getPath());
-//			if (im != null) {
-//				im.setTitle(resName);
-//			}
-//			return im;
-//		}
-//		default:
-//			throw new IllegalArgumentException("Cannot handle this resource type: " + scheme);
-//		}
 //	}
 
 }

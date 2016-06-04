@@ -68,26 +68,8 @@ public abstract class FileUtils {
 	 * if the class is anonymous).
 	 */   
 	public static String getClassPath(Class<?> clazz) {
-		return ResourceUtils.getResourcePath(clazz, "").toString();
+		return clazz.getProtectionDomain().getCodeSource().getLocation().getFile();
 	}
-
-	
-	
-	// old version
-//	public static String getResourcePath(Class<?> clazz, String name) {
-//		URL url = clazz.getResource(name);
-//		if (url == null) {
-//			return null;
-//		}
-//		else {
-//			return url.getPath();
-//		}
-//	}
-	
-	
-
-	
-	
 	
 	// ----------------------------------------------------------------
 
@@ -121,8 +103,6 @@ public abstract class FileUtils {
 		// IJ.log(logStr + "ERROR");
 		return false;
 	}
-	
-	
 	
 	
 	// ----------------------------------------------------------------
