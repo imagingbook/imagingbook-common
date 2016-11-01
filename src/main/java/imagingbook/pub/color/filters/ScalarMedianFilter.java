@@ -41,14 +41,7 @@ public class ScalarMedianFilter extends GenericFilter {
 		this.params = params;
 		this.mask = new FilterMask(params.radius);
 	}
-	
-	@Deprecated
-	public ScalarMedianFilter(double radius) {
-		this.params = new Parameters();
-		params.radius = radius;
-		this.mask = new FilterMask(params.radius);
-	}
-	
+		
 	//-------------------------------------------------------------------------------------
 
 	public float filterPixel(ImageAccessor.Scalar source, int u, int v) {

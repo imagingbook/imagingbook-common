@@ -9,6 +9,12 @@
 
 package imagingbook.lib.image;
 
+/**
+ * Enumeration type representing the available strategies
+ * for accessing pixel locations outside the image bounds.
+ * 
+ * @author WB
+ */
 public enum OutOfBoundsStrategy {
 	DefaultValue, 
 	NearestBorder,

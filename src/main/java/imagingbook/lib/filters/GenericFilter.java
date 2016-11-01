@@ -13,34 +13,84 @@ import ij.IJ;
 import ij.process.ColorProcessor;
 import ij.process.ImageProcessor;
 import imagingbook.lib.image.ImageAccessor;
+import imagingbook.lib.image.OutOfBoundsStrategy;
 
-
+/**
+ * This abstract class represents a generic filter that, when applied to 
+ * an {@code ImageProcessor} object performs all pixel-level
+ * iterations automatically.
+ * Concrete implementations of this class need to define only two methods:<br>
+ * {@code float filterPixel(ImageAccessor.Scalar, int, int)} and<br>
+ * {@code float[] filterPixel(ImageAccessor.Rgb, int, int)}.<br>
+ * See {@link LinearFilter} for a sample implementation.
+ * 
+ * <br>
+ * Note that this is experimental code!
+ * 
+ * @author wilbur
+ * @version 2016/11/01
+ * 
+ */
 public abstract class GenericFilter {
 	
-	// PASS THE IMAGE PROCESSOR of the original image and
-	// set up width/height, accessors etc.
-	// then use apply without processor argument??
-	// Allow source/target to be of different types?
-	// Implement using interfaces (for gray/color)?
+	/* TODO: PASS THE IMAGE PROCESSOR of the original image and
+	 * set up width/height, accessors etc., then use apply without processor argument??
+	 * Allow source/target to be of different types?
+	 * Implement using interfaces (for gray/color)?
+	 * 
+	 */
+	
+	private OutOfBoundsStrategy obs = OutOfBoundsStrategy.NearestBorder;
+	
+	/**
+	 * Set the out-of-bounds strategy of this {@link GenericFilter}. See {@link OutOfBoundsStrategy}.
+	 * @param obs
+	 */
+	public void setOutOfBoundsStrategy(OutOfBoundsStrategy obs) {
+		this.obs = obs;
+	}
 	
 	protected GenericFilter() {
 	}
  	
- 	public abstract float   filterPixel(ImageAccessor.Scalar source, int u, int v);
+	/**
+	 * Calculates and returns the filter result for a single pixel
+	 * at the given position.
+	 * 
+	 * @param source the {@link ImageAccessor.Scalar} representing the source (scalar-valued) image
+	 * @param u the horizontal pixel position
+	 * @param v the vertical pixel position
+	 * @return the resulting (scalar) filter value for the specified pixel position
+	 */
+ 	public abstract float filterPixel(ImageAccessor.Scalar source, int u, int v);
+ 	
+ 	/**
+	 * Calculates and returns the filter result for a single pixel
+	 * at the given position.
+	 * 
+	 * @param source the {@link ImageAccessor.Rgb} representing the source (RGB) image
+	 * @param u the horizontal pixel position
+	 * @param v the vertical pixel position
+	 * @return the resulting (RGB) filter value for the specified pixel position
+	 */
  	public abstract float[] filterPixel(ImageAccessor.Rgb source, int u, int v);
  	
- 	/* Dispatch work depending on actual (runtime) type of processor.
+
+ 	/**
+ 	 * Dispatch work depending on actual (runtime) type of processor.
  	 * This is ugly but we want to avoid generic types (which would
  	 * not be of much help in this case anyway).
+ 	 * 
+ 	 * @param ip the image this filter is applied to (destructively)
  	 */
- 	public void applyTo(ImageProcessor ip) {	// check for target == null?
+ 	public void applyTo(ImageProcessor ip) {	// TODO: check for target == null?
 		final int w = ip.getWidth();
 		final int h = ip.getHeight();
  		ImageProcessor ipCopy = ip.duplicate();
  
  		if (ip instanceof ColorProcessor) {
- 	 		ImageAccessor.Rgb iaOrig = ImageAccessor.Rgb.create(ip, null, null);
- 	 		ImageAccessor.Rgb iaCopy = ImageAccessor.Rgb.create(ipCopy, null, null);
+ 	 		ImageAccessor.Rgb iaOrig = ImageAccessor.Rgb.create(ip, obs, null);
+ 	 		ImageAccessor.Rgb iaCopy = ImageAccessor.Rgb.create(ipCopy, obs, null);
 			for (int v = 0; v < h; v++) {
 				for (int u = 0; u < w; u++) {
  	            	//int p = (int) filterPixel(iaCopy, u, v);
@@ -51,8 +101,8 @@ public abstract class GenericFilter {
  	        }
  		}
  		else {
- 			ImageAccessor.Scalar iaOrig = ImageAccessor.Scalar.create(ipCopy, null, null);
- 	 		ImageAccessor.Scalar iaCopy = ImageAccessor.Scalar.create(ipCopy, null, null);
+ 			ImageAccessor.Scalar iaOrig = ImageAccessor.Scalar.create(ip, obs, null);
+ 	 		ImageAccessor.Scalar iaCopy = ImageAccessor.Scalar.create(ipCopy, obs, null);
 			for (int v = 0; v < h; v++) {
 				for (int u = 0; u < w; u++) {
 					float p = filterPixel(iaCopy, u, v);

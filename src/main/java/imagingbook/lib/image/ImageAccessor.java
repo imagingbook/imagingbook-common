@@ -9,6 +9,7 @@
 
 package imagingbook.lib.image;
 
+import ij.IJ;
 import ij.process.ByteProcessor;
 import ij.process.ColorProcessor;
 import ij.process.FloatProcessor;
@@ -39,15 +40,33 @@ public abstract class ImageAccessor {
 	protected final OutOfBoundsStrategy outOfBoundsStrategy;
 	protected final InterpolationMethod interpolationMethod;
 	
+	/**
+	 * Creates a new {@code ImageAccessor} instance for the given image,
+	 * using the default out-of-bounds strategy and interpolation method.
+	 * 
+	 * @param ip the source image
+	 * @return a new {@code ImageAccessor} instance
+	 */
 	public static ImageAccessor create(ImageProcessor ip) {
 		return create(ip, DefaultOutOfBoundsStrategy, DefaultInterpolationMethod);
 	}
 	
+	/**
+	 * Creates a new {@code ImageAccessor} instance for the given image,
+	 * using the specified out-of-bounds strategy and interpolation method.
+	 * 
+	 * @param ip the source image
+	 * @param obs the out-of-bounds strategy (use {@code null} for default settings)
+	 * @param ipm the interpolation method (use {@code null} for default settings)
+	 * @return a new {@code ImageAccessor} instance
+	 */
 	public static ImageAccessor create(ImageProcessor ip,  OutOfBoundsStrategy obs, InterpolationMethod ipm) {
-		if (ip instanceof ColorProcessor)
+		if (ip instanceof ColorProcessor) {
 			return ImageAccessor.Rgb.create(ip, obs, ipm);
-		else
+		}
+		else {
 			return ImageAccessor.Scalar.create(ip, obs, ipm);
+		}
 	}
 	
 	// private constructor (used by all subtypes)
@@ -56,7 +75,7 @@ public abstract class ImageAccessor {
 		this.height = ip.getHeight();
 		this.outOfBoundsStrategy = (obs != null) ? obs : DefaultOutOfBoundsStrategy;
 		this.interpolationMethod = (ipm != null) ? ipm : DefaultInterpolationMethod;
-		this.indexer = PixelIndexer.create(width, height, this.outOfBoundsStrategy);
+		this.indexer = PixelIndexer.create(width, height, outOfBoundsStrategy);
 	}
 	
 	public abstract ImageProcessor getProcessor();
@@ -98,13 +117,12 @@ public abstract class ImageAccessor {
 		protected final PixelInterpolator interpolator;	// performs interpolation
 			
 		private Scalar(ImageProcessor ip, OutOfBoundsStrategy obs, InterpolationMethod ipm) {
-			super(ip,  obs, ipm);
+			super(ip, obs, ipm);
 			this.ip = ip;
-			this.interpolator = PixelInterpolator.create(ipm);
+			this.interpolator = PixelInterpolator.create(interpolationMethod);
 		}
 		
 		public float getVal(double x, double y) {	// interpolating version
-//			return interpolator.getInterpolatedValue(new Point2D.Double(x, y));
 			return interpolator.getInterpolatedValue(this, x, y);
 		}
 		

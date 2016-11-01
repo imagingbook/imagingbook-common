@@ -8,6 +8,7 @@
  *******************************************************************************/
 
 package imagingbook.lib.interpolation;
+
 import imagingbook.lib.image.ImageAccessor;
 
 
@@ -36,7 +37,7 @@ public abstract class PixelInterpolator {
 		case Lanzcos2 : 		return new LanczosInterpolator(2);
 		case Lanzcos3 : 		return new LanczosInterpolator(3);
 		case Lanzcos4 : 		return new LanczosInterpolator(4);
-		default : throw new IllegalArgumentException("unhandled interpolator method: " + method.name());
+		default : throw new IllegalArgumentException("unhandled interpolator method: " + method);
 		}
 	}
 	
