@@ -12,16 +12,25 @@ package imagingbook.pub.regions;
 import ij.process.ByteProcessor;
 
 /**
- * Updated/checked: 2014-11-12
+ * Binary region labeler based on a recursive flood filling
+ * algorithm. 
+ * 
  * @author WB
- *
+ * @version 2016-11-08
  */
 public class RecursiveLabeling extends RegionLabeling {
 
+	/**
+	 * Creates a new region labeling.
+	 * 
+	 * @param ip the binary input image with 0 values for background pixels and values &gt; 0
+	 * for foreground pixels.
+	 */
 	public RecursiveLabeling(ByteProcessor ip) {
 		super(ip);
 	}
 	
+	@Override
 	void applyLabeling() {
 		resetLabel();
 		for (int v = 0; v < height; v++) {
@@ -35,7 +44,7 @@ public class RecursiveLabeling extends RegionLabeling {
 		}
 	}
 
-	public void floodFill(int up, int vp, int label) {
+	private void floodFill(int up, int vp, int label) {
 		if ((up>=0) && (up<width) && (vp>=0) && (vp<height) && getLabel(up, vp)>=START_LABEL) {
 			setLabel(up, vp, label);
 			floodFill(up + 1, vp, label);

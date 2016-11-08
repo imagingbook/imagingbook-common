@@ -44,7 +44,7 @@ public abstract class GenericFilter {
 	
 	/**
 	 * Set the out-of-bounds strategy of this {@link GenericFilter}. See {@link OutOfBoundsStrategy}.
-	 * @param obs
+	 * @param obs the out-of-bounds strategy
 	 */
 	public void setOutOfBoundsStrategy(OutOfBoundsStrategy obs) {
 		this.obs = obs;

@@ -9,12 +9,6 @@
 
 package imagingbook.pub.regions;
 
-import ij.IJ;
-import ij.process.ByteProcessor;
-import ij.process.ColorProcessor;
-import ij.process.ImageProcessor;
-import ij.process.ShortProcessor;
-
 import java.awt.Color;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -30,11 +24,17 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
+import ij.process.ByteProcessor;
+import ij.process.ColorProcessor;
+import ij.process.ImageProcessor;
+import ij.process.ShortProcessor;
+
 /**
  * This class does the complete region labeling for a given image.
- * It is abstract, because the implementation of some parts depend
- * upon the region labeling algorithm being used.
- * Updated/checked: 2014-11-12
+ * It is abstract, because the implementation of some parts depends
+ * on the region labeling algorithm being used.
+ * 
+ * @version 2016-11-08
  */
 public abstract class RegionLabeling {
 	
@@ -42,43 +42,53 @@ public abstract class RegionLabeling {
 	static final int FOREGROUND = 1;
 	static final int START_LABEL = 2;
 
-	protected ImageProcessor ip;
-	protected int width;
-	protected int height;
-	protected int currentLabel;
-	protected int maxLabel;	// the maximum label in the labels array
+	protected final ImageProcessor ip;
+	protected final int width;
+	protected final int height;
 	
-	protected int[][] labelArray;
+	protected final int[][] labelArray;
 	// label values in labelArray can be:
 	//  0 ... unlabeled
 	// -1 ... previously visited background pixel
 	// >0 ... valid label
 	
+	protected int currentLabel;
+	protected int maxLabel;	// the maximum label in the labels array
 	protected List<BinaryRegion> regions;
 	
-	RegionLabeling(ByteProcessor ip) {
+	protected RegionLabeling(ByteProcessor ip) {
 		this.ip = ip;
 		width  = ip.getWidth();
 		height = ip.getHeight();
-		initialize();
+		labelArray = initialize();
 		applyLabeling();
 		collectRegions();
 	}
 	
-	void initialize() {
+	protected int[][]  initialize() {
+		int[][] lA = new int[width][height];	// label array
 		// set all pixels to either FOREGROUND or BACKGROUND (by thresholding)
-		labelArray = new int[width][height];
 		for (int v = 0; v < height; v++) {
 			for (int u = 0; u < width; u++) {
-				labelArray[u][v] = (ip.getPixel(u, v) > 0) ? FOREGROUND : BACKGROUND;
+				lA[u][v] = (ip.getPixel(u, v) > 0) ? FOREGROUND : BACKGROUND;
 			}
 		}
+		return lA;
 	}
 	
+	/**
+	 * Get an unsorted list of all regions associated with this region labeling.
+	 * @return the list of regions.
+	 */
 	public List<BinaryRegion> getRegions() {
 		return getRegions(false);	// unsorted
 	}
 	
+	/**
+	 * Get a possibly sorted list of all regions associated with this region labeling.
+	 * @param sort set {@code true} to sort regions by decreasing size.
+	 * @return the list of regions.
+	 */
 	public List<BinaryRegion> getRegions(boolean sort) {
 		if (regions == null) 
 			return Collections.emptyList();
@@ -121,6 +131,12 @@ public abstract class RegionLabeling {
 		regions = regionList;
 	}
 	
+	/**
+	 * Get the label number for the specified image coordinate.
+	 * @param u the horizontal coordinate.
+	 * @param v the vertical coordinate.
+	 * @return the label number for the given position.
+	 */
 	public int getLabel(int u, int v) {
 		if (u >= 0 && u < width && v >= 0 && v < height)
 			return labelArray[u][v];
@@ -128,12 +144,12 @@ public abstract class RegionLabeling {
 			return BACKGROUND;
 	}
 	
-	void setLabel(int u, int v, int label) {
+	protected void setLabel(int u, int v, int label) {
 		if (u >= 0 && u < width && v >= 0 && v < height)
 			labelArray[u][v] = label;
 	}
 	
-	void resetLabel() {
+	protected void resetLabel() {
 		currentLabel = -1;
 		maxLabel = -1;
 	}
@@ -153,11 +169,19 @@ public abstract class RegionLabeling {
 	
 	// --------------------------------------------------
 	
+	/**
+	 * Utility method that creates an image of the internal
+	 * label array.
+	 * 
+	 * @param color set {@code false} to get a 16-bit grayscale image,
+	 * {@code true} for an RGB (24-bit) color image.
+	 * @return an image of the label array.
+	 */
 	public ImageProcessor makeLabelImage(boolean color) {
 		return (color) ?  makeLabelImageColor() : makeLabelImageGray();
 	}
 
-	ColorProcessor makeLabelImageColor() {
+	private ColorProcessor makeLabelImageColor() {
 		int[] colorLUT = new int[maxLabel+1];
 		for (int i = START_LABEL; i <= maxLabel; i++) {
 			colorLUT[i] = makeRandomColor();
@@ -174,7 +198,7 @@ public abstract class RegionLabeling {
 		return cp;
 	}
 	
-	ShortProcessor makeLabelImageGray() {
+	private ShortProcessor makeLabelImageGray() {
 		ShortProcessor sp = new ShortProcessor(width, height);
 		for (int v = 0; v < height; v++) {
 			for (int u = 0; u < width; u++) {
@@ -186,7 +210,17 @@ public abstract class RegionLabeling {
 		return sp;
 	}
 	
-	// Find the region object with the given label:
+
+	/**
+	 * Find the region associated to the given label.
+	 * @param label the label number.
+	 * @return the associated region object or {@code null} if
+	 * is does not exist.
+	 * 
+	 * @param label the label number.
+	 * @return the region object associated with the given label
+	 * 		or {@code null} if it does not exist.
+	 */
 	public BinaryRegion findRegion(int label) {
 		if (label <= 0 || regions == null) return null;
 		BinaryRegion regn = null;
@@ -202,22 +236,17 @@ public abstract class RegionLabeling {
 	/**
 	 * Finds the {@link BinaryRegion} instance associated with
 	 * the given image position.
-	 * @param u horizontal position
-	 * @param v vertical position
+	 * @param u the horizontal position.
+	 * @param v the vertical position.
 	 * @return The associated {@link BinaryRegion} object or null if
-	 * 		this {@link RegionLabeling} has no region at the given position.
+	 * this {@link RegionLabeling} has no region at the given position.
 	 */
 	public BinaryRegion getRegion(int u, int v) {
 		int label = getLabel(u, v);
 		return findRegion(label);
 	}
 	
-	
-	/*
-	 * utility methods
-	 */
-
-	int makeRandomColor() {
+	protected int makeRandomColor() {
 		double saturation = 0.2;
 		double brightness = 0.2;
 		float h = (float) Math.random();
@@ -226,31 +255,33 @@ public abstract class RegionLabeling {
 		return Color.HSBtoRGB(h, s, b);
 	}
 	
-	void printSummary() {
-		if (regions != null) {
-			IJ.log("Number of regions detected: " + regions.size());
-			for (BinaryRegion r : regions) {
-				IJ.log(r.toString());
-			}
-		} else
-			IJ.log("No regions found.");
-	}
+//	private void printSummary() {
+//		if (regions != null) {
+//			IJ.log("Number of regions detected: " + regions.size());
+//			for (BinaryRegion r : regions) {
+//				IJ.log(r.toString());
+//			}
+//		} else
+//			IJ.log("No regions found.");
+//	}
 	
 	
 	// --------- Iteration over region pixels -----------------------------------
 	
 	/**
 	 * @deprecated
-	 * Use method getRegionPoints() of class {@link BinaryRegion} instead!
+	 * This method is not supported any longer.
+	 * Instead use {@code Iterable<Point>} capability of {@link BinaryRegion}
+	 * to iterate directly over region points.
 	 * 
-	 * @param r binary region
-	 * @return an {@link Iterable} to iterate over all region points
+	 * @param r the binary region.
+	 * @return an {@link Iterable} to iterate over all region points.
 	 */
 	public Iterable<Point> getRegionPoints(final BinaryRegion r) {
 		return r.getRegionPoints();
 	}
 	
-	protected class RegionPixelIterator implements Iterator<Point> {
+	private class RegionPixelIterator implements Iterator<Point> {
 		final int label;					// the corresponding region's label
 		final int uMin, uMax, vMin, vMax;	// coordinates of region's bounding box
 		int uCur, vCur;						// current pixel position
@@ -299,11 +330,7 @@ public abstract class RegionLabeling {
 			return null;		// no next pixel found
 		}
 
-		/**
-		 * Returns true if the iteration has more elements. (In other words, returns true if next() 
-		 * would return an element rather than throwing an exception.)
-		 * If hasNext() returns true, then pNext refers to a valid region pixel.
-		 */
+		@Override
 		public boolean hasNext() {
 			if (pNext != null) {	// next element has been queried before but not consumed
 				return true;
@@ -314,10 +341,9 @@ public abstract class RegionLabeling {
 			}
 		}
 
-		/**
-		 * Returns: the next element in the iteration
-		 * Throws: NoSuchElementException - if the iteration has no more elements.
-		 */
+		// Returns: the next element in the iteration
+		// Throws: NoSuchElementException - if the iteration has no more elements.
+		@Override
 		public Point next() {
 			if (pNext != null || hasNext()) {
 				Point pn = pNext;
@@ -329,6 +355,7 @@ public abstract class RegionLabeling {
 			}
 		}
 
+		@Override
 		public void remove() {
 			throw new UnsupportedOperationException();
 		}
@@ -366,48 +393,93 @@ public abstract class RegionLabeling {
 		private long x2Sum = 0;
 		private long y2Sum = 0;
 		
-		public double getXc() {
-			return xc;
-		}
-
-		public double getYc() {
-			return yc;
-		}
-		
-		public long getX1Sum() {
-			return x1Sum;
-		}
-
-		public long getY1Sum() {
-			return y1Sum;
-		}
-
-		public long getX2Sum() {
-			return x2Sum;
-		}
-
-		public long getY2Sum() {
-			return y2Sum;
-		}
-		
 		// ------- constructor --------------------------
 		
-		private BinaryRegion(int label){
+		private BinaryRegion(int label) {
 			this.label = label;
 			this.outerContour = null;
 			this.innerContours = null;
 		}
+		
+		/**
+		 * Get the x-value of the region's centroid.
+		 * @return the x-value of the region's centroid.
+		 */
+		public double getXc() {
+			return xc;
+		}
+
+		/**
+		 * Get the y-value of the region's centroid.
+		 * @return the y-value of the region's centroid.
+		 */
+		public double getYc() {
+			return yc;
+		}
+		
+		/**
+		 * Returns the sum of the x-values of the points
+		 * contained in this region.
+		 * 
+		 * @return the sum of x-values.
+		 */
+		public long getX1Sum() {
+			return x1Sum;
+		}
+
+		/**
+		 * Returns the sum of the y-values of the points
+		 * contained in this region.
+		 * 
+		 * @return the sum of y-values.
+		 */
+		public long getY1Sum() {
+			return y1Sum;
+		}
+
+		/**
+		 * Returns the sum of the squared x-values of the points
+		 * contained in this region.
+		 * 
+		 * @return the sum of squared x-values.
+		 */
+		public long getX2Sum() {
+			return x2Sum;
+		}
+
+		/**
+		 * Returns the sum of the squared y-values of the points
+		 * contained in this region.
+		 * 
+		 * @return the sum of squared y-values.
+		 */
+		public long getY2Sum() {
+			return y2Sum;
+		}
 
 		// ------- public methods --------------------------
 		
+		/**
+		 * Get the label associated with this region.
+		 * @return the region label.
+		 */
 		public int getLabel() {
 			return this.label;
 		}
 		
+		/**
+		 * Get the size of this region.
+		 * @return the number of region points.
+		 */
 		public int getSize() {
 			return this.size;
 		}
 		
+		/**
+		 * Get the x/y axes-parallel bounding box as a rectangle
+		 * (including the extremal coordinates).
+		 * @return the bounding box rectangle.
+		 */
 		public Rectangle getBoundingBox() {
 			if (right < 0)
 				return null;
@@ -416,13 +488,12 @@ public abstract class RegionLabeling {
 		}
 		
 		/**
+		 * @deprecated
 		 * Returns the centroid of this region as a 2D point.
 		 * Use {@link getCenterPoint} or {@link getXc} and {@link getYc} instead.
-		 * @deprecated
-		 * @return the centroid of this region
+		 * @return the centroid of this region.
 		 */
 		public Point2D getCenter() {
-			//TODO: rename to getCenterPoint, replace by returning array, make getters for xc, yc
 			if (Double.isNaN(xc))
 				return null;
 			else
@@ -434,10 +505,9 @@ public abstract class RegionLabeling {
 		 * Returns the centroid of this region as a 2D point.
 		 * See also {@link getXc}, {@link getYc}.
 		 * 
-		 * @return the centroid of this region
+		 * @return the centroid of this region.
 		 */
 		public Point2D getCenterPoint() {
-			//TODO: rename to getCenterPoint, replace by returning array, make getters for xc, yc
 			if (Double.isNaN(xc))
 				return null;
 			else
@@ -454,9 +524,6 @@ public abstract class RegionLabeling {
 		/**
 		 * @deprecated
 		 * Replaced by BinaryRegion implementing {@code Iterable<Point>}.
-		 * Use this method to iterate over all pixels of a region R
-		 * as follows:
-		 * <pre>for (Point p : R.getRegionPoints()) { ... }</pre>
 		 * @return iterator to be used in a for-loop. 
 		 */
 		public Iterable<Point> getRegionPoints() {
@@ -500,6 +567,12 @@ public abstract class RegionLabeling {
 			}
 		}
 		
+		/**
+		 * Get the (single) outer contour of this region.
+		 * Points on an outer contour are arranged in clockwise
+		 * order.
+		 * @return the outer contour.
+		 */
 		public Contour getOuterContour() {
 			return outerContour;
 		}
@@ -508,6 +581,12 @@ public abstract class RegionLabeling {
 			outerContour = contr;
 		}
 		
+		/**
+		 * Get all inner contours of this region.
+		 * Points on inner contours are arranged in counter-clockwise
+		 * order.
+		 * @return the list of inner contours.
+		 */
 		public List<Contour> getInnerContours() {
 			return innerContours;
 		}
@@ -536,9 +615,8 @@ public abstract class RegionLabeling {
 			return s;
 		}
 		
-		/**
-		 * Compare method for sorting by region size (larger regions at front)
-		 */
+		// Compare method for sorting by region size (larger regions at front)
+		@Override
 		public int compareTo(BinaryRegion r2) {
 			return r2.size - this.size;
 		}
@@ -572,6 +650,7 @@ public abstract class RegionLabeling {
 		 * Retrieves the specified region property. 
 		 * An {@link IllegalArgumentException} is thrown if the property 
 		 * is not defined for this region.
+		 * 
 		 * @param name The name of the property.
 		 * @return The value associated with the specified property.
 		 */

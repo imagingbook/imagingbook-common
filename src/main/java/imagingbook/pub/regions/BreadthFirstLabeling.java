@@ -16,15 +16,25 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 /**
- * Updated/checked: 2014-11-12
- *
+ * Binary region labeler based on a breadth-first flood filling
+ * algorithm. 
+ * 
+ * @author WB
+ * @version 2016-11-08
  */
 public class BreadthFirstLabeling extends RegionLabeling {
 	
+	/**
+	 * Creates a new region labeling.
+	 * 
+	 * @param ip the binary input image with 0 values for background pixels and values &gt; 0
+	 * for foreground pixels.
+	 */
 	public BreadthFirstLabeling(ByteProcessor ip) {
 		super(ip);
 	}
 	
+	@Override
 	void applyLabeling() {
 		resetLabel();
 		for (int v = 0; v < height; v++) {
@@ -38,7 +48,7 @@ public class BreadthFirstLabeling extends RegionLabeling {
 		}
 	}
 
-	void floodFill(int u, int v, int label) {
+	private void floodFill(int u, int v, int label) {
 		Queue<Point> Q = new LinkedList<Point>();	//queue contains pixel coordinates
 		Q.add(new Point(u, v));
 		while (!Q.isEmpty()) {

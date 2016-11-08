@@ -16,16 +16,25 @@ import java.util.Deque;
 import java.util.LinkedList;
 
 /**
- * Updated/checked: 2014-11-12
+ * Binary region labeler based on a depth-first flood filling
+ * algorithm. 
+ * 
  * @author WB
- *
+ * @version 2016-11-08
  */
 public class DepthFirstLabeling extends RegionLabeling {
 	
+	/**
+	 * Creates a new region labeling.
+	 * 
+	 * @param ip the binary input image with 0 values for background pixels and values &gt; 0
+	 * for foreground pixels.
+	 */
 	public DepthFirstLabeling(ByteProcessor ip) {
 		super(ip);
 	}
 	
+	@Override
 	void applyLabeling() {
 		resetLabel();
 		for (int v = 0; v < height; v++) {
@@ -39,7 +48,7 @@ public class DepthFirstLabeling extends RegionLabeling {
 		}
 	}
 
-	void floodFill(int u, int v, int label) {
+	private void floodFill(int u, int v, int label) {
 		Deque<Point> S = new LinkedList<Point>();	//stack contains pixel coordinates
 		S.push(new Point(u, v));
 		while (!S.isEmpty()){

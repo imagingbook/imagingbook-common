@@ -16,18 +16,27 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Updated/checked: 2014-11-12
+ * Binary region labeler based on a sequential labeling
+ * algorithm. 
+ * 
  * @author WB
- *
+ * @version 2016-11-08
  */
 public class SequentialLabeling extends RegionLabeling {
 
-	Map<LabelCollision,LabelCollision> collisionMap = null;
+	private Map<LabelCollision,LabelCollision> collisionMap = null;
 
+	/**
+	 * Creates a new region labeling.
+	 * 
+	 * @param ip the binary input image with 0 values for background pixels and values &gt; 0
+	 * for foreground pixels.
+	 */
 	public SequentialLabeling(ByteProcessor ip) {
 		super(ip);
 	}
 
+	@Override
 	void applyLabeling() {
 		if (IJ.debugMode) IJ.log("Sequential region labeling - Step 1");
 		collisionMap = new HashMap<LabelCollision,LabelCollision>(1000);
@@ -51,7 +60,7 @@ public class SequentialLabeling extends RegionLabeling {
 		//showLabelArray();
 	}
 
-	int makeLabel(int u, int v) {
+	private int makeLabel(int u, int v) {
 		int newLabel = 0;
 		//assemble the neighborhood n:
 		//
@@ -93,7 +102,7 @@ public class SequentialLabeling extends RegionLabeling {
 		return newLabel;
 	}
 
-	void registerCollision(int a, int b) {
+	private void registerCollision(int a, int b) {
 		if (collisionMap == null){
 			throw new Error("registerCollision(): no collission map!");
 		}
@@ -108,16 +117,16 @@ public class SequentialLabeling extends RegionLabeling {
 		}
 	}
 	
-	void listCollisions() {
-		IJ.log("Listing collisions********* " + collisionMap.size());
-		for (LabelCollision c: collisionMap.keySet()) {
-			IJ.log("  ---next----" + c.a + "/" + c.b + "=" + c);
-		}
-	}
+//	private void listCollisions() {
+//		IJ.log("Listing collisions********* " + collisionMap.size());
+//		for (LabelCollision c: collisionMap.keySet()) {
+//			IJ.log("  ---next----" + c.a + "/" + c.b + "=" + c);
+//		}
+//	}
 	
 	//---------------------------------------------------------------------------
 
-	int[] makeReplacementTable(int size) {
+	private int[] makeReplacementTable(int size) {
 		int[] rTable = resolveCollisions(size);
 		return cleanupReplacementTable(rTable);
 	}
@@ -137,7 +146,7 @@ public class SequentialLabeling extends RegionLabeling {
 	 *  @param size size of the label set
 	 *  @return replacement table
 	 */
-	int[] resolveCollisions(int size) {
+	private int[] resolveCollisions(int size) {
 		
 		// The table setNumber[i] indicates to which set the element i belongs:
 		//   k == setNumber[e] means that e is in set k 
@@ -164,7 +173,7 @@ public class SequentialLabeling extends RegionLabeling {
 		return setNumber;
 	}
 
-	int[] cleanupReplacementTable(int[] table) {
+	private int[] cleanupReplacementTable(int[] table) {
 		if (table.length == 0) return table; // case of empty image
 		// Assume the replacement table looks the following:
 		// table = [0 1 4 4 4 6 6 8 3 3 ]
@@ -210,7 +219,7 @@ public class SequentialLabeling extends RegionLabeling {
 		return table;
 	}
 
-	void applyReplacementTable(int[] replacementTable){
+	private void applyReplacementTable(int[] replacementTable){
 		if (replacementTable != null && replacementTable.length > 0){
 			for (int v = 0; v < height; v++) {
 				for (int u = 0; u < width; u++) {
@@ -226,8 +235,8 @@ public class SequentialLabeling extends RegionLabeling {
 	/**
 	 * This class represents a collision between two pixel labels a, b
 	 */
-	class LabelCollision { 
-		private int a, b;
+	private class LabelCollision { 
+		private final int a, b;
 
 		LabelCollision(int label_a, int label_b) {
 			a = label_a;

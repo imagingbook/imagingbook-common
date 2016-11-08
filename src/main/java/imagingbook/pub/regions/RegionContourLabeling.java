@@ -18,36 +18,52 @@ import ij.IJ;
 import ij.process.ByteProcessor;
 
 /**
- * 2014-11-12: changed to implement ContourTracer.
- *
+ * Binary region labeler based on a combined region labeling
+ * and contour tracing algorithm:
+ * F. Chang, C. J. Chen, and C. J. Lu. A linear-time component labeling
+ * algorithm using contour tracing technique. Computer Vision, Graphics,
+ * and Image Processing: Image Understanding 93(2), 206-220 (2004).
+ * 
+ * @author WB
+ * @version 2016-11-08
  */
 public class RegionContourLabeling extends RegionLabeling implements ContourTracer { 
 	
-	static final int VISITED = -1;
+	static private final int VISITED = -1;
 	
-	private List<Contour> outerContours;
-	private List<Contour> innerContours;
+	private final List<Contour> outerContours;
+	private final List<Contour> innerContours;
 	
-	// constructors
-	
+	/**
+	 * Creates a new region labeling.
+	 * 
+	 * @param ip the binary input image with 0 values for background pixels and values &gt; 0
+	 * for foreground pixels.
+	 */
 	public RegionContourLabeling (ByteProcessor ip) {
 		super(ip);	// all work is done by the constructor of the superclass
+		outerContours = new ArrayList<Contour>();
+		innerContours = new ArrayList<Contour>();
 	}
 	
 	// public methods required by interface ContourTracer (others are in inherited from super-class)
 	
+	@Override
 	public List<Contour> getOuterContours() {
 		return copyContours(outerContours, false);
 	}
 	
+	@Override
 	public List<Contour> getOuterContours(boolean sort) {
 		return copyContours(outerContours, sort);
 	}
 	
+	@Override
 	public List<Contour> getInnerContours() {
 		return copyContours(innerContours, false);
 	}
 	
+	@Override
 	public List<Contour> getInnerContours(boolean sort) {
 		return copyContours(innerContours, sort);
 	}
@@ -55,14 +71,15 @@ public class RegionContourLabeling extends RegionLabeling implements ContourTrac
 
 	// non-public methods
 	
-	void initialize() {
+	@Override
+	protected int[][] initialize() {
 		// Create a label array which is "padded" by 1 pixel, i.e., 
 		// 2 rows and 2 columns larger than the image:
-		labelArray = new int[width+2][height+2];	// initialized to zero
-		outerContours = new ArrayList<Contour>();
-		innerContours = new ArrayList<Contour>();
+		int[][] lA = new int[width+2][height+2];	// label array, initialized to zero
+		return lA;
 	}
 	
+	@Override
 	void applyLabeling() {
 		resetLabel();
 		// scan top to bottom, left to right
@@ -96,10 +113,17 @@ public class RegionContourLabeling extends RegionLabeling implements ContourTrac
 		}
 	}
 	
+	@Override
+	void collectRegions() {
+		super.collectRegions();	// collect region pixels and calculate statistics
+		attachOuterContours();	// attach each outer contours to the corresponding region
+		attachInnerContours();	// attach all inner contours to the corresponding regions
+	}
+	
 	// Trace one contour starting at (xS,yS) 
 	// in direction dS with label label
 	// trace one contour starting at (xS,yS) in direction dS	
-	Contour traceContour(int xS, int yS, int dS, int label) {
+	private Contour traceContour(int xS, int yS, int dS, int label) {
 		Contour contr = new Contour(label);
 		int xT, yT; // T = successor of starting point (xS,yS)
 		int xP, yP; // P = previous contour point
@@ -132,7 +156,7 @@ public class RegionContourLabeling extends RegionLabeling implements ContourTrac
 			{ 1,0}, { 1, 1}, {0, 1}, {-1, 1}, 
 			{-1,0}, {-1,-1}, {0,-1}, { 1,-1}};
 	
-	int findNextPoint (Point pt, int dir) { 
+	private int findNextPoint (Point pt, int dir) { 
 		// Starts at Point pt in direction dir,
 		// returns the resulting tracing direction
 		// and modifies pt.
@@ -152,13 +176,7 @@ public class RegionContourLabeling extends RegionLabeling implements ContourTrac
 		return dir;
 	}
 	
-	void collectRegions() {
-		super.collectRegions();	// collect region pixels and calculate statistics
-		attachOuterContours();	// attach each outer contours to the corresponding region
-		attachInnerContours();	// attach all inner contours to the corresponding regions
-	}
-	
-	void attachOuterContours() {
+	private void attachOuterContours() {
 		for (Contour c : outerContours) {
 			int label = c.getLabel();
 			BinaryRegion r = findRegion(label);
@@ -171,7 +189,7 @@ public class RegionContourLabeling extends RegionLabeling implements ContourTrac
 		}
 	}
 	
-	void attachInnerContours() {
+	private void attachInnerContours() {
 		for (BinaryRegion r : regions) {
 			r.makeInnerContours();	// ensure that every region has a (empty) list of inner contours
 		}
@@ -188,6 +206,7 @@ public class RegionContourLabeling extends RegionLabeling implements ContourTrac
 	}
 
 	// access methods to the label array (which is padded!)
+	@Override
 	public int getLabel(int u, int v) {	// (u,v) are image coordinates
 		if (u >= -1 && u <= width && v >= -1 && v <= height)
 			return labelArray[u + 1][v + 1]; 	// label array is padded (offset = 1)
@@ -196,7 +215,8 @@ public class RegionContourLabeling extends RegionLabeling implements ContourTrac
 		//return labelArray[u + 1][v + 1];	// original version
 	}
 	
-	void setLabel(int u, int v, int label) { // (u,v) are image coordinates
+	@Override
+	protected void setLabel(int u, int v, int label) { // (u,v) are image coordinates
 		if (u >= -1 && u <= width && v >= -1 && v <= height) {
 			labelArray[u + 1][v + 1] = label;
 		}
