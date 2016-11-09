@@ -9,7 +9,6 @@
 
 package imagingbook.lib.image;
 
-import ij.IJ;
 import ij.process.ByteProcessor;
 import ij.process.ColorProcessor;
 import ij.process.FloatProcessor;

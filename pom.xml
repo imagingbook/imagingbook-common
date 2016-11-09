@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>com.imagingbook</groupId>
 		<artifactId>_public</artifactId>
-		<version>1.3-SNAPSHOT</version>
+		<version>1.4-SNAPSHOT</version>
 		<relativePath>../_pom-public</relativePath>
 	</parent>
 	<artifactId>imagingbook-common</artifactId>
@@ -25,6 +25,4 @@
 			<artifactId>commons-math3</artifactId>
 		</dependency>
 	</dependencies>
-
-	<version>1.3</version>
 </project>
