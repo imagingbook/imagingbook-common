@@ -31,8 +31,8 @@ public class RegionContourLabeling extends RegionLabeling implements ContourTrac
 	
 	static private final int VISITED = -1;
 	
-	private final List<Contour> outerContours;
-	private final List<Contour> innerContours;
+	private List<Contour> outerContours;
+	private List<Contour> innerContours;
 	
 	/**
 	 * Creates a new region labeling.
@@ -42,8 +42,6 @@ public class RegionContourLabeling extends RegionLabeling implements ContourTrac
 	 */
 	public RegionContourLabeling (ByteProcessor ip) {
 		super(ip);	// all work is done by the constructor of the superclass
-		outerContours = new ArrayList<Contour>();
-		innerContours = new ArrayList<Contour>();
 	}
 	
 	// public methods required by interface ContourTracer (others are in inherited from super-class)
@@ -76,6 +74,8 @@ public class RegionContourLabeling extends RegionLabeling implements ContourTrac
 		// Create a label array which is "padded" by 1 pixel, i.e., 
 		// 2 rows and 2 columns larger than the image:
 		int[][] lA = new int[width+2][height+2];	// label array, initialized to zero
+		outerContours = new ArrayList<Contour>();
+		innerContours = new ArrayList<Contour>();
 		return lA;
 	}
 	
