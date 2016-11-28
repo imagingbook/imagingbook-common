@@ -32,15 +32,19 @@ import org.apache.commons.math3.linear.SingularMatrixException;
  * and c is the column index (as common in linear algebra). This means that
  * matrices are really vectors of row vectors.
  * TODO: need to differentiate functional and side-effect methods!
+ * TODO: add JavaDoc comments.
+ * 
  * @author WB
- * @version 2014/12/04
+ * @version 2016/11/28
  */
 
 public abstract class Matrix {
 	
-	static {
-		Locale.setDefault(Locale.US);
-	}
+//	static {
+//		Locale.setDefault(Locale.US);
+//	}
+	
+	static Locale loc = Locale.US;
 	
 	// Vector and matrix creation
 
@@ -60,7 +64,7 @@ public abstract class Matrix {
 		return new float[rows][columns];
 	}
 	
-	// vector/matrix creation:
+	// Specific vector/matrix creation:
 	
 	public static double[] zeroVector(int size) {
 		return new double[size];
@@ -92,7 +96,7 @@ public abstract class Matrix {
 		return A[0].length;
 	}
 	
-	// extract rows or columns
+	// Extract rows or columns
 	
 	public static double[] getRow(double[][] A, int r) {
 		return A[r].clone();
@@ -576,9 +580,9 @@ public abstract class Matrix {
 	
 	// Vector concatenation -----------------------
 	
-	public static float[] concatenate(float[]... as) {
+	public static float[] concatenate(float[]... xs) {
 		List<Float> vlist = new ArrayList<Float>();
-		for (float[] a : as) {
+		for (float[] a : xs) {
 			for (float val : a) {
 				vlist.add(val);
 			}
@@ -593,9 +597,9 @@ public abstract class Matrix {
 		return va;
 	}
 	
-	public static double[] concatenate(double[]... as) {
+	public static double[] concatenate(double[]... xs) {
 		List<Double> vlist = new ArrayList<Double>();
-		for (double[] a : as) {
+		for (double[] a : xs) {
 			for (double val : a) {
 				vlist.add(val);
 			}
@@ -766,69 +770,69 @@ public abstract class Matrix {
 	}
 
 	// use general method, i.e. double[][] inverse(double[][] A)
-	@Deprecated
-	public static double[][] inverse3x3(final double[][] A) {
-		double[][] B = duplicate(A);
-		final double det = determinant3x3(B);
-		if (Math.abs(det) < Arithmetic.EPSILON_DOUBLE)
-			return null;
-		else {
-			final double a00 = B[0][0];
-			final double a01 = B[0][1];
-			final double a02 = B[0][2];
-			final double a10 = B[1][0];
-			final double a11 = B[1][1];
-			final double a12 = B[1][2];
-			final double a20 = B[2][0];
-			final double a21 = B[2][1];
-			final double a22 = B[2][2];
-			B[0][0] = (a11 * a22 - a12 * a21) / det;
-			B[0][1] = (a02 * a21 - a01 * a22) / det;
-			B[0][2] = (a01 * a12 - a02 * a11) / det;
-
-			B[1][0] = (a12 * a20 - a10 * a22) / det;
-			B[1][1] = (a00 * a22 - a02 * a20) / det;
-			B[1][2] = (a02 * a10 - a00 * a12) / det;
-
-			B[2][0] = (a10 * a21 - a11 * a20) / det;
-			B[2][1] = (a01 * a20 - a00 * a21) / det;
-			B[2][2] = (a00 * a11 - a01 * a10) / det;
-			return B;
-		}
-	}
+//	@Deprecated
+//	public static double[][] inverse3x3(final double[][] A) {
+//		double[][] B = duplicate(A);
+//		final double det = determinant3x3(B);
+//		if (Math.abs(det) < Arithmetic.EPSILON_DOUBLE)
+//			return null;
+//		else {
+//			final double a00 = B[0][0];
+//			final double a01 = B[0][1];
+//			final double a02 = B[0][2];
+//			final double a10 = B[1][0];
+//			final double a11 = B[1][1];
+//			final double a12 = B[1][2];
+//			final double a20 = B[2][0];
+//			final double a21 = B[2][1];
+//			final double a22 = B[2][2];
+//			B[0][0] = (a11 * a22 - a12 * a21) / det;
+//			B[0][1] = (a02 * a21 - a01 * a22) / det;
+//			B[0][2] = (a01 * a12 - a02 * a11) / det;
+//
+//			B[1][0] = (a12 * a20 - a10 * a22) / det;
+//			B[1][1] = (a00 * a22 - a02 * a20) / det;
+//			B[1][2] = (a02 * a10 - a00 * a12) / det;
+//
+//			B[2][0] = (a10 * a21 - a11 * a20) / det;
+//			B[2][1] = (a01 * a20 - a00 * a21) / det;
+//			B[2][2] = (a00 * a11 - a01 * a10) / det;
+//			return B;
+//		}
+//	}
 	
 	// numerically stable? should be replaced by standard inversion
-	@Deprecated
-	public static float[][] inverse3x3(final float[][] A) {
-		final float[][] B = duplicate(A);
-		final double det = determinant3x3(B);
-		// IJ.log("   determinant = " + det);
-		if (Math.abs(det) < Arithmetic.EPSILON_DOUBLE)
-			return null;
-		else {
-			final double a00 = B[0][0];
-			final double a01 = B[0][1];
-			final double a02 = B[0][2];
-			final double a10 = B[1][0];
-			final double a11 = B[1][1];
-			final double a12 = B[1][2];
-			final double a20 = B[2][0];
-			final double a21 = B[2][1];
-			final double a22 = B[2][2];
-			B[0][0] = (float) ((a11 * a22 - a12 * a21) / det);
-			B[0][1] = (float) ((a02 * a21 - a01 * a22) / det);
-			B[0][2] = (float) ((a01 * a12 - a02 * a11) / det);
-
-			B[1][0] = (float) ((a12 * a20 - a10 * a22) / det);
-			B[1][1] = (float) ((a00 * a22 - a02 * a20) / det);
-			B[1][2] = (float) ((a02 * a10 - a00 * a12) / det);
-
-			B[2][0] = (float) ((a10 * a21 - a11 * a20) / det);
-			B[2][1] = (float) ((a01 * a20 - a00 * a21) / det);
-			B[2][2] = (float) ((a00 * a11 - a01 * a10) / det);
-			return B;
-		}
-	}
+//	@Deprecated
+//	public static float[][] inverse3x3(final float[][] A) {
+//		final float[][] B = duplicate(A);
+//		final double det = determinant3x3(B);
+//		// IJ.log("   determinant = " + det);
+//		if (Math.abs(det) < Arithmetic.EPSILON_DOUBLE)
+//			return null;
+//		else {
+//			final double a00 = B[0][0];
+//			final double a01 = B[0][1];
+//			final double a02 = B[0][2];
+//			final double a10 = B[1][0];
+//			final double a11 = B[1][1];
+//			final double a12 = B[1][2];
+//			final double a20 = B[2][0];
+//			final double a21 = B[2][1];
+//			final double a22 = B[2][2];
+//			B[0][0] = (float) ((a11 * a22 - a12 * a21) / det);
+//			B[0][1] = (float) ((a02 * a21 - a01 * a22) / det);
+//			B[0][2] = (float) ((a01 * a12 - a02 * a11) / det);
+//
+//			B[1][0] = (float) ((a12 * a20 - a10 * a22) / det);
+//			B[1][1] = (float) ((a00 * a22 - a02 * a20) / det);
+//			B[1][2] = (float) ((a02 * a10 - a00 * a12) / det);
+//
+//			B[2][0] = (float) ((a10 * a21 - a11 * a20) / det);
+//			B[2][1] = (float) ((a01 * a20 - a00 * a21) / det);
+//			B[2][2] = (float) ((a00 * a11 - a01 * a10) / det);
+//			return B;
+//		}
+//	}
 	
 	// ------------------------------------------------------------------------
 	
@@ -846,35 +850,10 @@ public abstract class Matrix {
 	
 	// Output to streams and strings ------------------------------------------
 	
-//	static int defaultPrintPrecision = 3;
-//	static int printPrecision = defaultPrintPrecision;
-////	static String fStr;
-//	static {
-//		 resetPrintPrecision();
-//	}
-//	
-//	public static void resetPrintPrecision() {
-//		setPrintPrecision(defaultPrintPrecision);
-//	}
-//	
-//	public static void setPrintPrecision(int nDigits) {
-//		printPrecision = Math.max(nDigits, 0);
-//		if (nDigits > 0) {
-//			fStr = "%." + printPrecision + "f"; // e.g. "%.5f"
-//		}
-//		else {
-//			fStr = "%e";	// use scientific format - OK?
-//		}
-//	}
-//	
-//	public static int getPrintPrecision() {
-//		return printPrecision;
-//	}
-	
-	public static String toString(double[] A) {
+	public static String toString(double[] x) {
 		ByteArrayOutputStream bas = new ByteArrayOutputStream();
 		PrintStream strm = new PrintStream(bas);
-		printToStream(A, strm);
+		printToStream(x, strm);
 		return bas.toString();
 	}
 	
@@ -884,7 +863,7 @@ public abstract class Matrix {
 		for (int i = 0; i < A.length; i++) {
 			if (i > 0)
 				strm.format(", ");
-			strm.format(fStr, A[i]);
+			strm.format(loc, fStr, A[i]);
 		}
 		strm.format("}");
 		strm.flush();
@@ -907,9 +886,9 @@ public abstract class Matrix {
 				strm.format(", \n{");
 			for (int j=0; j< A[i].length; j++) {
 				if (j == 0) 
-					strm.format(fStr, A[i][j]);
+					strm.format(loc, fStr, A[i][j]);
 				else
-					strm.format(", " + fStr, A[i][j]);
+					strm.format(loc, ", " + fStr, A[i][j]);
 			}
 			strm.format("}");
 		}
@@ -930,7 +909,7 @@ public abstract class Matrix {
 		for (int i = 0; i < A.length; i++) {
 			if (i > 0)
 				strm.format(", ");
-			strm.format(fStr, A[i]);
+			strm.format(loc, fStr, A[i]);
 		}
 		strm.format("}");
 		strm.flush();
@@ -953,9 +932,9 @@ public abstract class Matrix {
 				strm.format(", \n{");
 			for (int j=0; j< A[i].length; j++) {
 				if (j == 0) 
-					strm.format(fStr, A[i][j]);
+					strm.format(loc, fStr, A[i][j]);
 				else
-					strm.format(", " + fStr, A[i][j]);
+					strm.format(loc, ", " + fStr, A[i][j]);
 			}
 			strm.format("}");
 		}
@@ -980,7 +959,7 @@ public abstract class Matrix {
 		System.out.println("A[1][2] = " + A[row][column]);
 
 		System.out.println("det=" + determinant3x3(A));
-		float[][] Ai = inverse3x3(A);
+		float[][] Ai = inverse(A);
 		toString(Ai);
 
 		double[][] B = {{ -1, 2, 3 }, { 4, 5, 6 }};
@@ -1007,6 +986,5 @@ public abstract class Matrix {
 		System.out.println("maxd2 = " + Matrix.max(new double[] {-20,30,60,-40, 0}));
 		System.out.println("minf1 = " + Matrix.min(new float[] {-20,30,60,-40, 0}));
 		System.out.println("maxf2 = " + Matrix.max(new float[] {-20,30,60,-40, 0}));
-		
 	}
 }
