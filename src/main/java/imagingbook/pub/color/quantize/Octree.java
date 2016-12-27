@@ -15,6 +15,7 @@ import java.util.List;
 
 /**
  * This class represents an octree.
+ * 
  * @author Wilbur
  */
 public class Octree {

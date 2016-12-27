@@ -19,11 +19,11 @@ import ij.process.ColorProcessor;
  * is placed on the tree. Insertion of a color in the tree can result in two 
  * outcomes:
  * 
- * (A) If there are less than K leaves the the color is filtered down the tree 
+ * (A) If the tree has fewer than K leaves, the color is filtered down the tree 
  * until either it reaches some leaf node that has an associated representative 
- * color or it reaches the leaf node representing its unique color. 
+ * color or it reaches the leaf node representing its unique color.
  * 
- * (B) If there are greater than K leaves in the tree some set of leaves in the tree 
+ * (B) If there are more than K leaves in the tree some set of leaves in the tree 
  * must be merged (their representative colors averaged) together and a new representative 
  * color stored in their parent. 
  * 
@@ -43,6 +43,7 @@ import ij.process.ColorProcessor;
  * of the representative colors of the leaf nodes in the tree. The index of the color 
  * map is then stored at that leaf, and the process of quantizing the image is simply 
  * filtering each color down the tree until a leaf is hit.
+ * 
  * Because a limit is placed on the number of leaves in the tree this algorithm has 
  * a modest memory complexity, O(K), compared to the median cut and popularity algorithms. 
  * The time complexity is less clear. Gervautz and Purgathofer [1] cite the search phase 
