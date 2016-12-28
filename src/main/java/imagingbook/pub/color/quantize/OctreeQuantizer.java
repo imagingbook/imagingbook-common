@@ -49,10 +49,12 @@ import ij.process.ColorProcessor;
  * The time complexity is less clear. Gervautz and Purgathofer [1] cite the search phase 
  * as being O(N), where N is the number of pixels in the image. This is clearly best case 
  * behavior. The average case needs to address the complexity of the merging algorithm.
+ * 
+ * TODO: make a subclass of ColorQuantizer, add comments...
+ * 
+ * ATTENTION: Current implementation is non-functional!
+ * @deprecated
  */
-
-// TODO: make a subclass of ColorQuantizer, add comments...
-
 public class OctreeQuantizer { // extends ColorQuantizer {
 	
 	private Octree tree;

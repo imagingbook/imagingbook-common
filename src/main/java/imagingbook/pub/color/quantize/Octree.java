@@ -15,8 +15,10 @@ import java.util.List;
 
 /**
  * This class represents an octree.
+ * ATTENTION: This implementation is non-functional!
  * 
  * @author Wilbur
+ * @deprecated
  */
 public class Octree {
 	
