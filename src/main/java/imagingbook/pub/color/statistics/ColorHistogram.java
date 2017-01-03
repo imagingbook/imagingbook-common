@@ -12,9 +12,16 @@ package imagingbook.pub.color.statistics;
 import ij.process.ColorProcessor;
 import java.util.Arrays;
 
+/**
+ * This class calculates a color histogram of a set of colors (i.e., a color image).
+ * Only the unique colors are accounted for. Colors are supplied as ARGB-encoded
+ * integers (A = alpha values being ignored).
+ *  
+ * @author WB
+ */
 public class ColorHistogram {
-	int colorArray[] = null;
-	int countArray[] = null;
+	private final int colorArray[];
+	private final int countArray[];
 	
 	public ColorHistogram(ColorProcessor ip) {
 		this((int[]) ip.getPixels());
