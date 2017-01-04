@@ -64,7 +64,7 @@ public class ColorHistogram {
 			}
 		}
 		
-		Arrays.sort(colornodes);	// sort unique colors by descending frequency
+		Arrays.sort(colornodes);	// sort unique colors by descending frequency TODO: undelete!!
 	}
 	
 	/**
@@ -92,7 +92,7 @@ public class ColorHistogram {
 	 * @return	The frequency of the color.
 	 */
 	public int getCount(int index) {
-		return colornodes[index].rgb;
+		return colornodes[index].count;
 	}
 	
 	/**
