@@ -40,26 +40,44 @@ public class MedianCutQuantizer extends ColorQuantizer {
 	private final ColorNode[] imageColors;	// original (unique) image colors
 	private final ColorNode[] quantColors;	// quantized colors
 	private final int[][] colormap;
+	private final Parameters params;
+	
+	public static class Parameters {
+		/** Maximum number of quantized colors. */
+		public int maxColors = 16;
+		
+		void check() {
+			if (maxColors < 2 || maxColors > 256) {
+				throw new IllegalArgumentException();
+			}
+		}
+	}
 
+	// quick fix, better use a lambda expression?
+	@Deprecated
+	private static Parameters makeParameters(int Kmax) {
+		Parameters p = new Parameters();
+		p.maxColors = Kmax;
+		return p;
+	}
+	
 	@Deprecated
 	public MedianCutQuantizer(ColorProcessor ip, int Kmax) {
-		this((int[]) ip.getPixels(), Kmax);
+		this((int[]) ip.getPixels(), makeParameters(Kmax));
 	}
 	
+	@Deprecated
 	public MedianCutQuantizer(int[] pixels, int Kmax) {
+		this(pixels, makeParameters(Kmax));
+	}
+	
+	 
+	public MedianCutQuantizer(int[] pixels, Parameters params) {
+		this.params = params;
+		System.out.println("Kmax = " + this.params.maxColors);
 		imageColors = makeImageColors(pixels);
-		quantColors = findRepresentativeColors(Kmax);
+		quantColors = findRepresentativeColors(this.params.maxColors);
 		colormap = makeColorMap();
-	}
-	
-	@Deprecated
-	public int countQuantizedColors() {
-		return quantColors.length;
-	}
-	
-	@Deprecated
-	public ColorNode[] getQuantizedColors() {
-		return quantColors;
 	}
 	
 	private ColorNode[] makeImageColors(int[] pixels) {
@@ -72,7 +90,6 @@ public class MedianCutQuantizer extends ColorQuantizer {
 			int cnt = colorHist.getCount(i);
 			imgColors[i] = new ColorNode(rgb, cnt);
 		}
-		
 		return imgColors;
 	}
 
@@ -143,6 +160,18 @@ public class MedianCutQuantizer extends ColorQuantizer {
 	@Override
 	public int[][] getColorMap() {
 		return colormap;
+	}
+	
+	// ------- obsolete methods -----------------------
+	
+	@Deprecated
+	public int countQuantizedColors() {
+		return quantColors.length;
+	}
+	
+	@Deprecated
+	public ColorNode[] getQuantizedColors() {
+		return quantColors;
 	}
 	
 	// -------------- class ColorNode -------------------------------------------

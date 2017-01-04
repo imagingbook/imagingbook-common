@@ -9,82 +9,127 @@
 
 package imagingbook.pub.color.statistics;
 
-import ij.process.ColorProcessor;
 import java.util.Arrays;
 
 /**
  * This class calculates a color histogram of a set of colors (i.e., a color image).
  * Only the unique colors are accounted for. Colors are supplied as ARGB-encoded
  * integers (A = alpha values being ignored).
+ * Colors are internally sorted by their frequency (in descending order).
  *  
  * @author WB
+ * @version 2017/01/04
  */
 public class ColorHistogram {
-	private final int colorArray[];
-	private final int countArray[];
 	
-	public ColorHistogram(ColorProcessor ip) {
-		this((int[]) ip.getPixels());
-	}
+	private final ColorNode[] colornodes;
 	
+	/**
+	 * Creates a color histogram instance from the supplied sequence
+	 * of color pixel values (assumed to be ARGB-encoded integers).
+	 * @param pixelsOrig
+	 */
 	public ColorHistogram(int[] pixelsOrig) {
-		int N = pixelsOrig.length;
-		int[] pixelsCpy = new int[N];
-		for (int i = 0; i < N; i++) {
-			// remove possible alpha components
-			pixelsCpy[i] = 0xFFFFFF & pixelsOrig[i];
+		int[] pixels = new int[pixelsOrig.length];
+		for (int i = 0; i < pixels.length; i++) {
+			pixels[i] = 0xFFFFFF & pixelsOrig[i];	// remove nonzero alpha components
 		}
-		Arrays.sort(pixelsCpy);
+		
+		Arrays.sort(pixels);	// this is why we need a copy of the input array
 		
 		// count unique colors:
 		int k = -1; // current color index
 		int curColor = -1;
-		for (int i = 0; i < pixelsCpy.length; i++) {
-			if (pixelsCpy[i] != curColor) {
+		for (int i = 0; i < pixels.length; i++) {
+			if (pixels[i] != curColor) {
 				k++;
-				curColor = pixelsCpy[i];
+				curColor = pixels[i];
 			}
 		}
-		int nColors = k+1;
+		int nUnique = k + 1;	// number of unique colors
 		
-		// tabulate and count unique colors:
-		colorArray = new int[nColors];
-		countArray = new int[nColors];
+		colornodes = new ColorNode[nUnique];
+		
+		// tabulate and find frequency of unique colors:
 		k = -1;	// current color index
 		curColor = -1;
-		for (int i = 0; i < pixelsCpy.length; i++) {
-			if (pixelsCpy[i] != curColor) {	// new color
+		for (int i = 0; i < pixels.length; i++) {
+			if (pixels[i] != curColor) {	// found a new color
 				k++;
-				curColor = pixelsCpy[i];
-				colorArray[k] = curColor;
-				countArray[k] = 1;
+				curColor = pixels[i];
+				colornodes[k] = new ColorNode(curColor);
 			}
-			else {
-				countArray[k]++;
+			else {							// still with the previous color
+				colornodes[k].add(1);
 			}
+		}
+		
+		Arrays.sort(colornodes);	// sort unique colors by descending frequency
+	}
+	
+	/**
+	 * Returns the number of unique colors.
+	 * @return The number of unique colors.
+	 */
+	public int getNumberOfColors() {
+		return colornodes.length;
+	}
+	
+	/**
+	 * Returns the unique color with the given index.
+	 * Colors are sorted by (decreasing) frequency.
+	 * @param index The color index.
+	 * @return	The color, encoded as an ARGB integer (A is zero).
+	 */
+	public int getColor(int index) {
+		return colornodes[index].rgb;
+	}
+	
+	/**
+	 * Returns the frequency of the unique color with the given index.
+	 * Colors are sorted by (decreasing) frequency.
+	 * @param index The color index.
+	 * @return	The frequency of the color.
+	 */
+	public int getCount(int index) {
+		return colornodes[index].rgb;
+	}
+	
+	/**
+	 * Lists the unique colors to System.out (intended for
+	 * debugging only).
+	 */
+	public void listUniqueColors() {
+		for (ColorNode cn : colornodes) {
+			System.out.println(cn.toString());
 		}
 	}
 	
-	public int[] getColorArray() {
-		return colorArray;
+	// --------------------------------------------------------------------------------
+	
+	private class ColorNode implements Comparable<ColorNode> {
+		private final int rgb;
+		private int count;
+
+		ColorNode(int rgb) {
+			this.rgb = rgb;
+			this.count = 1;
+		}
+
+		void add(int n) {
+			count = count + n;	
+		}
+		
+		public String toString() {
+			return String.format(ColorNode.class.getSimpleName() + " rgb=%d count=%d", rgb, count);
+		}
+
+		@Override
+		public int compareTo(ColorNode c2) {	// to sort by count (high counts first)
+			if (this.count > c2.count) return -1;
+			if (this.count < c2.count) return 1;
+			else return 0;
+		}
 	}
 	
-	public int[] getCountArray() {
-		return countArray;
-	}
-	
-	public int getNumberOfColors() {
-		if (colorArray == null)
-			return 0;
-		else
-			return colorArray.length;
-	}
-	
-	public int getColor(int index) {
-		return this.colorArray[index];
-	}
-	
-	public int getCount(int index) {
-		return this.countArray[index];
-	}
 }

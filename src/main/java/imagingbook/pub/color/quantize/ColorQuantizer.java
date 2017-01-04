@@ -12,7 +12,7 @@ public abstract class ColorQuantizer {
 	/**
 	 * Retrieves the color map produced by this color quantizer.
 	 * The returned array is in the format int[idx][rgb], where
-	 * rgb = 0 (red), 1 (green), 2 (blue) and  0 <= idx < nColors.
+	 * rgb = 0 (red), 1 (green), 2 (blue) and  0 &le; idx &lt; nColors.
 	 * This method must be implemented by any derived concrete class.
 	 * 
 	 * @return The table of quantization colors.
@@ -95,8 +95,8 @@ public abstract class ColorQuantizer {
 	 * This method may be overridden by inheriting classes, for example, to use
 	 * quick indexing in the octree method.
 	 *  
-	 * @param p
-	 * @return
+	 * @param p Original color, encoded as an ARGB integer.
+	 * @return The associated color table index.
 	 */
 	protected int findColorIndex(int p) {
 		int[][] colormap = getColorMap();

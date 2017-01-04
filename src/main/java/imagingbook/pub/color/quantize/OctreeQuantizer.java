@@ -7,25 +7,25 @@ import java.util.List;
 /**
  * This class implements color quantization based on the octree method. It is a
  * re-factored version of an implementation (OctTreeOpImage.java) used in Sun's JAI 
- * (Java Advanced Imaging) framework, which - in turn - is based on a C implementation
- * (quantize.c) by John Cristy, written in 1992 as part of 
+ * (Java Advanced Imaging) framework, which &ndash; in turn &ndash; is based on a 
+ * C implementation (quantize.c) authored by John Cristy in 1992 as part of 
  * <a href="http://www.imagemagick.org/">ImageMagick</a>.
  * The associated source code can be found 
  * <a href="http://git.imagemagick.org/repos/ImageMagick/blob/master/MagickCore/quantize.c">
- * here</a>, the original copyright note is provided at the bottom of this file.
+ * here</a>, the original copyright note is provided at the bottom of this source file.
  * 
- * See also the JAI implementation in
+ * See also the abovementioned JAI implementation in
  * <a href="https://java.net/projects/jai-core/sources/svn/content/trunk/src/share/classes/com/sun/media/jai/opimage/OctTreeOpImage.java">
  * OctTreeOpImage.java</a>.
  * 
- * This implementation is similar to the original octree quantization algorithm proposed
+ * This implementation is similar but not identical to the original octree quantization algorithm proposed
  * by Gervautz and Purgathofer [M. Gervautz and W. Purgathofer. "A simple method for color
  * quantization: octree quantization", in A. Glassner (editor), Graphics Gems I, 
  * pp. 287–293. Academic Press, New York (1990)].
- * This implementation uses modified strategy for pruning the octree for better efficiency.
+ * This implementation uses a modified strategy for pruning the octree for better efficiency.
  * 
- *  
  * @author WB
+ * @version 2017/01/03
  */
 public class OctreeQuantizer extends ColorQuantizer {
 
@@ -34,6 +34,7 @@ public class OctreeQuantizer extends ColorQuantizer {
 	private final static int MAX_TREE_DEPTH = 8;	// check, 7 enough?
 
 	private final int maxColors;	// max. number of distinct colors after quantization
+	
 	private final int nColors;		// final number of colors
 	private final Node root;		// root node of the tree
 	
@@ -44,15 +45,36 @@ public class OctreeQuantizer extends ColorQuantizer {
 	private final int[][] colormap;
 	private boolean quickQuantization = false;
 	
+	private final Parameters params;
+	
+	public static class Parameters {
+		/** Maximum number of quantized colors. */
+		public int maxColors = 16;
+		
+		void check() {
+			if (maxColors < 2 || maxColors > 256) {
+				throw new IllegalArgumentException();
+			}
+		}
+	}
 	
 	
+	/**
+	 * Use to enable/disable quick quantization. This means that colors are mapped
+	 * to their color index by simply finding the containing octree node. Otherwise,
+	 * the closest quantized color (in terms of Euclidean distance) is searched
+	 * for, which is slower.
+	 * 
+	 * @param quickQuantization Pass true to allow quick quantization.
+	 */
 	public void setQuickQuantization(boolean quickQuantization) {
 		this.quickQuantization = quickQuantization;
 	}
 
 	// -------------------------------------------------------------------------
 	
-	public OctreeQuantizer(int[] pixels,  int maxColors) {
+	public OctreeQuantizer(int[] pixels, int maxColors) {
+		this.params = null;
 		this.maxColors = maxColors;
 		this.root = new Node(null, 0);
 		this.depth = Math.min(Math.max(log2(maxColors) - 1, 2), MAX_TREE_DEPTH);	// 2 <= depth <= maxTreeDepth	
@@ -131,6 +153,9 @@ public class OctreeQuantizer extends ColorQuantizer {
 		return colList.toArray(new int[0][]);
 	}
 	
+	/**
+	 * Lists the octree nodes to System.out (intended for debugging only).
+	 */
 	public void listNodes() {
 		root.listNodes();
 	}
