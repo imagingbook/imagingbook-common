@@ -24,12 +24,19 @@ public class ColorHistogram {
 	
 	private final ColorNode[] colornodes;
 	
+	public ColorHistogram(int[] pixelsOrig) {
+		this(pixelsOrig, false);
+	}
+	
 	/**
 	 * Creates a color histogram instance from the supplied sequence
 	 * of color pixel values (assumed to be ARGB-encoded integers).
-	 * @param pixelsOrig
+	 * The original pixel values are not modified.
+	 * 
+	 * @param pixelsOrig Original pixel values (not modified).
+	 * @param sortByFrequency Pass true to sort the final colors by descending frequency.
 	 */
-	public ColorHistogram(int[] pixelsOrig) {
+	public ColorHistogram(int[] pixelsOrig, boolean sortByFrequency) {
 		int[] pixels = new int[pixelsOrig.length];
 		for (int i = 0; i < pixels.length; i++) {
 			pixels[i] = 0xFFFFFF & pixelsOrig[i];	// remove nonzero alpha components
@@ -64,7 +71,8 @@ public class ColorHistogram {
 			}
 		}
 		
-		Arrays.sort(colornodes);	// sort unique colors by descending frequency TODO: undelete!!
+		if (sortByFrequency)
+			Arrays.sort(colornodes);	// sort unique colors by descending frequency
 	}
 	
 	/**

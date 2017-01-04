@@ -125,7 +125,7 @@ public class KMeansClusteringQuantizer extends ColorQuantizer {
 	}
 	
 	private int[] getMostFrequentColors(int[] pixels, int k) {
-		ColorHistogram colorHist = new ColorHistogram(pixels);
+		ColorHistogram colorHist = new ColorHistogram(pixels, true);
 		k = Math.min(k, colorHist.getNumberOfColors());
 		int[] s = new int[k];
 		for (int i = 0; i < k; i++) {
