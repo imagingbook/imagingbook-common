@@ -91,11 +91,8 @@ public class MedianCutQuantizer extends ColorQuantizer {
 	}
 	
 	private ColorNode[] makeImageColors(int[] pixels) {
-//		ColorHistogramOld colorHist = new ColorHistogramOld(pixels);
 		ColorHistogram colorHist = new ColorHistogram(pixels);
-		//colorHist.listUniqueColors();
 		final int K = colorHist.getNumberOfColors();
-		System.out.println("unique colors  " + K);
 		ColorNode[] imgColors = new ColorNode[K];
 		for (int i = 0; i < K; i++) {
 			int rgb = colorHist.getColor(i);
@@ -127,7 +124,7 @@ public class MedianCutQuantizer extends ColorQuantizer {
 					done = true;
 				}
 			}
-			return averageColors(colorSet);
+			return getAvgColors(colorSet);
 		}
 	}
 	
@@ -157,12 +154,12 @@ public class MedianCutQuantizer extends ColorQuantizer {
 		return boxToSplit;
 	}
 	
-	private ColorNode[] averageColors(List<ColorBox> colorBoxes) {
+	private ColorNode[] getAvgColors(List<ColorBox> colorBoxes) {
 		int n = colorBoxes.size();
 		ColorNode[] avgColors = new ColorNode[n];
 		int i = 0;
 		for (ColorBox box : colorBoxes) {
-			avgColors[i] = box.getAverageColor();
+			avgColors[i] = box.getAvgColor();
 			i = i + 1;
 		}
 		return avgColors;
@@ -247,18 +244,17 @@ public class MedianCutQuantizer extends ColorQuantizer {
 		 */
 		void trim() {
 			count = 0;	
-			rmin = MAX_RGB;	rmax = 0;
-			gmin = MAX_RGB;	gmax = 0;
-			bmin = MAX_RGB;	bmax = 0;
+			rmin = gmin = bmin = MAX_RGB;	
+			rmax = gmax = bmax = 0;
 			for (int i = lower; i <= upper; i++) {
 				ColorNode color = imageColors[i];
 				count = count + color.cnt;
 				rmax = Math.max(color.red, rmax);
-				rmin = Math.min(color.red, rmax);
+				rmin = Math.min(color.red, rmin);
 				gmax = Math.max(color.grn, gmax);
-				gmin = Math.min(color.grn, gmax);
+				gmin = Math.min(color.grn, gmin);
 				bmax = Math.max(color.blu, bmax);
-				bmin = Math.min(color.blu, bmax);
+				bmin = Math.min(color.blu, bmin);
 			}
 		}
 		
@@ -274,12 +270,9 @@ public class MedianCutQuantizer extends ColorQuantizer {
 			else {
 				// find longest dimension of this box:
 				ColorDimension dim = getLongestColorDimension();
-
 				// find median along dim
 				int med = findMedian(dim);
-
-				// now split this box at the median return the resulting new
-				// box.
+				// now split this box at the median return the resulting new box
 				int nextLevel = level + 1;
 				ColorBox newBox = new ColorBox(med + 1, upper, nextLevel);
 				this.upper = med;
@@ -294,9 +287,9 @@ public class MedianCutQuantizer extends ColorQuantizer {
 		 * @return The color dimension of the longest box side.
 		 */
 		ColorDimension getLongestColorDimension() {
-			int rLength = rmax - rmin;
-			int gLength = gmax - gmin;
-			int bLength = bmax - bmin;
+			final int rLength = rmax - rmin;
+			final int gLength = gmax - gmin;
+			final int bLength = bmax - bmin;
 			if (bLength >= rLength && bLength >= gLength)
 				return ColorDimension.BLUE;
 			else if (gLength >= rLength && gLength >= bLength)
@@ -305,12 +298,11 @@ public class MedianCutQuantizer extends ColorQuantizer {
 				return ColorDimension.RED;
 		}
 				
-
 		/**
-		 * Finds the position of the median in RGB space along
+		 * Finds the position of the median of this color box in RGB space along
 		 * the red, green or blue dimension, respectively.
 		 * @param dim Color dimension.
-		 * @return
+		 * @return The median value.
 		 */
 		int findMedian(ColorDimension dim) {
 			// sort color in this box along dimension dim:
@@ -325,7 +317,7 @@ public class MedianCutQuantizer extends ColorQuantizer {
 			return median;
 		}
 		
-		ColorNode getAverageColor() {
+		ColorNode getAvgColor() {
 			int rSum = 0;
 			int gSum = 0;
 			int bSum = 0;
@@ -361,7 +353,7 @@ public class MedianCutQuantizer extends ColorQuantizer {
 	 * color dimensions RED, GREEN, BLUE with the corresponding comparators.
 	 * Implementation uses anonymous classes.
 	 */
-	enum ColorDimension {
+	private enum ColorDimension {
 		RED (new Comparator<ColorNode>() {
 			public int compare(ColorNode colA, ColorNode colB) {
 				return colA.red - colB.red;
@@ -375,7 +367,7 @@ public class MedianCutQuantizer extends ColorQuantizer {
 				return colA.blu - colB.blu;
 			}});
 
-		public final Comparator<ColorNode> comparator;
+		final Comparator<ColorNode> comparator;
 
 		ColorDimension(Comparator<ColorNode> cmp) {
 			this.comparator = cmp;
