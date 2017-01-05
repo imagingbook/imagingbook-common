@@ -1,3 +1,12 @@
+/*******************************************************************************
+ * This software is provided as a supplement to the authors' textbooks on digital
+ *  image processing published by Springer-Verlag in various languages and editions.
+ * Permission to use and distribute this software is granted under the BSD 2-Clause 
+ * "Simplified" License (see http://opensource.org/licenses/BSD-2-Clause). 
+ * Copyright (c) 2006-2016 Wilhelm Burger, Mark J. Burge. All rights reserved. 
+ * Visit http://imagingbook.com for additional details.
+ *******************************************************************************/
+
 package imagingbook.pub.color.quantize;
 
 import java.util.Arrays;
@@ -23,6 +32,10 @@ import java.util.List;
  * quantization: octree quantization", in A. Glassner (editor), Graphics Gems I, 
  * pp. 287–293. Academic Press, New York (1990)].
  * This implementation uses a modified strategy for pruning the octree for better efficiency.
+ * 
+ * "Quick quantization" means that original colors are mapped to their color index by simply
+ * finding the containing octree node. Otherwise, the closest quantized color (in terms of 
+ * Euclidean distance) is searched for, which is naturally slower.
  * 
  * @author WB
  * @version 2017/01/03
@@ -50,6 +63,8 @@ public class OctreeQuantizer extends ColorQuantizer {
 	public static class Parameters {
 		/** Maximum number of quantized colors. */
 		public int maxColors = 16;
+		/** Enable/disable quick quantization */
+		public boolean quickQuantization = false;
 		
 		void check() {
 			if (maxColors < 2 || maxColors > 256) {
@@ -57,30 +72,21 @@ public class OctreeQuantizer extends ColorQuantizer {
 			}
 		}
 	}
-	
-	
-	/**
-	 * Use to enable/disable quick quantization. This means that colors are mapped
-	 * to their color index by simply finding the containing octree node. Otherwise,
-	 * the closest quantized color (in terms of Euclidean distance) is searched
-	 * for, which is slower.
-	 * 
-	 * @param quickQuantization Pass true to allow quick quantization.
-	 */
-	public void setQuickQuantization(boolean quickQuantization) {
-		this.quickQuantization = quickQuantization;
-	}
 
 	// -------------------------------------------------------------------------
 	
-	public OctreeQuantizer(int[] pixels, int maxColors) {
-		this.params = null;
-		this.maxColors = maxColors;
+	public OctreeQuantizer(int[] pixels, Parameters params) {
+		this.params = params;
+		this.maxColors = this.params.maxColors;
 		this.root = new Node(null, 0);
-		this.depth = Math.min(Math.max(log2(maxColors) - 1, 2), MAX_TREE_DEPTH);	// 2 <= depth <= maxTreeDepth	
+		this.depth = Math.min(Math.max(log2(maxColors) - 1, 2), MAX_TREE_DEPTH);// 2 <= depth <= maxTreeDepth	
 		int initColorCnt = addPixels(pixels);
 		this.nColors = reduceTree(initColorCnt, pixels.length);
 		this.colormap = makeColorMap();
+	}
+	
+	public OctreeQuantizer(int[] pixels) {
+		this(pixels, new Parameters());
 	}
 	
 	// -------------------------------------------------------------------------

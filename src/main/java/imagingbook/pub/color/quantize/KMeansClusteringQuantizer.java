@@ -81,9 +81,9 @@ public class KMeansClusteringQuantizer extends ColorQuantizer {
 		int Kmax = Math.min(pixels.length, params.maxColors);
 		int[] samples = getColorSamples(pixels, Kmax);
 		int k = Math.min(samples.length, Kmax);
-		Cluster[] cls = new Cluster[k];
+		Cluster[] cls = new Cluster[k];	// create an array of K clusters
 		for (int i = 0; i < k; i++) {
-			cls[i] = new Cluster(samples[i]);
+			cls[i] = new Cluster(samples[i]); // initialize cluster center
 		}
 		return cls; 
 	}
