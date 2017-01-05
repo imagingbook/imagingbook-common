@@ -58,7 +58,6 @@ public class KMeansClusteringQuantizerApache extends ColorQuantizer {
 	 * Creates a new quantizer instance from the supplied sequence
 	 * of color values (assumed to be ARGB-encoded integers). 
 	 * @param pixels Sequence of input color values.
-	 * @param maxColors Maximum number of quantized colors.
 	 * @param params Parameter object.
 	 */
 	public KMeansClusteringQuantizerApache(int[] pixels, Parameters params) {
