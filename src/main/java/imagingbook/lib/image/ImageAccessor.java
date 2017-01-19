@@ -109,7 +109,7 @@ public abstract class ImageAccessor {
 		protected final ImageProcessor ip;
 		protected final float pixelDefaultValue = 0.0f;
 		
-		// only Gray accessors can do this (get/set scalar values):
+		// only scalar accessors can do this (get/set scalar values):
 		public abstract float getVal(int u, int v);				// returns pixel value at integer position (u, v)
 		public abstract void setVal(int u, int v, float val);
 		
@@ -205,7 +205,7 @@ public abstract class ImageAccessor {
 			if (i < 0) 
 				return pixelDefaultValue;
 			else
-				return (float) pixels[i];
+				return (0xFFFF & pixels[i]);
 		}
 		
 		@Override
