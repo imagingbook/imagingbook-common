@@ -8,7 +8,6 @@
  *******************************************************************************/
 package imagingbook.lib.image;
 
-import ij.IJ;
 import ij.process.ByteProcessor;
 
 
@@ -142,9 +141,9 @@ public class IntegralImage {
 		if (N <= 0)
 			throw new IllegalArgumentException("region size must be positive");
 		double S1 = getBlockSum1(ua, va, ub, vb);
-		IJ.log("u0 = " + ua); IJ.log("v0 = " + va);
-		IJ.log("u1 = " + ub); IJ.log("v1 = " + vb);
-		IJ.log("S1 = " + S1);
+//		IJ.log("u0 = " + ua); IJ.log("v0 = " + va);
+//		IJ.log("u1 = " + ub); IJ.log("v1 = " + vb);
+//		IJ.log("S1 = " + S1);
 		return S1 / N;
 	}
 	
