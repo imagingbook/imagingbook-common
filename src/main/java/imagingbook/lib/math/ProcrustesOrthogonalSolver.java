@@ -3,6 +3,7 @@ package imagingbook.lib.math;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.math3.exception.DimensionMismatchException;
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.LUDecomposition;
 import org.apache.commons.math3.linear.MatrixUtils;
@@ -133,57 +134,36 @@ public class ProcrustesOrthogonalSolver {
 			lB.add(b);
 		}
 		
-		final int m = lA.size();
-		final int n = lA.get(0).length;
+		RealMatrix A = makeMatrix(lA);
+		RealMatrix B = makeMatrix(lB);
+		System.out.println("A = \n" + Matrix.toString(A.getData()));
+		System.out.println("B = \n" + Matrix.toString(B.getData()));
+		
+		RealVector Amean = getMeanColumnVector(A);
+		RealVector Bmean = getMeanColumnVector(B);
+		
+		System.out.println("Amean = \n" + Matrix.toString(Amean.toArray()));
+		System.out.println("Bmean = \n" + Matrix.toString(Bmean.toArray()));
+		
+		// make A'
+		RealMatrix Ap = subtractColumnVector(A, Amean);
+		System.out.println("Ap = \n" + Matrix.toString(Ap.getData()));
+		
+		// make B'
+		RealMatrix Bp = subtractColumnVector(B, Bmean);
+		System.out.println("Bp = \n" + Matrix.toString(Bp.getData()));
 		
 		
-		// calcutate centroids of A, B:
-		RealVector Ap = new ArrayRealVector(n);
-		for (double[] ai : lA) {
-			Ap.combineToSelf(1, 1, new ArrayRealVector(ai));
-		}
-		Ap.mapMultiplyToSelf(1.0/m);
-		
-		RealVector Bp = new ArrayRealVector(n);
-		for (double[] bi : lB) {
-			Bp.combineToSelf(1, 1, new ArrayRealVector(bi));
-		}
-		Bp.mapMultiplyToSelf(1.0/m);
-		
-		System.out.println("Ap = \n" + Matrix.toString(Ap.toArray()));
-		System.out.println("Bp = \n" + Matrix.toString(Bp.toArray()));
-		
-		
-		List<double[]> lAp = new ArrayList<double[]>();
-		for (double[] ai : lA) {
-			RealVector aip = new ArrayRealVector(ai).subtract(Ap);
-			lAp.add(aip.toArray());
-		}
-		
-		List<double[]> lBp = new ArrayList<double[]>();
-		for (double[] bi : lB) {
-			RealVector bip = new ArrayRealVector(bi).subtract(Bp);
-			lBp.add(bip.toArray());
-		}	
-		
-		RealMatrix A = makeMatrix(lAp);
-		RealMatrix B = makeMatrix(lBp);
-		System.out.println("Ap = \n" + Matrix.toString(A.getData()));
-		System.out.println("Bp = \n" + Matrix.toString(B.getData()));
-		
-		
-		
-		//ProcrustesOrthogonalSolver ps = new ProcrustesOrthogonalSolver(lA, lB);
-		RealMatrix Q = solve(A, B);
+		RealMatrix Q = solve(Ap, Bp);
 		System.out.println("Q = \n" + Matrix.toString(Q.getData()));
 		
-		RealVector t = Bp.subtract(Q.operate(Ap));
+		RealVector t = Bmean.subtract(Q.operate(Amean));
 		System.out.println("t = \n" + Matrix.toString(t.toArray()));
 		
 		RealMatrix II = Q.transpose().multiply(Q);
 		System.out.println("Q^T * Q = \n" + Matrix.toString(II.getData()));
 		
-		// calculate residual
+		// calculate residual error
 		double err = 0;
 		for (int i = 0; i < lA.size(); i++) {
 			RealVector ai = new ArrayRealVector(lA.get(i));
@@ -194,7 +174,7 @@ public class ProcrustesOrthogonalSolver {
 		
 		System.out.println("error1 = " + err);
 		
-		double fn = Q.multiply(A).subtract(B).getFrobeniusNorm();
+		double fn = Q.multiply(Ap).subtract(Bp).getFrobeniusNorm();
 		System.out.println("error2 = " + fn*fn);
 		
 		double det = new LUDecomposition(Q).getDeterminant();
@@ -206,12 +186,42 @@ public class ProcrustesOrthogonalSolver {
 	}
 	
 	public static void main(String[] args) {
-		PrintPrecision.set(10);
+		PrintPrecision.set(3);
 		example1();
 		example2();
 		
 	}
 
+	static RealVector getMeanColumnVector(RealMatrix M) {
+		final int ncols = M.getColumnDimension();
+		RealVector mean = M.getColumnVector(0);
+		for (int i = 1; i < ncols; i++) {
+			mean.combineToSelf(1, 1, M.getColumnVector(i));
+		}
+		mean.mapDivideToSelf(ncols);
+		return mean;
+	}
+	
+	static RealMatrix subtractColumnVector(RealMatrix M, RealVector cv) {
+		final int ncols = M.getColumnDimension();
+		RealMatrix MM = M.copy();
+		for (int i = 0; i < ncols; i++) {
+			MM.setColumnVector(i, M.getColumnVector(i).subtract(cv));
+		}
+		return MM;
+	}
+	
+	static RealMatrix subtractColumnVector2(RealMatrix M, RealVector cv) {
+		final int ncols = M.getColumnDimension();
+		if (M.getRowDimension() != cv.getDimension()) {
+			throw new DimensionMismatchException(cv.getDimension(), ncols);
+		}
+		RealMatrix MM = M.copy();
+		for (int i = 0; i < ncols; i++) {
+			MM.setColumnVector(i, M.getColumnVector(i).subtract(cv));
+		}
+		return MM;
+	}
 	
 	static double roundToDigits(double x, int k) {
 		int d = (int) Math.pow(10, k);
