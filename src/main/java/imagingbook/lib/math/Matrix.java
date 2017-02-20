@@ -534,6 +534,26 @@ public abstract class Matrix {
 		return sum;
 	}
 	
+	public static double[] sumColumns(final double[][] A) {
+		double[] sum = new double[getNumberOfRows(A)];
+		for (int r = 0; r < sum.length; r++) {
+			for (int c = 0; c < A[r].length; c++) {
+				sum[r] = sum[r] + A[r][c];
+			}
+		}
+		return sum;
+	}
+	
+	public static double[] sumRows(final double[][] A) {
+		double[] sum = new double[getNumberOfColumns(A)];
+		for (int c = 0; c < sum.length; c++) {
+			for (int r = 0; r < A.length; r++) {
+				sum[c] = sum[c] + A[r][c];
+			}
+		}
+		return sum;
+	}
+	
 	// Min/max of vectors ------------------------
 	
 	public static float min(final float[] A) {
@@ -954,6 +974,10 @@ public abstract class Matrix {
 		System.out.println("A = \n" + toString(A));
 		System.out.println("A rows = " + getNumberOfRows(A));
 		System.out.println("A columns = " + getNumberOfColumns(A));
+		
+		
+		
+		
 		int row = 1;
 		int column = 2;
 		System.out.println("A[1][2] = " + A[row][column]);
@@ -962,10 +986,17 @@ public abstract class Matrix {
 		float[][] Ai = inverse(A);
 		toString(Ai);
 
-		double[][] B = {{ -1, 2, 3 }, { 4, 5, 6 }};
+		double[][] B = {
+				{ -1, 2, 3 }, 
+				{ 4, 5, 6 }};
 		System.out.println("B = \n" + toString(B));
 		System.out.println("B rows = " + getNumberOfRows(B));
 		System.out.println("B columns = " + getNumberOfColumns(B));
+		
+		double[] rowSum = sumRows(B);
+		System.out.println("B sum of rows = " + toString(rowSum));
+		double[] colSum = sumColumns(B);
+		System.out.println("B sum of cols = " + toString(colSum));
 		
 		PrintPrecision.set(5);
 
