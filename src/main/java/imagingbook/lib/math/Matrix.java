@@ -31,11 +31,14 @@ import org.apache.commons.math3.linear.SingularMatrixException;
  * Matrices are simply two-dimensional array M[r][c], where r is the row index
  * and c is the column index (as common in linear algebra). This means that
  * matrices are really vectors of row vectors.
- * TODO: need to differentiate functional and side-effect methods!
+ * 
+ * Methods named with a trailing 'D' (e.g., 'multiplyD') operate destructively,
+ * i.e., modify one of the passed arguments.
+ * 
  * TODO: add JavaDoc comments.
  * 
  * @author WB
- * @version 2016/11/28
+ * @version 2017/02/20
  */
 
 public abstract class Matrix {
@@ -351,7 +354,7 @@ public abstract class Matrix {
 	
 	/**
 	 * Matrix-vector product: A . x = y 
-	 * All arguments must be appropriately sized. destructive
+	 * All arguments must be appropriately sized. Destructive.
 	 * @param A matrix of size m,n (input)
 	 * @param x vector of length n (input)
 	 * @param y vector of length m (result)
@@ -431,7 +434,7 @@ public abstract class Matrix {
 	// Vector-vector products ---------------------------------------
 	
 	// A is considered a row vector, B is a column vector, both of length n.
-	// returns a scalar vale.
+	// returns a scalar value.
 	public static double dotProduct(final double[] A, final double[] B) {
 		double sum = 0;
 		for (int i = 0; i < A.length; i++) {
@@ -534,24 +537,74 @@ public abstract class Matrix {
 		return sum;
 	}
 	
+	// --------------------------------------------------
+	
+	/**
+	 * Calculates the sum of all matrix columns.
+	 * @param A The input matrix
+	 * @return A vector with sum of all matrix columns
+	 */
 	public static double[] sumColumns(final double[][] A) {
-		double[] sum = new double[getNumberOfRows(A)];
-		for (int r = 0; r < sum.length; r++) {
+		double[] sumVec = new double[getNumberOfRows(A)];
+		for (int r = 0; r < sumVec.length; r++) {
+			double sum = 0;
 			for (int c = 0; c < A[r].length; c++) {
-				sum[r] = sum[r] + A[r][c];
+				sum = sum + A[r][c];
 			}
+			sumVec[r] = sum;
 		}
-		return sum;
+		return sumVec;
 	}
 	
-	public static double[] sumRows(final double[][] A) {
-		double[] sum = new double[getNumberOfColumns(A)];
-		for (int c = 0; c < sum.length; c++) {
-			for (int r = 0; r < A.length; r++) {
-				sum[c] = sum[c] + A[r][c];
+	/**
+	 * Calculates the sum of all matrix columns.
+	 * @param A The input matrix
+	 * @return A vector with sum of all matrix columns
+	 */
+	public static float[] sumColumns(final float[][] A) {
+		float[] sumVec = new float[getNumberOfRows(A)];
+		for (int r = 0; r < sumVec.length; r++) {
+			double sum = 0;
+			for (int c = 0; c < A[r].length; c++) {
+				sum = sum + A[r][c];
 			}
+			sumVec[r] = (float) sum;
 		}
-		return sum;
+		return sumVec;
+	}
+	
+	/**
+	 * Calculates the sum of all matrix rows.
+	 * @param A The input matrix
+	 * @return A vector with sum of all matrix rows
+	 */
+	public static double[] sumRows(final double[][] A) {
+		double[] sumVec = new double[getNumberOfColumns(A)];
+		for (int c = 0; c < sumVec.length; c++) {
+			double sum = 0;
+			for (int r = 0; r < A.length; r++) {
+				sum = sum + A[r][c];
+			}
+			sumVec[c] = sum;
+		}
+		return sumVec;
+	}
+	
+	/**
+	 * Calculates the sum of all matrix rows.
+	 * @param A The input matrix
+	 * @return A vector with sum of all matrix rows
+	 */
+	public static float[] sumRows(final float[][] A) {
+		float[] sumVec = new float[getNumberOfColumns(A)];
+		for (int c = 0; c < sumVec.length; c++) {
+			double sum = 0;
+			for (int r = 0; r < A.length; r++) {
+				sum = sum + A[r][c];
+			}
+			sumVec[c] = (float) sum;
+		}
+		return sumVec;
 	}
 	
 	// Min/max of vectors ------------------------
@@ -663,7 +716,12 @@ public abstract class Matrix {
 			A[2][1] * A[1][2] * A[0][0] - 
 			A[2][2] * A[1][0] * A[0][1] ;
 	}
-
+	
+	public static double determinant(final double[][] A) {
+		RealMatrix M = MatrixUtils.createRealMatrix(A);
+		return new LUDecomposition(M).getDeterminant();
+	}
+	
 	// Matrix transposition ---------------------------------------
 	
 	public static float[][] transpose(float[][] A) {

@@ -192,14 +192,26 @@ public class ProcrustesOrthogonalSolver {
 		
 	}
 
+//	static RealVector getMeanColumnVector(RealMatrix M) {
+//		final int ncols = M.getColumnDimension();
+//		RealVector mean = M.getColumnVector(0);
+//		for (int i = 1; i < ncols; i++) {
+//			mean.combineToSelf(1, 1, M.getColumnVector(i));
+//		}
+//		mean.mapDivideToSelf(ncols);
+//		return mean;
+//	}
+	
 	static RealVector getMeanColumnVector(RealMatrix M) {
+		double[] colSum = Matrix.sumColumns(M.getData());
 		final int ncols = M.getColumnDimension();
-		RealVector mean = M.getColumnVector(0);
-		for (int i = 1; i < ncols; i++) {
-			mean.combineToSelf(1, 1, M.getColumnVector(i));
-		}
-		mean.mapDivideToSelf(ncols);
-		return mean;
+//		RealVector mean = M.getColumnVector(0);
+//		for (int i = 1; i < ncols; i++) {
+//			mean.combineToSelf(1, 1, M.getColumnVector(i));
+//		}
+//		mean.mapDivideToSelf(ncols);
+		Matrix.multiplyD(1.0/ncols, colSum);
+		return new ArrayRealVector(colSum);
 	}
 	
 	static RealMatrix subtractColumnVector(RealMatrix M, RealVector cv) {
