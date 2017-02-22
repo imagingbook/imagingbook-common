@@ -13,6 +13,7 @@ import org.apache.commons.math3.linear.SingularValueDecomposition;
 
 import imagingbook.lib.settings.PrintPrecision;
 
+@Deprecated
 public class ProcrustesOrthogonalSolver {
 	
 	static int NDIGITS = 1;

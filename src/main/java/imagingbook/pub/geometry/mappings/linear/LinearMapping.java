@@ -53,6 +53,8 @@ public class LinearMapping extends Mapping {
 		this.isInverseFlag = lm.isInverseFlag;
 	}
 	
+	// ----------------------------------------------------------
+	
 	public double[] applyTo (double[] xy) {
 		return applyTo(xy[0], xy[1]);
 	}
