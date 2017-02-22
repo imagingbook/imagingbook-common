@@ -12,7 +12,7 @@ import imagingbook.pub.geometry.mappings.linear.AffineMapping;
 
 
 
-public class ProcrustesSolver {
+public class ProcrustesFit {
 	
 	final boolean allowTranslation;
 	final boolean allowScaling;
@@ -49,11 +49,11 @@ public class ProcrustesSolver {
 	
 	// --------------------------------------------------------------
 	
-	public ProcrustesSolver(List<double[]> xA, List<double[]> xB) {
+	public ProcrustesFit(List<double[]> xA, List<double[]> xB) {
 		this(xA, xB, true, true);
 	}
 	
-	public ProcrustesSolver(List<double[]> xA, List<double[]> xB, boolean translation, boolean scaling) {
+	public ProcrustesFit(List<double[]> xA, List<double[]> xB, boolean translation, boolean scaling) {
 		if (xA.size() != xB.size())
 			throw new IllegalArgumentException("sample lists must have same lengths");
 		this.allowTranslation = translation;
@@ -91,6 +91,7 @@ public class ProcrustesSolver {
 		
 		SingularValueDecomposition svd = 
 				new SingularValueDecomposition(B.multiply(A.transpose()));
+		printSVD(svd);
 		RealMatrix U = svd.getU();
 		RealMatrix V = svd.getV();
 		Q = U.multiply(V.transpose());
@@ -143,12 +144,23 @@ public class ProcrustesSolver {
 		return M;
 	}
 	
+	void printSVD(SingularValueDecomposition svd) {
+		RealMatrix U = svd.getU();
+		RealMatrix S = svd.getS();
+		RealMatrix V = svd.getV();
+		System.out.println("------ SVD ---------------");
+		System.out.println("U = " + Matrix.toString(U.getData()));
+		System.out.println("S = " + Matrix.toString(S.getData()));
+		System.out.println("V = " + Matrix.toString(V.getData()));
+		System.out.println("--------------------------");
+	}
+	
 	// --------------------------------------------------------------------
 	
 	public static void main(String[] args) {
 		int NDIGITS = 1;
 		
-		double scale = 3.5;
+		double scale = 11.5;
 		System.out.println("original scale = " + scale);
 		
 		double alpha = 0.6;
@@ -176,7 +188,7 @@ public class ProcrustesSolver {
 			lB.add(b);
 		}
 		
-		ProcrustesSolver solver = new ProcrustesSolver(lA, lB);
+		ProcrustesFit solver = new ProcrustesFit(lA, lB);
 		
 		System.out.println("s = " + solver.getS());
 		System.out.println("Q = \n" + Matrix.toString(solver.getQ().getData()));
