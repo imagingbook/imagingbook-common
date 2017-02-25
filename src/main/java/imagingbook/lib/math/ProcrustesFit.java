@@ -1,8 +1,9 @@
 package imagingbook.lib.math;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.math3.linear.ArrayRealVector;
+import org.apache.commons.math3.linear.LUDecomposition;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.RealVector;
@@ -16,6 +17,7 @@ public class ProcrustesFit {
 	
 	final boolean allowTranslation;
 	final boolean allowScaling;
+	final boolean allowReflection;
 	
 	final int m;	// number of samples
 	final int n;	// dimension of samples
@@ -23,6 +25,7 @@ public class ProcrustesFit {
 	double s = 1;			// scale
 	RealMatrix Q = null;	// orthogonal (rotation) matrix
 	RealVector t = null;	// translation vector
+	double err1, err2;
 	
 	public double getS() {
 		return s;
@@ -34,6 +37,14 @@ public class ProcrustesFit {
 	
 	public RealVector getT() {
 		return t;
+	}
+	
+	public double getError() {
+		return err1;
+	}
+	
+	public double getError2() {
+		return err2;
 	}
 	
 	public AffineMapping getAffineMapping() {
@@ -50,14 +61,16 @@ public class ProcrustesFit {
 	// --------------------------------------------------------------
 	
 	public ProcrustesFit(List<double[]> xA, List<double[]> xB) {
-		this(xA, xB, true, true);
+		this(xA, xB, true, true, false);
 	}
 	
-	public ProcrustesFit(List<double[]> xA, List<double[]> xB, boolean translation, boolean scaling) {
+	public ProcrustesFit(List<double[]> xA, List<double[]> xB, boolean translation, boolean scaling,
+			boolean allowReflection) {
 		if (xA.size() != xB.size())
 			throw new IllegalArgumentException("sample lists must have same lengths");
 		this.allowTranslation = translation;
 		this.allowScaling = scaling;
+		this.allowReflection = allowReflection;
 		this.m = xA.size();
 		this.n = xA.get(0).length;
 		solve(xA, xB);
@@ -85,25 +98,57 @@ public class ProcrustesFit {
 		
 		MatrixUtils.checkAdditionCompatible(A, B);	// A, B of same dimensions?
 		
-		if (allowScaling) {
-			s = B.getFrobeniusNorm() / A.getFrobeniusNorm();
-		}
+		RealMatrix BAt = B.multiply(A.transpose());
+		
 		
 		SingularValueDecomposition svd = 
-				new SingularValueDecomposition(B.multiply(A.transpose()));
+				new SingularValueDecomposition(BAt);
 		printSVD(svd);
+		int rank = svd.getRank();
+		
+		System.out.println("rank of BAt = " + rank + ", full = " + (rank >= n - 1));
 		RealMatrix U = svd.getU();
+		RealMatrix D = svd.getS();
 		RealMatrix V = svd.getV();
-		Q = U.multiply(V.transpose());
+		
+		System.out.println("det(BAt) = " + det(BAt));
+		System.out.println("det(U) = " + det(U));
+		System.out.println("det(V) = " + det(V));
+		
+		double d = (rank >= n - 1) ?
+			det(BAt) :	// is there a simpler way?
+			det(U) * det(V);
+
+		RealMatrix S = MatrixUtils.createRealIdentityMatrix(n);
+		if (!allowReflection && d < 0)
+			S.setEntry(n - 1, n - 1, -1);
+		
+		Q = U.multiply(S).multiply(V.transpose());
+		
+		if (allowScaling) {
+//			s = B.getFrobeniusNorm() / A.getFrobeniusNorm();
+			s = D.multiply(S).getTrace() / sqr(A.getFrobeniusNorm());
+		}
 		
 		if (allowTranslation) {
 			RealVector aa = MatrixUtils.createRealVector(meanA);
 			RealVector bb = MatrixUtils.createRealVector(meanB);
-			t = bb.subtract(Q.operate(aa).mapMultiplyToSelf(s));
+			t = bb.subtract(Q.scalarMultiply(s).operate(aa));
 		}
 		else {
 			t = MatrixUtils.createRealVector(new double[n]);	// zero vector
 		}
+		
+		err1 = sqr(B.getFrobeniusNorm()) - sqr(D.multiply(S).getTrace()) / sqr(A.getFrobeniusNorm());
+		err2 = calculateError(xA, xB);
+	}
+	
+	private double det(RealMatrix M) {
+		return new LUDecomposition(M).getDeterminant();
+	}
+	
+	private double sqr(final double x) {
+		return x * x;
 	}
 	
 	private double[] getMeanVec(List<double[]> X) {
@@ -115,6 +160,20 @@ public class ProcrustesFit {
 		}
 		Matrix.multiplyD(1.0 / X.size(), sum);
 		return sum;
+	}
+	
+	// calculate residual error
+	double calculateError(List<double[]> lA, List<double[]> lB) {
+		RealMatrix sQ = Q.scalarMultiply(s);
+		double err = 0;
+		for (int i = 0; i < lA.size(); i++) {
+			RealVector ai = new ArrayRealVector(lA.get(i));
+			RealVector bi = new ArrayRealVector(lB.get(i));
+			RealVector aiT = sQ.operate(ai).add(t);
+			double ei = aiT.subtract(bi).getNorm();
+			err = err + sqr(ei);
+		}
+		return err;
 	}
 	
 	private static RealMatrix makeDataMatrix(List<double[]> X) {
@@ -155,52 +214,5 @@ public class ProcrustesFit {
 		System.out.println("--------------------------");
 	}
 	
-	// --------------------------------------------------------------------
-	
-	public static void main(String[] args) {
-		int NDIGITS = 1;
-		
-		double scale = 11.5;
-		System.out.println("original scale = " + scale);
-		
-		double alpha = 0.6;
-		double[][] Q0 =
-			{{ Math.cos(alpha), -Math.sin(alpha) },
-			 { Math.sin(alpha),  Math.cos(alpha) }};
-		
-		RealMatrix R = MatrixUtils.createRealMatrix(Q0);
-		System.out.println("original R = \n" + Matrix.toString(R.getData()));
-		
-		double[] t0 = {4, -3};
-		
-		List<double[]> lA = new ArrayList<double[]>();
-		List<double[]> lB = new ArrayList<double[]>();
-		
-		lA.add(new double[] {2, 5});
-		lA.add(new double[] {7, 3});
-		lA.add(new double[] {0, 9});
-		lA.add(new double[] {5, 4});
-		
-		for (double[] a : lA) {
-			double[] b = R.operate(a);
-			b[0] = roundToDigits(scale * b[0] + t0[0], NDIGITS);
-			b[1] = roundToDigits(scale * b[1] + t0[1], NDIGITS);
-			lB.add(b);
-		}
-		
-		ProcrustesFit solver = new ProcrustesFit(lA, lB);
-		
-		System.out.println("s = " + solver.getS());
-		System.out.println("Q = \n" + Matrix.toString(solver.getQ().getData()));
-		System.out.println("t = \n" + Matrix.toString(solver.getT().toArray()));
-		
-		AffineMapping map = solver.getAffineMapping();
-		System.out.println("map = \n" + map.toString());
-	}
-	
-	private static double roundToDigits(double x, int ndigits) {
-		int d = (int) Math.pow(10, ndigits);
-		return Math.rint(x * d) / d;
-	}
 
 }
