@@ -13,6 +13,8 @@ public class ProcrustesExample2 extends ProcrustesExample {
 	@Override
 	public void run() {
 		
+		showHeadline(this.getClass().getSimpleName());
+		
 		List<double[]> lA = new ArrayList<double[]>();
 		List<double[]> lB = new ArrayList<double[]>();
 		
@@ -32,9 +34,12 @@ public class ProcrustesExample2 extends ProcrustesExample {
 		lB.add(B);
 		lB.add(C);
 		
-		ProcrustesFit solver = new ProcrustesFit(lA, lB, true, true, false);
+		System.out.println("lA = "); print(lA);
+		System.out.println("lB = "); print(lB);
 		
-		System.out.println("s = " + solver.getS());
+		ProcrustesFit solver = new ProcrustesFit(lA, lB, true, true, true);
+		
+		System.out.println("s = " + solver.getScale());
 		System.out.println("Q = \n" + Matrix.toString(solver.getQ().getData()));
 		System.out.println("t = \n" + Matrix.toString(solver.getT().toArray()));
 		System.out.println("err1 = " + solver.getError());
