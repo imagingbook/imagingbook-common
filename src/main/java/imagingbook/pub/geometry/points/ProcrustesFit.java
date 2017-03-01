@@ -158,8 +158,8 @@ public class ProcrustesFit {
 	 * transformed point set A and the reference set B.
 	 * This method is provided for testing as an alternative to
 	 * the quicker {@link getError} method.
-	 * @param X Sequence A of n-dimensional points.
-	 * @param Y Sequence B of n-dimensional points (reference).
+	 * @param X Sequence of n-dimensional points.
+	 * @param Y Sequence of n-dimensional points (reference).
 	 * @return The total error for the estimated fit.
 	 */
 	public double getEuclideanError(List<double[]> X, List<double[]> Y) {
