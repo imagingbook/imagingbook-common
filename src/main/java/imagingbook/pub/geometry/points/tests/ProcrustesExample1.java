@@ -1,4 +1,4 @@
-package imagingbook.pub.geometry.points;
+package imagingbook.pub.geometry.points.tests;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,6 +8,7 @@ import org.apache.commons.math3.linear.RealMatrix;
 
 import imagingbook.lib.math.Matrix;
 import imagingbook.pub.geometry.mappings.linear.AffineMapping;
+import imagingbook.pub.geometry.points.ProcrustesFit;
 
 class ProcrustesExample1 extends ProcrustesExample {
 

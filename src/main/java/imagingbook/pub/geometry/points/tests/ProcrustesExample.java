@@ -1,4 +1,4 @@
-package imagingbook.pub.geometry.points;
+package imagingbook.pub.geometry.points.tests;
 
 import java.util.List;
 
