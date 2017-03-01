@@ -1,4 +1,4 @@
-package imagingbook.lib.math;
+package imagingbook.pub.geometry.points;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,9 +6,10 @@ import java.util.List;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
 
+import imagingbook.lib.math.Matrix;
 import imagingbook.pub.geometry.mappings.linear.AffineMapping;
 
-public class ProcrustesExample1 extends ProcrustesExample {
+class ProcrustesExample1 extends ProcrustesExample {
 
 	@Override
 	public void run() {
@@ -57,7 +58,7 @@ public class ProcrustesExample1 extends ProcrustesExample {
 		System.out.println("err1 = " + solver.getError());
 		System.out.println("err2 = " + solver.getEuclideanError(lA, lB));
 		
-		AffineMapping map = solver.getAffineMapping();
+		AffineMapping map = solver.getAffineMapping2D();
 		System.out.println("map = \n" + map.toString());
 	}
 

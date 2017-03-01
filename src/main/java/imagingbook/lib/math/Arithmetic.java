@@ -74,5 +74,15 @@ public abstract class Arithmetic {
 	public static boolean isZero(double x) {
 		return Math.abs(x) < Arithmetic.EPSILON_DOUBLE;
 	}
+	
+	
+	// -------------------------------------
+	
+	public static void main(String[] args) {
+		System.out.println(Arithmetic.mod(4, 3));
+		System.out.println(Arithmetic.mod(4, -3));
+		System.out.println(Arithmetic.mod(-4, 3));
+		System.out.println(Arithmetic.mod(-4, -3));
+	}
 
 }

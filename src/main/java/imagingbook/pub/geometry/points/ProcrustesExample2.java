@@ -1,14 +1,12 @@
-package imagingbook.lib.math;
+package imagingbook.pub.geometry.points;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.math3.linear.MatrixUtils;
-import org.apache.commons.math3.linear.RealMatrix;
-
+import imagingbook.lib.math.Matrix;
 import imagingbook.pub.geometry.mappings.linear.AffineMapping;
 
-public class ProcrustesExample2 extends ProcrustesExample {
+class ProcrustesExample2 extends ProcrustesExample {
 
 	@Override
 	public void run() {
@@ -45,7 +43,7 @@ public class ProcrustesExample2 extends ProcrustesExample {
 		System.out.println("t = \n" + Matrix.toString(solver1.getT().toArray()));
 		System.out.println("err1 = " + solver1.getError());
 		System.out.println("err2 = " + solver1.getEuclideanError(lA, lB));
-		AffineMapping map1 = solver1.getAffineMapping();
+		AffineMapping map1 = solver1.getAffineMapping2D();
 		System.out.println("map = \n" + map1.toString());
 		
 		System.out.println("     --- Case 2: rotation enforced (NO reflection allowed) -------------");
@@ -56,7 +54,7 @@ public class ProcrustesExample2 extends ProcrustesExample {
 		System.out.println("t = \n" + Matrix.toString(solver2.getT().toArray()));
 		System.out.println("err1 = " + solver2.getError());
 		System.out.println("err2 = " + solver2.getEuclideanError(lA, lB));
-		AffineMapping map2 = solver2.getAffineMapping();
+		AffineMapping map2 = solver2.getAffineMapping2D();
 		System.out.println("map = \n" + map2.toString());
 	}
 

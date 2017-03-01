@@ -1,10 +1,11 @@
-package imagingbook.lib.math;
+package imagingbook.pub.geometry.points;
 
 import java.util.List;
 
+import imagingbook.lib.math.Matrix;
 import imagingbook.lib.settings.PrintPrecision;
 
-public abstract class ProcrustesExample {
+abstract class ProcrustesExample {
 	
 	public abstract void run();
 	
