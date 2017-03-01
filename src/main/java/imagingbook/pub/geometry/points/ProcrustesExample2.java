@@ -39,7 +39,7 @@ class ProcrustesExample2 extends ProcrustesExample {
 		
 		ProcrustesFit solver1 = new ProcrustesFit(lA, lB, true, true, false);
 		System.out.println("c = " + solver1.getScale());
-		System.out.println("Q = \n" + Matrix.toString(solver1.getQ().getData()));
+		System.out.println("Q = \n" + Matrix.toString(solver1.getR().getData()));
 		System.out.println("t = \n" + Matrix.toString(solver1.getT().toArray()));
 		System.out.println("err1 = " + solver1.getError());
 		System.out.println("err2 = " + solver1.getEuclideanError(lA, lB));
@@ -50,7 +50,7 @@ class ProcrustesExample2 extends ProcrustesExample {
 		
 		ProcrustesFit solver2 = new ProcrustesFit(lA, lB, true, true, true);
 		System.out.println("c = " + solver2.getScale());
-		System.out.println("Q = \n" + Matrix.toString(solver2.getQ().getData()));
+		System.out.println("Q = \n" + Matrix.toString(solver2.getR().getData()));
 		System.out.println("t = \n" + Matrix.toString(solver2.getT().toArray()));
 		System.out.println("err1 = " + solver2.getError());
 		System.out.println("err2 = " + solver2.getEuclideanError(lA, lB));

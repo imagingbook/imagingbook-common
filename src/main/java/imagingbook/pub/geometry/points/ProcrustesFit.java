@@ -33,7 +33,7 @@ public class ProcrustesFit {
 	final int n;		// dimension of samples
 	
 	final double c;		// scale
-	final RealMatrix Q;	// orthogonal (rotation) matrix
+	final RealMatrix R;	// orthogonal (rotation) matrix
 	final RealVector t;	// translation vector
 	final double err;	// total (squared) error
 	
@@ -42,18 +42,18 @@ public class ProcrustesFit {
 	/**
 	 * Convenience constructor. The supplied point sequences must have the
 	 * same length and order (i.e., points must be in correspondence).
-	 * @param xA Sequence of n-dimensional points
-	 * @param xB Sequence of n-dimensional points (reference)
+	 * @param X Sequence of n-dimensional points
+	 * @param Y Sequence of n-dimensional points (reference)
 	 */
-	public ProcrustesFit(List<double[]> xA, List<double[]> xB) {
-		this(xA, xB, true, true, true);
+	public ProcrustesFit(List<double[]> X, List<double[]> Y) {
+		this(X, Y, true, true, true);
 	}
 	
 	/**
 	 * Full constructor. The supplied point sequences must have the
 	 * same length and order (i.e., points must be in correspondence).
-	 * @param xA Sequence of n-dimensional points
-	 * @param xB Sequence of n-dimensional points (reference)
+	 * @param X Sequence of n-dimensional points
+	 * @param Y Sequence of n-dimensional points (reference)
 	 * @param allowTranslation If {@code true}, translation (t) between point sets is considered, 
 	 * 		otherwise zero translation is assumed.
 	 * @param allowScaling If {@code true}, scaling (c) between point sets is considered, 
@@ -61,60 +61,60 @@ public class ProcrustesFit {
 	 * @param forceRotation If {@code true}, the orthogonal part of the transformation (Q)
 	 * 		is forced to a true rotation and no reflection is allowed.
 	 */
-	public ProcrustesFit(List<double[]> xA, List<double[]> xB, 
+	public ProcrustesFit(List<double[]> X, List<double[]> Y, 
 			boolean allowTranslation, boolean allowScaling, boolean forceRotation) {
-		if (xA.size() != xB.size())
+		if (X.size() != Y.size())
 			throw new IllegalArgumentException("point sequences xA, xB must have same length");
 		
 		this.allowTranslation = allowTranslation;
 		this.allowScaling = allowScaling;
 		this.forceRotation = forceRotation;
-		this.m = xA.size();
-		this.n = xA.get(0).length;
+		this.m = X.size();
+		this.n = X.get(0).length;
 		
-		double[] meanA = null;
-		double[] meanB = null;
+		double[] meanX = null;
+		double[] meanY = null;
 		
 		if (this.allowTranslation) {
-			meanA = getMeanVec(xA);
-			meanB = getMeanVec(xB);
+			meanX = getMeanVec(X);
+			meanY = getMeanVec(Y);
 		}
 		
-		RealMatrix A = makeDataMatrix(xA, meanA);
-		RealMatrix B = makeDataMatrix(xB, meanB);
-		MatrixUtils.checkAdditionCompatible(A, B);	// A, B of same dimensions?
+		RealMatrix P = makeDataMatrix(X, meanX);
+		RealMatrix Q = makeDataMatrix(Y, meanY);
+		MatrixUtils.checkAdditionCompatible(P, Q);	// A, B of same dimensions?
 		
-		RealMatrix BAt = B.multiply(A.transpose());
-		SingularValueDecomposition svd = new SingularValueDecomposition(BAt);
+		RealMatrix QPt = Q.multiply(P.transpose());
+		SingularValueDecomposition svd = new SingularValueDecomposition(QPt);
 		
 		RealMatrix U = svd.getU();
 		RealMatrix S = svd.getS();
 		RealMatrix V = svd.getV();
 			
-		double d = (svd.getRank() >= n) ? det(BAt) : det(U) * det(V);
+		double d = (svd.getRank() >= n) ? det(QPt) : det(U) * det(V);
 		
 		RealMatrix D = MatrixUtils.createRealIdentityMatrix(n);
 		if (d < 0 && forceRotation)
 			D.setEntry(n - 1, n - 1, -1);
 		
-		Q = U.multiply(D).multiply(V.transpose());
+		R = U.multiply(D).multiply(V.transpose());
 		
-		double normA = A.getFrobeniusNorm();
-		double normB = B.getFrobeniusNorm();
+		double normP = P.getFrobeniusNorm();
+		double normQ = Q.getFrobeniusNorm();
 		
 		c = (this.allowScaling) ? 
-				S.multiply(D).getTrace() / sqr(normA) : 1.0;
+				S.multiply(D).getTrace() / sqr(normP) : 1.0;
 		
 		if (allowTranslation) {
-			RealVector ma = MatrixUtils.createRealVector(meanA);
-			RealVector mb = MatrixUtils.createRealVector(meanB);
-			t = mb.subtract(Q.scalarMultiply(c).operate(ma));
+			RealVector ma = MatrixUtils.createRealVector(meanX);
+			RealVector mb = MatrixUtils.createRealVector(meanY);
+			t = mb.subtract(R.scalarMultiply(c).operate(ma));
 		}
 		else {
 			t = new ArrayRealVector(n);	// zero vector
 		}
 		
-		err = sqr(normB) - sqr(S.multiply(D).getTrace() / normA);
+		err = sqr(normQ) - sqr(S.multiply(D).getTrace() / normP);
 	}
 	
 	// -----------------------------------------------------------------
@@ -131,8 +131,8 @@ public class ProcrustesFit {
 	 * Retrieves the estimated orthogonal (rotation) matrix.
 	 * @return The estimated rotation matrix.
 	 */
-	public RealMatrix getQ() {
-		return Q;
+	public RealMatrix getR() {
+		return R;
 	}
 	
 	/**
@@ -158,17 +158,17 @@ public class ProcrustesFit {
 	 * transformed point set A and the reference set B.
 	 * This method is provided for testing as an alternative to
 	 * the quicker {@link getError} method.
-	 * @param xA Sequence A of n-dimensional points.
-	 * @param xB Sequence B of n-dimensional points (reference).
+	 * @param X Sequence A of n-dimensional points.
+	 * @param Y Sequence B of n-dimensional points (reference).
 	 * @return The total error for the estimated fit.
 	 */
-	public double getEuclideanError(List<double[]> xA, List<double[]> xB) {
-		RealMatrix cQ = Q.scalarMultiply(c);
+	public double getEuclideanError(List<double[]> X, List<double[]> Y) {
+		RealMatrix cR = R.scalarMultiply(c);
 		double ee = 0;
-		for (int i = 0; i < xA.size(); i++) {
-			RealVector ai = new ArrayRealVector(xA.get(i));
-			RealVector bi = new ArrayRealVector(xB.get(i));
-			RealVector aiT = cQ.operate(ai).add(t);
+		for (int i = 0; i < X.size(); i++) {
+			RealVector ai = new ArrayRealVector(X.get(i));
+			RealVector bi = new ArrayRealVector(Y.get(i));
+			RealVector aiT = cR.operate(ai).add(t);
 			double ei = aiT.subtract(bi).getNorm();
 			ee = ee + sqr(ei);
 		}
@@ -179,8 +179,8 @@ public class ProcrustesFit {
 		if (n != 2)
 			return null;
 		AffineMapping map = new AffineMapping(
-				c * Q.getEntry(0, 0), c * Q.getEntry(0, 1), t.getEntry(0),
-				c * Q.getEntry(1, 0), c * Q.getEntry(1, 1), t.getEntry(1),
+				c * R.getEntry(0, 0), c * R.getEntry(0, 1), t.getEntry(0),
+				c * R.getEntry(1, 0), c * R.getEntry(1, 1), t.getEntry(1),
 				false
 				);
 		return map;	

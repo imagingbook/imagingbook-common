@@ -53,7 +53,7 @@ class ProcrustesExample1 extends ProcrustesExample {
 		ProcrustesFit solver = new ProcrustesFit(lA, lB, true, true, true);
 		
 		System.out.println("c = " + solver.getScale());
-		System.out.println("Q = \n" + Matrix.toString(solver.getQ().getData()));
+		System.out.println("Q = \n" + Matrix.toString(solver.getR().getData()));
 		System.out.println("t = \n" + Matrix.toString(solver.getT().toArray()));
 		System.out.println("err1 = " + solver.getError());
 		System.out.println("err2 = " + solver.getEuclideanError(lA, lB));
