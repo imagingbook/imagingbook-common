@@ -6,7 +6,6 @@ import java.util.List;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
 
-import imagingbook.lib.settings.PrintPrecision;
 import imagingbook.pub.geometry.mappings.linear.AffineMapping;
 
 public class ProcrustesExample1 extends ProcrustesExample {
@@ -14,7 +13,7 @@ public class ProcrustesExample1 extends ProcrustesExample {
 	@Override
 	public void run() {
 		
-		showHeadline(this.getClass().getSimpleName());
+		showHeadline(this.getClass().getSimpleName() + " (WB)");
 		
 		int NDIGITS = 1;
 		
@@ -52,11 +51,11 @@ public class ProcrustesExample1 extends ProcrustesExample {
 		
 		ProcrustesFit solver = new ProcrustesFit(lA, lB, true, true, true);
 		
-		System.out.println("s = " + solver.getScale());
+		System.out.println("c = " + solver.getScale());
 		System.out.println("Q = \n" + Matrix.toString(solver.getQ().getData()));
 		System.out.println("t = \n" + Matrix.toString(solver.getT().toArray()));
 		System.out.println("err1 = " + solver.getError());
-		System.out.println("err2 = " + solver.getError2());
+		System.out.println("err2 = " + solver.getEuclideanError(lA, lB));
 		
 		AffineMapping map = solver.getAffineMapping();
 		System.out.println("map = \n" + map.toString());

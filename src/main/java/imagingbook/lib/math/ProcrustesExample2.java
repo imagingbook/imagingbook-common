@@ -13,7 +13,7 @@ public class ProcrustesExample2 extends ProcrustesExample {
 	@Override
 	public void run() {
 		
-		showHeadline(this.getClass().getSimpleName());
+		showHeadline(this.getClass().getSimpleName() + " ( Umeyama-Test)");
 		
 		List<double[]> lA = new ArrayList<double[]>();
 		List<double[]> lB = new ArrayList<double[]>();
@@ -37,16 +37,27 @@ public class ProcrustesExample2 extends ProcrustesExample {
 		System.out.println("lA = "); print(lA);
 		System.out.println("lB = "); print(lB);
 		
-		ProcrustesFit solver = new ProcrustesFit(lA, lB, true, true, true);
+		System.out.println("     --- Case 1: rotation NOT enforced (reflection allowed) -------------");
 		
-		System.out.println("s = " + solver.getScale());
-		System.out.println("Q = \n" + Matrix.toString(solver.getQ().getData()));
-		System.out.println("t = \n" + Matrix.toString(solver.getT().toArray()));
-		System.out.println("err1 = " + solver.getError());
-		System.out.println("err2 = " + solver.getError2());
+		ProcrustesFit solver1 = new ProcrustesFit(lA, lB, true, true, false);
+		System.out.println("c = " + solver1.getScale());
+		System.out.println("Q = \n" + Matrix.toString(solver1.getQ().getData()));
+		System.out.println("t = \n" + Matrix.toString(solver1.getT().toArray()));
+		System.out.println("err1 = " + solver1.getError());
+		System.out.println("err2 = " + solver1.getEuclideanError(lA, lB));
+		AffineMapping map1 = solver1.getAffineMapping();
+		System.out.println("map = \n" + map1.toString());
 		
-		AffineMapping map = solver.getAffineMapping();
-		System.out.println("map = \n" + map.toString());
+		System.out.println("     --- Case 2: rotation enforced (NO reflection allowed) -------------");
+		
+		ProcrustesFit solver2 = new ProcrustesFit(lA, lB, true, true, true);
+		System.out.println("c = " + solver2.getScale());
+		System.out.println("Q = \n" + Matrix.toString(solver2.getQ().getData()));
+		System.out.println("t = \n" + Matrix.toString(solver2.getT().toArray()));
+		System.out.println("err1 = " + solver2.getError());
+		System.out.println("err2 = " + solver2.getEuclideanError(lA, lB));
+		AffineMapping map2 = solver2.getAffineMapping();
+		System.out.println("map = \n" + map2.toString());
 	}
 
 }
