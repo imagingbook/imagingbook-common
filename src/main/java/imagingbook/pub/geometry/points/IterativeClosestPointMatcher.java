@@ -1,5 +1,6 @@
 package imagingbook.pub.geometry.points;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.math3.linear.MatrixUtils;
@@ -20,7 +21,7 @@ public class IterativeClosestPointMatcher {
 	private final double tau;
 	private final int kMax;
 	private final int mx, my, n;
-	private final int[] A;
+	private int[] A;
 	
 	private int k = 0;
 	private double eMin = Double.POSITIVE_INFINITY;
@@ -36,9 +37,9 @@ public class IterativeClosestPointMatcher {
 		this.n = X.get(0).length;
 		this.A = new int[mx];
 		
-		System.out.println("X length = " + mx);
-		System.out.println("Y length = " + my);
-		System.out.println("X dimension = " + X.get(0).length);
+//		System.out.println("X length = " + mx);
+//		System.out.println("Y length = " + my);
+//		System.out.println("X dimension = " + X.get(0).length);
 		
 		match(X, Y);
 	}
@@ -49,15 +50,16 @@ public class IterativeClosestPointMatcher {
 		T = initialTransformation();
 		
 		do {
-			System.out.println("k = " + k);
+			System.out.println("ITERATION k = " + k);
+			A = associatePoints(X, Y);
+			double e = fitPoints(X, Y, A);	// sets T
 			System.out.println("T = " + Matrix.toString(T.getData()));
-			associatePoints(X, Y);
-			double e = fitPoints(X, Y);	// sets T
+			System.out.println("e = " + e);
 			double de = eMin - e;
 			converged = (0 <= de && de < tau);
 			eMin = e;
 			k = k + 1;
-		} while(!converged && k <= kMax);
+		} while(!converged && k < kMax);
 	}
 
 	private RealMatrix initialTransformation() {
@@ -66,7 +68,8 @@ public class IterativeClosestPointMatcher {
 		return iT;
 	}
 	
-	private void associatePoints(List<double[]> X, List<double[]> Y) {
+	private int[] associatePoints(List<double[]> X, List<double[]> Y) {
+		int[] A = new int[X.size()];
 		int i = 0;
 		for (double[] xi : X) {
 			double[] xiT = T.operate(Matrix.toHomogeneous(xi)); // T.applyTo(xi);
@@ -81,20 +84,36 @@ public class IterativeClosestPointMatcher {
 				}
 				j = j + 1;
 			}
+//			System.out.format("  A[%d] = %d, %.3f\n", i, jMin, dMin);
 			A[i] = jMin;
 			i = i + 1;
 		}
-		
+		return A;
 	}
 
-	private double fitPoints(List<double[]> X, List<double[]> Y) {
-		ProcrustesFit pf = new ProcrustesFit(X, Y);
+	private double fitPoints(List<double[]> X, List<double[]> Y, int[] A) {
+		List<double[]> YY = new ArrayList<double[]>(A.length);
+
+		for (int i = 0; i < A.length; i++) {
+			YY.add(Y.get(A[i]));
+		}
+		
+		ProcrustesFit pf = new ProcrustesFit(X, YY, true, false, true);
 		T = pf.getTransformationMatrix();
+		System.out.println("EuclideanError = " + pf.getEuclideanError(X, Y));
 		return pf.getError();
 	}
 
 	public boolean hasConverged() {
 		return converged;
+	}
+	
+	public RealMatrix getT() {
+		return T;
+	}
+
+	public int[] getA() {
+		return A;
 	}
 
 }

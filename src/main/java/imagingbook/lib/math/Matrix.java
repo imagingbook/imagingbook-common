@@ -1053,9 +1053,6 @@ public abstract class Matrix {
 		System.out.println("A rows = " + getNumberOfRows(A));
 		System.out.println("A columns = " + getNumberOfColumns(A));
 		
-		
-		
-		
 		int row = 1;
 		int column = 2;
 		System.out.println("A[1][2] = " + A[row][column]);

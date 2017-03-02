@@ -11,9 +11,9 @@ import imagingbook.pub.geometry.points.IterativeClosestPointMatcher;
 
 public class IcpTest1 {
 	
-	static int m = 50;
+	static int m = 150;
 	static int size = 100;
-	static double theta = 0.1;
+	static double theta = 1.5;
 	static double dx = 4;
 	static double dy = -6;
 	
@@ -44,10 +44,11 @@ public class IcpTest1 {
 	}
 
 	private AffineMapping makeTransformation() {
+		double ctr = 0.5 * size;
 		AffineMapping am = new AffineMapping();
-		am.concatDestructive(new Translation(-50, -50));
+		am.concatDestructive(new Translation(-ctr, -ctr));	// TODO: rename to concatD
 		am.concatDestructive(new Rotation(theta));
-		am.concatDestructive(new Translation(50, 50));
+		am.concatDestructive(new Translation(ctr, ctr));
 		am.concatDestructive(new Translation(dx, dy));
 		return am;
 	}
