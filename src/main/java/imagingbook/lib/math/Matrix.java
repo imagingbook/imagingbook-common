@@ -687,6 +687,26 @@ public abstract class Matrix {
 		return va;
 	}
 	
+	// Homogeneous coordinates ---------------------------------
+	
+	public static double[] toHomogeneous(double[] cvec) {
+		double[] hvec = new double[cvec.length + 1];
+		for (int i = 0; i < cvec.length; i++) {
+			hvec[i] = cvec[i];
+			hvec[hvec.length - 1] = 1;
+		}
+		return hvec;
+	}
+	
+	public static double[] toCartesian(double[] hvec) {
+		double[] cvec = new double[hvec.length - 1];
+		final double s = 1 / hvec[hvec.length - 1];	// TODO: check for zero factor
+		for (int i = 0; i < hvec.length - 1; i++) {
+			cvec[i] = s * hvec[i];
+		}
+		return cvec;
+	}
+	
 	// Determinants --------------------------------------------
 	
 	public static float determinant2x2(final float[][] A) {
