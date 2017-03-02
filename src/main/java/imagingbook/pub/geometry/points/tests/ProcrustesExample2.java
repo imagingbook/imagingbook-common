@@ -3,6 +3,8 @@ package imagingbook.pub.geometry.points.tests;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.math3.linear.RealMatrix;
+
 import imagingbook.lib.math.Matrix;
 import imagingbook.pub.geometry.mappings.linear.AffineMapping;
 import imagingbook.pub.geometry.points.ProcrustesFit;
@@ -36,27 +38,39 @@ class ProcrustesExample2 extends ProcrustesExample {
 		System.out.println("lA = "); print(lA);
 		System.out.println("lB = "); print(lB);
 		
+		{
 		System.out.println("     --- Case 1: rotation NOT enforced (reflection allowed) -------------");
 		
-		ProcrustesFit solver1 = new ProcrustesFit(lA, lB, true, true, false);
-		System.out.println("c = " + solver1.getScale());
-		System.out.println("Q = \n" + Matrix.toString(solver1.getR().getData()));
-		System.out.println("t = \n" + Matrix.toString(solver1.getT().toArray()));
-		System.out.println("err1 = " + solver1.getError());
-		System.out.println("err2 = " + solver1.getEuclideanError(lA, lB));
-		AffineMapping map1 = solver1.getAffineMapping2D();
-		System.out.println("map = \n" + map1.toString());
+		ProcrustesFit solver = new ProcrustesFit(lA, lB, true, true, false);
+		System.out.println("c = " + solver.getScale());
+		System.out.println("Q = \n" + Matrix.toString(solver.getR().getData()));
+		System.out.println("t = \n" + Matrix.toString(solver.getT().toArray()));
+		System.out.println("err1 = " + solver.getError());
+		System.out.println("err2 = " + solver.getEuclideanError(lA, lB));
+
+		AffineMapping amap = solver.getAffineMapping2D();
+		System.out.println("affine map = \n" + amap.toString());
 		
+		RealMatrix map = solver.getTransformationMatrix();
+		System.out.println("general map = \n" + Matrix.toString(map.getData()));
+		}
+		
+		{
 		System.out.println("     --- Case 2: rotation enforced (NO reflection allowed) -------------");
 		
-		ProcrustesFit solver2 = new ProcrustesFit(lA, lB, true, true, true);
-		System.out.println("c = " + solver2.getScale());
-		System.out.println("Q = \n" + Matrix.toString(solver2.getR().getData()));
-		System.out.println("t = \n" + Matrix.toString(solver2.getT().toArray()));
-		System.out.println("err1 = " + solver2.getError());
-		System.out.println("err2 = " + solver2.getEuclideanError(lA, lB));
-		AffineMapping map2 = solver2.getAffineMapping2D();
-		System.out.println("map = \n" + map2.toString());
+		ProcrustesFit solver = new ProcrustesFit(lA, lB, true, true, true);
+		System.out.println("c = " + solver.getScale());
+		System.out.println("Q = \n" + Matrix.toString(solver.getR().getData()));
+		System.out.println("t = \n" + Matrix.toString(solver.getT().toArray()));
+		System.out.println("err1 = " + solver.getError());
+		System.out.println("err2 = " + solver.getEuclideanError(lA, lB));
+
+		AffineMapping amap = solver.getAffineMapping2D();
+		System.out.println("affine map = \n" + amap.toString());
+		
+		RealMatrix map = solver.getTransformationMatrix();
+		System.out.println("general map = \n" + Matrix.toString(map.getData()));
+		}
 	}
 
 }

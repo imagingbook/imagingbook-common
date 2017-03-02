@@ -59,8 +59,11 @@ class ProcrustesExample1 extends ProcrustesExample {
 		System.out.println("err1 = " + solver.getError());
 		System.out.println("err2 = " + solver.getEuclideanError(lA, lB));
 		
-		AffineMapping map = solver.getAffineMapping2D();
-		System.out.println("map = \n" + map.toString());
+		AffineMapping amap = solver.getAffineMapping2D();
+		System.out.println("affine map = \n" + amap.toString());
+		
+		RealMatrix map = solver.getTransformationMatrix();
+		System.out.println("general map = \n" + Matrix.toString(map.getData()));
 	}
 
 }

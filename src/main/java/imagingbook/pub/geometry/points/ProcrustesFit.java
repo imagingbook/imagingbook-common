@@ -151,11 +151,10 @@ public class ProcrustesFit {
 		return err;
 	}
 	
-	// calculate total error (for testing)
 	/**
 	 * Calculates the total error for the estimated fit as
 	 * the sum of the squared Euclidean distances between the 
-	 * transformed point set A and the reference set B.
+	 * transformed point set X and the reference set Y.
 	 * This method is provided for testing as an alternative to
 	 * the quicker {@link getError} method.
 	 * @param X Sequence of n-dimensional points.
@@ -173,6 +172,18 @@ public class ProcrustesFit {
 			ee = ee + sqr(ei);
 		}
 		return ee;
+	}
+	
+	/**
+	 * Retrieves the (n) x (n+1) transformation matrix A, such that
+	 * y_i = A * x_i (with x_i in homogeneous coordinates)
+	 */
+	public RealMatrix getTransformationMatrix() {
+		RealMatrix cR = R.scalarMultiply(c);
+		RealMatrix A = MatrixUtils.createRealMatrix(n, n + 1);
+		A.setSubMatrix(cR.getData(), 0, 0);
+		A.setColumnVector(n, t);
+		return A;
 	}
 	
 	public AffineMapping getAffineMapping2D() {
