@@ -12,6 +12,11 @@ package imagingbook.pub.geometry.mappings.linear;
 
 public class Rotation extends AffineMapping {
 	
+	/**
+	 * Creates a new {@link AffineMapping} representing a pure 2D rotation
+	 * around the origin.
+	 * @param alpha Rotation angle (in radians).
+	 */
 	public Rotation(double alpha) {
 		super(
 			 Math.cos(alpha), -Math.sin(alpha), 0,
