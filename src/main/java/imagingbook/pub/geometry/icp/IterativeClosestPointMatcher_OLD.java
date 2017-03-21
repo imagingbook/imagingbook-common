@@ -1,4 +1,4 @@
-package imagingbook.pub.geometry.points;
+package imagingbook.pub.geometry.icp;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,16 +7,20 @@ import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
 
 import imagingbook.lib.math.Matrix;
+import imagingbook.pub.geometry.fitting.ProcrustesFit;
 
 
 /**
  * This class implements the Iterative Closest Point algorithm for
  * n-dimensional samples.
  * 
+ * TODO: change to use a variable fitter (currently ProcrustesFit only).
+ * 
  * @author W. Burger
- *
+ * @version 2017/03/21
+ * @deprecated
  */
-public class IterativeClosestPointMatcher {
+public class IterativeClosestPointMatcher_OLD {
 	
 	private final double tau;
 	private final int kMax;
@@ -29,7 +33,7 @@ public class IterativeClosestPointMatcher {
 	private boolean converged = false;
 	
 	
-	public IterativeClosestPointMatcher(List<double[]> X, List<double[]> Y, double tau, int kMax) {
+	public IterativeClosestPointMatcher_OLD(List<double[]> X, List<double[]> Y, double tau, int kMax) {
 		this.tau = tau;
 		this.kMax = kMax;
 		this.mx = X.size();
@@ -98,7 +102,8 @@ public class IterativeClosestPointMatcher {
 			YY.add(Y.get(A[i]));
 		}
 		
-		ProcrustesFit pf = new ProcrustesFit(X, YY, true, false, true);
+		ProcrustesFit pf = new ProcrustesFit(true, false, true);
+		pf.fit(X, YY);
 		T = pf.getTransformationMatrix();
 		System.out.println("EuclideanError = " + pf.getEuclideanError(X, Y));
 		return pf.getError();

@@ -1,13 +1,13 @@
-package imagingbook.pub.geometry.points.tests;
+package imagingbook.pub.geometry.icp.tests;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import imagingbook.pub.geometry.icp.IterativeClosestPointMatcher_OLD;
 import imagingbook.pub.geometry.mappings.linear.AffineMapping;
 import imagingbook.pub.geometry.mappings.linear.Rotation;
 import imagingbook.pub.geometry.mappings.linear.Translation;
-import imagingbook.pub.geometry.points.IterativeClosestPointMatcher;
 
 public class IcpTest1 {
 	
@@ -37,8 +37,7 @@ public class IcpTest1 {
 		A = makeTransformation();
 		makeSamplePointsX();
 		makeSamplePointsY();
-		IterativeClosestPointMatcher icp = 
-				new IterativeClosestPointMatcher(X, Y, tau, kMax);
+		IterativeClosestPointMatcher_OLD icp = new IterativeClosestPointMatcher_OLD(X, Y, tau, kMax);
 		
 		System.out.println("ICP has converged: " + icp.hasConverged());
 	}

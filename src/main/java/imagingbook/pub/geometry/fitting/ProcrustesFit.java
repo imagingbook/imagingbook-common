@@ -1,5 +1,7 @@
-package imagingbook.pub.geometry.points;
+package imagingbook.pub.geometry.fitting;
 
+import java.awt.geom.Point2D;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.math3.linear.ArrayRealVector;
@@ -12,48 +14,51 @@ import org.apache.commons.math3.linear.SingularValueDecomposition;
 import imagingbook.lib.math.Matrix;
 import imagingbook.pub.geometry.mappings.linear.AffineMapping;
 
+
 /**
  * This class implements the n-dimensional Procrustes fit algorithm described in 
  * Shinji Umeyama, "Least-squares estimation of transformation parameters 
  * between two point patterns", IEEE Transactions on Pattern Analysis and 
  * Machine Intelligence 13.4 (Apr. 1991), pp. 376–380.
- * The 
+ * <p>
+ * Usage example (also see the main() method of this class):
+ * <pre>
+ * List<double> X = ... // create list of m points (n-dimensional)
+ * List<double> Y = ... // create list of m points (n-dimensional)
+ * ProcrustesFit pf = new ProcrustesFit();
+ * pf.fit(X, Y);
+ * double err = pf.getError();
+ * RealMatrix R = pf.getR();
+ * RealVector t = pf.getT();
+ * double c = pf.getScale();
+ * double err = pf.getError();
+ * RealMatrix M = pf.getTransformationMatrix();
+ * </pre>
+ * <p>
+ * This is a preliminary version!
+ * TODO: Implement common interface with other fitters; polish parameter handling.
  * 
  * @author W. Burger
- * @version 2017/03/01
- *
+ * @version 2017/03/21
  */
-public class ProcrustesFit {
+public class ProcrustesFit implements LinearFit {
 	
-	final boolean allowTranslation;
-	final boolean allowScaling;
-	final boolean forceRotation;
+	private final boolean allowTranslation;
+	private final boolean allowScaling;
+	private final boolean forceRotation;
 	
-	final int m;		// number of samples
-	final int n;		// dimension of samples
+	private int m;		// number of samples
+	private int n;		// dimension of samples
 	
-	final double c;		// scale
-	final RealMatrix R;	// orthogonal (rotation) matrix
-	final RealVector t;	// translation vector
-	final double err;	// total (squared) error
+	private RealMatrix R = null;					// orthogonal (rotation) matrix
+	private RealVector t = null;					// translation vector
+	private double c = 1;							// scale
+	private double err = Double.POSITIVE_INFINITY;	// total (squared) error
 	
 	// --------------------------------------------------------------
 	
 	/**
-	 * Convenience constructor. The supplied point sequences must have the
-	 * same length and order (i.e., points must be in correspondence).
-	 * @param X Sequence of n-dimensional points
-	 * @param Y Sequence of n-dimensional points (reference)
-	 */
-	public ProcrustesFit(List<double[]> X, List<double[]> Y) {
-		this(X, Y, true, true, true);
-	}
-	
-	/**
-	 * Full constructor. The supplied point sequences must have the
-	 * same length and order (i.e., points must be in correspondence).
-	 * @param X Sequence of n-dimensional points
-	 * @param Y Sequence of n-dimensional points (reference)
+	 * Full constructor. 
 	 * @param allowTranslation If {@code true}, translation (t) between point sets is considered, 
 	 * 		otherwise zero translation is assumed.
 	 * @param allowScaling If {@code true}, scaling (c) between point sets is considered, 
@@ -61,14 +66,24 @@ public class ProcrustesFit {
 	 * @param forceRotation If {@code true}, the orthogonal part of the transformation (Q)
 	 * 		is forced to a true rotation and no reflection is allowed.
 	 */
-	public ProcrustesFit(List<double[]> X, List<double[]> Y, 
-			boolean allowTranslation, boolean allowScaling, boolean forceRotation) {
-		if (X.size() != Y.size())
-			throw new IllegalArgumentException("point sequences xA, xB must have same length");
-		
+	public ProcrustesFit(boolean allowTranslation, boolean allowScaling, boolean forceRotation) {
 		this.allowTranslation = allowTranslation;
 		this.allowScaling = allowScaling;
 		this.forceRotation = forceRotation;
+	}
+	
+	/**
+	 * Convenience constructor. 
+	 */
+	public ProcrustesFit() {
+		this(true, true, true);
+	}
+	
+
+	@Override
+	public void fit(List<double[]> X, List<double[]> Y) {
+		if (X.size() != Y.size())
+			throw new IllegalArgumentException("point sequences X, Y must have same length");
 		this.m = X.size();
 		this.n = X.get(0).length;
 		
@@ -82,7 +97,7 @@ public class ProcrustesFit {
 		
 		RealMatrix P = makeDataMatrix(X, meanX);
 		RealMatrix Q = makeDataMatrix(Y, meanY);
-		MatrixUtils.checkAdditionCompatible(P, Q);	// A, B of same dimensions?
+		MatrixUtils.checkAdditionCompatible(P, Q);	// P, Q of same dimensions?
 		
 		RealMatrix QPt = Q.multiply(P.transpose());
 		SingularValueDecomposition svd = new SingularValueDecomposition(QPt);
@@ -117,6 +132,22 @@ public class ProcrustesFit {
 		err = sqr(normQ) - sqr(S.multiply(D).getTrace() / normP);
 	}
 	
+	@Override
+	public void fitPoints(List<Point2D> Xpts, List<Point2D> Ypts) {
+		List<double[]> X = new ArrayList<>(Xpts.size());
+		List<double[]> Y = new ArrayList<>(Ypts.size());
+		for (Point2D pt : Xpts) {
+			X.add(toArray(pt));
+		}
+		for (Point2D pt : Ypts) {
+			Y.add(toArray(pt));
+		}
+		fit(X, Y);
+	}
+	
+	private double[] toArray(Point2D pt) {
+		return new double[] {pt.getX(), pt.getY()};
+	}
 	// -----------------------------------------------------------------
 	
 	/**
@@ -174,21 +205,25 @@ public class ProcrustesFit {
 		return ee;
 	}
 	
-	/**
-	 * Retrieves the (n) x (n+1) transformation matrix A, such that
-	 * y_i = A * x_i (with x_i in homogeneous coordinates)
-	 */
+	@Override
 	public RealMatrix getTransformationMatrix() {
 		RealMatrix cR = R.scalarMultiply(c);
-		RealMatrix A = MatrixUtils.createRealMatrix(n, n + 1);
-		A.setSubMatrix(cR.getData(), 0, 0);
-		A.setColumnVector(n, t);
-		return A;
+		RealMatrix M = MatrixUtils.createRealMatrix(n, n + 1);
+		M.setSubMatrix(cR.getData(), 0, 0);
+		M.setColumnVector(n, t);
+		return M;
 	}
 	
+	/**
+	 * Returns a 2D {@link AffineMapping} object, as defined in
+	 * {@code imagingbook.pub.geometry.mappings.linear}.
+	 * Throws an exception if the dimensionality of the data
+	 * is not 2.
+	 * @return An affine mapping object.
+	 */
 	public AffineMapping getAffineMapping2D() {
 		if (n != 2)
-			return null;
+			throw new UnsupportedOperationException("fit is not 2D");
 		AffineMapping map = new AffineMapping(
 				c * R.getEntry(0, 0), c * R.getEntry(0, 1), t.getEntry(0),
 				c * R.getEntry(1, 0), c * R.getEntry(1, 1), t.getEntry(1),
@@ -248,7 +283,7 @@ public class ProcrustesFit {
 		return M;
 	}
 	
-	void printSVD(SingularValueDecomposition svd) {
+	private void printSVD(SingularValueDecomposition svd) {
 		RealMatrix U = svd.getU();
 		RealMatrix S = svd.getS();
 		RealMatrix V = svd.getV();
@@ -258,6 +293,61 @@ public class ProcrustesFit {
 		System.out.println("V = " + Matrix.toString(V.getData()));
 		System.out.println("--------------------------");
 	}
+	
+	private static double roundToDigits(double x, int ndigits) {
+		int d = (int) Math.pow(10, ndigits);
+		return Math.rint(x * d) / d;
+	}
+
+	// --------------------------------------------------------------------------------
+
+	public static void main(String[] args) {
+		int NDIGITS = 1;
+		
+		double scale = 3.5;
+		System.out.println("original scale = " + scale);
+		
+		double alpha = 0.6;
+		double[][] R0data =
+			{{ Math.cos(alpha), -Math.sin(alpha) },
+			 { Math.sin(alpha),  Math.cos(alpha) }};
+		
+		RealMatrix R0 = MatrixUtils.createRealMatrix(R0data);
+		System.out.println("original R = \n" + Matrix.toString(R0.getData()));
+		
+		double[] t0 = {4, -3};
+		System.out.println("original t = " + Matrix.toString(t0));
+		
+		List<double[]> X = new ArrayList<double[]>();
+		List<double[]> Y = new ArrayList<double[]>();
+		
+		X.add(new double[] {2, 5});
+		X.add(new double[] {7, 3});
+		X.add(new double[] {0, 9});
+		X.add(new double[] {5, 4});
+		
+		for (double[] a : X) {
+			double[] b = R0.operate(a);
+			b[0] = roundToDigits(scale * b[0] + t0[0], NDIGITS);
+			b[1] = roundToDigits(scale * b[1] + t0[1], NDIGITS);
+			Y.add(b);
+		}
+
+		boolean allowTranslation = true;
+		boolean allowScaling = true;
+		boolean forceRotation = true;
+		ProcrustesFit pf = new ProcrustesFit(allowTranslation, allowScaling, forceRotation);
+		pf.fit(X, Y);
+
+		System.out.println("R = \n" + Matrix.toString(pf.getR().getData()));
+		System.out.println("t = \n" + Matrix.toString(pf.getT().toArray()));
+		System.out.format("c = %.3f\n", pf.getScale());
+		System.out.format("err1 = %.3f\n", pf.getError());
+		
+		RealMatrix M = pf.getTransformationMatrix();
+		System.out.println("M = \n" + Matrix.toString(M.getData()));
+	}
+	
 
 }
 
