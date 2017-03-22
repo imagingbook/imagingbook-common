@@ -36,8 +36,6 @@ public interface LinearFit {
 	 */
 	public RealMatrix getTransformationMatrix();
 	
-
-	
 	/**
 	 * Retrieves the total (squared) error for the estimated fit.
 	 * @return The total error for the estimated fit.
