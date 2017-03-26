@@ -1,6 +1,5 @@
 package imagingbook.pub.geometry.fitting;
 
-import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,7 +40,7 @@ import imagingbook.pub.geometry.mappings.linear.AffineMapping;
  * @author W. Burger
  * @version 2017/03/21
  */
-public class ProcrustesFit implements LinearFit {
+public class ProcrustesFit extends LinearFit {
 	
 	private final boolean allowTranslation;
 	private final boolean allowScaling;
@@ -132,22 +131,6 @@ public class ProcrustesFit implements LinearFit {
 		err = sqr(normQ) - sqr(S.multiply(D).getTrace() / normP);
 	}
 	
-	@Override
-	public void fitPoints(List<Point2D> Xpts, List<Point2D> Ypts) {
-		List<double[]> X = new ArrayList<>(Xpts.size());
-		List<double[]> Y = new ArrayList<>(Ypts.size());
-		for (Point2D pt : Xpts) {
-			X.add(toArray(pt));
-		}
-		for (Point2D pt : Ypts) {
-			Y.add(toArray(pt));
-		}
-		fit(X, Y);
-	}
-	
-	private double[] toArray(Point2D pt) {
-		return new double[] {pt.getX(), pt.getY()};
-	}
 	// -----------------------------------------------------------------
 	
 	/**
@@ -340,7 +323,7 @@ public class ProcrustesFit implements LinearFit {
 		pf.fit(X, Y);
 
 		System.out.println("R = \n" + Matrix.toString(pf.getR().getData()));
-		System.out.println("t = \n" + Matrix.toString(pf.getT().toArray()));
+		System.out.println("t = " + Matrix.toString(pf.getT().toArray()));
 		System.out.format("c = %.3f\n", pf.getScale());
 		System.out.format("err1 = %.3f\n", pf.getError());
 		

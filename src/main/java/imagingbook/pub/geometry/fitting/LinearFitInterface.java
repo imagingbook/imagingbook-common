@@ -1,7 +1,6 @@
 package imagingbook.pub.geometry.fitting;
 
 import java.awt.geom.Point2D;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.math3.linear.RealMatrix;
@@ -9,9 +8,9 @@ import org.apache.commons.math3.linear.RealMatrix;
 /**
  * Describes a fitter based on a linear transformation model.
  * @author WB
- *
+ * @deprecated
  */
-public abstract class LinearFit {
+public interface LinearFitInterface {
 	
 	/**
 	 * Calculates the least-squares fit for the supplied point sequences,
@@ -20,20 +19,7 @@ public abstract class LinearFit {
 	 * @param X Sequence of n-dimensional points
 	 * @param Y Sequence of n-dimensional points (reference)
 	 */
-	public abstract void fit(List<double[]> X, List<double[]> Y);
-
-	/**
-	 * Retrieves the (n) x (n+1) transformation matrix A, such that
-	 * y_i = A * x_i (with x_i in homogeneous coordinates)
-	 */
-	public abstract RealMatrix getTransformationMatrix();
-	
-	/**
-	 * Retrieves the total (squared) error for the estimated fit.
-	 * @return The total error for the estimated fit.
-	 */
-	public abstract double getError();
-	
+	public void fit(List<double[]> X, List<double[]> Y);
 	
 	/**
 	 * Calculates the least-squares fit for the supplied point sequences,
@@ -42,16 +28,18 @@ public abstract class LinearFit {
 	 * @param X Sequence of 2-dimensional points
 	 * @param Y Sequence of 2-dimensional points (reference)
 	 */
-	public void fitPoints(List<Point2D> Xpts, List<Point2D> Ypts) {
-		fit(toDoubleArrays(Xpts), toDoubleArrays(Ypts));
-	}
+	public void fitPoints(List<Point2D> X, List<Point2D> Y);
 	
-	private List<double[]> toDoubleArrays(List<Point2D> Xpts) {
-		List<double[]> X = new ArrayList<>(Xpts.size());
-		for (Point2D pt : Xpts) {
-			X.add(new double[] {pt.getX(), pt.getY()});
-		}
-		return X;
-	}
+	/**
+	 * Retrieves the (n) x (n+1) transformation matrix A, such that
+	 * y_i = A * x_i (with x_i in homogeneous coordinates)
+	 */
+	public RealMatrix getTransformationMatrix();
+	
+	/**
+	 * Retrieves the total (squared) error for the estimated fit.
+	 * @return The total error for the estimated fit.
+	 */
+	public double getError();
 
 }
