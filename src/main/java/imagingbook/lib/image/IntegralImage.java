@@ -22,7 +22,7 @@ import ij.process.ByteProcessor;
  */
 public class IntegralImage {
 	
-	private final int M, N;
+	private final int M, N;	
 	private final long[][] S1, S2;
 	
 	/**
@@ -30,8 +30,8 @@ public class IntegralImage {
 	 * @param I pixel values
 	 */
 	public IntegralImage(int[][] I) {
-		M = I.length;
-		N = I[0].length;
+		M = I.length;			// image width
+		N = I[0].length;		// image height
 		S1 = new long[M][N];
 		S2 = new long[M][N];
 		
@@ -61,7 +61,6 @@ public class IntegralImage {
 	public IntegralImage(ByteProcessor I) {
 		this(I.getIntArray());
 	}
-	
 	
 	// -------------------------------------------------------
 	

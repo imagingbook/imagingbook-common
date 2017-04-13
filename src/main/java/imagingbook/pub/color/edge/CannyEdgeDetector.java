@@ -22,20 +22,27 @@ import java.util.Stack;
 
 /**
  * This class implements a Canny edge detector for grayscale and RGB images.
+ * The edge detector is "lazy" in the sense that it performs local non-
+ * maximum suppression and edge tracing only when the results are explicitly 
+ * asked for (by the methods {@code getEdgeBinary()} and {@code getEdgeTraces()}).
+ * 
  * @author W. Burger
- * @version 2016/05/04
+ * @version 2017/04/13
  */
 public class CannyEdgeDetector extends ColorEdgeDetector {
 	
 	public static class Parameters {
 		/** Gaussian sigma (scale) */
 		public double gSigma = 2.0f;
+		
 		/** High threshold (20% of max. edge magnitude) */
 		public double hiThr  = 20.0f;
+		
 		/** Low threshold (5% of max. edge magnitude) */
 		public double loThr = 5.0f;
+		
 		/** Set true to normalize gradient magnitude */
-		public boolean normGradMag = true;	
+		public boolean normGradMag = true;
 		
 		/**
 		 * Checks the parameter set.
@@ -46,15 +53,15 @@ public class CannyEdgeDetector extends ColorEdgeDetector {
 		}
 	}
 	
-	final Parameters params;
-	final ImageProcessor I;				// original image
-	final int M, N;						// width and height of I
+	private final Parameters params;
+//	private final ImageProcessor I;				// original image
+	private final int M, N;						// width and height of I
 	
-	FloatProcessor Emag = null;				// gradient magnitude
-	FloatProcessor Enms = null;				// non-max suppressed gradient magnitude
-	FloatProcessor Ex = null, Ey = null;	// edge normal vectors
-	ByteProcessor Ebin = null;				// final (binary) edge image
-	List<List<Point>> traceList = null;		// list of edge traces
+	private FloatProcessor Emag = null;				// gradient magnitude
+	private FloatProcessor Enms = null;				// non-max suppressed gradient magnitude
+	private FloatProcessor Ex = null, Ey = null;	// edge normal vectors
+	private ByteProcessor Ebin = null;				// final (binary) edge image
+	private List<List<Point>> traceList = null;		// list of edge traces
 	
 	// Constructor with default parameters:
 	public CannyEdgeDetector(ImageProcessor ip) {
@@ -65,29 +72,26 @@ public class CannyEdgeDetector extends ColorEdgeDetector {
 	public CannyEdgeDetector(ImageProcessor I, Parameters params) {
 		if (params.isInValid()) throw new IllegalArgumentException();
 		this.params = params;
-		this.I = I;
+//		this.I = I;
 		M = I.getWidth();
 		N = I.getHeight();
-		findEdges();
+		makeGradientsAndMagnitude(I);
 	}
+
+	//---------------------------------------------------------------------------
 	
-	// do the work ...
-	void findEdges() {
+	// do the inital work only
+	private void makeGradientsAndMagnitude(ImageProcessor I) {
 		if (I instanceof ColorProcessor) 
-			makeGradientsAndMagnitudeColor();
+			makeGradientsAndMagnitudeColor((ColorProcessor) I);
 		else
-			makeGradientsAndMagnitudeGray();
-		nonMaxSuppression();
+			makeGradientsAndMagnitudeGray(I);
+		//nonMaxSuppression();
 		//detectAndTraceEdges();
 	}
 	
-	//---------------------------------------------------------------------------
-	
-	void makeGradientsAndMagnitudeGray() {
-//		FloatProcessor If = (I instanceof FloatProcessor) ? 
-//				(FloatProcessor) I.duplicate() :
-//				(FloatProcessor) I.convertToFloat();
-		
+
+	private void makeGradientsAndMagnitudeGray(ImageProcessor I) {		
 		FloatProcessor If = I.convertToFloatProcessor();	// always makes a copy
 				
 		// apply a separable Gaussian filter to I
@@ -117,15 +121,14 @@ public class CannyEdgeDetector extends ColorEdgeDetector {
 				Emag.setf(u, v, mag);
 			}
 		}
-		//IJ.log("Gray emax = " + emax);
 		
 		// normalize gradient magnitude 
 		if (params.normGradMag && emax > 0.001) 
 			Emag.multiply(100.0/emax);
 	}
 	
-	void makeGradientsAndMagnitudeColor() {
-		FloatProcessor[] Irgb = rgbToFloatChannels((ColorProcessor)I);
+	private void makeGradientsAndMagnitudeColor(ColorProcessor I) {
+		FloatProcessor[] Irgb = rgbToFloatChannels(I);
 		FloatProcessor[] Ixrgb = new FloatProcessor[3];
 		FloatProcessor[] Iyrgb = new FloatProcessor[3];
 		
@@ -134,11 +137,11 @@ public class CannyEdgeDetector extends ColorEdgeDetector {
 		Convolver conv = new Convolver();
 		conv.setNormalize(true);
 		for (int i=0; i<Irgb.length; i++) {
-			FloatProcessor I = Irgb[i];
-			conv.convolve(I, gaussKernel, gaussKernel.length, 1);
-			conv.convolve(I, gaussKernel, 1, gaussKernel.length);
-			Ixrgb[i] = I;
-			Iyrgb[i] = (FloatProcessor) I.duplicate();
+			FloatProcessor If = Irgb[i];
+			conv.convolve(If, gaussKernel, gaussKernel.length, 1);
+			conv.convolve(If, gaussKernel, 1, gaussKernel.length);
+			Ixrgb[i] = If;
+			Iyrgb[i] = (FloatProcessor) If.duplicate();
 		}
 		
 		// calculate the gradients in X- and Y-direction for each RGB channel
@@ -182,7 +185,7 @@ public class CannyEdgeDetector extends ColorEdgeDetector {
 	
 	//---------------------------------------------------------------------------
 	
-	void nonMaxSuppression() {
+	private void nonMaxSuppression() {
 		// perform non-maximum suppression along gradient direction
 		Enms = new FloatProcessor(M, N);
 		for (int v = 1; v < N - 1; v++) {
@@ -195,7 +198,7 @@ public class CannyEdgeDetector extends ColorEdgeDetector {
 		}
 	}
 	
-	void detectAndTraceEdges() {
+	private void detectAndTraceEdges() {
 		if (Enms == null) {
 			nonMaxSuppression();
 		}
@@ -214,7 +217,7 @@ public class CannyEdgeDetector extends ColorEdgeDetector {
 	
 	// Determines if the gradient magnitude is a local maximum at position (u,v)
 	// in direction s_theta.
-	boolean isLocalMaximum(FloatProcessor gradMagnitude, int u, int v, int s_theta, float mMin) {
+	private boolean isLocalMaximum(FloatProcessor gradMagnitude, int u, int v, int s_theta, float mMin) {
 		float mC = gradMagnitude.getf(u, v);
 		if (mC < mMin) {
 			return false;
@@ -254,7 +257,7 @@ public class CannyEdgeDetector extends ColorEdgeDetector {
 	 * @param markColor color used for marking pixels on edge trace
 	 * @return a list of Point objects.
 	 */
-	List<Point> traceAndThreshold(int u0, int v0, float loThr, int markColor) {
+	private List<Point> traceAndThreshold(int u0, int v0, float loThr, int markColor) {
 		//IJ.log("  working point " + u + " " + v);
 		Stack<Point> pointStack = new Stack<Point>();
 		List<Point> pointList = new LinkedList<Point>();
@@ -286,7 +289,7 @@ public class CannyEdgeDetector extends ColorEdgeDetector {
 	private final float sinPi8 = (float) Math.sin(Math.PI/8);
 	
 	// returns the quantized orientation sector for vector (dx, dy)
-	int getOrientationSector(float dx, float dy) {
+	private int getOrientationSector(float dx, float dy) {
 		// rotate the gradient vector by PI/8
 		float dxR = cosPi8 * dx - sinPi8 * dy;
 		float dyR = sinPi8 * dx + cosPi8 * dy;	
@@ -345,7 +348,7 @@ public class CannyEdgeDetector extends ColorEdgeDetector {
 	
 	//---------------------------------------------------------------------------
 
-	float[] makeGaussKernel1d(double sigma) {
+	private float[] makeGaussKernel1d(double sigma) {
 		// make 1D Gauss filter kernel large enough
 		int rad = (int) (3.5 * sigma);
 		int size = rad + rad + 1;
@@ -362,7 +365,7 @@ public class CannyEdgeDetector extends ColorEdgeDetector {
 	}
 	
 	// extract RGB channels of 'cp' as 3 float processors
-	FloatProcessor[] rgbToFloatChannels(ColorProcessor cp) {
+	private FloatProcessor[] rgbToFloatChannels(ColorProcessor cp) {
 		int w = cp.getWidth();
 		int h = cp.getHeight();
 		FloatProcessor rp = new FloatProcessor(w, h);
