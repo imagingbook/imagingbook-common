@@ -1,0 +1,207 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span>/*******************************************************************************<a name="line.1"></a>
+<span class="sourceLineNo">002</span> * This software is provided as a supplement to the authors' textbooks on digital<a name="line.2"></a>
+<span class="sourceLineNo">003</span> *  image processing published by Springer-Verlag in various languages and editions.<a name="line.3"></a>
+<span class="sourceLineNo">004</span> * Permission to use and distribute this software is granted under the BSD 2-Clause <a name="line.4"></a>
+<span class="sourceLineNo">005</span> * "Simplified" License (see http://opensource.org/licenses/BSD-2-Clause). <a name="line.5"></a>
+<span class="sourceLineNo">006</span> * Copyright (c) 2006-2016 Wilhelm Burger, Mark J. Burge. All rights reserved. <a name="line.6"></a>
+<span class="sourceLineNo">007</span> * Visit http://imagingbook.com for additional details.<a name="line.7"></a>
+<span class="sourceLineNo">008</span> *******************************************************************************/<a name="line.8"></a>
+<span class="sourceLineNo">009</span>package imagingbook.pub.fd;<a name="line.9"></a>
+<span class="sourceLineNo">010</span><a name="line.10"></a>
+<span class="sourceLineNo">011</span>import static imagingbook.lib.math.Arithmetic.EPSILON_DOUBLE;<a name="line.11"></a>
+<span class="sourceLineNo">012</span>import static imagingbook.lib.math.Arithmetic.sqr;<a name="line.12"></a>
+<span class="sourceLineNo">013</span>import static java.lang.Math.PI;<a name="line.13"></a>
+<span class="sourceLineNo">014</span>import static java.lang.Math.abs;<a name="line.14"></a>
+<span class="sourceLineNo">015</span>import static java.lang.Math.cos;<a name="line.15"></a>
+<span class="sourceLineNo">016</span>import static java.lang.Math.sin;<a name="line.16"></a>
+<span class="sourceLineNo">017</span>import static java.lang.Math.sqrt;<a name="line.17"></a>
+<span class="sourceLineNo">018</span>import ij.gui.Roi;<a name="line.18"></a>
+<span class="sourceLineNo">019</span>import imagingbook.lib.math.Complex;<a name="line.19"></a>
+<span class="sourceLineNo">020</span><a name="line.20"></a>
+<span class="sourceLineNo">021</span>import java.awt.Point;<a name="line.21"></a>
+<span class="sourceLineNo">022</span>import java.awt.Polygon;<a name="line.22"></a>
+<span class="sourceLineNo">023</span>import java.awt.geom.Point2D;<a name="line.23"></a>
+<span class="sourceLineNo">024</span>import java.util.ArrayList;<a name="line.24"></a>
+<span class="sourceLineNo">025</span>import java.util.List;<a name="line.25"></a>
+<span class="sourceLineNo">026</span><a name="line.26"></a>
+<span class="sourceLineNo">027</span><a name="line.27"></a>
+<span class="sourceLineNo">028</span>/**<a name="line.28"></a>
+<span class="sourceLineNo">029</span> * Subclass of {@link FourierDescriptor} whose constructors assume<a name="line.29"></a>
+<span class="sourceLineNo">030</span> * that input polygons are non-uniformly sampled.<a name="line.30"></a>
+<span class="sourceLineNo">031</span> * <a name="line.31"></a>
+<span class="sourceLineNo">032</span> * @author W. Burger<a name="line.32"></a>
+<span class="sourceLineNo">033</span> * @version 2015/08/13<a name="line.33"></a>
+<span class="sourceLineNo">034</span> */<a name="line.34"></a>
+<span class="sourceLineNo">035</span>public class FourierDescriptorFromPolygon extends FourierDescriptor {<a name="line.35"></a>
+<span class="sourceLineNo">036</span><a name="line.36"></a>
+<span class="sourceLineNo">037</span>        /**<a name="line.37"></a>
+<span class="sourceLineNo">038</span>         * <a name="line.38"></a>
+<span class="sourceLineNo">039</span>         * @param V sequences of 2D points describing an arbitrary, closed polygon.<a name="line.39"></a>
+<span class="sourceLineNo">040</span>         * @param Mp the number of Fourier coefficient pairs (M = 2 * Mp + 1).<a name="line.40"></a>
+<span class="sourceLineNo">041</span>         */<a name="line.41"></a>
+<span class="sourceLineNo">042</span>        public FourierDescriptorFromPolygon(Point2D[] V, int Mp) {<a name="line.42"></a>
+<span class="sourceLineNo">043</span>                g = makeComplex(V);<a name="line.43"></a>
+<span class="sourceLineNo">044</span>                makeDftSpectrumTrigonometric(Mp);<a name="line.44"></a>
+<span class="sourceLineNo">045</span>        }<a name="line.45"></a>
+<span class="sourceLineNo">046</span>        <a name="line.46"></a>
+<span class="sourceLineNo">047</span>        /**<a name="line.47"></a>
+<span class="sourceLineNo">048</span>         * <a name="line.48"></a>
+<span class="sourceLineNo">049</span>         * @param roi: a region of interest (ImageJ), not necessarily a polyline.<a name="line.49"></a>
+<span class="sourceLineNo">050</span>         * @param Mp:  the number of Fourier coefficient pairs (M = 2 * Mp + 1)<a name="line.50"></a>
+<span class="sourceLineNo">051</span>         */<a name="line.51"></a>
+<span class="sourceLineNo">052</span>        public FourierDescriptorFromPolygon(Roi roi, int Mp) {<a name="line.52"></a>
+<span class="sourceLineNo">053</span>                this(getRoiPoints(roi), Mp);<a name="line.53"></a>
+<span class="sourceLineNo">054</span>        }<a name="line.54"></a>
+<span class="sourceLineNo">055</span>        <a name="line.55"></a>
+<span class="sourceLineNo">056</span>        void makeDftSpectrumTrigonometric(int Mp) {<a name="line.56"></a>
+<span class="sourceLineNo">057</span>                final int N = g.length;                         // number of polygon vertices<a name="line.57"></a>
+<span class="sourceLineNo">058</span>                final int M = 2 * Mp + 1;                       // number of Fourier coefficients<a name="line.58"></a>
+<span class="sourceLineNo">059</span>        double[] dx = new double[N];            // dx[k] is the delta-x for polygon segment &lt;k,k+1&gt;<a name="line.59"></a>
+<span class="sourceLineNo">060</span>        double[] dy = new double[N];            // dy[k] is the delta-y for polygon segment &lt;k,k+1&gt;<a name="line.60"></a>
+<span class="sourceLineNo">061</span>        double[] lambda = new double[N];        // lambda[k] is the length of the polygon segment &lt;k,k+1&gt;<a name="line.61"></a>
+<span class="sourceLineNo">062</span>        double[] L  = new double[N + 1];        // T[k] is the cumulated path length at polygon vertex k in [0,K]<a name="line.62"></a>
+<span class="sourceLineNo">063</span>        <a name="line.63"></a>
+<span class="sourceLineNo">064</span>        G = new Complex[M];<a name="line.64"></a>
+<span class="sourceLineNo">065</span>        <a name="line.65"></a>
+<span class="sourceLineNo">066</span>        L[0] = 0;<a name="line.66"></a>
+<span class="sourceLineNo">067</span>        for (int i = 0; i &lt; N; i++) {   // compute Dx, Dy, Dt and t tables<a name="line.67"></a>
+<span class="sourceLineNo">068</span>            dx[i] = g[(i + 1) % N].re() - g[i].re();<a name="line.68"></a>
+<span class="sourceLineNo">069</span>            dy[i] = g[(i + 1) % N].im() - g[i].im();<a name="line.69"></a>
+<span class="sourceLineNo">070</span>            lambda[i] = sqrt(sqr(dx[i]) + sqr(dy[i])); <a name="line.70"></a>
+<span class="sourceLineNo">071</span>            if (abs(lambda[i]) &lt; EPSILON_DOUBLE) {<a name="line.71"></a>
+<span class="sourceLineNo">072</span>                        throw new Error("Zero-length polygon segment!");<a name="line.72"></a>
+<span class="sourceLineNo">073</span>                }<a name="line.73"></a>
+<span class="sourceLineNo">074</span>            L[i+1] = L[i] + lambda[i];<a name="line.74"></a>
+<span class="sourceLineNo">075</span>        }<a name="line.75"></a>
+<span class="sourceLineNo">076</span>        <a name="line.76"></a>
+<span class="sourceLineNo">077</span>        double Ln = L[N];       // Ln is the closed polygon length<a name="line.77"></a>
+<span class="sourceLineNo">078</span>               <a name="line.78"></a>
+<span class="sourceLineNo">079</span>        // calculate DFT coefficient G[0]:<a name="line.79"></a>
+<span class="sourceLineNo">080</span>        double x0 = g[0].re(); // V[0].getX();<a name="line.80"></a>
+<span class="sourceLineNo">081</span>        double y0 = g[0].im(); // V[0].getY();<a name="line.81"></a>
+<span class="sourceLineNo">082</span>        double a0 = 0;<a name="line.82"></a>
+<span class="sourceLineNo">083</span>        double c0 = 0;<a name="line.83"></a>
+<span class="sourceLineNo">084</span>        for (int i = 0; i &lt; N; i++) {   // for each polygon vertex<a name="line.84"></a>
+<span class="sourceLineNo">085</span>                double s = (sqr(L[i+1]) - sqr(L[i])) / (2 * lambda[i]) - L[i];<a name="line.85"></a>
+<span class="sourceLineNo">086</span>                double xi = g[i].re(); // V[i].getX();<a name="line.86"></a>
+<span class="sourceLineNo">087</span>                double yi = g[i].im(); // V[i].getY();<a name="line.87"></a>
+<span class="sourceLineNo">088</span>                a0 = a0 + s * dx[i] + (xi - x0) * lambda[i];<a name="line.88"></a>
+<span class="sourceLineNo">089</span>                c0 = c0 + s * dy[i] + (yi - y0) * lambda[i];<a name="line.89"></a>
+<span class="sourceLineNo">090</span>        }<a name="line.90"></a>
+<span class="sourceLineNo">091</span>        //G[0] = new Complex(x0 + a0/Ln, y0 + c0/Ln);<a name="line.91"></a>
+<span class="sourceLineNo">092</span>        this.setCoefficient(0, new Complex(x0 + a0/Ln, y0 + c0/Ln));<a name="line.92"></a>
+<span class="sourceLineNo">093</span>        <a name="line.93"></a>
+<span class="sourceLineNo">094</span>        // calculate remaining FD pairs G[-m], G[+m] for m = 1,...,Mp<a name="line.94"></a>
+<span class="sourceLineNo">095</span>        for (int m = 1; m &lt;= Mp; m++) { // for each FD pair<a name="line.95"></a>
+<span class="sourceLineNo">096</span>                double w = 2 * PI * m / Ln;<a name="line.96"></a>
+<span class="sourceLineNo">097</span>                double a = 0, c = 0;<a name="line.97"></a>
+<span class="sourceLineNo">098</span>                double b = 0, d = 0;<a name="line.98"></a>
+<span class="sourceLineNo">099</span>            for (int i = 0; i &lt; N; i++) {       //      for each polygon vertex<a name="line.99"></a>
+<span class="sourceLineNo">100</span>                double w0 = w * L[i];                           <a name="line.100"></a>
+<span class="sourceLineNo">101</span>                double w1 = w * L[(i + 1) % N];         <a name="line.101"></a>
+<span class="sourceLineNo">102</span>                double dCos = cos(w1) - cos(w0);<a name="line.102"></a>
+<span class="sourceLineNo">103</span>                a = a + dCos * (dx[i] / lambda[i]);<a name="line.103"></a>
+<span class="sourceLineNo">104</span>                c = c + dCos * (dy[i] / lambda[i]);<a name="line.104"></a>
+<span class="sourceLineNo">105</span>                double dSin = sin(w1) - sin(w0);<a name="line.105"></a>
+<span class="sourceLineNo">106</span>                b = b + dSin * (dx[i] / lambda[i]);<a name="line.106"></a>
+<span class="sourceLineNo">107</span>                d = d + dSin * (dy[i] / lambda[i]);<a name="line.107"></a>
+<span class="sourceLineNo">108</span>            }<a name="line.108"></a>
+<span class="sourceLineNo">109</span>            double s = Ln / sqr(2 * PI * m);<a name="line.109"></a>
+<span class="sourceLineNo">110</span>            this.setCoefficient(+m, new Complex(s * (a + d), s * (c - b)));<a name="line.110"></a>
+<span class="sourceLineNo">111</span>            this.setCoefficient(-m, new Complex(s * (a - d), s * (b + c)));<a name="line.111"></a>
+<span class="sourceLineNo">112</span>        }<a name="line.112"></a>
+<span class="sourceLineNo">113</span>        }<a name="line.113"></a>
+<span class="sourceLineNo">114</span>        <a name="line.114"></a>
+<span class="sourceLineNo">115</span>        static Point2D[] getRoiPoints(Roi roi) {<a name="line.115"></a>
+<span class="sourceLineNo">116</span>                Polygon poly = roi.getPolygon();<a name="line.116"></a>
+<span class="sourceLineNo">117</span>                int[] xp = poly.xpoints;<a name="line.117"></a>
+<span class="sourceLineNo">118</span>                int[] yp = poly.ypoints;<a name="line.118"></a>
+<span class="sourceLineNo">119</span>                // copy vertices for all non-zero-length polygon segments:<a name="line.119"></a>
+<span class="sourceLineNo">120</span>                List&lt;Point&gt; points = new ArrayList&lt;Point&gt;(xp.length);<a name="line.120"></a>
+<span class="sourceLineNo">121</span>                points.add(new Point(xp[0], yp[0]));<a name="line.121"></a>
+<span class="sourceLineNo">122</span>                int last = 0;<a name="line.122"></a>
+<span class="sourceLineNo">123</span>                for (int i = 1; i &lt; xp.length; i++) {<a name="line.123"></a>
+<span class="sourceLineNo">124</span>                        if (xp[last] != xp[i] || yp[last] != yp[i]) {<a name="line.124"></a>
+<span class="sourceLineNo">125</span>                                points.add(new Point(xp[i], yp[i]));<a name="line.125"></a>
+<span class="sourceLineNo">126</span>                                last = i;<a name="line.126"></a>
+<span class="sourceLineNo">127</span>                        }<a name="line.127"></a>
+<span class="sourceLineNo">128</span>                }<a name="line.128"></a>
+<span class="sourceLineNo">129</span>                // remove last point if the closing segment has zero length:<a name="line.129"></a>
+<span class="sourceLineNo">130</span>                if (xp[last] == xp[0] &amp;&amp; yp[last] == yp[0]) {<a name="line.130"></a>
+<span class="sourceLineNo">131</span>                        points.remove(last);<a name="line.131"></a>
+<span class="sourceLineNo">132</span>                }<a name="line.132"></a>
+<span class="sourceLineNo">133</span>                return points.toArray(new Point2D[0]);<a name="line.133"></a>
+<span class="sourceLineNo">134</span>        }<a name="line.134"></a>
+<span class="sourceLineNo">135</span>}<a name="line.135"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+</body>
+</html>

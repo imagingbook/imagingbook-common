@@ -1,0 +1,124 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span>/*******************************************************************************<a name="line.1"></a>
+<span class="sourceLineNo">002</span> * This software is provided as a supplement to the authors' textbooks on digital<a name="line.2"></a>
+<span class="sourceLineNo">003</span> *  image processing published by Springer-Verlag in various languages and editions.<a name="line.3"></a>
+<span class="sourceLineNo">004</span> * Permission to use and distribute this software is granted under the BSD 2-Clause <a name="line.4"></a>
+<span class="sourceLineNo">005</span> * "Simplified" License (see http://opensource.org/licenses/BSD-2-Clause). <a name="line.5"></a>
+<span class="sourceLineNo">006</span> * Copyright (c) 2006-2016 Wilhelm Burger, Mark J. Burge. All rights reserved. <a name="line.6"></a>
+<span class="sourceLineNo">007</span> * Visit http://imagingbook.com for additional details.<a name="line.7"></a>
+<span class="sourceLineNo">008</span> *******************************************************************************/<a name="line.8"></a>
+<span class="sourceLineNo">009</span><a name="line.9"></a>
+<span class="sourceLineNo">010</span>package imagingbook.pub.threshold.global;<a name="line.10"></a>
+<span class="sourceLineNo">011</span><a name="line.11"></a>
+<span class="sourceLineNo">012</span>import imagingbook.pub.threshold.global.GlobalThresholder;<a name="line.12"></a>
+<span class="sourceLineNo">013</span><a name="line.13"></a>
+<span class="sourceLineNo">014</span>/**<a name="line.14"></a>
+<span class="sourceLineNo">015</span> * This thresholder implements the algorithm proposed by Ridler and Calvard (1978),<a name="line.15"></a>
+<span class="sourceLineNo">016</span> * T.W. Ridler, S. Calvard, Picture thresholding using an iterative selection method,<a name="line.16"></a>
+<span class="sourceLineNo">017</span> * IEEE Trans. System, Man and Cybernetics, SMC-8 (August 1978) 630-632.<a name="line.17"></a>
+<span class="sourceLineNo">018</span> * described in Glasbey/Horgan: "Image Analysis for the Biological Sciences" (Ch. 4).<a name="line.18"></a>
+<span class="sourceLineNo">019</span> * <a name="line.19"></a>
+<span class="sourceLineNo">020</span> * Slow version using explicit recomputation of background and foreground means <a name="line.20"></a>
+<span class="sourceLineNo">021</span> * in every iteration.<a name="line.21"></a>
+<span class="sourceLineNo">022</span> */<a name="line.22"></a>
+<span class="sourceLineNo">023</span>public class IsodataThresholderSlow extends GlobalThresholder {<a name="line.23"></a>
+<span class="sourceLineNo">024</span>        <a name="line.24"></a>
+<span class="sourceLineNo">025</span>        private int MAX_ITERATIONS = 100;<a name="line.25"></a>
+<span class="sourceLineNo">026</span>        <a name="line.26"></a>
+<span class="sourceLineNo">027</span>        public IsodataThresholderSlow() {<a name="line.27"></a>
+<span class="sourceLineNo">028</span>                super();<a name="line.28"></a>
+<span class="sourceLineNo">029</span>        }<a name="line.29"></a>
+<span class="sourceLineNo">030</span><a name="line.30"></a>
+<span class="sourceLineNo">031</span>        public int getThreshold(int[] h) {<a name="line.31"></a>
+<span class="sourceLineNo">032</span>                int K = h.length;<a name="line.32"></a>
+<span class="sourceLineNo">033</span>                int q = (int) mean(h, 0, K-1);  // start with the total mean<a name="line.33"></a>
+<span class="sourceLineNo">034</span>                int q_;<a name="line.34"></a>
+<span class="sourceLineNo">035</span>                <a name="line.35"></a>
+<span class="sourceLineNo">036</span>                int i = 0;      // iteration counter<a name="line.36"></a>
+<span class="sourceLineNo">037</span>                do {<a name="line.37"></a>
+<span class="sourceLineNo">038</span>                        i++;<a name="line.38"></a>
+<span class="sourceLineNo">039</span>                        int nB = count(h, 0, q);<a name="line.39"></a>
+<span class="sourceLineNo">040</span>                        int nF = count(h, q+1, K-1);<a name="line.40"></a>
+<span class="sourceLineNo">041</span>                        if (nB == 0 || nF == 0)<a name="line.41"></a>
+<span class="sourceLineNo">042</span>                                return -1;<a name="line.42"></a>
+<span class="sourceLineNo">043</span>                        double meanB = mean(h, 0, q);<a name="line.43"></a>
+<span class="sourceLineNo">044</span>                        double meanF = mean(h, q+1, K-1);<a name="line.44"></a>
+<span class="sourceLineNo">045</span>                        q_ = q;                         <a name="line.45"></a>
+<span class="sourceLineNo">046</span>                        q = (int)((meanB + meanF)/2);<a name="line.46"></a>
+<span class="sourceLineNo">047</span>                } while (q != q_ &amp;&amp; i &lt; MAX_ITERATIONS);<a name="line.47"></a>
+<span class="sourceLineNo">048</span>                <a name="line.48"></a>
+<span class="sourceLineNo">049</span>                return q;<a name="line.49"></a>
+<span class="sourceLineNo">050</span>        }<a name="line.50"></a>
+<span class="sourceLineNo">051</span><a name="line.51"></a>
+<span class="sourceLineNo">052</span>}<a name="line.52"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+</body>
+</html>

@@ -1,0 +1,310 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span>/*******************************************************************************<a name="line.1"></a>
+<span class="sourceLineNo">002</span> * This software is provided as a supplement to the authors' textbooks on digital<a name="line.2"></a>
+<span class="sourceLineNo">003</span> *  image processing published by Springer-Verlag in various languages and editions.<a name="line.3"></a>
+<span class="sourceLineNo">004</span> * Permission to use and distribute this software is granted under the BSD 2-Clause <a name="line.4"></a>
+<span class="sourceLineNo">005</span> * "Simplified" License (see http://opensource.org/licenses/BSD-2-Clause). <a name="line.5"></a>
+<span class="sourceLineNo">006</span> * Copyright (c) 2006-2016 Wilhelm Burger, Mark J. Burge. All rights reserved. <a name="line.6"></a>
+<span class="sourceLineNo">007</span> * Visit http://imagingbook.com for additional details.<a name="line.7"></a>
+<span class="sourceLineNo">008</span> *******************************************************************************/<a name="line.8"></a>
+<span class="sourceLineNo">009</span><a name="line.9"></a>
+<span class="sourceLineNo">010</span>package imagingbook.pub.regions;<a name="line.10"></a>
+<span class="sourceLineNo">011</span><a name="line.11"></a>
+<span class="sourceLineNo">012</span>import java.awt.Point;<a name="line.12"></a>
+<span class="sourceLineNo">013</span>import java.util.ArrayList;<a name="line.13"></a>
+<span class="sourceLineNo">014</span>import java.util.Collections;<a name="line.14"></a>
+<span class="sourceLineNo">015</span>import java.util.List;<a name="line.15"></a>
+<span class="sourceLineNo">016</span><a name="line.16"></a>
+<span class="sourceLineNo">017</span>import ij.IJ;<a name="line.17"></a>
+<span class="sourceLineNo">018</span>import ij.process.ByteProcessor;<a name="line.18"></a>
+<span class="sourceLineNo">019</span><a name="line.19"></a>
+<span class="sourceLineNo">020</span>/**<a name="line.20"></a>
+<span class="sourceLineNo">021</span> * Binary region labeler based on a combined region labeling<a name="line.21"></a>
+<span class="sourceLineNo">022</span> * and contour tracing algorithm:<a name="line.22"></a>
+<span class="sourceLineNo">023</span> * F. Chang, C. J. Chen, and C. J. Lu. A linear-time component labeling<a name="line.23"></a>
+<span class="sourceLineNo">024</span> * algorithm using contour tracing technique. Computer Vision, Graphics,<a name="line.24"></a>
+<span class="sourceLineNo">025</span> * and Image Processing: Image Understanding 93(2), 206-220 (2004).<a name="line.25"></a>
+<span class="sourceLineNo">026</span> * <a name="line.26"></a>
+<span class="sourceLineNo">027</span> * @author WB<a name="line.27"></a>
+<span class="sourceLineNo">028</span> * @version 2016-11-08<a name="line.28"></a>
+<span class="sourceLineNo">029</span> */<a name="line.29"></a>
+<span class="sourceLineNo">030</span>public class RegionContourLabeling extends RegionLabeling implements ContourTracer { <a name="line.30"></a>
+<span class="sourceLineNo">031</span>        <a name="line.31"></a>
+<span class="sourceLineNo">032</span>        static private final int VISITED = -1;<a name="line.32"></a>
+<span class="sourceLineNo">033</span>        <a name="line.33"></a>
+<span class="sourceLineNo">034</span>        private List&lt;Contour&gt; outerContours;<a name="line.34"></a>
+<span class="sourceLineNo">035</span>        private List&lt;Contour&gt; innerContours;<a name="line.35"></a>
+<span class="sourceLineNo">036</span>        <a name="line.36"></a>
+<span class="sourceLineNo">037</span>        /**<a name="line.37"></a>
+<span class="sourceLineNo">038</span>         * Creates a new region labeling.<a name="line.38"></a>
+<span class="sourceLineNo">039</span>         * <a name="line.39"></a>
+<span class="sourceLineNo">040</span>         * @param ip the binary input image with 0 values for background pixels and values &amp;gt; 0<a name="line.40"></a>
+<span class="sourceLineNo">041</span>         * for foreground pixels.<a name="line.41"></a>
+<span class="sourceLineNo">042</span>         */<a name="line.42"></a>
+<span class="sourceLineNo">043</span>        public RegionContourLabeling (ByteProcessor ip) {<a name="line.43"></a>
+<span class="sourceLineNo">044</span>                super(ip);      // all work is done by the constructor of the superclass<a name="line.44"></a>
+<span class="sourceLineNo">045</span>        }<a name="line.45"></a>
+<span class="sourceLineNo">046</span>        <a name="line.46"></a>
+<span class="sourceLineNo">047</span>        // public methods required by interface ContourTracer (others are in inherited from super-class)<a name="line.47"></a>
+<span class="sourceLineNo">048</span>        <a name="line.48"></a>
+<span class="sourceLineNo">049</span>        @Override<a name="line.49"></a>
+<span class="sourceLineNo">050</span>        public List&lt;Contour&gt; getOuterContours() {<a name="line.50"></a>
+<span class="sourceLineNo">051</span>                return copyContours(outerContours, false);<a name="line.51"></a>
+<span class="sourceLineNo">052</span>        }<a name="line.52"></a>
+<span class="sourceLineNo">053</span>        <a name="line.53"></a>
+<span class="sourceLineNo">054</span>        @Override<a name="line.54"></a>
+<span class="sourceLineNo">055</span>        public List&lt;Contour&gt; getOuterContours(boolean sort) {<a name="line.55"></a>
+<span class="sourceLineNo">056</span>                return copyContours(outerContours, sort);<a name="line.56"></a>
+<span class="sourceLineNo">057</span>        }<a name="line.57"></a>
+<span class="sourceLineNo">058</span>        <a name="line.58"></a>
+<span class="sourceLineNo">059</span>        @Override<a name="line.59"></a>
+<span class="sourceLineNo">060</span>        public List&lt;Contour&gt; getInnerContours() {<a name="line.60"></a>
+<span class="sourceLineNo">061</span>                return copyContours(innerContours, false);<a name="line.61"></a>
+<span class="sourceLineNo">062</span>        }<a name="line.62"></a>
+<span class="sourceLineNo">063</span>        <a name="line.63"></a>
+<span class="sourceLineNo">064</span>        @Override<a name="line.64"></a>
+<span class="sourceLineNo">065</span>        public List&lt;Contour&gt; getInnerContours(boolean sort) {<a name="line.65"></a>
+<span class="sourceLineNo">066</span>                return copyContours(innerContours, sort);<a name="line.66"></a>
+<span class="sourceLineNo">067</span>        }<a name="line.67"></a>
+<span class="sourceLineNo">068</span>        <a name="line.68"></a>
+<span class="sourceLineNo">069</span><a name="line.69"></a>
+<span class="sourceLineNo">070</span>        // non-public methods<a name="line.70"></a>
+<span class="sourceLineNo">071</span>        <a name="line.71"></a>
+<span class="sourceLineNo">072</span>        @Override<a name="line.72"></a>
+<span class="sourceLineNo">073</span>        protected int[][] initialize() {<a name="line.73"></a>
+<span class="sourceLineNo">074</span>                // Create a label array which is "padded" by 1 pixel, i.e., <a name="line.74"></a>
+<span class="sourceLineNo">075</span>                // 2 rows and 2 columns larger than the image:<a name="line.75"></a>
+<span class="sourceLineNo">076</span>                int[][] lA = new int[width+2][height+2];        // label array, initialized to zero<a name="line.76"></a>
+<span class="sourceLineNo">077</span>                outerContours = new ArrayList&lt;Contour&gt;();<a name="line.77"></a>
+<span class="sourceLineNo">078</span>                innerContours = new ArrayList&lt;Contour&gt;();<a name="line.78"></a>
+<span class="sourceLineNo">079</span>                return lA;<a name="line.79"></a>
+<span class="sourceLineNo">080</span>        }<a name="line.80"></a>
+<span class="sourceLineNo">081</span>        <a name="line.81"></a>
+<span class="sourceLineNo">082</span>        @Override<a name="line.82"></a>
+<span class="sourceLineNo">083</span>        void applyLabeling() {<a name="line.83"></a>
+<span class="sourceLineNo">084</span>                resetLabel();<a name="line.84"></a>
+<span class="sourceLineNo">085</span>                // scan top to bottom, left to right<a name="line.85"></a>
+<span class="sourceLineNo">086</span>                for (int v = 0; v &lt; height; v++) {<a name="line.86"></a>
+<span class="sourceLineNo">087</span>                        int label = 0;  // reset label, scan through horiz. line:<a name="line.87"></a>
+<span class="sourceLineNo">088</span>                        for (int u = 0; u &lt; width; u++) {<a name="line.88"></a>
+<span class="sourceLineNo">089</span>                                if (ip.getPixel(u, v) &gt; 0) {    // unlabeled FOREGROUND pixel<a name="line.89"></a>
+<span class="sourceLineNo">090</span>                                        if (label != 0) { // keep using the same label<a name="line.90"></a>
+<span class="sourceLineNo">091</span>                                                setLabel(u, v, label);<a name="line.91"></a>
+<span class="sourceLineNo">092</span>                                        }<a name="line.92"></a>
+<span class="sourceLineNo">093</span>                                        else {  // label == zero<a name="line.93"></a>
+<span class="sourceLineNo">094</span>                                                label = getLabel(u, v);<a name="line.94"></a>
+<span class="sourceLineNo">095</span>                                                if (label == 0) {       // new (unlabeled) region is hit<a name="line.95"></a>
+<span class="sourceLineNo">096</span>                                                        label = getNextLabel(); // assign a new region label<a name="line.96"></a>
+<span class="sourceLineNo">097</span>                                                        Contour oc = traceContour(u, v, 0, label);<a name="line.97"></a>
+<span class="sourceLineNo">098</span>                                                        outerContours.add(oc);<a name="line.98"></a>
+<span class="sourceLineNo">099</span>                                                        setLabel(u, v, label);<a name="line.99"></a>
+<span class="sourceLineNo">100</span>                                                }<a name="line.100"></a>
+<span class="sourceLineNo">101</span>                                        }<a name="line.101"></a>
+<span class="sourceLineNo">102</span>                                } <a name="line.102"></a>
+<span class="sourceLineNo">103</span>                                else {  // BACKGROUND pixel<a name="line.103"></a>
+<span class="sourceLineNo">104</span>                                        if (label != 0) { // exiting a region<a name="line.104"></a>
+<span class="sourceLineNo">105</span>                                                if (getLabel(u, v) == BACKGROUND) { // unlabeled - new inner contour<a name="line.105"></a>
+<span class="sourceLineNo">106</span>                                                        Contour ic = traceContour(u - 1, v, 1, label);<a name="line.106"></a>
+<span class="sourceLineNo">107</span>                                                        innerContours.add(ic);<a name="line.107"></a>
+<span class="sourceLineNo">108</span>                                                }<a name="line.108"></a>
+<span class="sourceLineNo">109</span>                                                label = 0;<a name="line.109"></a>
+<span class="sourceLineNo">110</span>                                        }<a name="line.110"></a>
+<span class="sourceLineNo">111</span>                                }<a name="line.111"></a>
+<span class="sourceLineNo">112</span>                        }<a name="line.112"></a>
+<span class="sourceLineNo">113</span>                }<a name="line.113"></a>
+<span class="sourceLineNo">114</span>        }<a name="line.114"></a>
+<span class="sourceLineNo">115</span>        <a name="line.115"></a>
+<span class="sourceLineNo">116</span>        @Override<a name="line.116"></a>
+<span class="sourceLineNo">117</span>        void collectRegions() {<a name="line.117"></a>
+<span class="sourceLineNo">118</span>                super.collectRegions(); // collect region pixels and calculate statistics<a name="line.118"></a>
+<span class="sourceLineNo">119</span>                attachOuterContours();  // attach each outer contours to the corresponding region<a name="line.119"></a>
+<span class="sourceLineNo">120</span>                attachInnerContours();  // attach all inner contours to the corresponding regions<a name="line.120"></a>
+<span class="sourceLineNo">121</span>        }<a name="line.121"></a>
+<span class="sourceLineNo">122</span>        <a name="line.122"></a>
+<span class="sourceLineNo">123</span>        // Trace one contour starting at (xS,yS) <a name="line.123"></a>
+<span class="sourceLineNo">124</span>        // in direction dS with label label<a name="line.124"></a>
+<span class="sourceLineNo">125</span>        // trace one contour starting at (xS,yS) in direction dS        <a name="line.125"></a>
+<span class="sourceLineNo">126</span>        private Contour traceContour(int xS, int yS, int dS, int label) {<a name="line.126"></a>
+<span class="sourceLineNo">127</span>                Contour contr = new Contour(label);<a name="line.127"></a>
+<span class="sourceLineNo">128</span>                int xT, yT; // T = successor of starting point (xS,yS)<a name="line.128"></a>
+<span class="sourceLineNo">129</span>                int xP, yP; // P = previous contour point<a name="line.129"></a>
+<span class="sourceLineNo">130</span>                int xC, yC; // C = current contour point<a name="line.130"></a>
+<span class="sourceLineNo">131</span>                Point pt = new Point(xS, yS); <a name="line.131"></a>
+<span class="sourceLineNo">132</span>                int dNext = findNextPoint(pt, dS);<a name="line.132"></a>
+<span class="sourceLineNo">133</span>                contr.addPoint(pt); <a name="line.133"></a>
+<span class="sourceLineNo">134</span>                xP = xS; yP = yS;<a name="line.134"></a>
+<span class="sourceLineNo">135</span>                xC = xT = pt.x;<a name="line.135"></a>
+<span class="sourceLineNo">136</span>                yC = yT = pt.y;<a name="line.136"></a>
+<span class="sourceLineNo">137</span>                <a name="line.137"></a>
+<span class="sourceLineNo">138</span>                boolean done = (xS == xT &amp;&amp; yS == yT);  // true if isolated pixel<a name="line.138"></a>
+<span class="sourceLineNo">139</span>                while (!done) {<a name="line.139"></a>
+<span class="sourceLineNo">140</span>                        setLabel(xC, yC, label);<a name="line.140"></a>
+<span class="sourceLineNo">141</span>                        pt = new Point(xC, yC);<a name="line.141"></a>
+<span class="sourceLineNo">142</span>                        int dSearch = (dNext + 6) % 8;<a name="line.142"></a>
+<span class="sourceLineNo">143</span>                        dNext = findNextPoint(pt, dSearch);<a name="line.143"></a>
+<span class="sourceLineNo">144</span>                        xP = xC;  yP = yC;      <a name="line.144"></a>
+<span class="sourceLineNo">145</span>                        xC = pt.x; yC = pt.y; <a name="line.145"></a>
+<span class="sourceLineNo">146</span>                        // are we back at the starting position?<a name="line.146"></a>
+<span class="sourceLineNo">147</span>                        done = (xP==xS &amp;&amp; yP==yS &amp;&amp; xC==xT &amp;&amp; yC==yT);<a name="line.147"></a>
+<span class="sourceLineNo">148</span>                        if (!done) {<a name="line.148"></a>
+<span class="sourceLineNo">149</span>                                contr.addPoint(pt);<a name="line.149"></a>
+<span class="sourceLineNo">150</span>                        }<a name="line.150"></a>
+<span class="sourceLineNo">151</span>                }<a name="line.151"></a>
+<span class="sourceLineNo">152</span>                return contr;<a name="line.152"></a>
+<span class="sourceLineNo">153</span>        }<a name="line.153"></a>
+<span class="sourceLineNo">154</span>        <a name="line.154"></a>
+<span class="sourceLineNo">155</span>        static final int[][] delta = {<a name="line.155"></a>
+<span class="sourceLineNo">156</span>                        { 1,0}, { 1, 1}, {0, 1}, {-1, 1}, <a name="line.156"></a>
+<span class="sourceLineNo">157</span>                        {-1,0}, {-1,-1}, {0,-1}, { 1,-1}};<a name="line.157"></a>
+<span class="sourceLineNo">158</span>        <a name="line.158"></a>
+<span class="sourceLineNo">159</span>        private int findNextPoint (Point pt, int dir) { <a name="line.159"></a>
+<span class="sourceLineNo">160</span>                // Starts at Point pt in direction dir,<a name="line.160"></a>
+<span class="sourceLineNo">161</span>                // returns the resulting tracing direction<a name="line.161"></a>
+<span class="sourceLineNo">162</span>                // and modifies pt.<a name="line.162"></a>
+<span class="sourceLineNo">163</span>                for (int i = 0; i &lt; 7; i++) {<a name="line.163"></a>
+<span class="sourceLineNo">164</span>                        int x = pt.x + delta[dir][0];<a name="line.164"></a>
+<span class="sourceLineNo">165</span>                        int y = pt.y + delta[dir][1];<a name="line.165"></a>
+<span class="sourceLineNo">166</span>                        if (ip.getPixel(x, y) == BACKGROUND) {<a name="line.166"></a>
+<span class="sourceLineNo">167</span>                                setLabel(x, y, VISITED);        // mark surrounding background pixels<a name="line.167"></a>
+<span class="sourceLineNo">168</span>                                dir = (dir + 1) % 8;<a name="line.168"></a>
+<span class="sourceLineNo">169</span>                        } <a name="line.169"></a>
+<span class="sourceLineNo">170</span>                        else {  // found a non-background pixel (next pixel to follow)<a name="line.170"></a>
+<span class="sourceLineNo">171</span>                                pt.x = x; <a name="line.171"></a>
+<span class="sourceLineNo">172</span>                                pt.y = y; <a name="line.172"></a>
+<span class="sourceLineNo">173</span>                                break;<a name="line.173"></a>
+<span class="sourceLineNo">174</span>                        }<a name="line.174"></a>
+<span class="sourceLineNo">175</span>                }<a name="line.175"></a>
+<span class="sourceLineNo">176</span>                return dir;<a name="line.176"></a>
+<span class="sourceLineNo">177</span>        }<a name="line.177"></a>
+<span class="sourceLineNo">178</span>        <a name="line.178"></a>
+<span class="sourceLineNo">179</span>        private void attachOuterContours() {<a name="line.179"></a>
+<span class="sourceLineNo">180</span>                for (Contour c : outerContours) {<a name="line.180"></a>
+<span class="sourceLineNo">181</span>                        int label = c.getLabel();<a name="line.181"></a>
+<span class="sourceLineNo">182</span>                        BinaryRegion r = findRegion(label);<a name="line.182"></a>
+<span class="sourceLineNo">183</span>                        if (r == null) {<a name="line.183"></a>
+<span class="sourceLineNo">184</span>                                IJ.log("Error: Could not associate outer contour with label " + label);<a name="line.184"></a>
+<span class="sourceLineNo">185</span>                        }<a name="line.185"></a>
+<span class="sourceLineNo">186</span>                        else {<a name="line.186"></a>
+<span class="sourceLineNo">187</span>                                r.setOuterContour(c);<a name="line.187"></a>
+<span class="sourceLineNo">188</span>                        }<a name="line.188"></a>
+<span class="sourceLineNo">189</span>                }<a name="line.189"></a>
+<span class="sourceLineNo">190</span>        }<a name="line.190"></a>
+<span class="sourceLineNo">191</span>        <a name="line.191"></a>
+<span class="sourceLineNo">192</span>        private void attachInnerContours() {<a name="line.192"></a>
+<span class="sourceLineNo">193</span>                for (BinaryRegion r : regions) {<a name="line.193"></a>
+<span class="sourceLineNo">194</span>                        r.makeInnerContours();  // ensure that every region has a (empty) list of inner contours<a name="line.194"></a>
+<span class="sourceLineNo">195</span>                }<a name="line.195"></a>
+<span class="sourceLineNo">196</span>                for (Contour c : innerContours) {<a name="line.196"></a>
+<span class="sourceLineNo">197</span>                        int label = c.getLabel();<a name="line.197"></a>
+<span class="sourceLineNo">198</span>                        BinaryRegion r = findRegion(label);<a name="line.198"></a>
+<span class="sourceLineNo">199</span>                        if (r == null) {<a name="line.199"></a>
+<span class="sourceLineNo">200</span>                                IJ.log("Error: Could not associate inner contour with label " + label);<a name="line.200"></a>
+<span class="sourceLineNo">201</span>                        }<a name="line.201"></a>
+<span class="sourceLineNo">202</span>                        else {<a name="line.202"></a>
+<span class="sourceLineNo">203</span>                                r.addInnerContour(c);<a name="line.203"></a>
+<span class="sourceLineNo">204</span>                        }<a name="line.204"></a>
+<span class="sourceLineNo">205</span>                }<a name="line.205"></a>
+<span class="sourceLineNo">206</span>        }<a name="line.206"></a>
+<span class="sourceLineNo">207</span><a name="line.207"></a>
+<span class="sourceLineNo">208</span>        // access methods to the label array (which is padded!)<a name="line.208"></a>
+<span class="sourceLineNo">209</span>        @Override<a name="line.209"></a>
+<span class="sourceLineNo">210</span>        public int getLabel(int u, int v) {     // (u,v) are image coordinates<a name="line.210"></a>
+<span class="sourceLineNo">211</span>                if (u &gt;= -1 &amp;&amp; u &lt;= width &amp;&amp; v &gt;= -1 &amp;&amp; v &lt;= height)<a name="line.211"></a>
+<span class="sourceLineNo">212</span>                        return labelArray[u + 1][v + 1];        // label array is padded (offset = 1)<a name="line.212"></a>
+<span class="sourceLineNo">213</span>                else<a name="line.213"></a>
+<span class="sourceLineNo">214</span>                        return BACKGROUND;<a name="line.214"></a>
+<span class="sourceLineNo">215</span>                //return labelArray[u + 1][v + 1];      // original version<a name="line.215"></a>
+<span class="sourceLineNo">216</span>        }<a name="line.216"></a>
+<span class="sourceLineNo">217</span>        <a name="line.217"></a>
+<span class="sourceLineNo">218</span>        @Override<a name="line.218"></a>
+<span class="sourceLineNo">219</span>        protected void setLabel(int u, int v, int label) { // (u,v) are image coordinates<a name="line.219"></a>
+<span class="sourceLineNo">220</span>                if (u &gt;= -1 &amp;&amp; u &lt;= width &amp;&amp; v &gt;= -1 &amp;&amp; v &lt;= height) {<a name="line.220"></a>
+<span class="sourceLineNo">221</span>                        labelArray[u + 1][v + 1] = label;<a name="line.221"></a>
+<span class="sourceLineNo">222</span>                }<a name="line.222"></a>
+<span class="sourceLineNo">223</span>        }<a name="line.223"></a>
+<span class="sourceLineNo">224</span>        <a name="line.224"></a>
+<span class="sourceLineNo">225</span>        private List&lt;Contour&gt; copyContours(List&lt;Contour&gt; cntrs, boolean sort) {<a name="line.225"></a>
+<span class="sourceLineNo">226</span>                if (cntrs == null)<a name="line.226"></a>
+<span class="sourceLineNo">227</span>                        return Collections.emptyList(); <a name="line.227"></a>
+<span class="sourceLineNo">228</span>                else {<a name="line.228"></a>
+<span class="sourceLineNo">229</span>                        List&lt;Contour&gt; cc = new ArrayList&lt;Contour&gt;(cntrs);<a name="line.229"></a>
+<span class="sourceLineNo">230</span>                        if (sort) {<a name="line.230"></a>
+<span class="sourceLineNo">231</span>                                Collections.sort(cc);<a name="line.231"></a>
+<span class="sourceLineNo">232</span>                        }<a name="line.232"></a>
+<span class="sourceLineNo">233</span>                        return cc;<a name="line.233"></a>
+<span class="sourceLineNo">234</span>                }<a name="line.234"></a>
+<span class="sourceLineNo">235</span>        }<a name="line.235"></a>
+<span class="sourceLineNo">236</span>        <a name="line.236"></a>
+<span class="sourceLineNo">237</span>}<a name="line.237"></a>
+<span class="sourceLineNo">238</span><a name="line.238"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+</body>
+</html>

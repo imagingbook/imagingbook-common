@@ -1,0 +1,655 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span>/*******************************************************************************<a name="line.1"></a>
+<span class="sourceLineNo">002</span> * This software is provided as a supplement to the authors' textbooks on digital<a name="line.2"></a>
+<span class="sourceLineNo">003</span> *  image processing published by Springer-Verlag in various languages and editions.<a name="line.3"></a>
+<span class="sourceLineNo">004</span> * Permission to use and distribute this software is granted under the BSD 2-Clause <a name="line.4"></a>
+<span class="sourceLineNo">005</span> * "Simplified" License (see http://opensource.org/licenses/BSD-2-Clause). <a name="line.5"></a>
+<span class="sourceLineNo">006</span> * Copyright (c) 2006-2016 Wilhelm Burger, Mark J. Burge. All rights reserved. <a name="line.6"></a>
+<span class="sourceLineNo">007</span> * Visit http://imagingbook.com for additional details.<a name="line.7"></a>
+<span class="sourceLineNo">008</span> *******************************************************************************/<a name="line.8"></a>
+<span class="sourceLineNo">009</span><a name="line.9"></a>
+<span class="sourceLineNo">010</span>package imagingbook.pub.color.quantize;<a name="line.10"></a>
+<span class="sourceLineNo">011</span><a name="line.11"></a>
+<span class="sourceLineNo">012</span>import java.util.Arrays;<a name="line.12"></a>
+<span class="sourceLineNo">013</span>import java.util.LinkedList;<a name="line.13"></a>
+<span class="sourceLineNo">014</span>import java.util.List;<a name="line.14"></a>
+<span class="sourceLineNo">015</span><a name="line.15"></a>
+<span class="sourceLineNo">016</span>/**<a name="line.16"></a>
+<span class="sourceLineNo">017</span> * This class implements color quantization based on the octree method. It is a<a name="line.17"></a>
+<span class="sourceLineNo">018</span> * re-factored version of an implementation (OctTreeOpImage.java) used in Sun's JAI <a name="line.18"></a>
+<span class="sourceLineNo">019</span> * (Java Advanced Imaging) framework, which &amp;ndash; in turn &amp;ndash; is based on a <a name="line.19"></a>
+<span class="sourceLineNo">020</span> * C implementation (quantize.c) authored by John Cristy in 1992 as part of <a name="line.20"></a>
+<span class="sourceLineNo">021</span> * &lt;a href="http://www.imagemagick.org/"&gt;ImageMagick&lt;/a&gt;.<a name="line.21"></a>
+<span class="sourceLineNo">022</span> * The associated source code can be found <a name="line.22"></a>
+<span class="sourceLineNo">023</span> * &lt;a href="http://git.imagemagick.org/repos/ImageMagick/blob/master/MagickCore/quantize.c"&gt;<a name="line.23"></a>
+<span class="sourceLineNo">024</span> * here&lt;/a&gt;, the original copyright note is provided at the bottom of this source file.<a name="line.24"></a>
+<span class="sourceLineNo">025</span> * <a name="line.25"></a>
+<span class="sourceLineNo">026</span> * See also the abovementioned JAI implementation in<a name="line.26"></a>
+<span class="sourceLineNo">027</span> * &lt;a href="https://java.net/projects/jai-core/sources/svn/content/trunk/src/share/classes/com/sun/media/jai/opimage/OctTreeOpImage.java"&gt;<a name="line.27"></a>
+<span class="sourceLineNo">028</span> * OctTreeOpImage.java&lt;/a&gt;.<a name="line.28"></a>
+<span class="sourceLineNo">029</span> * <a name="line.29"></a>
+<span class="sourceLineNo">030</span> * This implementation is similar but not identical to the original octree quantization algorithm proposed<a name="line.30"></a>
+<span class="sourceLineNo">031</span> * by Gervautz and Purgathofer [M. Gervautz and W. Purgathofer. "A simple method for color<a name="line.31"></a>
+<span class="sourceLineNo">032</span> * quantization: octree quantization", in A. Glassner (editor), Graphics Gems I, <a name="line.32"></a>
+<span class="sourceLineNo">033</span> * pp. 287–293. Academic Press, New York (1990)].<a name="line.33"></a>
+<span class="sourceLineNo">034</span> * This implementation uses a modified strategy for pruning the octree for better efficiency.<a name="line.34"></a>
+<span class="sourceLineNo">035</span> * <a name="line.35"></a>
+<span class="sourceLineNo">036</span> * "Quick quantization" means that original colors are mapped to their color index by simply<a name="line.36"></a>
+<span class="sourceLineNo">037</span> * finding the containing octree node. Otherwise, the closest quantized color (in terms of <a name="line.37"></a>
+<span class="sourceLineNo">038</span> * Euclidean distance) is searched for, which is naturally slower.<a name="line.38"></a>
+<span class="sourceLineNo">039</span> * <a name="line.39"></a>
+<span class="sourceLineNo">040</span> * @author WB<a name="line.40"></a>
+<span class="sourceLineNo">041</span> * @version 2017/01/03<a name="line.41"></a>
+<span class="sourceLineNo">042</span> */<a name="line.42"></a>
+<span class="sourceLineNo">043</span>public class OctreeQuantizer extends ColorQuantizer {<a name="line.43"></a>
+<span class="sourceLineNo">044</span><a name="line.44"></a>
+<span class="sourceLineNo">045</span>//      private final static int MAX_RGB = 255;<a name="line.45"></a>
+<span class="sourceLineNo">046</span>        private final static int MAX_NODES = 262144 - 1; // = 2^18 - 1, was 266817;<a name="line.46"></a>
+<span class="sourceLineNo">047</span>        private final static int MAX_TREE_DEPTH = 8;    // check, 7 enough?<a name="line.47"></a>
+<span class="sourceLineNo">048</span><a name="line.48"></a>
+<span class="sourceLineNo">049</span>        private final int maxColors;    // max. number of distinct colors after quantization<a name="line.49"></a>
+<span class="sourceLineNo">050</span>        <a name="line.50"></a>
+<span class="sourceLineNo">051</span>        private final int nColors;              // final number of colors<a name="line.51"></a>
+<span class="sourceLineNo">052</span>        private final Node root;                // root node of the tree<a name="line.52"></a>
+<span class="sourceLineNo">053</span>        <a name="line.53"></a>
+<span class="sourceLineNo">054</span>        private int depth;                              // current depth of the tree<a name="line.54"></a>
+<span class="sourceLineNo">055</span>        private int nodeCnt = 0;                // counts the number of nodes in the tree<a name="line.55"></a>
+<span class="sourceLineNo">056</span>        private int colorCnt = 0;               // counts the number of colors in the cube (used for temp. counting)<a name="line.56"></a>
+<span class="sourceLineNo">057</span><a name="line.57"></a>
+<span class="sourceLineNo">058</span>        private final int[][] colormap;<a name="line.58"></a>
+<span class="sourceLineNo">059</span>        private boolean quickQuantization = false;<a name="line.59"></a>
+<span class="sourceLineNo">060</span>        <a name="line.60"></a>
+<span class="sourceLineNo">061</span>        private final Parameters params;<a name="line.61"></a>
+<span class="sourceLineNo">062</span>        <a name="line.62"></a>
+<span class="sourceLineNo">063</span>        public static class Parameters {<a name="line.63"></a>
+<span class="sourceLineNo">064</span>                /** Maximum number of quantized colors. */<a name="line.64"></a>
+<span class="sourceLineNo">065</span>                public int maxColors = 16;<a name="line.65"></a>
+<span class="sourceLineNo">066</span>                /** Enable/disable quick quantization */<a name="line.66"></a>
+<span class="sourceLineNo">067</span>                public boolean quickQuantization = false;<a name="line.67"></a>
+<span class="sourceLineNo">068</span>                <a name="line.68"></a>
+<span class="sourceLineNo">069</span>                void check() {<a name="line.69"></a>
+<span class="sourceLineNo">070</span>                        if (maxColors &lt; 2 || maxColors &gt; 256) {<a name="line.70"></a>
+<span class="sourceLineNo">071</span>                                throw new IllegalArgumentException();<a name="line.71"></a>
+<span class="sourceLineNo">072</span>                        }<a name="line.72"></a>
+<span class="sourceLineNo">073</span>                }<a name="line.73"></a>
+<span class="sourceLineNo">074</span>        }<a name="line.74"></a>
+<span class="sourceLineNo">075</span><a name="line.75"></a>
+<span class="sourceLineNo">076</span>        // -------------------------------------------------------------------------<a name="line.76"></a>
+<span class="sourceLineNo">077</span>        <a name="line.77"></a>
+<span class="sourceLineNo">078</span>        public OctreeQuantizer(int[] pixels, Parameters params) {<a name="line.78"></a>
+<span class="sourceLineNo">079</span>                this.params = params;<a name="line.79"></a>
+<span class="sourceLineNo">080</span>                this.maxColors = this.params.maxColors;<a name="line.80"></a>
+<span class="sourceLineNo">081</span>                this.root = new Node(null, 0);<a name="line.81"></a>
+<span class="sourceLineNo">082</span>                this.depth = Math.min(Math.max(log2(maxColors) - 1, 2), MAX_TREE_DEPTH);// 2 &lt;= depth &lt;= maxTreeDepth   <a name="line.82"></a>
+<span class="sourceLineNo">083</span>                int initColorCnt = addPixels(pixels);<a name="line.83"></a>
+<span class="sourceLineNo">084</span>                this.nColors = reduceTree(initColorCnt, pixels.length);<a name="line.84"></a>
+<span class="sourceLineNo">085</span>                this.colormap = makeColorMap();<a name="line.85"></a>
+<span class="sourceLineNo">086</span>        }<a name="line.86"></a>
+<span class="sourceLineNo">087</span>        <a name="line.87"></a>
+<span class="sourceLineNo">088</span>        public OctreeQuantizer(int[] pixels) {<a name="line.88"></a>
+<span class="sourceLineNo">089</span>                this(pixels, new Parameters());<a name="line.89"></a>
+<span class="sourceLineNo">090</span>        }<a name="line.90"></a>
+<span class="sourceLineNo">091</span>        <a name="line.91"></a>
+<span class="sourceLineNo">092</span>        // -------------------------------------------------------------------------<a name="line.92"></a>
+<span class="sourceLineNo">093</span>        <a name="line.93"></a>
+<span class="sourceLineNo">094</span>        private int addPixels(int[] pixels) {<a name="line.94"></a>
+<span class="sourceLineNo">095</span>                for (int p : pixels) {<a name="line.95"></a>
+<span class="sourceLineNo">096</span>                        addPixel(p);<a name="line.96"></a>
+<span class="sourceLineNo">097</span>                        if (nodeCnt &gt; MAX_NODES) { // a hard limit on the number of nodes in the tree<a name="line.97"></a>
+<span class="sourceLineNo">098</span>                                root.pruneTree();<a name="line.98"></a>
+<span class="sourceLineNo">099</span>                                depth--;<a name="line.99"></a>
+<span class="sourceLineNo">100</span>                        }       <a name="line.100"></a>
+<span class="sourceLineNo">101</span>                }<a name="line.101"></a>
+<span class="sourceLineNo">102</span>                return colorCnt;<a name="line.102"></a>
+<span class="sourceLineNo">103</span>        }<a name="line.103"></a>
+<span class="sourceLineNo">104</span><a name="line.104"></a>
+<span class="sourceLineNo">105</span>        private void addPixel(int p) {<a name="line.105"></a>
+<span class="sourceLineNo">106</span>                // walk the tree to depth, increasing the number_pixels count in each node<a name="line.106"></a>
+<span class="sourceLineNo">107</span>                Node node = root;<a name="line.107"></a>
+<span class="sourceLineNo">108</span>                node.nPixels++;<a name="line.108"></a>
+<span class="sourceLineNo">109</span>                int[] rgb = intToRgb(p);<a name="line.109"></a>
+<span class="sourceLineNo">110</span>                for (int level = 1; level &lt;= depth; level++) {<a name="line.110"></a>
+<span class="sourceLineNo">111</span>                        int id = node.getChildId(rgb);<a name="line.111"></a>
+<span class="sourceLineNo">112</span>                        if (node.childs[id] == null) {<a name="line.112"></a>
+<span class="sourceLineNo">113</span>                                node = new Node(node, id);      // create a new node at next level<a name="line.113"></a>
+<span class="sourceLineNo">114</span>                        } <a name="line.114"></a>
+<span class="sourceLineNo">115</span>                        else {  // step to next level<a name="line.115"></a>
+<span class="sourceLineNo">116</span>                                node = node.childs[id];<a name="line.116"></a>
+<span class="sourceLineNo">117</span>                        }<a name="line.117"></a>
+<span class="sourceLineNo">118</span>                        node.nPixels++;<a name="line.118"></a>
+<span class="sourceLineNo">119</span>                }<a name="line.119"></a>
+<span class="sourceLineNo">120</span><a name="line.120"></a>
+<span class="sourceLineNo">121</span>                // at level 'depth': update color statistics of this node<a name="line.121"></a>
+<span class="sourceLineNo">122</span>                node.nUnique++;<a name="line.122"></a>
+<span class="sourceLineNo">123</span>                node.totalRed += rgb[0];<a name="line.123"></a>
+<span class="sourceLineNo">124</span>                node.totalGrn += rgb[1];<a name="line.124"></a>
+<span class="sourceLineNo">125</span>                node.totalBlu += rgb[2];<a name="line.125"></a>
+<span class="sourceLineNo">126</span>        }<a name="line.126"></a>
+<span class="sourceLineNo">127</span><a name="line.127"></a>
+<span class="sourceLineNo">128</span>        /**<a name="line.128"></a>
+<span class="sourceLineNo">129</span>         * reduceTree() repeatedly prunes the tree until the number of<a name="line.129"></a>
+<span class="sourceLineNo">130</span>         * nodes with unique &gt; 0 is less than or equal to the maximum<a name="line.130"></a>
+<span class="sourceLineNo">131</span>         * number of colors allowed in the output image.<a name="line.131"></a>
+<span class="sourceLineNo">132</span>         * When a node to be pruned has offspring, the pruning<a name="line.132"></a>
+<span class="sourceLineNo">133</span>         * procedure invokes itself recursively in order to prune the<a name="line.133"></a>
+<span class="sourceLineNo">134</span>         * tree from the leaves upward.  The statistics of the node<a name="line.134"></a>
+<span class="sourceLineNo">135</span>         * being pruned are always added to the corresponding data in<a name="line.135"></a>
+<span class="sourceLineNo">136</span>         * that node's parent.  This retains the pruned node's color<a name="line.136"></a>
+<span class="sourceLineNo">137</span>         * characteristics for later averaging.<a name="line.137"></a>
+<span class="sourceLineNo">138</span>         * <a name="line.138"></a>
+<span class="sourceLineNo">139</span>         * @param initColorCnt <a name="line.139"></a>
+<span class="sourceLineNo">140</span>         *              The initial number of colors (leaves) in the octree.<a name="line.140"></a>
+<span class="sourceLineNo">141</span>         * @param nSamples <a name="line.141"></a>
+<span class="sourceLineNo">142</span>         *              The total number of color samples used for creating the tree.<a name="line.142"></a>
+<span class="sourceLineNo">143</span>         * @return<a name="line.143"></a>
+<span class="sourceLineNo">144</span>         */<a name="line.144"></a>
+<span class="sourceLineNo">145</span>        private int reduceTree(int initColorCnt, int nSamples) {<a name="line.145"></a>
+<span class="sourceLineNo">146</span>                int minPixelCnt = Math.max(1,  nSamples / (maxColors * 8));<a name="line.146"></a>
+<span class="sourceLineNo">147</span>                colorCnt = initColorCnt;<a name="line.147"></a>
+<span class="sourceLineNo">148</span>                while (colorCnt &gt; maxColors) {<a name="line.148"></a>
+<span class="sourceLineNo">149</span>                        colorCnt = 0;   // for recounting the number of colors (leaves)<a name="line.149"></a>
+<span class="sourceLineNo">150</span>                        minPixelCnt = root.reduceSparseNodes(minPixelCnt, Integer.MAX_VALUE);<a name="line.150"></a>
+<span class="sourceLineNo">151</span>                }<a name="line.151"></a>
+<span class="sourceLineNo">152</span>                return colorCnt;<a name="line.152"></a>
+<span class="sourceLineNo">153</span>        }<a name="line.153"></a>
+<span class="sourceLineNo">154</span><a name="line.154"></a>
+<span class="sourceLineNo">155</span>        private int[][] makeColorMap() {<a name="line.155"></a>
+<span class="sourceLineNo">156</span>                List&lt;int[]&gt; colList = new LinkedList&lt;&gt;();<a name="line.156"></a>
+<span class="sourceLineNo">157</span>                colorCnt = 0;   // used to store the color index in each node<a name="line.157"></a>
+<span class="sourceLineNo">158</span>                root.collectColors(colList);<a name="line.158"></a>
+<span class="sourceLineNo">159</span>                return colList.toArray(new int[0][]);<a name="line.159"></a>
+<span class="sourceLineNo">160</span>        }<a name="line.160"></a>
+<span class="sourceLineNo">161</span>        <a name="line.161"></a>
+<span class="sourceLineNo">162</span>        /**<a name="line.162"></a>
+<span class="sourceLineNo">163</span>         * Lists the octree nodes to System.out (intended for debugging only).<a name="line.163"></a>
+<span class="sourceLineNo">164</span>         */<a name="line.164"></a>
+<span class="sourceLineNo">165</span>        public void listNodes() {<a name="line.165"></a>
+<span class="sourceLineNo">166</span>                root.listNodes();<a name="line.166"></a>
+<span class="sourceLineNo">167</span>        }<a name="line.167"></a>
+<span class="sourceLineNo">168</span><a name="line.168"></a>
+<span class="sourceLineNo">169</span>        // ------------------------------------------------------------------------------------<a name="line.169"></a>
+<span class="sourceLineNo">170</span>        <a name="line.170"></a>
+<span class="sourceLineNo">171</span>        /**<a name="line.171"></a>
+<span class="sourceLineNo">172</span>         * Represents a node in the octree.<a name="line.172"></a>
+<span class="sourceLineNo">173</span>         */<a name="line.173"></a>
+<span class="sourceLineNo">174</span>        private class Node {<a name="line.174"></a>
+<span class="sourceLineNo">175</span>                final Node parent;              // reference to the parent node (null for the root node)<a name="line.175"></a>
+<span class="sourceLineNo">176</span>                final Node[] childs;    // references to child nodes<a name="line.176"></a>
+<span class="sourceLineNo">177</span>                final int id;                   // branch index of this node at the parent node<a name="line.177"></a>
+<span class="sourceLineNo">178</span>                final int level;                // level of this node within the tree (root has level 0)<a name="line.178"></a>
+<span class="sourceLineNo">179</span>                <a name="line.179"></a>
+<span class="sourceLineNo">180</span>                int nChilds = 0;        // number of child nodes<a name="line.180"></a>
+<span class="sourceLineNo">181</span>                int nPixels = 0;        // number of pixels represented by this node and all child nodes<a name="line.181"></a>
+<span class="sourceLineNo">182</span>                int nUnique = 0;        // number of pixels represented by this node but none of the children<a name="line.182"></a>
+<span class="sourceLineNo">183</span><a name="line.183"></a>
+<span class="sourceLineNo">184</span>                final int midRed;       // RGB color midpoint (center of this node in color space)<a name="line.184"></a>
+<span class="sourceLineNo">185</span>                final int midGrn;<a name="line.185"></a>
+<span class="sourceLineNo">186</span>                final int midBlu;<a name="line.186"></a>
+<span class="sourceLineNo">187</span>                <a name="line.187"></a>
+<span class="sourceLineNo">188</span>                int totalRed = 0;       // sum of all pixel component values represented by this node<a name="line.188"></a>
+<span class="sourceLineNo">189</span>                int totalGrn = 0;<a name="line.189"></a>
+<span class="sourceLineNo">190</span>                int totalBlu = 0;<a name="line.190"></a>
+<span class="sourceLineNo">191</span>                <a name="line.191"></a>
+<span class="sourceLineNo">192</span>                int colorIdx = -1;      // the index of the associated color in the final color table<a name="line.192"></a>
+<span class="sourceLineNo">193</span><a name="line.193"></a>
+<span class="sourceLineNo">194</span>                Node(Node parent, int id) {<a name="line.194"></a>
+<span class="sourceLineNo">195</span>                        this.parent = parent;<a name="line.195"></a>
+<span class="sourceLineNo">196</span>                        this.id = id;<a name="line.196"></a>
+<span class="sourceLineNo">197</span>                        this.childs = new Node[8];<a name="line.197"></a>
+<span class="sourceLineNo">198</span>                        nodeCnt++;<a name="line.198"></a>
+<span class="sourceLineNo">199</span><a name="line.199"></a>
+<span class="sourceLineNo">200</span>                        if (parent == null) {   // this is the root node<a name="line.200"></a>
+<span class="sourceLineNo">201</span>                                this.level = 0;<a name="line.201"></a>
+<span class="sourceLineNo">202</span>                                // set this node's midpoint<a name="line.202"></a>
+<span class="sourceLineNo">203</span>                                int mid = (MAX_RGB + 1) / 2;<a name="line.203"></a>
+<span class="sourceLineNo">204</span>                                midRed = mid;<a name="line.204"></a>
+<span class="sourceLineNo">205</span>                                midGrn = mid;<a name="line.205"></a>
+<span class="sourceLineNo">206</span>                                midBlu = mid;<a name="line.206"></a>
+<span class="sourceLineNo">207</span>                        }<a name="line.207"></a>
+<span class="sourceLineNo">208</span>                        else {<a name="line.208"></a>
+<span class="sourceLineNo">209</span>                                this.level = parent.level + 1;<a name="line.209"></a>
+<span class="sourceLineNo">210</span>                                // attach this node to its parent<a name="line.210"></a>
+<span class="sourceLineNo">211</span>                                parent.nChilds++;<a name="line.211"></a>
+<span class="sourceLineNo">212</span>                                parent.childs[id] = this;<a name="line.212"></a>
+<span class="sourceLineNo">213</span>                                // set this node's midpoint<a name="line.213"></a>
+<span class="sourceLineNo">214</span>                                //int bi = (1 &lt;&lt; (MAX_TREE_DEPTH - level)) &gt;&gt; 1;<a name="line.214"></a>
+<span class="sourceLineNo">215</span>                                int bi = 256 &gt;&gt; (level + 1);<a name="line.215"></a>
+<span class="sourceLineNo">216</span>                                midRed = parent.midRed + ((id &amp; 1) &gt; 0 ? bi : -bi);<a name="line.216"></a>
+<span class="sourceLineNo">217</span>                                midGrn = parent.midGrn + ((id &amp; 2) &gt; 0 ? bi : -bi);<a name="line.217"></a>
+<span class="sourceLineNo">218</span>                                midBlu = parent.midBlu + ((id &amp; 4) &gt; 0 ? bi : -bi);<a name="line.218"></a>
+<span class="sourceLineNo">219</span>                                if (level == depth) {   // this is a leaf node<a name="line.219"></a>
+<span class="sourceLineNo">220</span>                                        colorCnt++;<a name="line.220"></a>
+<span class="sourceLineNo">221</span>                                }<a name="line.221"></a>
+<span class="sourceLineNo">222</span>                        }<a name="line.222"></a>
+<span class="sourceLineNo">223</span>                }<a name="line.223"></a>
+<span class="sourceLineNo">224</span><a name="line.224"></a>
+<span class="sourceLineNo">225</span><a name="line.225"></a>
+<span class="sourceLineNo">226</span>                /**<a name="line.226"></a>
+<span class="sourceLineNo">227</span>                 * Prune all nodes at the lowest level (= depth) of the tree.<a name="line.227"></a>
+<span class="sourceLineNo">228</span>                 */<a name="line.228"></a>
+<span class="sourceLineNo">229</span>                void pruneTree() {<a name="line.229"></a>
+<span class="sourceLineNo">230</span>                        if (nChilds != 0) {     <a name="line.230"></a>
+<span class="sourceLineNo">231</span>                                // move recursively to the lowest level<a name="line.231"></a>
+<span class="sourceLineNo">232</span>                                for (int i = 0; i &lt; childs.length; i++) {<a name="line.232"></a>
+<span class="sourceLineNo">233</span>                                        if (childs[i] != null) {<a name="line.233"></a>
+<span class="sourceLineNo">234</span>                                                childs[i].pruneTree();<a name="line.234"></a>
+<span class="sourceLineNo">235</span>                                        }<a name="line.235"></a>
+<span class="sourceLineNo">236</span>                                }<a name="line.236"></a>
+<span class="sourceLineNo">237</span>                        }<a name="line.237"></a>
+<span class="sourceLineNo">238</span>                        // work on the actual node now<a name="line.238"></a>
+<span class="sourceLineNo">239</span>                        if (level == depth) {   // we are at a node on the lowest level<a name="line.239"></a>
+<span class="sourceLineNo">240</span>                                delete();                       // remove THIS node!<a name="line.240"></a>
+<span class="sourceLineNo">241</span>                        }<a name="line.241"></a>
+<span class="sourceLineNo">242</span>                }<a name="line.242"></a>
+<span class="sourceLineNo">243</span><a name="line.243"></a>
+<span class="sourceLineNo">244</span><a name="line.244"></a>
+<span class="sourceLineNo">245</span>                /**<a name="line.245"></a>
+<span class="sourceLineNo">246</span>                 * Removes any nodes that hold fewer than 'minPixelCount' pixels<a name="line.246"></a>
+<span class="sourceLineNo">247</span>                 * and finds the minimum population of all remaining nodes. <a name="line.247"></a>
+<span class="sourceLineNo">248</span>                 * <a name="line.248"></a>
+<span class="sourceLineNo">249</span>                 * @param minPixelCount The minimum population required for surviving nodes.<a name="line.249"></a>
+<span class="sourceLineNo">250</span>                 * @param newMinPixelCnt The minimum population found so far (during recursive tree walk).<a name="line.250"></a>
+<span class="sourceLineNo">251</span>                 * @return<a name="line.251"></a>
+<span class="sourceLineNo">252</span>                 */<a name="line.252"></a>
+<span class="sourceLineNo">253</span>                int reduceSparseNodes(int minPixelCount, int newMinPixelCnt) {<a name="line.253"></a>
+<span class="sourceLineNo">254</span>                        // visit all child nodes first<a name="line.254"></a>
+<span class="sourceLineNo">255</span>                        if (nChilds &gt; 0) {<a name="line.255"></a>
+<span class="sourceLineNo">256</span>                                for (Node ch : childs) {<a name="line.256"></a>
+<span class="sourceLineNo">257</span>                                        if (ch != null) {<a name="line.257"></a>
+<span class="sourceLineNo">258</span>                                                newMinPixelCnt = ch.reduceSparseNodes(minPixelCount, newMinPixelCnt);<a name="line.258"></a>
+<span class="sourceLineNo">259</span>                                        }<a name="line.259"></a>
+<span class="sourceLineNo">260</span>                                }<a name="line.260"></a>
+<span class="sourceLineNo">261</span>                        }<a name="line.261"></a>
+<span class="sourceLineNo">262</span>                        // work on the actual node now<a name="line.262"></a>
+<span class="sourceLineNo">263</span>                        if (nPixels &lt;= minPixelCount) {<a name="line.263"></a>
+<span class="sourceLineNo">264</span>                                this.delete();<a name="line.264"></a>
+<span class="sourceLineNo">265</span>                        } <a name="line.265"></a>
+<span class="sourceLineNo">266</span>                        else {<a name="line.266"></a>
+<span class="sourceLineNo">267</span>                                if (nUnique &gt; 0) {<a name="line.267"></a>
+<span class="sourceLineNo">268</span>                                        colorCnt++;<a name="line.268"></a>
+<span class="sourceLineNo">269</span>                                }<a name="line.269"></a>
+<span class="sourceLineNo">270</span>                                newMinPixelCnt = Math.min(nPixels, newMinPixelCnt); // find smallest population<a name="line.270"></a>
+<span class="sourceLineNo">271</span>                        }<a name="line.271"></a>
+<span class="sourceLineNo">272</span>                        return newMinPixelCnt;<a name="line.272"></a>
+<span class="sourceLineNo">273</span>                }<a name="line.273"></a>
+<span class="sourceLineNo">274</span>                <a name="line.274"></a>
+<span class="sourceLineNo">275</span>                /**<a name="line.275"></a>
+<span class="sourceLineNo">276</span>                 * Remove this node, and push all pixel statistics to its parent.<a name="line.276"></a>
+<span class="sourceLineNo">277</span>                 */<a name="line.277"></a>
+<span class="sourceLineNo">278</span>                void delete() {<a name="line.278"></a>
+<span class="sourceLineNo">279</span>                        parent.nChilds--;<a name="line.279"></a>
+<span class="sourceLineNo">280</span>                        parent.nUnique += nUnique;<a name="line.280"></a>
+<span class="sourceLineNo">281</span>                        parent.totalRed += totalRed;<a name="line.281"></a>
+<span class="sourceLineNo">282</span>                        parent.totalGrn += totalGrn;<a name="line.282"></a>
+<span class="sourceLineNo">283</span>                        parent.totalBlu += totalBlu;<a name="line.283"></a>
+<span class="sourceLineNo">284</span>                        parent.childs[id] = null;       // unlink<a name="line.284"></a>
+<span class="sourceLineNo">285</span>                        nodeCnt--;<a name="line.285"></a>
+<span class="sourceLineNo">286</span>                }<a name="line.286"></a>
+<span class="sourceLineNo">287</span>                <a name="line.287"></a>
+<span class="sourceLineNo">288</span>                /**<a name="line.288"></a>
+<span class="sourceLineNo">289</span>                 * Calculates the branch index [0,...,7] out of this node<a name="line.289"></a>
+<span class="sourceLineNo">290</span>                 * for the specified color.<a name="line.290"></a>
+<span class="sourceLineNo">291</span>                 * @param red<a name="line.291"></a>
+<span class="sourceLineNo">292</span>                 * @param grn<a name="line.292"></a>
+<span class="sourceLineNo">293</span>                 * @param blu<a name="line.293"></a>
+<span class="sourceLineNo">294</span>                 * @return The branch index [0,...,7].<a name="line.294"></a>
+<span class="sourceLineNo">295</span>                 */<a name="line.295"></a>
+<span class="sourceLineNo">296</span>                int getChildId(int[] rgb) {<a name="line.296"></a>
+<span class="sourceLineNo">297</span>                        int idx = ((rgb[0] &gt; this.midRed ? 1 : 0) &lt;&lt; 0) <a name="line.297"></a>
+<span class="sourceLineNo">298</span>                                        | ((rgb[1] &gt; this.midGrn ? 1 : 0) &lt;&lt; 1)<a name="line.298"></a>
+<span class="sourceLineNo">299</span>                                        | ((rgb[2] &gt; this.midBlu ? 1 : 0) &lt;&lt; 2);<a name="line.299"></a>
+<span class="sourceLineNo">300</span>                        return idx;<a name="line.300"></a>
+<span class="sourceLineNo">301</span>                }<a name="line.301"></a>
+<span class="sourceLineNo">302</span>                <a name="line.302"></a>
+<span class="sourceLineNo">303</span>                /**<a name="line.303"></a>
+<span class="sourceLineNo">304</span>                 * Collects the color entries for the color map. Any node<a name="line.304"></a>
+<span class="sourceLineNo">305</span>                 * with a non-zero number of unique colors creates a color map<a name="line.305"></a>
+<span class="sourceLineNo">306</span>                 * entry. The representative color for the node is calculated<a name="line.306"></a>
+<span class="sourceLineNo">307</span>                 * as the average color vector over all contributing pixels.<a name="line.307"></a>
+<span class="sourceLineNo">308</span>                 * <a name="line.308"></a>
+<span class="sourceLineNo">309</span>                 * @param colList List of colors to add to.<a name="line.309"></a>
+<span class="sourceLineNo">310</span>                 */<a name="line.310"></a>
+<span class="sourceLineNo">311</span>                private void collectColors(List&lt;int[]&gt; colList) {<a name="line.311"></a>
+<span class="sourceLineNo">312</span>                        // visit all children first<a name="line.312"></a>
+<span class="sourceLineNo">313</span>                        if (nChilds &gt; 0) {<a name="line.313"></a>
+<span class="sourceLineNo">314</span>                                for (Node ch : childs) {<a name="line.314"></a>
+<span class="sourceLineNo">315</span>                                        if (ch != null) {<a name="line.315"></a>
+<span class="sourceLineNo">316</span>                                                ch.collectColors(colList);<a name="line.316"></a>
+<span class="sourceLineNo">317</span>                                        }<a name="line.317"></a>
+<span class="sourceLineNo">318</span>                                }<a name="line.318"></a>
+<span class="sourceLineNo">319</span>                        }<a name="line.319"></a>
+<span class="sourceLineNo">320</span>                        <a name="line.320"></a>
+<span class="sourceLineNo">321</span>                        // process this node<a name="line.321"></a>
+<span class="sourceLineNo">322</span>                        if (nUnique &gt; 0) {                      <a name="line.322"></a>
+<span class="sourceLineNo">323</span>                                int avgRed = (totalRed + (nUnique / 2)) / nUnique;<a name="line.323"></a>
+<span class="sourceLineNo">324</span>                                int avgGrn = (totalGrn + (nUnique / 2)) / nUnique;<a name="line.324"></a>
+<span class="sourceLineNo">325</span>                                int avgBlu = (totalBlu + (nUnique / 2)) / nUnique;<a name="line.325"></a>
+<span class="sourceLineNo">326</span>                                colList.add(new int[] {avgRed, avgGrn, avgBlu});<a name="line.326"></a>
+<span class="sourceLineNo">327</span>                                this.colorIdx = colorCnt;       // store the color table index for this node<a name="line.327"></a>
+<span class="sourceLineNo">328</span>                                colorCnt++;<a name="line.328"></a>
+<span class="sourceLineNo">329</span>                        }<a name="line.329"></a>
+<span class="sourceLineNo">330</span>                }<a name="line.330"></a>
+<span class="sourceLineNo">331</span><a name="line.331"></a>
+<span class="sourceLineNo">332</span>                private void listNodes() {<a name="line.332"></a>
+<span class="sourceLineNo">333</span>                        if (nChilds &gt; 0) {      <a name="line.333"></a>
+<span class="sourceLineNo">334</span>                                for (Node ch : childs) {<a name="line.334"></a>
+<span class="sourceLineNo">335</span>                                        if (ch != null) {<a name="line.335"></a>
+<span class="sourceLineNo">336</span>                                                ch.listNodes();<a name="line.336"></a>
+<span class="sourceLineNo">337</span>                                        }<a name="line.337"></a>
+<span class="sourceLineNo">338</span>                                }<a name="line.338"></a>
+<span class="sourceLineNo">339</span>                        }<a name="line.339"></a>
+<span class="sourceLineNo">340</span>                        // bottom of recursion<a name="line.340"></a>
+<span class="sourceLineNo">341</span>                        System.out.format(makeBlanks(level) + "node level=%d unique=%d total=%d: %3d %3d %3d, \n", <a name="line.341"></a>
+<span class="sourceLineNo">342</span>                                        level, nUnique, this.nPixels, 0xFF &amp; midRed, 0xFF &amp; midGrn, 0xFF &amp; midBlu); <a name="line.342"></a>
+<span class="sourceLineNo">343</span>                }<a name="line.343"></a>
+<span class="sourceLineNo">344</span>                <a name="line.344"></a>
+<span class="sourceLineNo">345</span>                private String makeBlanks(int level) {<a name="line.345"></a>
+<span class="sourceLineNo">346</span>                        char[] blanks = new char[3 * level];<a name="line.346"></a>
+<span class="sourceLineNo">347</span>                        Arrays.fill(blanks, '-');<a name="line.347"></a>
+<span class="sourceLineNo">348</span>                        return new String(blanks);<a name="line.348"></a>
+<span class="sourceLineNo">349</span>                }<a name="line.349"></a>
+<span class="sourceLineNo">350</span>        }<a name="line.350"></a>
+<span class="sourceLineNo">351</span>        <a name="line.351"></a>
+<span class="sourceLineNo">352</span>        // ------- methods required by abstract super class -----------------------<a name="line.352"></a>
+<span class="sourceLineNo">353</span>        <a name="line.353"></a>
+<span class="sourceLineNo">354</span>        @Override<a name="line.354"></a>
+<span class="sourceLineNo">355</span>        public int[][] getColorMap() {<a name="line.355"></a>
+<span class="sourceLineNo">356</span>                return colormap;<a name="line.356"></a>
+<span class="sourceLineNo">357</span>        }<a name="line.357"></a>
+<span class="sourceLineNo">358</span>        <a name="line.358"></a>
+<span class="sourceLineNo">359</span>        @Override<a name="line.359"></a>
+<span class="sourceLineNo">360</span>        protected int findColorIndex(int p) {<a name="line.360"></a>
+<span class="sourceLineNo">361</span>                if (quickQuantization) {<a name="line.361"></a>
+<span class="sourceLineNo">362</span>                        return getNodeIndex(p);<a name="line.362"></a>
+<span class="sourceLineNo">363</span>                }<a name="line.363"></a>
+<span class="sourceLineNo">364</span>                else {<a name="line.364"></a>
+<span class="sourceLineNo">365</span>                        return super.findColorIndex(p);<a name="line.365"></a>
+<span class="sourceLineNo">366</span>                }<a name="line.366"></a>
+<span class="sourceLineNo">367</span>        }<a name="line.367"></a>
+<span class="sourceLineNo">368</span><a name="line.368"></a>
+<span class="sourceLineNo">369</span>        /**<a name="line.369"></a>
+<span class="sourceLineNo">370</span>         * Finds the associated color table index for the supplied RGB color<a name="line.370"></a>
+<span class="sourceLineNo">371</span>         * by traversing the octree. <a name="line.371"></a>
+<span class="sourceLineNo">372</span>         * @param p<a name="line.372"></a>
+<span class="sourceLineNo">373</span>         * @return<a name="line.373"></a>
+<span class="sourceLineNo">374</span>         */<a name="line.374"></a>
+<span class="sourceLineNo">375</span>        private int getNodeIndex(int p) {<a name="line.375"></a>
+<span class="sourceLineNo">376</span>                int[] rgb = intToRgb(p);<a name="line.376"></a>
+<span class="sourceLineNo">377</span>                Node node = root;<a name="line.377"></a>
+<span class="sourceLineNo">378</span>                while(true) {<a name="line.378"></a>
+<span class="sourceLineNo">379</span>                        int id = node.getChildId(rgb);<a name="line.379"></a>
+<span class="sourceLineNo">380</span>                        if (node.childs[id] == null) {<a name="line.380"></a>
+<span class="sourceLineNo">381</span>                                break;<a name="line.381"></a>
+<span class="sourceLineNo">382</span>                        }<a name="line.382"></a>
+<span class="sourceLineNo">383</span>                        node = node.childs[id];<a name="line.383"></a>
+<span class="sourceLineNo">384</span>                }<a name="line.384"></a>
+<span class="sourceLineNo">385</span>                // this node is associated with color p<a name="line.385"></a>
+<span class="sourceLineNo">386</span>                if (node.colorIdx &lt; 0) {<a name="line.386"></a>
+<span class="sourceLineNo">387</span>                        throw new IllegalArgumentException("cannot assign color " + p);<a name="line.387"></a>
+<span class="sourceLineNo">388</span>                }<a name="line.388"></a>
+<span class="sourceLineNo">389</span>                return node.colorIdx;<a name="line.389"></a>
+<span class="sourceLineNo">390</span>        }<a name="line.390"></a>
+<span class="sourceLineNo">391</span>        <a name="line.391"></a>
+<span class="sourceLineNo">392</span>}<a name="line.392"></a>
+<span class="sourceLineNo">393</span><a name="line.393"></a>
+<span class="sourceLineNo">394</span>/*<a name="line.394"></a>
+<span class="sourceLineNo">395</span>%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%<a name="line.395"></a>
+<span class="sourceLineNo">396</span>%                                                                             %<a name="line.396"></a>
+<span class="sourceLineNo">397</span>%                                                                             %<a name="line.397"></a>
+<span class="sourceLineNo">398</span>%                                                                             %<a name="line.398"></a>
+<span class="sourceLineNo">399</span>%           QQQ   U   U   AAA   N   N  TTTTT  IIIII   ZZZZZ  EEEEE            %<a name="line.399"></a>
+<span class="sourceLineNo">400</span>%          Q   Q  U   U  A   A  NN  N    T      I        ZZ  E                %<a name="line.400"></a>
+<span class="sourceLineNo">401</span>%          Q   Q  U   U  AAAAA  N N N    T      I      ZZZ   EEEEE            %<a name="line.401"></a>
+<span class="sourceLineNo">402</span>%          Q  QQ  U   U  A   A  N  NN    T      I     ZZ     E                %<a name="line.402"></a>
+<span class="sourceLineNo">403</span>%           QQQQ   UUU   A   A  N   N    T    IIIII   ZZZZZ  EEEEE            %<a name="line.403"></a>
+<span class="sourceLineNo">404</span>%                                                                             %<a name="line.404"></a>
+<span class="sourceLineNo">405</span>%                                                                             %<a name="line.405"></a>
+<span class="sourceLineNo">406</span>%              Reduce the Number of Unique Colors in an Image                 %<a name="line.406"></a>
+<span class="sourceLineNo">407</span>%                                                                             %<a name="line.407"></a>
+<span class="sourceLineNo">408</span>%                                                                             %<a name="line.408"></a>
+<span class="sourceLineNo">409</span>%                           Software Design                                   %<a name="line.409"></a>
+<span class="sourceLineNo">410</span>%                             John Cristy                                     %<a name="line.410"></a>
+<span class="sourceLineNo">411</span>%                              July 1992                                      %<a name="line.411"></a>
+<span class="sourceLineNo">412</span>%                                                                             %<a name="line.412"></a>
+<span class="sourceLineNo">413</span>%                                                                             %<a name="line.413"></a>
+<span class="sourceLineNo">414</span>%  Copyright 1998 E. I. du Pont de Nemours and Company                        %<a name="line.414"></a>
+<span class="sourceLineNo">415</span>%                                                                             %<a name="line.415"></a>
+<span class="sourceLineNo">416</span>%  Permission is hereby granted, free of charge, to any person obtaining a    %<a name="line.416"></a>
+<span class="sourceLineNo">417</span>%  copy of this software and associated documentation files ("ImageMagick"),  %<a name="line.417"></a>
+<span class="sourceLineNo">418</span>%  to deal in ImageMagick without restriction, including without limitation   %<a name="line.418"></a>
+<span class="sourceLineNo">419</span>%  the rights to use, copy, modify, merge, publish, distribute, sublicense,   %<a name="line.419"></a>
+<span class="sourceLineNo">420</span>%  and/or sell copies of ImageMagick, and to permit persons to whom the       %<a name="line.420"></a>
+<span class="sourceLineNo">421</span>%  ImageMagick is furnished to do so, subject to the following conditions:    %<a name="line.421"></a>
+<span class="sourceLineNo">422</span>%                                                                             %<a name="line.422"></a>
+<span class="sourceLineNo">423</span>%  The above copyright notice and this permission notice shall be included in %<a name="line.423"></a>
+<span class="sourceLineNo">424</span>%  all copies or substantial portions of ImageMagick.                         %<a name="line.424"></a>
+<span class="sourceLineNo">425</span>%                                                                             %<a name="line.425"></a>
+<span class="sourceLineNo">426</span>%  The software is provided "as is", without warranty of any kind, express or %<a name="line.426"></a>
+<span class="sourceLineNo">427</span>%  implied, including but not limited to the warranties of merchantability,   %<a name="line.427"></a>
+<span class="sourceLineNo">428</span>%  fitness for a particular purpose and noninfringement.  In no event shall   %<a name="line.428"></a>
+<span class="sourceLineNo">429</span>%  E. I. du Pont de Nemours and Company be liable for any claim, damages or   %<a name="line.429"></a>
+<span class="sourceLineNo">430</span>%  other liability, whether in an action of contract, tort or otherwise,      %<a name="line.430"></a>
+<span class="sourceLineNo">431</span>%  arising from, out of or in connection with ImageMagick or the use or other %<a name="line.431"></a>
+<span class="sourceLineNo">432</span>%  dealings in ImageMagick.                                                   %<a name="line.432"></a>
+<span class="sourceLineNo">433</span>%                                                                             %<a name="line.433"></a>
+<span class="sourceLineNo">434</span>%  Except as contained in this notice, the name of the E. I. du Pont de       %<a name="line.434"></a>
+<span class="sourceLineNo">435</span>%  Nemours and Company shall not be used in advertising or otherwise to       %<a name="line.435"></a>
+<span class="sourceLineNo">436</span>%  promote the sale, use or other dealings in ImageMagick without prior       %<a name="line.436"></a>
+<span class="sourceLineNo">437</span>%  written authorization from the E. I. du Pont de Nemours and Company.       %<a name="line.437"></a>
+<span class="sourceLineNo">438</span>%                                                                             %<a name="line.438"></a>
+<span class="sourceLineNo">439</span>%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%<a name="line.439"></a>
+<span class="sourceLineNo">440</span>%<a name="line.440"></a>
+<span class="sourceLineNo">441</span>%  Realism in computer graphics typically requires using 24 bits/pixel to<a name="line.441"></a>
+<span class="sourceLineNo">442</span>%  generate an image. Yet many graphic display devices do not contain<a name="line.442"></a>
+<span class="sourceLineNo">443</span>%  the amount of memory necessary to match the spatial and color<a name="line.443"></a>
+<span class="sourceLineNo">444</span>%  resolution of the human eye. The QUANTIZE program takes a 24 bit<a name="line.444"></a>
+<span class="sourceLineNo">445</span>%  image and reduces the number of colors so it can be displayed on<a name="line.445"></a>
+<span class="sourceLineNo">446</span>%  raster device with less bits per pixel. In most instances, the<a name="line.446"></a>
+<span class="sourceLineNo">447</span>%  quantized image closely resembles the original reference image.<a name="line.447"></a>
+<span class="sourceLineNo">448</span>%<a name="line.448"></a>
+<span class="sourceLineNo">449</span>%  A reduction of colors in an image is also desirable for image<a name="line.449"></a>
+<span class="sourceLineNo">450</span>%  transmission and real-time animation.<a name="line.450"></a>
+<span class="sourceLineNo">451</span>%<a name="line.451"></a>
+<span class="sourceLineNo">452</span>%  Function Quantize takes a standard RGB or monochrome images and quantizes<a name="line.452"></a>
+<span class="sourceLineNo">453</span>%  them down to some fixed number of colors.<a name="line.453"></a>
+<span class="sourceLineNo">454</span>%<a name="line.454"></a>
+<span class="sourceLineNo">455</span>%  For purposes of color allocation, an image is a set of n pixels, where<a name="line.455"></a>
+<span class="sourceLineNo">456</span>%  each pixel is a point in RGB space. RGB space is a 3-dimensional<a name="line.456"></a>
+<span class="sourceLineNo">457</span>%  vector space, and each pixel, pi, is defined by an ordered triple of<a name="line.457"></a>
+<span class="sourceLineNo">458</span>%  red, green, and blue coordinates, (ri, gi, bi).<a name="line.458"></a>
+<span class="sourceLineNo">459</span>%<a name="line.459"></a>
+<span class="sourceLineNo">460</span>%  Each primary color component (red, green, or blue) represents an<a name="line.460"></a>
+<span class="sourceLineNo">461</span>%  intensity which varies linearly from 0 to a maximum value, cmax, which<a name="line.461"></a>
+<span class="sourceLineNo">462</span>%  corresponds to full saturation of that color. Color allocation is<a name="line.462"></a>
+<span class="sourceLineNo">463</span>%  defined over a domain consisting of the cube in RGB space with<a name="line.463"></a>
+<span class="sourceLineNo">464</span>%  opposite vertices at (0,0,0) and (cmax,cmax,cmax). QUANTIZE requires<a name="line.464"></a>
+<span class="sourceLineNo">465</span>%  cmax = 255.<a name="line.465"></a>
+<span class="sourceLineNo">466</span>%<a name="line.466"></a>
+<span class="sourceLineNo">467</span>%  The algorithm maps this domain onto a tree in which each node<a name="line.467"></a>
+<span class="sourceLineNo">468</span>%  represents a cube within that domain. In the following discussion<a name="line.468"></a>
+<span class="sourceLineNo">469</span>%  these cubes are defined by the coordinate of two opposite vertices:<a name="line.469"></a>
+<span class="sourceLineNo">470</span>%  The vertex nearest the origin in RGB space and the vertex farthest<a name="line.470"></a>
+<span class="sourceLineNo">471</span>%  from the origin.<a name="line.471"></a>
+<span class="sourceLineNo">472</span>%<a name="line.472"></a>
+<span class="sourceLineNo">473</span>%  The tree's root node represents the the entire domain, (0,0,0) through<a name="line.473"></a>
+<span class="sourceLineNo">474</span>%  (cmax,cmax,cmax). Each lower level in the tree is generated by<a name="line.474"></a>
+<span class="sourceLineNo">475</span>%  subdividing one node's cube into eight smaller cubes of equal size.<a name="line.475"></a>
+<span class="sourceLineNo">476</span>%  This corresponds to bisecting the parent cube with planes passing<a name="line.476"></a>
+<span class="sourceLineNo">477</span>%  through the midpoints of each edge.<a name="line.477"></a>
+<span class="sourceLineNo">478</span>%<a name="line.478"></a>
+<span class="sourceLineNo">479</span>%  The basic algorithm operates in three phases: Classification,<a name="line.479"></a>
+<span class="sourceLineNo">480</span>%  Reduction, and Assignment. Classification builds a color<a name="line.480"></a>
+<span class="sourceLineNo">481</span>%  description tree for the image. Reduction collapses the tree until<a name="line.481"></a>
+<span class="sourceLineNo">482</span>%  the number it represents, at most, the number of colors desired in the<a name="line.482"></a>
+<span class="sourceLineNo">483</span>%  output image. Assignment defines the output image's color map and<a name="line.483"></a>
+<span class="sourceLineNo">484</span>%  sets each pixel's color by reclassification in the reduced tree.<a name="line.484"></a>
+<span class="sourceLineNo">485</span>%  Our goal is to minimize the numerical discrepancies between the original<a name="line.485"></a>
+<span class="sourceLineNo">486</span>%  colors and quantized colors (quantization error).<a name="line.486"></a>
+<span class="sourceLineNo">487</span>%<a name="line.487"></a>
+<span class="sourceLineNo">488</span>%  Classification begins by initializing a color description tree of<a name="line.488"></a>
+<span class="sourceLineNo">489</span>%  sufficient depth to represent each possible input color in a leaf.<a name="line.489"></a>
+<span class="sourceLineNo">490</span>%  However, it is impractical to generate a fully-formed color<a name="line.490"></a>
+<span class="sourceLineNo">491</span>%  description tree in the classification phase for realistic values of<a name="line.491"></a>
+<span class="sourceLineNo">492</span>%  cmax. If colors components in the input image are quantized to k-bit<a name="line.492"></a>
+<span class="sourceLineNo">493</span>%  precision, so that cmax= 2k-1, the tree would need k levels below the<a name="line.493"></a>
+<span class="sourceLineNo">494</span>%  root node to allow representing each possible input color in a leaf.<a name="line.494"></a>
+<span class="sourceLineNo">495</span>%  This becomes prohibitive because the tree's total number of nodes is<a name="line.495"></a>
+<span class="sourceLineNo">496</span>%  1 + sum(i=1,k,8k).<a name="line.496"></a>
+<span class="sourceLineNo">497</span>%<a name="line.497"></a>
+<span class="sourceLineNo">498</span>%  A complete tree would require 19,173,961 nodes for k = 8, cmax = 255.<a name="line.498"></a>
+<span class="sourceLineNo">499</span>%  Therefore, to avoid building a fully populated tree, QUANTIZE: (1)<a name="line.499"></a>
+<span class="sourceLineNo">500</span>%  Initializes data structures for nodes only as they are needed;  (2)<a name="line.500"></a>
+<span class="sourceLineNo">501</span>%  Chooses a maximum depth for the tree as a function of the desired<a name="line.501"></a>
+<span class="sourceLineNo">502</span>%  number of colors in the output image (currently log2(colormap size)).<a name="line.502"></a>
+<span class="sourceLineNo">503</span>%<a name="line.503"></a>
+<span class="sourceLineNo">504</span>%  For each pixel in the input image, classification scans downward from<a name="line.504"></a>
+<span class="sourceLineNo">505</span>%  the root of the color description tree. At each level of the tree it<a name="line.505"></a>
+<span class="sourceLineNo">506</span>%  identifies the single node which represents a cube in RGB space<a name="line.506"></a>
+<span class="sourceLineNo">507</span>%  containing the pixel's color. It updates the following data for each<a name="line.507"></a>
+<span class="sourceLineNo">508</span>%  such node:<a name="line.508"></a>
+<span class="sourceLineNo">509</span>%<a name="line.509"></a>
+<span class="sourceLineNo">510</span>%    n1: Number of pixels whose color is contained in the RGB cube<a name="line.510"></a>
+<span class="sourceLineNo">511</span>%    which this node represents;<a name="line.511"></a>
+<span class="sourceLineNo">512</span>%<a name="line.512"></a>
+<span class="sourceLineNo">513</span>%    n2: Number of pixels whose color is not represented in a node at<a name="line.513"></a>
+<span class="sourceLineNo">514</span>%    lower depth in the tree;  initially,  n2 = 0 for all nodes except<a name="line.514"></a>
+<span class="sourceLineNo">515</span>%    leaves of the tree.<a name="line.515"></a>
+<span class="sourceLineNo">516</span>%<a name="line.516"></a>
+<span class="sourceLineNo">517</span>%    Sr, Sg, Sb: Sums of the red, green, and blue component values for<a name="line.517"></a>
+<span class="sourceLineNo">518</span>%    all pixels not classified at a lower depth. The combination of<a name="line.518"></a>
+<span class="sourceLineNo">519</span>%    these sums and n2  will ultimately characterize the mean color of a<a name="line.519"></a>
+<span class="sourceLineNo">520</span>%    set of pixels represented by this node.<a name="line.520"></a>
+<span class="sourceLineNo">521</span>%<a name="line.521"></a>
+<span class="sourceLineNo">522</span>%    E: The distance squared in RGB space between each pixel contained<a name="line.522"></a>
+<span class="sourceLineNo">523</span>%    within a node and the nodes' center. This represents the quantization<a name="line.523"></a>
+<span class="sourceLineNo">524</span>%    error for a node.<a name="line.524"></a>
+<span class="sourceLineNo">525</span>%<a name="line.525"></a>
+<span class="sourceLineNo">526</span>%  Reduction repeatedly prunes the tree until the number of nodes with<a name="line.526"></a>
+<span class="sourceLineNo">527</span>%  n2 &gt; 0 is less than or equal to the maximum number of colors allowed<a name="line.527"></a>
+<span class="sourceLineNo">528</span>%  in the output image. On any given iteration over the tree, it selects<a name="line.528"></a>
+<span class="sourceLineNo">529</span>%  those nodes whose E count is minimal for pruning and merges their<a name="line.529"></a>
+<span class="sourceLineNo">530</span>%  color statistics upward. It uses a pruning threshold, Ep, to govern<a name="line.530"></a>
+<span class="sourceLineNo">531</span>%  node selection as follows:<a name="line.531"></a>
+<span class="sourceLineNo">532</span>%<a name="line.532"></a>
+<span class="sourceLineNo">533</span>%    Ep = 0<a name="line.533"></a>
+<span class="sourceLineNo">534</span>%    while number of nodes with (n2 &gt; 0) &gt; required maximum number of colors<a name="line.534"></a>
+<span class="sourceLineNo">535</span>%      prune all nodes such that E &lt;= Ep<a name="line.535"></a>
+<span class="sourceLineNo">536</span>%      Set Ep to minimum E in remaining nodes<a name="line.536"></a>
+<span class="sourceLineNo">537</span>%<a name="line.537"></a>
+<span class="sourceLineNo">538</span>%  This has the effect of minimizing any quantization error when merging<a name="line.538"></a>
+<span class="sourceLineNo">539</span>%  two nodes together.<a name="line.539"></a>
+<span class="sourceLineNo">540</span>%<a name="line.540"></a>
+<span class="sourceLineNo">541</span>%  When a node to be pruned has offspring, the pruning procedure invokes<a name="line.541"></a>
+<span class="sourceLineNo">542</span>%  itself recursively in order to prune the tree from the leaves upward.<a name="line.542"></a>
+<span class="sourceLineNo">543</span>%  n2,  Sr, Sg,  and  Sb in a node being pruned are always added to the<a name="line.543"></a>
+<span class="sourceLineNo">544</span>%  corresponding data in that node's parent. This retains the pruned<a name="line.544"></a>
+<span class="sourceLineNo">545</span>%  node's color characteristics for later averaging.<a name="line.545"></a>
+<span class="sourceLineNo">546</span>%<a name="line.546"></a>
+<span class="sourceLineNo">547</span>%  For each node, n2 pixels exist for which that node represents the<a name="line.547"></a>
+<span class="sourceLineNo">548</span>%  smallest volume in RGB space containing those pixel's colors. When n2<a name="line.548"></a>
+<span class="sourceLineNo">549</span>%  &gt; 0 the node will uniquely define a color in the output image. At the<a name="line.549"></a>
+<span class="sourceLineNo">550</span>%  beginning of reduction,  n2 = 0  for all nodes except a the leaves of<a name="line.550"></a>
+<span class="sourceLineNo">551</span>%  the tree which represent colors present in the input image.<a name="line.551"></a>
+<span class="sourceLineNo">552</span>%<a name="line.552"></a>
+<span class="sourceLineNo">553</span>%  The other pixel count, n1, indicates the total number of colors<a name="line.553"></a>
+<span class="sourceLineNo">554</span>%  within the cubic volume which the node represents. This includes n1 -<a name="line.554"></a>
+<span class="sourceLineNo">555</span>%  n2  pixels whose colors should be defined by nodes at a lower level in<a name="line.555"></a>
+<span class="sourceLineNo">556</span>%  the tree.<a name="line.556"></a>
+<span class="sourceLineNo">557</span>%<a name="line.557"></a>
+<span class="sourceLineNo">558</span>%  Assignment generates the output image from the pruned tree. The<a name="line.558"></a>
+<span class="sourceLineNo">559</span>%  output image consists of two parts: (1)  A color map, which is an<a name="line.559"></a>
+<span class="sourceLineNo">560</span>%  array of color descriptions (RGB triples) for each color present in<a name="line.560"></a>
+<span class="sourceLineNo">561</span>%  the output image;  (2)  A pixel array, which represents each pixel as<a name="line.561"></a>
+<span class="sourceLineNo">562</span>%  an index into the color map array.<a name="line.562"></a>
+<span class="sourceLineNo">563</span>%<a name="line.563"></a>
+<span class="sourceLineNo">564</span>%  First, the assignment phase makes one pass over the pruned color<a name="line.564"></a>
+<span class="sourceLineNo">565</span>%  description tree to establish the image's color map. For each node<a name="line.565"></a>
+<span class="sourceLineNo">566</span>%  with n2  &gt; 0, it divides Sr, Sg, and Sb by n2 . This produces the<a name="line.566"></a>
+<span class="sourceLineNo">567</span>%  mean color of all pixels that classify no lower than this node. Each<a name="line.567"></a>
+<span class="sourceLineNo">568</span>%  of these colors becomes an entry in the color map.<a name="line.568"></a>
+<span class="sourceLineNo">569</span>%<a name="line.569"></a>
+<span class="sourceLineNo">570</span>%  Finally,  the assignment phase reclassifies each pixel in the pruned<a name="line.570"></a>
+<span class="sourceLineNo">571</span>%  tree to identify the deepest node containing the pixel's color. The<a name="line.571"></a>
+<span class="sourceLineNo">572</span>%  pixel's value in the pixel array becomes the index of this node's mean<a name="line.572"></a>
+<span class="sourceLineNo">573</span>%  color in the color map.<a name="line.573"></a>
+<span class="sourceLineNo">574</span>%<a name="line.574"></a>
+<span class="sourceLineNo">575</span>%  With the permission of USC Information Sciences Institute, 4676 Admiralty<a name="line.575"></a>
+<span class="sourceLineNo">576</span>%  Way, Marina del Rey, California  90292, this code was adapted from module<a name="line.576"></a>
+<span class="sourceLineNo">577</span>%  ALCOLS written by Paul Raveling.<a name="line.577"></a>
+<span class="sourceLineNo">578</span>%<a name="line.578"></a>
+<span class="sourceLineNo">579</span>%  The names of ISI and USC are not used in advertising or publicity<a name="line.579"></a>
+<span class="sourceLineNo">580</span>%  pertaining to distribution of the software without prior specific<a name="line.580"></a>
+<span class="sourceLineNo">581</span>%  written permission from ISI.<a name="line.581"></a>
+<span class="sourceLineNo">582</span>%<a name="line.582"></a>
+<span class="sourceLineNo">583</span>*/<a name="line.583"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+</body>
+</html>

@@ -24,7 +24,9 @@ public abstract class LinearFit {
 
 	/**
 	 * Retrieves the (n) x (n+1) transformation matrix A, such that
-	 * y_i = A * x_i (with x_i in homogeneous coordinates)
+	 * y_i = A * x_i (with x_i in homogeneous coordinates).
+	 * 
+	 * @return the transformation matrix
 	 */
 	public abstract RealMatrix getTransformationMatrix();
 	
@@ -39,8 +41,8 @@ public abstract class LinearFit {
 	 * Calculates the least-squares fit for the supplied point sequences,
 	 * which must have the same length and order (i.e., points must be in 
 	 * correspondence). Convenience method for fitting 2D points.
-	 * @param X Sequence of 2-dimensional points
-	 * @param Y Sequence of 2-dimensional points (reference)
+	 * @param Xpts Sequence of 2-dimensional points
+	 * @param Ypts Sequence of 2-dimensional points (reference)
 	 */
 	public void fitPoints(List<Point2D> Xpts, List<Point2D> Ypts) {
 		fit(toDoubleArrays(Xpts), toDoubleArrays(Ypts));

@@ -1,0 +1,146 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span>package imagingbook.pub.geometry.icp.tests;<a name="line.1"></a>
+<span class="sourceLineNo">002</span><a name="line.2"></a>
+<span class="sourceLineNo">003</span>import java.util.ArrayList;<a name="line.3"></a>
+<span class="sourceLineNo">004</span>import java.util.List;<a name="line.4"></a>
+<span class="sourceLineNo">005</span>import java.util.Random;<a name="line.5"></a>
+<span class="sourceLineNo">006</span><a name="line.6"></a>
+<span class="sourceLineNo">007</span>import imagingbook.pub.geometry.icp.IterativeClosestPointMatcher_OLD;<a name="line.7"></a>
+<span class="sourceLineNo">008</span>import imagingbook.pub.geometry.mappings.linear.AffineMapping;<a name="line.8"></a>
+<span class="sourceLineNo">009</span>import imagingbook.pub.geometry.mappings.linear.Rotation;<a name="line.9"></a>
+<span class="sourceLineNo">010</span>import imagingbook.pub.geometry.mappings.linear.Translation;<a name="line.10"></a>
+<span class="sourceLineNo">011</span><a name="line.11"></a>
+<span class="sourceLineNo">012</span>public class IcpTest1 {<a name="line.12"></a>
+<span class="sourceLineNo">013</span>        <a name="line.13"></a>
+<span class="sourceLineNo">014</span>        static int m = 150;<a name="line.14"></a>
+<span class="sourceLineNo">015</span>        static int size = 100;<a name="line.15"></a>
+<span class="sourceLineNo">016</span>        static double theta = 1.5;<a name="line.16"></a>
+<span class="sourceLineNo">017</span>        static double dx = 4;<a name="line.17"></a>
+<span class="sourceLineNo">018</span>        static double dy = -6;<a name="line.18"></a>
+<span class="sourceLineNo">019</span>        <a name="line.19"></a>
+<span class="sourceLineNo">020</span>        static double sigma = 2.5;<a name="line.20"></a>
+<span class="sourceLineNo">021</span><a name="line.21"></a>
+<span class="sourceLineNo">022</span>        <a name="line.22"></a>
+<span class="sourceLineNo">023</span>        static double tau = 0.1;<a name="line.23"></a>
+<span class="sourceLineNo">024</span>        static int kMax = 20;<a name="line.24"></a>
+<span class="sourceLineNo">025</span>        <a name="line.25"></a>
+<span class="sourceLineNo">026</span>        AffineMapping A = null;<a name="line.26"></a>
+<span class="sourceLineNo">027</span>        List&lt;double[]&gt; X, Y;<a name="line.27"></a>
+<span class="sourceLineNo">028</span>        <a name="line.28"></a>
+<span class="sourceLineNo">029</span>        Random rnd = new Random(11);<a name="line.29"></a>
+<span class="sourceLineNo">030</span><a name="line.30"></a>
+<span class="sourceLineNo">031</span>        public static void main(String[] args) {<a name="line.31"></a>
+<span class="sourceLineNo">032</span>                // TODO Auto-generated method stub<a name="line.32"></a>
+<span class="sourceLineNo">033</span>                new IcpTest1().run();<a name="line.33"></a>
+<span class="sourceLineNo">034</span>        }<a name="line.34"></a>
+<span class="sourceLineNo">035</span>        <a name="line.35"></a>
+<span class="sourceLineNo">036</span>        void run() {<a name="line.36"></a>
+<span class="sourceLineNo">037</span>                A = makeTransformation();<a name="line.37"></a>
+<span class="sourceLineNo">038</span>                makeSamplePointsX();<a name="line.38"></a>
+<span class="sourceLineNo">039</span>                makeSamplePointsY();<a name="line.39"></a>
+<span class="sourceLineNo">040</span>                IterativeClosestPointMatcher_OLD icp = new IterativeClosestPointMatcher_OLD(X, Y, tau, kMax);<a name="line.40"></a>
+<span class="sourceLineNo">041</span>                <a name="line.41"></a>
+<span class="sourceLineNo">042</span>                System.out.println("ICP has converged: " + icp.hasConverged());<a name="line.42"></a>
+<span class="sourceLineNo">043</span>        }<a name="line.43"></a>
+<span class="sourceLineNo">044</span><a name="line.44"></a>
+<span class="sourceLineNo">045</span>        private AffineMapping makeTransformation() {<a name="line.45"></a>
+<span class="sourceLineNo">046</span>                double ctr = 0.5 * size;<a name="line.46"></a>
+<span class="sourceLineNo">047</span>                AffineMapping am = new AffineMapping();<a name="line.47"></a>
+<span class="sourceLineNo">048</span>                am.concatDestructive(new Translation(-ctr, -ctr));      // TODO: rename to concatD<a name="line.48"></a>
+<span class="sourceLineNo">049</span>                am.concatDestructive(new Rotation(theta));<a name="line.49"></a>
+<span class="sourceLineNo">050</span>                am.concatDestructive(new Translation(ctr, ctr));<a name="line.50"></a>
+<span class="sourceLineNo">051</span>                am.concatDestructive(new Translation(dx, dy));<a name="line.51"></a>
+<span class="sourceLineNo">052</span>                return am;<a name="line.52"></a>
+<span class="sourceLineNo">053</span>        }<a name="line.53"></a>
+<span class="sourceLineNo">054</span><a name="line.54"></a>
+<span class="sourceLineNo">055</span>        private void  makeSamplePointsX() {<a name="line.55"></a>
+<span class="sourceLineNo">056</span>                X = new ArrayList&lt;double[]&gt;(m);<a name="line.56"></a>
+<span class="sourceLineNo">057</span>                for (int i = 0; i &lt; m; i++) {<a name="line.57"></a>
+<span class="sourceLineNo">058</span>                        double x = rnd.nextInt(size);<a name="line.58"></a>
+<span class="sourceLineNo">059</span>                        double y = rnd.nextInt(size);<a name="line.59"></a>
+<span class="sourceLineNo">060</span>                        X.add(new double[] {x, y});<a name="line.60"></a>
+<span class="sourceLineNo">061</span>                }<a name="line.61"></a>
+<span class="sourceLineNo">062</span>        }<a name="line.62"></a>
+<span class="sourceLineNo">063</span><a name="line.63"></a>
+<span class="sourceLineNo">064</span>        private void makeSamplePointsY() {<a name="line.64"></a>
+<span class="sourceLineNo">065</span>                Y = new ArrayList&lt;double[]&gt;(m);<a name="line.65"></a>
+<span class="sourceLineNo">066</span>                for (double[] xi : X) {<a name="line.66"></a>
+<span class="sourceLineNo">067</span>                        double[] xiT = A.applyTo(xi);<a name="line.67"></a>
+<span class="sourceLineNo">068</span>                        xiT[0] = xiT[0] + sigma * rnd.nextGaussian();<a name="line.68"></a>
+<span class="sourceLineNo">069</span>                        xiT[1] = xiT[1] + sigma * rnd.nextGaussian();<a name="line.69"></a>
+<span class="sourceLineNo">070</span>                        Y.add(xiT);<a name="line.70"></a>
+<span class="sourceLineNo">071</span>                }<a name="line.71"></a>
+<span class="sourceLineNo">072</span>                <a name="line.72"></a>
+<span class="sourceLineNo">073</span>        }<a name="line.73"></a>
+<span class="sourceLineNo">074</span>}<a name="line.74"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+</body>
+</html>

@@ -1,0 +1,297 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span>/*******************************************************************************<a name="line.1"></a>
+<span class="sourceLineNo">002</span> * This software is provided as a supplement to the authors' textbooks on digital<a name="line.2"></a>
+<span class="sourceLineNo">003</span> *  image processing published by Springer-Verlag in various languages and editions.<a name="line.3"></a>
+<span class="sourceLineNo">004</span> * Permission to use and distribute this software is granted under the BSD 2-Clause <a name="line.4"></a>
+<span class="sourceLineNo">005</span> * "Simplified" License (see http://opensource.org/licenses/BSD-2-Clause). <a name="line.5"></a>
+<span class="sourceLineNo">006</span> * Copyright (c) 2006-2016 Wilhelm Burger, Mark J. Burge. All rights reserved. <a name="line.6"></a>
+<span class="sourceLineNo">007</span> * Visit http://imagingbook.com for additional details.<a name="line.7"></a>
+<span class="sourceLineNo">008</span> *******************************************************************************/<a name="line.8"></a>
+<span class="sourceLineNo">009</span><a name="line.9"></a>
+<span class="sourceLineNo">010</span>package imagingbook.lib.ij;<a name="line.10"></a>
+<span class="sourceLineNo">011</span><a name="line.11"></a>
+<span class="sourceLineNo">012</span>import ij.IJ;<a name="line.12"></a>
+<span class="sourceLineNo">013</span>import ij.process.ImageProcessor;<a name="line.13"></a>
+<span class="sourceLineNo">014</span>import ij.process.LUT;<a name="line.14"></a>
+<span class="sourceLineNo">015</span><a name="line.15"></a>
+<span class="sourceLineNo">016</span>import java.awt.Color;<a name="line.16"></a>
+<span class="sourceLineNo">017</span>import java.awt.image.ColorModel;<a name="line.17"></a>
+<span class="sourceLineNo">018</span>import java.awt.image.IndexColorModel;<a name="line.18"></a>
+<span class="sourceLineNo">019</span><a name="line.19"></a>
+<span class="sourceLineNo">020</span><a name="line.20"></a>
+<span class="sourceLineNo">021</span>/**<a name="line.21"></a>
+<span class="sourceLineNo">022</span> * This class holds utility methods for lookup-tables and implementations<a name="line.22"></a>
+<span class="sourceLineNo">023</span> * of various standard ImageJ lookup tables (originally defined in class<a name="line.23"></a>
+<span class="sourceLineNo">024</span> * {@link ij.plugin.LutLoader}.<a name="line.24"></a>
+<span class="sourceLineNo">025</span> * <a name="line.25"></a>
+<span class="sourceLineNo">026</span> * @author WB<a name="line.26"></a>
+<span class="sourceLineNo">027</span> * @version 2016/12/19<a name="line.27"></a>
+<span class="sourceLineNo">028</span> */<a name="line.28"></a>
+<span class="sourceLineNo">029</span>public abstract class LookupTables {<a name="line.29"></a>
+<span class="sourceLineNo">030</span>        <a name="line.30"></a>
+<span class="sourceLineNo">031</span>        /**<a name="line.31"></a>
+<span class="sourceLineNo">032</span>         * Create a new lookup-table from three RGB arrays of length 256.<a name="line.32"></a>
+<span class="sourceLineNo">033</span>         * @param r Red component values.<a name="line.33"></a>
+<span class="sourceLineNo">034</span>         * @param g Green component values.<a name="line.34"></a>
+<span class="sourceLineNo">035</span>         * @param b Blue component values.<a name="line.35"></a>
+<span class="sourceLineNo">036</span>         * @return A new instance of type {@link ij.process.LUT}.<a name="line.36"></a>
+<span class="sourceLineNo">037</span>         */<a name="line.37"></a>
+<span class="sourceLineNo">038</span>        public static LUT create(byte[] r, byte[] g, byte[] b) {<a name="line.38"></a>
+<span class="sourceLineNo">039</span>                if (r.length != 256 || g.length != 256 || b.length != 256) {<a name="line.39"></a>
+<span class="sourceLineNo">040</span>                        throw new IllegalArgumentException("Component arrays must be of length 256");<a name="line.40"></a>
+<span class="sourceLineNo">041</span>                }<a name="line.41"></a>
+<span class="sourceLineNo">042</span>                return new LUT(r, g, b);<a name="line.42"></a>
+<span class="sourceLineNo">043</span>        }<a name="line.43"></a>
+<span class="sourceLineNo">044</span><a name="line.44"></a>
+<span class="sourceLineNo">045</span><a name="line.45"></a>
+<span class="sourceLineNo">046</span>        /**<a name="line.46"></a>
+<span class="sourceLineNo">047</span>         * ImageJ's 'fire' LUT, as originally defined in class {@link ij.plugin.LutLoader}.<a name="line.47"></a>
+<span class="sourceLineNo">048</span>         * @return A new instance of type {@link ij.process.LUT}.<a name="line.48"></a>
+<span class="sourceLineNo">049</span>         */<a name="line.49"></a>
+<span class="sourceLineNo">050</span>        public static LUT fire() {<a name="line.50"></a>
+<span class="sourceLineNo">051</span>                int[] r = { 0, 0, 1, 25, 49, 73, 98, 122, 146, 162, 173, 184, 195, 207, 217, 229, 240, 252,<a name="line.51"></a>
+<span class="sourceLineNo">052</span>                                255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255 };<a name="line.52"></a>
+<span class="sourceLineNo">053</span>                int[] g = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 35, 57, 79, 101, 117, 133, 147, 161,<a name="line.53"></a>
+<span class="sourceLineNo">054</span>                                175, 190, 205, 219, 234, 248, 255, 255, 255, 255 };<a name="line.54"></a>
+<span class="sourceLineNo">055</span>                int[] b = { 0, 61, 96, 130, 165, 192, 220, 227, 210, 181, 151, 122, 93, 64, 35, 5, 0, 0, 0, 0,<a name="line.55"></a>
+<span class="sourceLineNo">056</span>                                0, 0, 0, 0, 0, 0, 0, 35, 98, 160, 223, 255 };<a name="line.56"></a>
+<span class="sourceLineNo">057</span><a name="line.57"></a>
+<span class="sourceLineNo">058</span>                return create(interpolateTo256(r), interpolateTo256(g), interpolateTo256(b));<a name="line.58"></a>
+<span class="sourceLineNo">059</span>        }<a name="line.59"></a>
+<span class="sourceLineNo">060</span><a name="line.60"></a>
+<span class="sourceLineNo">061</span><a name="line.61"></a>
+<span class="sourceLineNo">062</span>        /**<a name="line.62"></a>
+<span class="sourceLineNo">063</span>         * ImageJ's 'grays' LUT, as originally defined in class {@link ij.plugin.LutLoader}.<a name="line.63"></a>
+<span class="sourceLineNo">064</span>         * @return A new instance of type {@link ij.process.LUT}.<a name="line.64"></a>
+<span class="sourceLineNo">065</span>         */<a name="line.65"></a>
+<span class="sourceLineNo">066</span>        public static LUT grays() {<a name="line.66"></a>
+<span class="sourceLineNo">067</span>                byte[] r = new byte[256];<a name="line.67"></a>
+<span class="sourceLineNo">068</span>                byte[] g = new byte[256];<a name="line.68"></a>
+<span class="sourceLineNo">069</span>                byte[] b = new byte[256];<a name="line.69"></a>
+<span class="sourceLineNo">070</span>                for (int i = 0; i &lt; r.length; i++) {<a name="line.70"></a>
+<span class="sourceLineNo">071</span>                        r[i] = (byte) i;<a name="line.71"></a>
+<span class="sourceLineNo">072</span>                        g[i] = (byte) i;<a name="line.72"></a>
+<span class="sourceLineNo">073</span>                        b[i] = (byte) i;<a name="line.73"></a>
+<span class="sourceLineNo">074</span>                }<a name="line.74"></a>
+<span class="sourceLineNo">075</span>                return create(r, g, b);<a name="line.75"></a>
+<span class="sourceLineNo">076</span>        }<a name="line.76"></a>
+<span class="sourceLineNo">077</span><a name="line.77"></a>
+<span class="sourceLineNo">078</span>        /**<a name="line.78"></a>
+<span class="sourceLineNo">079</span>         * ImageJ's 'ice' LUT, as originally defined in class {@link ij.plugin.LutLoader}.<a name="line.79"></a>
+<span class="sourceLineNo">080</span>         * @return A new instance of type {@link ij.process.LUT}.<a name="line.80"></a>
+<span class="sourceLineNo">081</span>         */<a name="line.81"></a>
+<span class="sourceLineNo">082</span>        public static LUT ice() {<a name="line.82"></a>
+<span class="sourceLineNo">083</span>                int[] r = { 0, 0, 0, 0, 0, 0, 19, 29, 50, 48, 79, 112, 134, 158, 186, 201, 217, 229, 242, 250, 250, 250, 250,<a name="line.83"></a>
+<span class="sourceLineNo">084</span>                                251, 250, 250, 250, 250, 251, 251, 243, 230 };<a name="line.84"></a>
+<span class="sourceLineNo">085</span>                int[] g = { 156, 165, 176, 184, 190, 196, 193, 184, 171, 162, 146, 125, 107, 93, 81, 87, 92, 97, 95, 93, 93, 90,<a name="line.85"></a>
+<span class="sourceLineNo">086</span>                                85, 69, 64, 54, 47, 35, 19, 0, 4, 0 };<a name="line.86"></a>
+<span class="sourceLineNo">087</span>                int[] b = { 140, 147, 158, 166, 170, 176, 209, 220, 234, 225, 236, 246, 250, 251, 250, 250, 245, 230, 230, 222,<a name="line.87"></a>
+<span class="sourceLineNo">088</span>                                202, 180, 163, 142, 123, 114, 106, 94, 84, 64, 26, 27 };<a name="line.88"></a>
+<span class="sourceLineNo">089</span><a name="line.89"></a>
+<span class="sourceLineNo">090</span>                return new LUT(interpolateTo256(r), interpolateTo256(g), interpolateTo256(b));<a name="line.90"></a>
+<span class="sourceLineNo">091</span>        }<a name="line.91"></a>
+<span class="sourceLineNo">092</span><a name="line.92"></a>
+<span class="sourceLineNo">093</span>        /**<a name="line.93"></a>
+<span class="sourceLineNo">094</span>         * ImageJ's 'spectrum' LUT, as originally defined in class {@link ij.plugin.LutLoader}.<a name="line.94"></a>
+<span class="sourceLineNo">095</span>         * @return A new instance of type {@link ij.process.LUT}.<a name="line.95"></a>
+<span class="sourceLineNo">096</span>         */<a name="line.96"></a>
+<span class="sourceLineNo">097</span>        public static LUT spectrum() {<a name="line.97"></a>
+<span class="sourceLineNo">098</span>                byte[] r = new byte[256];<a name="line.98"></a>
+<span class="sourceLineNo">099</span>                byte[] g = new byte[256];<a name="line.99"></a>
+<span class="sourceLineNo">100</span>                byte[] b = new byte[256];<a name="line.100"></a>
+<span class="sourceLineNo">101</span>                for (int i = 0; i &lt; r.length; i++) {<a name="line.101"></a>
+<span class="sourceLineNo">102</span>                        Color c = Color.getHSBColor(i/255f, 1.0f, 1.0f);<a name="line.102"></a>
+<span class="sourceLineNo">103</span>                        r[i] = (byte) c.getRed();<a name="line.103"></a>
+<span class="sourceLineNo">104</span>                        g[i] = (byte) c.getGreen();<a name="line.104"></a>
+<span class="sourceLineNo">105</span>                        b[i] = (byte) c.getBlue();<a name="line.105"></a>
+<span class="sourceLineNo">106</span>                }<a name="line.106"></a>
+<span class="sourceLineNo">107</span>                return new LUT(r, g, b);<a name="line.107"></a>
+<span class="sourceLineNo">108</span>        }<a name="line.108"></a>
+<span class="sourceLineNo">109</span><a name="line.109"></a>
+<span class="sourceLineNo">110</span>        /**<a name="line.110"></a>
+<span class="sourceLineNo">111</span>         * ImageJ's 'rgb332' LUT, as originally defined in class {@link ij.plugin.LutLoader}.<a name="line.111"></a>
+<span class="sourceLineNo">112</span>         * @return A new instance of type {@link ij.process.LUT}.<a name="line.112"></a>
+<span class="sourceLineNo">113</span>         */<a name="line.113"></a>
+<span class="sourceLineNo">114</span>        public static LUT rgb332() {<a name="line.114"></a>
+<span class="sourceLineNo">115</span>                byte[] r = new byte[256];<a name="line.115"></a>
+<span class="sourceLineNo">116</span>                byte[] g = new byte[256];<a name="line.116"></a>
+<span class="sourceLineNo">117</span>                byte[] b = new byte[256];<a name="line.117"></a>
+<span class="sourceLineNo">118</span>                for (int i = 0; i &lt; r.length; i++) {<a name="line.118"></a>
+<span class="sourceLineNo">119</span>                        r[i] = (byte) (i &amp; 0xE0);<a name="line.119"></a>
+<span class="sourceLineNo">120</span>                        g[i] = (byte) ((i &lt;&lt; 3) &amp; 0xE0);<a name="line.120"></a>
+<span class="sourceLineNo">121</span>                        b[i] = (byte) ((i &lt;&lt; 6) &amp; 0xC0);<a name="line.121"></a>
+<span class="sourceLineNo">122</span>                }<a name="line.122"></a>
+<span class="sourceLineNo">123</span>                return new LUT(r, g, b);<a name="line.123"></a>
+<span class="sourceLineNo">124</span>        }<a name="line.124"></a>
+<span class="sourceLineNo">125</span>        <a name="line.125"></a>
+<span class="sourceLineNo">126</span>        /**<a name="line.126"></a>
+<span class="sourceLineNo">127</span>         * ImageJ's 'redgreen' LUT, as originally defined in class {@link ij.plugin.LutLoader}.<a name="line.127"></a>
+<span class="sourceLineNo">128</span>         * @return A new instance of type {@link ij.process.LUT}.<a name="line.128"></a>
+<span class="sourceLineNo">129</span>         */<a name="line.129"></a>
+<span class="sourceLineNo">130</span>        public static LUT redgreen() {<a name="line.130"></a>
+<span class="sourceLineNo">131</span>                byte[] r = new byte[256];<a name="line.131"></a>
+<span class="sourceLineNo">132</span>                byte[] g = new byte[256];<a name="line.132"></a>
+<span class="sourceLineNo">133</span>                byte[] b = new byte[256];<a name="line.133"></a>
+<span class="sourceLineNo">134</span>                for (int i = 0; i &lt; 128; i++) {<a name="line.134"></a>
+<span class="sourceLineNo">135</span>                        r[i] = (byte) (i * 2);<a name="line.135"></a>
+<span class="sourceLineNo">136</span>                        g[i] = (byte) 0;<a name="line.136"></a>
+<span class="sourceLineNo">137</span>                        b[i] = (byte) 0;<a name="line.137"></a>
+<span class="sourceLineNo">138</span>                }<a name="line.138"></a>
+<span class="sourceLineNo">139</span>                for (int i = 128; i &lt; 256; i++) {<a name="line.139"></a>
+<span class="sourceLineNo">140</span>                        r[i] = (byte) 0;<a name="line.140"></a>
+<span class="sourceLineNo">141</span>                        g[i] = (byte) (i * 2);<a name="line.141"></a>
+<span class="sourceLineNo">142</span>                        b[i] = (byte) 0;<a name="line.142"></a>
+<span class="sourceLineNo">143</span>                }<a name="line.143"></a>
+<span class="sourceLineNo">144</span><a name="line.144"></a>
+<span class="sourceLineNo">145</span>                return new LUT(r, g, b);<a name="line.145"></a>
+<span class="sourceLineNo">146</span>        }<a name="line.146"></a>
+<span class="sourceLineNo">147</span><a name="line.147"></a>
+<span class="sourceLineNo">148</span>        // --------------------------------------------------------------<a name="line.148"></a>
+<span class="sourceLineNo">149</span><a name="line.149"></a>
+<span class="sourceLineNo">150</span>        private static byte[] interpolateTo256(int[] samples) {<a name="line.150"></a>
+<span class="sourceLineNo">151</span>                final int nColors = 256;<a name="line.151"></a>
+<span class="sourceLineNo">152</span>                int nSamples = samples.length;<a name="line.152"></a>
+<span class="sourceLineNo">153</span>                byte[] component = new byte[nColors];<a name="line.153"></a>
+<span class="sourceLineNo">154</span>                double scale = (double) nSamples / nColors;<a name="line.154"></a>
+<span class="sourceLineNo">155</span>                for (int i = 0; i &lt; component.length; i++) {<a name="line.155"></a>
+<span class="sourceLineNo">156</span>                        int i1 = (int) Math.floor(i * scale);<a name="line.156"></a>
+<span class="sourceLineNo">157</span>                        int i2 = i1 + 1;<a name="line.157"></a>
+<span class="sourceLineNo">158</span>                        if (i2 &gt;= nSamples)<a name="line.158"></a>
+<span class="sourceLineNo">159</span>                                i2 = nSamples - 1;<a name="line.159"></a>
+<span class="sourceLineNo">160</span>                        double frac = i * scale - i1;   // frac is in [0,1]<a name="line.160"></a>
+<span class="sourceLineNo">161</span>                        int val = (int) Math.round((1.0 - frac) * samples[i1] + frac * samples[i2]);<a name="line.161"></a>
+<span class="sourceLineNo">162</span>                        if (val &lt; 0)<a name="line.162"></a>
+<span class="sourceLineNo">163</span>                                val = 0;<a name="line.163"></a>
+<span class="sourceLineNo">164</span>                        else if (val &gt; 255)<a name="line.164"></a>
+<span class="sourceLineNo">165</span>                                val = 255;<a name="line.165"></a>
+<span class="sourceLineNo">166</span>                        component[i] = (byte) val;<a name="line.166"></a>
+<span class="sourceLineNo">167</span>                        //component[i] = (byte) ((1.0 - frac) * (samples[i1] &amp; 0xFF) + frac * (samples[i2] &amp; 0xFF));<a name="line.167"></a>
+<span class="sourceLineNo">168</span>                }<a name="line.168"></a>
+<span class="sourceLineNo">169</span>                return component;<a name="line.169"></a>
+<span class="sourceLineNo">170</span>        }<a name="line.170"></a>
+<span class="sourceLineNo">171</span>        <a name="line.171"></a>
+<span class="sourceLineNo">172</span>        // ----------------------------------------------------------------------<a name="line.172"></a>
+<span class="sourceLineNo">173</span>        <a name="line.173"></a>
+<span class="sourceLineNo">174</span>        /**<a name="line.174"></a>
+<span class="sourceLineNo">175</span>         * Lists the contents of the lookup-table currently associated<a name="line.175"></a>
+<span class="sourceLineNo">176</span>         * with the specified image.<a name="line.176"></a>
+<span class="sourceLineNo">177</span>         * <a name="line.177"></a>
+<span class="sourceLineNo">178</span>         * @param ip The image.<a name="line.178"></a>
+<span class="sourceLineNo">179</span>         */<a name="line.179"></a>
+<span class="sourceLineNo">180</span>        public static void listCurrentLut(ImageProcessor ip) {<a name="line.180"></a>
+<span class="sourceLineNo">181</span>                ColorModel cm = ip.getCurrentColorModel();<a name="line.181"></a>
+<span class="sourceLineNo">182</span>                IndexColorModel icm = (IndexColorModel) cm;<a name="line.182"></a>
+<span class="sourceLineNo">183</span>                int mapSize = icm.getMapSize();<a name="line.183"></a>
+<span class="sourceLineNo">184</span>                byte[] reds = new byte[mapSize];<a name="line.184"></a>
+<span class="sourceLineNo">185</span>                byte[] grns = new byte[mapSize];<a name="line.185"></a>
+<span class="sourceLineNo">186</span>                byte[] blus = new byte[mapSize];<a name="line.186"></a>
+<span class="sourceLineNo">187</span>                icm.getReds(reds);<a name="line.187"></a>
+<span class="sourceLineNo">188</span>                icm.getGreens(grns);<a name="line.188"></a>
+<span class="sourceLineNo">189</span>                icm.getBlues(blus);<a name="line.189"></a>
+<span class="sourceLineNo">190</span>                for (int i = 0; i &lt; mapSize; i++) {<a name="line.190"></a>
+<span class="sourceLineNo">191</span>                        IJ.log(String.format("%3d: %3d %3d %3d", i, reds[i] &amp; 0xFF, grns[i] &amp; 0xFF, blus[i] &amp; 0xFF));<a name="line.191"></a>
+<span class="sourceLineNo">192</span>                }<a name="line.192"></a>
+<span class="sourceLineNo">193</span>        }<a name="line.193"></a>
+<span class="sourceLineNo">194</span>        <a name="line.194"></a>
+<span class="sourceLineNo">195</span>        <a name="line.195"></a>
+<span class="sourceLineNo">196</span>        /**<a name="line.196"></a>
+<span class="sourceLineNo">197</span>         * Modifies the lookup table to display a bright image with gray values<a name="line.197"></a>
+<span class="sourceLineNo">198</span>         * in the range minGray ... 255. Does nothing if ip is of type<a name="line.198"></a>
+<span class="sourceLineNo">199</span>         * ColorProcessor.<a name="line.199"></a>
+<span class="sourceLineNo">200</span>         * <a name="line.200"></a>
+<span class="sourceLineNo">201</span>         * @param ip The target image.<a name="line.201"></a>
+<span class="sourceLineNo">202</span>         * @param minGray Minimum gray value.<a name="line.202"></a>
+<span class="sourceLineNo">203</span>         */<a name="line.203"></a>
+<span class="sourceLineNo">204</span>        public static void brightLut(ImageProcessor ip, int minGray) {<a name="line.204"></a>
+<span class="sourceLineNo">205</span>                if (minGray &lt; 0 || minGray &gt;= 255)<a name="line.205"></a>
+<span class="sourceLineNo">206</span>                        return;<a name="line.206"></a>
+<span class="sourceLineNo">207</span>                ColorModel cm = ip.getColorModel();<a name="line.207"></a>
+<span class="sourceLineNo">208</span>                if (!(cm instanceof IndexColorModel))<a name="line.208"></a>
+<span class="sourceLineNo">209</span>                        return;<a name="line.209"></a>
+<span class="sourceLineNo">210</span>                IndexColorModel icm = (IndexColorModel) cm;<a name="line.210"></a>
+<span class="sourceLineNo">211</span>                int mapSize = icm.getMapSize();<a name="line.211"></a>
+<span class="sourceLineNo">212</span>                byte[] reds = new byte[mapSize];<a name="line.212"></a>
+<span class="sourceLineNo">213</span>                byte[] grns = new byte[mapSize];<a name="line.213"></a>
+<span class="sourceLineNo">214</span>                byte[] blus = new byte[mapSize];<a name="line.214"></a>
+<span class="sourceLineNo">215</span>                float scale = (255 - minGray) / 255f;<a name="line.215"></a>
+<span class="sourceLineNo">216</span>                for (int i = 0; i &lt; mapSize; i++) {<a name="line.216"></a>
+<span class="sourceLineNo">217</span>                        byte g = (byte) (Math.round(minGray + scale * i) &amp; 0xFF);<a name="line.217"></a>
+<span class="sourceLineNo">218</span>                        reds[i] = g;<a name="line.218"></a>
+<span class="sourceLineNo">219</span>                        grns[i] = g;<a name="line.219"></a>
+<span class="sourceLineNo">220</span>                        blus[i] = g;<a name="line.220"></a>
+<span class="sourceLineNo">221</span>                }<a name="line.221"></a>
+<span class="sourceLineNo">222</span>                ip.setColorModel(new IndexColorModel(8, mapSize, reds, grns, blus));<a name="line.222"></a>
+<span class="sourceLineNo">223</span>        }<a name="line.223"></a>
+<span class="sourceLineNo">224</span><a name="line.224"></a>
+<span class="sourceLineNo">225</span>}<a name="line.225"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+</body>
+</html>

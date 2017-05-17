@@ -1,0 +1,120 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span>/*******************************************************************************<a name="line.1"></a>
+<span class="sourceLineNo">002</span> * This software is provided as a supplement to the authors' textbooks on digital<a name="line.2"></a>
+<span class="sourceLineNo">003</span> *  image processing published by Springer-Verlag in various languages and editions.<a name="line.3"></a>
+<span class="sourceLineNo">004</span> * Permission to use and distribute this software is granted under the BSD 2-Clause <a name="line.4"></a>
+<span class="sourceLineNo">005</span> * "Simplified" License (see http://opensource.org/licenses/BSD-2-Clause). <a name="line.5"></a>
+<span class="sourceLineNo">006</span> * Copyright (c) 2006-2016 Wilhelm Burger, Mark J. Burge. All rights reserved. <a name="line.6"></a>
+<span class="sourceLineNo">007</span> * Visit http://imagingbook.com for additional details.<a name="line.7"></a>
+<span class="sourceLineNo">008</span> *******************************************************************************/<a name="line.8"></a>
+<span class="sourceLineNo">009</span><a name="line.9"></a>
+<span class="sourceLineNo">010</span>package imagingbook.pub.geometry.mappings.nonlinear;<a name="line.10"></a>
+<span class="sourceLineNo">011</span><a name="line.11"></a>
+<span class="sourceLineNo">012</span>import imagingbook.pub.geometry.mappings.Mapping;<a name="line.12"></a>
+<span class="sourceLineNo">013</span><a name="line.13"></a>
+<span class="sourceLineNo">014</span>public class TwirlMapping extends Mapping {<a name="line.14"></a>
+<span class="sourceLineNo">015</span>        double xc, yc, angle, rad;<a name="line.15"></a>
+<span class="sourceLineNo">016</span>   <a name="line.16"></a>
+<span class="sourceLineNo">017</span>        public TwirlMapping (double xc, double yc, double angle, double rad, boolean inv) {<a name="line.17"></a>
+<span class="sourceLineNo">018</span>                this.xc = xc;<a name="line.18"></a>
+<span class="sourceLineNo">019</span>                this.yc = yc;<a name="line.19"></a>
+<span class="sourceLineNo">020</span>                this.angle = angle;<a name="line.20"></a>
+<span class="sourceLineNo">021</span>                this.rad = rad;<a name="line.21"></a>
+<span class="sourceLineNo">022</span>                this.isInverseFlag = inv;<a name="line.22"></a>
+<span class="sourceLineNo">023</span>        }<a name="line.23"></a>
+<span class="sourceLineNo">024</span><a name="line.24"></a>
+<span class="sourceLineNo">025</span>        public static TwirlMapping makeInverseMapping(double xc, double yc, double angle, double rad){<a name="line.25"></a>
+<span class="sourceLineNo">026</span>                return new TwirlMapping(xc, yc, angle, rad, true);<a name="line.26"></a>
+<span class="sourceLineNo">027</span>        }<a name="line.27"></a>
+<span class="sourceLineNo">028</span><a name="line.28"></a>
+<span class="sourceLineNo">029</span>        public double[] applyTo (double[] xy){<a name="line.29"></a>
+<span class="sourceLineNo">030</span>                double x = xy[0];<a name="line.30"></a>
+<span class="sourceLineNo">031</span>                double y = xy[1];<a name="line.31"></a>
+<span class="sourceLineNo">032</span>                double dx = x - xc;<a name="line.32"></a>
+<span class="sourceLineNo">033</span>                double dy = y - yc;<a name="line.33"></a>
+<span class="sourceLineNo">034</span>                double d = Math.sqrt(dx*dx + dy*dy);<a name="line.34"></a>
+<span class="sourceLineNo">035</span>                if (d &lt; rad) {<a name="line.35"></a>
+<span class="sourceLineNo">036</span>                        double a = Math.atan2(dy,dx) + angle * (rad-d) / rad;<a name="line.36"></a>
+<span class="sourceLineNo">037</span>                        double x1 = xc + d * Math.cos(a);<a name="line.37"></a>
+<span class="sourceLineNo">038</span>                        double y1 = yc + d * Math.sin(a);<a name="line.38"></a>
+<span class="sourceLineNo">039</span>                        //pnt.setLocation(x1, y1);<a name="line.39"></a>
+<span class="sourceLineNo">040</span>                        return new double[] {x1, y1};<a name="line.40"></a>
+<span class="sourceLineNo">041</span>                }<a name="line.41"></a>
+<span class="sourceLineNo">042</span>                return xy.clone();<a name="line.42"></a>
+<span class="sourceLineNo">043</span>        }<a name="line.43"></a>
+<span class="sourceLineNo">044</span>}<a name="line.44"></a>
+<span class="sourceLineNo">045</span><a name="line.45"></a>
+<span class="sourceLineNo">046</span><a name="line.46"></a>
+<span class="sourceLineNo">047</span><a name="line.47"></a>
+<span class="sourceLineNo">048</span><a name="line.48"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+</body>
+</html>

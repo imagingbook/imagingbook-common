@@ -19,9 +19,9 @@ import imagingbook.pub.geometry.mappings.linear.AffineMapping;
  * Shinji Umeyama, "Least-squares estimation of transformation parameters 
  * between two point patterns", IEEE Transactions on Pattern Analysis and 
  * Machine Intelligence 13.4 (Apr. 1991), pp. 376–380.
- * <p>
  * Usage example (also see the main() method of this class):
  * <pre>
+ * {@code
  * List<double> X = ... // create list of m points (n-dimensional)
  * List<double> Y = ... // create list of m points (n-dimensional)
  * ProcrustesFit pf = new ProcrustesFit();
@@ -32,8 +32,8 @@ import imagingbook.pub.geometry.mappings.linear.AffineMapping;
  * double c = pf.getScale();
  * double err = pf.getError();
  * RealMatrix M = pf.getTransformationMatrix();
+ * }
  * </pre>
- * <p>
  * This is a preliminary version!
  * TODO: Implement common interface with other fitters; polish parameter handling.
  * 

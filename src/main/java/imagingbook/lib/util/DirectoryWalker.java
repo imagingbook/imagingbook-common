@@ -41,7 +41,7 @@ public class DirectoryWalker {
 	 * TODO: clean up exception handling.
 	 * 
 	 * @param startDir The start directory.
-	 * @return
+	 * @return A list of file names.
 	 */
 	public Collection<String> collectFiles(String startDir) {
 //		DirectoryWalker walker = new DirectoryWalker(extensions);

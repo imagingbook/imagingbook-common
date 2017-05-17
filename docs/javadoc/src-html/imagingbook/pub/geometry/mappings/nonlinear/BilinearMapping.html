@@ -1,0 +1,163 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span>/*******************************************************************************<a name="line.1"></a>
+<span class="sourceLineNo">002</span> * This software is provided as a supplement to the authors' textbooks on digital<a name="line.2"></a>
+<span class="sourceLineNo">003</span> *  image processing published by Springer-Verlag in various languages and editions.<a name="line.3"></a>
+<span class="sourceLineNo">004</span> * Permission to use and distribute this software is granted under the BSD 2-Clause <a name="line.4"></a>
+<span class="sourceLineNo">005</span> * "Simplified" License (see http://opensource.org/licenses/BSD-2-Clause). <a name="line.5"></a>
+<span class="sourceLineNo">006</span> * Copyright (c) 2006-2016 Wilhelm Burger, Mark J. Burge. All rights reserved. <a name="line.6"></a>
+<span class="sourceLineNo">007</span> * Visit http://imagingbook.com for additional details.<a name="line.7"></a>
+<span class="sourceLineNo">008</span> *******************************************************************************/<a name="line.8"></a>
+<span class="sourceLineNo">009</span><a name="line.9"></a>
+<span class="sourceLineNo">010</span>package imagingbook.pub.geometry.mappings.nonlinear;<a name="line.10"></a>
+<span class="sourceLineNo">011</span><a name="line.11"></a>
+<span class="sourceLineNo">012</span>import imagingbook.lib.math.Matrix;<a name="line.12"></a>
+<span class="sourceLineNo">013</span>import imagingbook.pub.geometry.mappings.Mapping;<a name="line.13"></a>
+<span class="sourceLineNo">014</span><a name="line.14"></a>
+<span class="sourceLineNo">015</span>import java.awt.geom.Point2D;<a name="line.15"></a>
+<span class="sourceLineNo">016</span><a name="line.16"></a>
+<span class="sourceLineNo">017</span><a name="line.17"></a>
+<span class="sourceLineNo">018</span>/*<a name="line.18"></a>
+<span class="sourceLineNo">019</span> * 2007: Changed to use the JAMA numerical math package <a name="line.19"></a>
+<span class="sourceLineNo">020</span> * (http://math.nist.gov/javanumerics/jama/) instead of JAMPACK.<a name="line.20"></a>
+<span class="sourceLineNo">021</span> * 2013: changed to use methods from the local matrix library<a name="line.21"></a>
+<span class="sourceLineNo">022</span> * (based on Apache Common Maths) to solve linear systems of <a name="line.22"></a>
+<span class="sourceLineNo">023</span> * equations.<a name="line.23"></a>
+<span class="sourceLineNo">024</span> */<a name="line.24"></a>
+<span class="sourceLineNo">025</span><a name="line.25"></a>
+<span class="sourceLineNo">026</span>public class BilinearMapping extends Mapping { <a name="line.26"></a>
+<span class="sourceLineNo">027</span>        double a1, a2, a3, a4;<a name="line.27"></a>
+<span class="sourceLineNo">028</span>        double b1, b2, b3, b4;<a name="line.28"></a>
+<span class="sourceLineNo">029</span>        <a name="line.29"></a>
+<span class="sourceLineNo">030</span>        BilinearMapping(<a name="line.30"></a>
+<span class="sourceLineNo">031</span>                                        double a1, double a2, double a3, double a4,<a name="line.31"></a>
+<span class="sourceLineNo">032</span>                                        double b1, double b2, double b3, double b4, <a name="line.32"></a>
+<span class="sourceLineNo">033</span>                                        boolean isInverse) {<a name="line.33"></a>
+<span class="sourceLineNo">034</span>                this.a1 = a1;   this.a2 = a2;   this.a3 = a3;   this.a4 = a4;<a name="line.34"></a>
+<span class="sourceLineNo">035</span>                this.b1 = b1;   this.b2 = b2;   this.b3 = b3;   this.b4 = b4;   <a name="line.35"></a>
+<span class="sourceLineNo">036</span>                this.isInverseFlag = isInverse;         <a name="line.36"></a>
+<span class="sourceLineNo">037</span>        }<a name="line.37"></a>
+<span class="sourceLineNo">038</span>        <a name="line.38"></a>
+<span class="sourceLineNo">039</span>        //map between arbitrary quadrilaterals<a name="line.39"></a>
+<span class="sourceLineNo">040</span>        public static BilinearMapping makeInverseMapping(<a name="line.40"></a>
+<span class="sourceLineNo">041</span>                        Point2D P1, Point2D P2, Point2D P3, Point2D P4, // source quad<a name="line.41"></a>
+<span class="sourceLineNo">042</span>                        Point2D Q1, Point2D Q2, Point2D Q3, Point2D Q4) // target quad<a name="line.42"></a>
+<span class="sourceLineNo">043</span>                {       <a name="line.43"></a>
+<span class="sourceLineNo">044</span>                //define column vectors X, Y<a name="line.44"></a>
+<span class="sourceLineNo">045</span>                double[] x = {Q1.getX(), Q2.getX(), Q3.getX(), Q4.getX()};<a name="line.45"></a>
+<span class="sourceLineNo">046</span>                double[] y = {Q1.getY(), Q2.getY(), Q3.getY(), Q4.getY()};<a name="line.46"></a>
+<span class="sourceLineNo">047</span>                <a name="line.47"></a>
+<span class="sourceLineNo">048</span>                //define matrix M<a name="line.48"></a>
+<span class="sourceLineNo">049</span>                double[][] M = new double[][]<a name="line.49"></a>
+<span class="sourceLineNo">050</span>                        {{P1.getX(), P1.getY(), P1.getX() * P1.getY(), 1},<a name="line.50"></a>
+<span class="sourceLineNo">051</span>                         {P2.getX(), P2.getY(), P2.getX() * P2.getY(), 1},<a name="line.51"></a>
+<span class="sourceLineNo">052</span>                         {P3.getX(), P3.getY(), P3.getX() * P3.getY(), 1},<a name="line.52"></a>
+<span class="sourceLineNo">053</span>                         {P4.getX(), P4.getY(), P4.getX() * P4.getY(), 1}};<a name="line.53"></a>
+<span class="sourceLineNo">054</span><a name="line.54"></a>
+<span class="sourceLineNo">055</span>                double[] a = Matrix.solve(M, x);                // solve x = M * a = x (a is unknown)<a name="line.55"></a>
+<span class="sourceLineNo">056</span>                double[] b = Matrix.solve(M, y);                // solve y = M * b = y (b is unknown)<a name="line.56"></a>
+<span class="sourceLineNo">057</span>                <a name="line.57"></a>
+<span class="sourceLineNo">058</span>                double a1 = a[0];               double b1 = b[0];<a name="line.58"></a>
+<span class="sourceLineNo">059</span>                double a2 = a[1];               double b2 = b[1];<a name="line.59"></a>
+<span class="sourceLineNo">060</span>                double a3 = a[2];               double b3 = b[2];<a name="line.60"></a>
+<span class="sourceLineNo">061</span>                double a4 = a[3];               double b4 = b[3];<a name="line.61"></a>
+<span class="sourceLineNo">062</span>                   <a name="line.62"></a>
+<span class="sourceLineNo">063</span>                return new BilinearMapping(a1, a2, a3, a4, b1, b2, b3, b4, true);<a name="line.63"></a>
+<span class="sourceLineNo">064</span>        }<a name="line.64"></a>
+<span class="sourceLineNo">065</span>        <a name="line.65"></a>
+<span class="sourceLineNo">066</span>        public double[] applyTo (double[] xy){<a name="line.66"></a>
+<span class="sourceLineNo">067</span>                double x0 = xy[0];<a name="line.67"></a>
+<span class="sourceLineNo">068</span>                double y0 = xy[1];<a name="line.68"></a>
+<span class="sourceLineNo">069</span>                double x1 = a1 * x0 + a2 * y0 + a3 * x0 * y0 + a4;<a name="line.69"></a>
+<span class="sourceLineNo">070</span>                double y1 = b1 * x0 + b2 * y0 + b3 * x0 * y0 + b4;<a name="line.70"></a>
+<span class="sourceLineNo">071</span>                //pnt.setLocation(x1, y1);<a name="line.71"></a>
+<span class="sourceLineNo">072</span>                return new double[] {x1, y1};<a name="line.72"></a>
+<span class="sourceLineNo">073</span>        }       <a name="line.73"></a>
+<span class="sourceLineNo">074</span>                                                <a name="line.74"></a>
+<span class="sourceLineNo">075</span>//      public Point2D applyTo (Point2D pnt){<a name="line.75"></a>
+<span class="sourceLineNo">076</span>//              double x0 = pnt.getX();<a name="line.76"></a>
+<span class="sourceLineNo">077</span>//              double y0 = pnt.getY();<a name="line.77"></a>
+<span class="sourceLineNo">078</span>//              double x1 = a1 * x0 + a2 * y0 + a3 * x0 * y0 + a4;<a name="line.78"></a>
+<span class="sourceLineNo">079</span>//              double y1 = b1 * x0 + b2 * y0 + b3 * x0 * y0 + b4;<a name="line.79"></a>
+<span class="sourceLineNo">080</span>//              //pnt.setLocation(x1, y1);<a name="line.80"></a>
+<span class="sourceLineNo">081</span>//              return new Point2D.Double(x1, y1);<a name="line.81"></a>
+<span class="sourceLineNo">082</span>//      }       <a name="line.82"></a>
+<span class="sourceLineNo">083</span>        <a name="line.83"></a>
+<span class="sourceLineNo">084</span>        public String toString() {<a name="line.84"></a>
+<span class="sourceLineNo">085</span>                return <a name="line.85"></a>
+<span class="sourceLineNo">086</span>                        "A=(" + a1 + "," + a2 + "," + a3 + "," + a4 + ")" + <a name="line.86"></a>
+<span class="sourceLineNo">087</span>                        " / " +<a name="line.87"></a>
+<span class="sourceLineNo">088</span>                        "B=(" + b1 + "," + b2 + "," + b3 + "," + b4 + ")" ;<a name="line.88"></a>
+<span class="sourceLineNo">089</span>        }<a name="line.89"></a>
+<span class="sourceLineNo">090</span><a name="line.90"></a>
+<span class="sourceLineNo">091</span>}<a name="line.91"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+</body>
+</html>

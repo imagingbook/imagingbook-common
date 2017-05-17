@@ -1,0 +1,237 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span>/*******************************************************************************<a name="line.1"></a>
+<span class="sourceLineNo">002</span> * This software is provided as a supplement to the authors' textbooks on digital<a name="line.2"></a>
+<span class="sourceLineNo">003</span> *  image processing published by Springer-Verlag in various languages and editions.<a name="line.3"></a>
+<span class="sourceLineNo">004</span> * Permission to use and distribute this software is granted under the BSD 2-Clause <a name="line.4"></a>
+<span class="sourceLineNo">005</span> * "Simplified" License (see http://opensource.org/licenses/BSD-2-Clause). <a name="line.5"></a>
+<span class="sourceLineNo">006</span> * Copyright (c) 2006-2016 Wilhelm Burger, Mark J. Burge. All rights reserved. <a name="line.6"></a>
+<span class="sourceLineNo">007</span> * Visit http://imagingbook.com for additional details.<a name="line.7"></a>
+<span class="sourceLineNo">008</span> *******************************************************************************/<a name="line.8"></a>
+<span class="sourceLineNo">009</span><a name="line.9"></a>
+<span class="sourceLineNo">010</span>package imagingbook.pub.edgepreservingfilters;<a name="line.10"></a>
+<span class="sourceLineNo">011</span><a name="line.11"></a>
+<span class="sourceLineNo">012</span>import imagingbook.lib.filters.GenericFilter;<a name="line.12"></a>
+<span class="sourceLineNo">013</span>import imagingbook.lib.image.ImageAccessor;<a name="line.13"></a>
+<span class="sourceLineNo">014</span><a name="line.14"></a>
+<span class="sourceLineNo">015</span>/**<a name="line.15"></a>
+<span class="sourceLineNo">016</span> * This class implements a Kuwahara-type filter, similar to the filter suggested in <a name="line.16"></a>
+<span class="sourceLineNo">017</span> * Tomita and Tsuji (1977). It structures the filter region into five overlapping, <a name="line.17"></a>
+<span class="sourceLineNo">018</span> * square subregions (including a center region) of size (r+1) x (r+1). <a name="line.18"></a>
+<span class="sourceLineNo">019</span> * See algorithm 5.2 in Utics Vol. 3.<a name="line.19"></a>
+<span class="sourceLineNo">020</span> * <a name="line.20"></a>
+<span class="sourceLineNo">021</span> * @author W. Burger<a name="line.21"></a>
+<span class="sourceLineNo">022</span> * @version 2013/05/30<a name="line.22"></a>
+<span class="sourceLineNo">023</span> */<a name="line.23"></a>
+<span class="sourceLineNo">024</span>public class KuwaharaFilter extends GenericFilter {<a name="line.24"></a>
+<span class="sourceLineNo">025</span>        <a name="line.25"></a>
+<span class="sourceLineNo">026</span>        public static class Parameters {<a name="line.26"></a>
+<span class="sourceLineNo">027</span>                /** Radius of the filter (should be even) */<a name="line.27"></a>
+<span class="sourceLineNo">028</span>                public int radius = 2;<a name="line.28"></a>
+<span class="sourceLineNo">029</span>                /** Threshold on sigma to avoid banding in flat regions */<a name="line.29"></a>
+<span class="sourceLineNo">030</span>                public double tsigma = 5.0;     <a name="line.30"></a>
+<span class="sourceLineNo">031</span>        }<a name="line.31"></a>
+<span class="sourceLineNo">032</span>        <a name="line.32"></a>
+<span class="sourceLineNo">033</span>        private Parameters params;<a name="line.33"></a>
+<span class="sourceLineNo">034</span>        <a name="line.34"></a>
+<span class="sourceLineNo">035</span>        private int n;                  // fixed subregion size <a name="line.35"></a>
+<span class="sourceLineNo">036</span>        private int dm;                 // = d-<a name="line.36"></a>
+<span class="sourceLineNo">037</span>        private int dp;                 // = d+<a name="line.37"></a>
+<span class="sourceLineNo">038</span>        <a name="line.38"></a>
+<span class="sourceLineNo">039</span>        // these are used in calculation by several methods:<a name="line.39"></a>
+<span class="sourceLineNo">040</span>        private float Smin;             // min. variance<a name="line.40"></a>
+<span class="sourceLineNo">041</span>        private float Amin;             <a name="line.41"></a>
+<span class="sourceLineNo">042</span>        private float AminR;<a name="line.42"></a>
+<span class="sourceLineNo">043</span>        private float AminG;<a name="line.43"></a>
+<span class="sourceLineNo">044</span>        private float AminB;<a name="line.44"></a>
+<span class="sourceLineNo">045</span><a name="line.45"></a>
+<span class="sourceLineNo">046</span>        // constructor using default settings<a name="line.46"></a>
+<span class="sourceLineNo">047</span>        public KuwaharaFilter() {<a name="line.47"></a>
+<span class="sourceLineNo">048</span>                this.params = new Parameters();<a name="line.48"></a>
+<span class="sourceLineNo">049</span>                initialize();<a name="line.49"></a>
+<span class="sourceLineNo">050</span>        }<a name="line.50"></a>
+<span class="sourceLineNo">051</span>        <a name="line.51"></a>
+<span class="sourceLineNo">052</span>        public KuwaharaFilter(Parameters params) {<a name="line.52"></a>
+<span class="sourceLineNo">053</span>                this.params = params;<a name="line.53"></a>
+<span class="sourceLineNo">054</span>                initialize();<a name="line.54"></a>
+<span class="sourceLineNo">055</span>        }<a name="line.55"></a>
+<span class="sourceLineNo">056</span>        <a name="line.56"></a>
+<span class="sourceLineNo">057</span>        public KuwaharaFilter(int r, double tsigma) {<a name="line.57"></a>
+<span class="sourceLineNo">058</span>                this.params = new Parameters();<a name="line.58"></a>
+<span class="sourceLineNo">059</span>                this.params.radius = r;<a name="line.59"></a>
+<span class="sourceLineNo">060</span>                this.params.tsigma = tsigma;<a name="line.60"></a>
+<span class="sourceLineNo">061</span>                initialize();<a name="line.61"></a>
+<span class="sourceLineNo">062</span>        }<a name="line.62"></a>
+<span class="sourceLineNo">063</span>        <a name="line.63"></a>
+<span class="sourceLineNo">064</span>        void initialize() {<a name="line.64"></a>
+<span class="sourceLineNo">065</span>                int r = params.radius;<a name="line.65"></a>
+<span class="sourceLineNo">066</span>                n = (r + 1) * (r + 1);  // size of complete filter<a name="line.66"></a>
+<span class="sourceLineNo">067</span>                dm = (r/2) - r;                 // d- = top/left center coordinate<a name="line.67"></a>
+<span class="sourceLineNo">068</span>                dp = dm + r;                    // d+ = bottom/right center coordinate<a name="line.68"></a>
+<span class="sourceLineNo">069</span>        }<a name="line.69"></a>
+<span class="sourceLineNo">070</span>                <a name="line.70"></a>
+<span class="sourceLineNo">071</span>        static int checkRadius(int radius) {<a name="line.71"></a>
+<span class="sourceLineNo">072</span>                assert radius &gt;= 1 : "filter radius must be &gt;= 1";<a name="line.72"></a>
+<span class="sourceLineNo">073</span>                return radius;<a name="line.73"></a>
+<span class="sourceLineNo">074</span>        }<a name="line.74"></a>
+<span class="sourceLineNo">075</span>        <a name="line.75"></a>
+<span class="sourceLineNo">076</span>        // ------------------------------------------------------<a name="line.76"></a>
+<span class="sourceLineNo">077</span><a name="line.77"></a>
+<span class="sourceLineNo">078</span>        /*<a name="line.78"></a>
+<span class="sourceLineNo">079</span>         * This method is used for all scalar-values images.<a name="line.79"></a>
+<span class="sourceLineNo">080</span>         */<a name="line.80"></a>
+<span class="sourceLineNo">081</span>        public float filterPixel(ImageAccessor.Scalar ia, int u, int v) {<a name="line.81"></a>
+<span class="sourceLineNo">082</span>                Smin = Float.MAX_VALUE;<a name="line.82"></a>
+<span class="sourceLineNo">083</span>                evalSubregionGray(ia, u, v);                                    // a centered subregion (not in original Kuwahara)<a name="line.83"></a>
+<span class="sourceLineNo">084</span>                Smin = Smin - (float)params.tsigma * n;                 // tS * n because we use variance scaled by n<a name="line.84"></a>
+<span class="sourceLineNo">085</span>                evalSubregionGray(ia, u + dm, v + dm);<a name="line.85"></a>
+<span class="sourceLineNo">086</span>                evalSubregionGray(ia, u + dm, v + dp);<a name="line.86"></a>
+<span class="sourceLineNo">087</span>                evalSubregionGray(ia, u + dp, v + dm);<a name="line.87"></a>
+<span class="sourceLineNo">088</span>                evalSubregionGray(ia, u + dp, v + dp);<a name="line.88"></a>
+<span class="sourceLineNo">089</span>                return Amin;<a name="line.89"></a>
+<span class="sourceLineNo">090</span>        } <a name="line.90"></a>
+<span class="sourceLineNo">091</span>        <a name="line.91"></a>
+<span class="sourceLineNo">092</span>        /*<a name="line.92"></a>
+<span class="sourceLineNo">093</span>         * sets the member variables Smin, Amin<a name="line.93"></a>
+<span class="sourceLineNo">094</span>         */<a name="line.94"></a>
+<span class="sourceLineNo">095</span>        void evalSubregionGray(ImageAccessor.Scalar ia, int u, int v) {<a name="line.95"></a>
+<span class="sourceLineNo">096</span>                float S1 = 0; <a name="line.96"></a>
+<span class="sourceLineNo">097</span>                float S2 = 0;<a name="line.97"></a>
+<span class="sourceLineNo">098</span>                for (int j = dm; j &lt;= dp; j++) {<a name="line.98"></a>
+<span class="sourceLineNo">099</span>                        for (int i = dm; i &lt;= dp; i++) {<a name="line.99"></a>
+<span class="sourceLineNo">100</span>                                float a = ia.getVal(u+i, v+j);<a name="line.100"></a>
+<span class="sourceLineNo">101</span>                                S1 = S1 + a;<a name="line.101"></a>
+<span class="sourceLineNo">102</span>                                S2 = S2 + a * a;<a name="line.102"></a>
+<span class="sourceLineNo">103</span>                        }<a name="line.103"></a>
+<span class="sourceLineNo">104</span>                }<a name="line.104"></a>
+<span class="sourceLineNo">105</span>//              double s = (sum2 - sum1*sum1/nr)/nr;    // actual sigma^2<a name="line.105"></a>
+<span class="sourceLineNo">106</span>                float s = S2 - S1*S1/n; // s = n * sigma^2<a name="line.106"></a>
+<span class="sourceLineNo">107</span>                if (s &lt; Smin) {<a name="line.107"></a>
+<span class="sourceLineNo">108</span>                        Smin = s;<a name="line.108"></a>
+<span class="sourceLineNo">109</span>                        Amin = S1 / n; // mean<a name="line.109"></a>
+<span class="sourceLineNo">110</span>                }<a name="line.110"></a>
+<span class="sourceLineNo">111</span>        }<a name="line.111"></a>
+<span class="sourceLineNo">112</span>        <a name="line.112"></a>
+<span class="sourceLineNo">113</span>        // ------------------------------------------------------<a name="line.113"></a>
+<span class="sourceLineNo">114</span>        <a name="line.114"></a>
+<span class="sourceLineNo">115</span>        final float[] rgb = {0,0,0};<a name="line.115"></a>
+<span class="sourceLineNo">116</span>        <a name="line.116"></a>
+<span class="sourceLineNo">117</span>        public float[] filterPixel(ImageAccessor.Rgb ia, int u, int v) {<a name="line.117"></a>
+<span class="sourceLineNo">118</span>                Smin = Float.MAX_VALUE;<a name="line.118"></a>
+<span class="sourceLineNo">119</span>                evalSubregion(ia, u, v);                                                // centered subregion - different to original Kuwahara!<a name="line.119"></a>
+<span class="sourceLineNo">120</span>                Smin = Smin - (3 * (float)params.tsigma * n);   // tS * n because we use variance scaled by n<a name="line.120"></a>
+<span class="sourceLineNo">121</span>                evalSubregion(ia, u+dm, v+dm);  <a name="line.121"></a>
+<span class="sourceLineNo">122</span>                evalSubregion(ia, u+dm, v+dp);  <a name="line.122"></a>
+<span class="sourceLineNo">123</span>                evalSubregion(ia, u+dp, v+dm);  <a name="line.123"></a>
+<span class="sourceLineNo">124</span>                evalSubregion(ia, u+dp, v+dp);  <a name="line.124"></a>
+<span class="sourceLineNo">125</span>                rgb[0] = (int) Math.rint(AminR);<a name="line.125"></a>
+<span class="sourceLineNo">126</span>                rgb[1] = (int) Math.rint(AminG);<a name="line.126"></a>
+<span class="sourceLineNo">127</span>                rgb[2] = (int) Math.rint(AminB);<a name="line.127"></a>
+<span class="sourceLineNo">128</span>                return rgb;<a name="line.128"></a>
+<span class="sourceLineNo">129</span>        }<a name="line.129"></a>
+<span class="sourceLineNo">130</span>        <a name="line.130"></a>
+<span class="sourceLineNo">131</span>        void evalSubregion(ImageAccessor.Rgb ia, int u, int v) {<a name="line.131"></a>
+<span class="sourceLineNo">132</span>                // evaluate the subregion centered at (u,v)<a name="line.132"></a>
+<span class="sourceLineNo">133</span>                //final int[] cpix = {0,0,0};<a name="line.133"></a>
+<span class="sourceLineNo">134</span>                int S1R = 0; int S2R = 0;<a name="line.134"></a>
+<span class="sourceLineNo">135</span>                int S1G = 0; int S2G = 0;<a name="line.135"></a>
+<span class="sourceLineNo">136</span>                int S1B = 0; int S2B = 0;<a name="line.136"></a>
+<span class="sourceLineNo">137</span>                for (int j = dm; j &lt;= dp; j++) {<a name="line.137"></a>
+<span class="sourceLineNo">138</span>                        for (int i = dm; i &lt;= dp; i++) {                <a name="line.138"></a>
+<span class="sourceLineNo">139</span>                                final float[] cpix = ia.getPix(u + i, v + j);<a name="line.139"></a>
+<span class="sourceLineNo">140</span>                                int red = (int) cpix[0];<a name="line.140"></a>
+<span class="sourceLineNo">141</span>                                int grn = (int) cpix[1];<a name="line.141"></a>
+<span class="sourceLineNo">142</span>                                int blu = (int) cpix[2];<a name="line.142"></a>
+<span class="sourceLineNo">143</span>                                S1R = S1R + red;<a name="line.143"></a>
+<span class="sourceLineNo">144</span>                                S1G = S1G + grn;<a name="line.144"></a>
+<span class="sourceLineNo">145</span>                                S1B = S1B + blu;<a name="line.145"></a>
+<span class="sourceLineNo">146</span>                                S2R = S2R + red * red;<a name="line.146"></a>
+<span class="sourceLineNo">147</span>                                S2G = S2G + grn * grn;<a name="line.147"></a>
+<span class="sourceLineNo">148</span>                                S2B = S2B + blu * blu;<a name="line.148"></a>
+<span class="sourceLineNo">149</span>                        }<a name="line.149"></a>
+<span class="sourceLineNo">150</span>                }<a name="line.150"></a>
+<span class="sourceLineNo">151</span>                // calculate the variance for this subregion:<a name="line.151"></a>
+<span class="sourceLineNo">152</span>                float nf = n;<a name="line.152"></a>
+<span class="sourceLineNo">153</span>                float SR = S2R - S1R * S1R / nf;<a name="line.153"></a>
+<span class="sourceLineNo">154</span>                float SG = S2G - S1G * S1G / nf;<a name="line.154"></a>
+<span class="sourceLineNo">155</span>                float SB = S2B - S1B * S1B / nf;<a name="line.155"></a>
+<span class="sourceLineNo">156</span>                // total variance (scaled by nr):<a name="line.156"></a>
+<span class="sourceLineNo">157</span>                float Srgb = SR + SG + SB;<a name="line.157"></a>
+<span class="sourceLineNo">158</span>                if (Srgb &lt; Smin) { <a name="line.158"></a>
+<span class="sourceLineNo">159</span>                        Smin = Srgb;<a name="line.159"></a>
+<span class="sourceLineNo">160</span>                        AminR = S1R / n;        <a name="line.160"></a>
+<span class="sourceLineNo">161</span>                        AminG = S1G / n;<a name="line.161"></a>
+<span class="sourceLineNo">162</span>                        AminB = S1B / n;<a name="line.162"></a>
+<span class="sourceLineNo">163</span>                }<a name="line.163"></a>
+<span class="sourceLineNo">164</span>        }<a name="line.164"></a>
+<span class="sourceLineNo">165</span>}<a name="line.165"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+</body>
+</html>
