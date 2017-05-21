@@ -29,4 +29,4 @@ To use the ``imagingbook-common`` library in your Maven project, add the followi
   <!-- other dependencies ... -->
 </dependencies>
 ````
-This is for ``<version>1.5</version>``. Check the [ImagingBook Maven repository](https://github.com/imagingbook/imagingbook-maven-repository/tree/master/com/imagingbook/imagingbook-common) for the most recent release version.
+This refers to version ``1.5``. Check the [ImagingBook Maven repository](https://github.com/imagingbook/imagingbook-maven-repository/tree/master/com/imagingbook/imagingbook-common) for the most recent release version.
