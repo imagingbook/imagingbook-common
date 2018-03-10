@@ -19,15 +19,15 @@ import ij.IJ;
 
 /**
  * This class implements the Mahalanobis distance using the Apache commons math library.
- * See the numerical example in Theodoridis/Koutumbras, "Pattern recognition", p. 27.
+ * See the numerical example in Theodoridis/Koutumbras, "Pattern Recognition" (p. 27).
+ * No statistical bias correction is applied.
  */
 public class MahalanobisDistance extends VectorNorm {
 	
-	public static final double DEFAULT_DIAGONAL_INCREMENT = 10E-6;
-	public static final boolean BIAS_CORRECTION = false;	// we use no bias correction here (factor is 1/n)
+	public static final double DEFAULT_MIN_DIAGONAL = 10E-15;
 	
-	private final int n;					// number of samples
-	private final int m;					// feature dimension
+	private final int N;					// number of samples
+	private final int M;					// feature dimension
 	private final double[] mean;			// the distribution's mean vector (\mu)
 	private final double[][] Cov;			// covariance matrix of size n x n
 	private final double[][] iCov;			// inverse covariance matrix size n x n
@@ -42,9 +42,9 @@ public class MahalanobisDistance extends VectorNorm {
 	 *      covariance matrix to avoid singularity. 
 	 */
 	public MahalanobisDistance(double[][] samples, double diagonalIncrement) {
-		n = samples.length;
-		m = samples[0].length;
-		if (n < 1 || m < 1) {
+		N = samples.length;
+		M = samples[0].length;
+		if (N < 1 || M < 1) {
 			throw new IllegalArgumentException("dimension less than 1");
 		}
 		if (diagonalIncrement < 0) {
@@ -52,14 +52,12 @@ public class MahalanobisDistance extends VectorNorm {
 		}
 
 		mean = makeMeanVector(samples);
-		
-		Covariance cov = new Covariance(samples, BIAS_CORRECTION);	
-		RealMatrix S = cov.getCovarianceMatrix();
+		RealMatrix S = new Covariance(samples, false).getCovarianceMatrix();
 		
 		// condition the covariance matrix to avoid singularity:
-		S = conditionCovarianceMatrix(S);
-		
+		S = conditionCovarianceMatrix(S, diagonalIncrement);
 		Cov = S.getData();
+		
 		// get the inverse covariance matrix
 		iCov = MatrixUtils.inverse(S).getData();	// not always symmetric?
 	}
@@ -72,7 +70,7 @@ public class MahalanobisDistance extends VectorNorm {
 	 *      samples[k][i] represents the i-th component of the k-th sample.
 	 */
 	public MahalanobisDistance(double[][] samples) {
-		this(samples, DEFAULT_DIAGONAL_INCREMENT);
+		this(samples, DEFAULT_MIN_DIAGONAL);
 	}
 	
 	// 
@@ -80,15 +78,16 @@ public class MahalanobisDistance extends VectorNorm {
 	 * Conditions the supplied covariance matrix by enforcing
 	 * positive eigenvalues along its main diagonal. 
 	 * @param S original covariance matrix
-	 * @return modified covariance matrix
+	 * @param minDiagonal the minimum positive value of diagonal elements
+	 * @return conditioned covariance matrix
 	 */
-	private RealMatrix conditionCovarianceMatrix(RealMatrix S) {
+	private RealMatrix conditionCovarianceMatrix(RealMatrix S, double minDiagonal) {
 		EigenDecomposition ed = new EigenDecomposition(S);  // S  ->  V . D . V^T
 		RealMatrix V  = ed.getV();
 		RealMatrix D  = ed.getD();	// diagonal matrix of eigenvalues
 		RealMatrix VT = ed.getVT();
 		for (int i = 0; i < D.getRowDimension(); i++) {
-			D.setEntry(i, i, Math.max(D.getEntry(i, i), 10E-6));	// setting eigenvalues to zero is not enough!
+			D.setEntry(i, i, Math.max(D.getEntry(i, i), minDiagonal));	// setting eigenvalues to zero is not enough!
 		}
 		return V.multiply(D).multiply(VT);
 	}
@@ -111,22 +110,31 @@ public class MahalanobisDistance extends VectorNorm {
 	}
 	
 	public int getNumberOfSamples() {
-		return n;
+		return N;
 	}
 
 	public int getSampleDimension() {
-		return m;
+		return M;
 	}
 	
 	//------------------------------------------------------------------------------------
 	
+	/**
+	 * Returns the "conditioned" covariance matrix used for distance calculations.
+	 * @return The conditioned covariance matrix
+	 */
 	public double[][] getCovarianceMatrix() {
 		return Cov;
 	}
 	
+	/**
+	 * Returns the inverse of the conditioned covariance matrix.
+	 * @return The inverse of the conditioned covariance matrix
+	 */
 	public double[][] getInverseCovarianceMatrix() {
 		return iCov;
 	}
+	
 	
 	public double[] getMeanVector() {
 		return mean;
@@ -162,23 +170,23 @@ public class MahalanobisDistance extends VectorNorm {
 	}
 	
 	public double distance2(double[] X, double[] Y) {
-		if (X.length != m || Y.length != m) {
-			throw new IllegalArgumentException("vectors must be of length " + m);
+		if (X.length != M || Y.length != M) {
+			throw new IllegalArgumentException("vectors must be of length " + M);
 		}
 		// TODO: implement with methods from Matrix class
 		// d^2(X,Y) = (X-Y)^T . S^{-1} . (X-Y)
-		double[] dXY = new double[m]; // = (X-Y)
-		for (int k = 0; k < m; k++) {
+		double[] dXY = new double[M]; // = (X-Y)
+		for (int k = 0; k < M; k++) {
 			dXY[k] = X[k] - Y[k];
 		}
-		double[] iSdXY = new double[m]; // = S^{-1} . (X-Y)
-		for (int k = 0; k < m; k++) {
-			for (int i = 0; i < m; i++) {
+		double[] iSdXY = new double[M]; // = S^{-1} . (X-Y)
+		for (int k = 0; k < M; k++) {
+			for (int i = 0; i < M; i++) {
 				iSdXY[k] += iCov[i][k] * dXY[i];
 			}
 		}
 		double d2 = 0;	// final sum
-		for (int k = 0; k < m; k++) {
+		for (int k = 0; k < M; k++) {
 			d2 += dXY[k] * iSdXY[k];
 		}						// d = (X-Y)^T . S^{-1} . (X-Y)
 		return d2;
@@ -266,6 +274,7 @@ public class MahalanobisDistance extends VectorNorm {
 		
 		double[][] samples = {X0, X1, X2, X3, X4, X5};
 		
+
 		MahalanobisDistance mhd = new MahalanobisDistance(samples);
 		
 		double[] mu = mhd.getMeanVector();
