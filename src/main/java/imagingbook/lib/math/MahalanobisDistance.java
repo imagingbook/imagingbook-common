@@ -264,7 +264,7 @@ public class MahalanobisDistance extends VectorNorm {
 		System.out.println("X5 = " + Matrix.toString(X5));
 		System.out.println();
 		
-		double[][] samples = {X1, X2, X3, X4};
+		double[][] samples = {X0, X1, X2, X3, X4, X5};
 		
 		MahalanobisDistance mhd = new MahalanobisDistance(samples);
 		
