@@ -19,7 +19,8 @@ import ij.IJ;
 
 /**
  * This class implements the Mahalanobis distance using the Apache commons math library.
- * See the numerical example in Theodoridis/Koutumbras, "Pattern Recognition" (p. 27).
+ * See the numerical example in Theodoridis/Koutrumbras, "Pattern Recognition",
+ * Academic Press 1999 (p. 27).
  * No statistical bias correction is applied.
  */
 public class MahalanobisDistance extends VectorNorm {
