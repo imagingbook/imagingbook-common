@@ -65,7 +65,7 @@ public class Dft2d {
 	
 	public void doDft2d () { // in-place 2D Dft
 		// do the rows:
-		Complex[] row = Complex.makeComplexVector(width);
+		Complex[] row = makeComplexVector(width);
 		Dft1d dftR = new Dft1d(width);
 		for (int v=0; v<height; v++){
 			getRow(v,row);
@@ -73,7 +73,7 @@ public class Dft2d {
 			putRow(v,rowDft);
 		}
 		// do the columns:
-		Complex[] col = Complex.makeComplexVector(height);
+		Complex[] col = makeComplexVector(height);
 		Dft1d dftC = new Dft1d(height);
 		for (int u=0; u<width; u++){
 			getCol(u,col);
@@ -94,8 +94,8 @@ public class Dft2d {
 	void putRow(int v, Complex[] rowC){
 		int i = v*width; //start index of row v
 		for (int u=0; u<width; u++){
-			Real[i+u] = (float) rowC[u].re();
-			Imag[i+u] = (float) rowC[u].im();
+			Real[i+u] = (float) rowC[u].re;
+			Imag[i+u] = (float) rowC[u].im;
 		}
 	}
 	
@@ -109,10 +109,19 @@ public class Dft2d {
 	
 	void putCol(int u, Complex[] rowC){
 		for (int v=0; v<height; v++){
-			Real[v*width+u] = (float) rowC[v].re();
-			Imag[v*width+u] = (float) rowC[v].im();
+			Real[v*width+u] = (float) rowC[v].re;
+			Imag[v*width+u] = (float) rowC[v].im;
 		}
 	}
+	
+	Complex[] makeComplexVector(int M) {
+		Complex[] g = new Complex[M];
+		for (int i = 0; i < M; i++) {
+			g[i] = new Complex(0, 0);
+		}
+		return g;
+	}
+
 	
 	//----------------------------------------------------
 	

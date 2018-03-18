@@ -47,8 +47,8 @@ public class Dft1d {
 			double sumRe = 0;
 			double sumIm = 0;
 			for (int m = 0; m < M; m++) {
-				double gRe = g[m].re();
-				double gIm = g[m].im();
+				double gRe = g[m].re;
+				double gIm = g[m].im;
 				int k = (u * m) % M;
 				double cosPhi = cosTable[k];
 				double sinPhi = sinTable[k];

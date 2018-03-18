@@ -67,8 +67,8 @@ public class FourierDescriptorUniform extends FourierDescriptor {
 			double Am = 0;
 			double Bm = 0;
 			for (int k = 0; k < M; k++) {
-				double x = g[k].re();
-				double y = g[k].im();
+				double x = g[k].re;
+				double y = g[k].im;
 				double phi = 2 * Math.PI * m * k / M;
 				double cosPhi = Math.cos(phi);
 				double sinPhi = Math.sin(phi);
@@ -98,8 +98,8 @@ public class FourierDescriptorUniform extends FourierDescriptor {
 			double Am = 0;
 			double Bm = 0;
 			for (int k = 0; k < M; k++) {
-				double x = g[k].re();
-				double y = g[k].im();
+				double x = g[k].re;
+				double y = g[k].im;
 				//int mk = (m * k) % M; double phi = 2 * Math.PI * mk / M;
 				double phi = 2 * Math.PI * m * k / M;	
 				double cosPhi = Math.cos(phi);

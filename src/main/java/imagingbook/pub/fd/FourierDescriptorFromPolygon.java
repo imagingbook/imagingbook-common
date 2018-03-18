@@ -65,8 +65,8 @@ public class FourierDescriptorFromPolygon extends FourierDescriptor {
         
         L[0] = 0;
         for (int i = 0; i < N; i++) {	// compute Dx, Dy, Dt and t tables
-            dx[i] = g[(i + 1) % N].re() - g[i].re();
-            dy[i] = g[(i + 1) % N].im() - g[i].im();
+            dx[i] = g[(i + 1) % N].re - g[i].re;
+            dy[i] = g[(i + 1) % N].im - g[i].im;
             lambda[i] = sqrt(sqr(dx[i]) + sqr(dy[i])); 
             if (abs(lambda[i]) < EPSILON_DOUBLE) {
         		throw new Error("Zero-length polygon segment!");
@@ -77,14 +77,14 @@ public class FourierDescriptorFromPolygon extends FourierDescriptor {
         double Ln = L[N];	// Ln is the closed polygon length
                
         // calculate DFT coefficient G[0]:
-        double x0 = g[0].re(); // V[0].getX();
-        double y0 = g[0].im(); // V[0].getY();
+        double x0 = g[0].re; // V[0].getX();
+        double y0 = g[0].im; // V[0].getY();
         double a0 = 0;
         double c0 = 0;
         for (int i = 0; i < N; i++) {	// for each polygon vertex
         	double s = (sqr(L[i+1]) - sqr(L[i])) / (2 * lambda[i]) - L[i];
-        	double xi = g[i].re(); // V[i].getX();
-        	double yi = g[i].im(); // V[i].getY();
+        	double xi = g[i].re; // V[i].getX();
+        	double yi = g[i].im; // V[i].getY();
         	a0 = a0 + s * dx[i] + (xi - x0) * lambda[i];
         	c0 = c0 + s * dy[i] + (yi - y0) * lambda[i];
         }

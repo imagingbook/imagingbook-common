@@ -86,8 +86,8 @@ public abstract class FourierDescriptor implements Cloneable {
 		} catch (CloneNotSupportedException e) {
 			e.printStackTrace();
 		}
-		fd2.g = Complex.duplicate(this.g);
-		fd2.G = Complex.duplicate(this.G);
+		fd2.g = duplicate(this.g);
+		fd2.G = duplicate(this.G);
 		return fd2;
 	}
 
@@ -109,9 +109,18 @@ public abstract class FourierDescriptor implements Cloneable {
 		int N = points.length;
 		Complex[] samples = new Complex[N];
 		for (int i = 0; i < N; i++) {
-			samples[i] = new Complex(points[i]);
+			samples[i] = new Complex(points[i].getX(), points[i].getY());
 		}
 		return samples;
+	}
+	
+
+	public static Complex[] duplicate(Complex[] g1) {
+		Complex[] g2 = new Complex[g1.length];
+		for (int i = 0; i < g1.length; i++) {
+			g2[i] = new Complex(g1[i].re, g1[i].im);
+		}
+		return g2;
 	}
 
 	// ------------------------------------------------------------------
@@ -212,13 +221,13 @@ public abstract class FourierDescriptor implements Cloneable {
 	 * @return single contour point
 	 */
 	private Complex getReconstructionPoint(double t, int mm, int mp) {
-		double x = G[0].re();
-		double y = G[0].im();
+		double x = G[0].re;
+		double y = G[0].im;
 		for (int m = mm; m <= mp; m++) {
 			if (m != 0) {
 				Complex Gm = getCoefficient(m);
-				double A = reconstructionScale * Gm.re();
-				double B = reconstructionScale * Gm.im();
+				double A = reconstructionScale * Gm.re;
+				double B = reconstructionScale * Gm.im;
 				double phi = 2 * Math.PI * m * t;
 				double sinPhi = Math.sin(phi);
 				double cosPhi = Math.cos(phi);
@@ -238,8 +247,8 @@ public abstract class FourierDescriptor implements Cloneable {
 		for (int i = 0; i < recPoints; i++) {
 			double t = (double) i / recPoints;
 			Complex p1 = this.getEllipsePoint(G1, G2, m, t);
-			double xt = p1.re();
-			double yt = p1.im();
+			double xt = p1.re;
+			double yt = p1.im;
 			if (i == 0) {
 				path.moveTo(xt + xOffset, yt + yOffset);
 			}
@@ -280,8 +289,8 @@ public abstract class FourierDescriptor implements Cloneable {
 	 */
 	private Complex getReconstructionPoint(Complex Gm, int m, double t) {
 		double wm = 2 * Math.PI * m;
-		double Am = Gm.re();
-		double Bm = Gm.im();
+		double Am = Gm.re;
+		double Bm = Gm.im;
 		double cost = Math.cos(wm * t);
 		double sint = Math.sin(wm * t);
 		double xt = Am * cost - Bm * sint;
@@ -317,10 +326,10 @@ public abstract class FourierDescriptor implements Cloneable {
 			// calculate a particular reconstruction point 
 			for (int m = 1; m <= Mp; m++) {
 				Complex ep = getEllipsePoint(getCoefficient(-m), getCoefficient(m), m, t);
-				pt = pt.add(ep.mult(reconstructionScale));
+				pt = pt.add(ep.multiply(reconstructionScale));
 			}
-			double xt = pt.re(); 
-			double yt = pt.im(); 
+			double xt = pt.re; 
+			double yt = pt.im; 
 			if (i == 0) {
 				path.moveTo(xt, yt);
 			}
@@ -407,7 +416,7 @@ public abstract class FourierDescriptor implements Cloneable {
 		reconstructionScale = norm;		// keep for later reconstruction
 		double scale = 1 / norm;
 		for (int m = 1; m < G.length; m++) {
-			G[m] =  G[m].mult(scale);
+			G[m] =  G[m].multiply(scale);
 		}
 		return scale;
 	}
@@ -430,8 +439,8 @@ public abstract class FourierDescriptor implements Cloneable {
 		reconstructionScale = norm;		// keep for later reconstruction
 		double scale = 1 / norm;
 		for (int m = 1; m <= Mp; m++) {
-			setCoefficient(-m, getCoefficient(-m).mult(scale));
-			setCoefficient( m, getCoefficient( m).mult(scale));
+			setCoefficient(-m, getCoefficient(-m).multiply(scale));
+			setCoefficient( m, getCoefficient( m).multiply(scale));
 		}
 		return scale;
 	}
@@ -449,8 +458,8 @@ public abstract class FourierDescriptor implements Cloneable {
 			Complex Gm = getCoefficient(-m);
 			Complex Gp = getCoefficient(+m);
 			double w = 1.0 / m;
-			z = z.add(Gm.mult(w));
-			z = z.add(Gp.mult(w));
+			z = z.add(Gm.multiply(w));
+			z = z.add(Gp.multiply(w));
 		}
 		double beta = z.arg();
 		for (int m = 1; m <= Mp; m++) {
@@ -478,7 +487,7 @@ public abstract class FourierDescriptor implements Cloneable {
 	private void rotate(Complex[] C, double phi) {
 		Complex rot = new Complex(phi);
 		for (int m = 1; m < G.length; m++) {
-			C[m] = C[m].mult(rot);
+			C[m] = C[m].multiply(rot);
 		}
 	}
 
@@ -560,10 +569,14 @@ public abstract class FourierDescriptor implements Cloneable {
 			for (int m = 1; m <= Mp; m++) {
 				Complex Gm = getCoefficient(-m).rotate(-m * phi);
 				Complex Gp = getCoefficient( m).rotate( m * phi);
-				sum = sum + Gp.crossProduct(Gm);
+				sum = sum + crossProduct(Gp, Gm);
 			}
 			return sum;
 		}
+	}
+	
+	private double crossProduct(Complex c1, Complex c2) {
+		return c1.re * c2.im - c1.im * c2.re;
 	}
 
 
@@ -580,8 +593,8 @@ public abstract class FourierDescriptor implements Cloneable {
 			if (m != 0) {
 				Complex G1m = fd1.getCoefficient(m);
 				Complex G2m = fd2.getCoefficient(m);
-				double dRe = G1m.re() - G2m.re();
-				double dIm = G1m.im() - G2m.im();
+				double dRe = G1m.re - G2m.re;
+				double dIm = G1m.im - G2m.im;
 				sum = sum + dRe * dRe + dIm * dIm;
 			}
 		}
