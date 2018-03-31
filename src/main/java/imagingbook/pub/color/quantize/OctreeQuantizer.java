@@ -48,7 +48,7 @@ public class OctreeQuantizer extends ColorQuantizer {
 
 	private final int maxColors;	// max. number of distinct colors after quantization
 	
-	private final int nColors;		// final number of colors
+//	private final int nColors;		// final number of colors
 	private final Node root;		// root node of the tree
 	
 	private int depth;				// current depth of the tree
@@ -81,7 +81,7 @@ public class OctreeQuantizer extends ColorQuantizer {
 		this.root = new Node(null, 0);
 		this.depth = Math.min(Math.max(log2(maxColors) - 1, 2), MAX_TREE_DEPTH);// 2 <= depth <= maxTreeDepth	
 		int initColorCnt = addPixels(pixels);
-		this.nColors = reduceTree(initColorCnt, pixels.length);
+//		this.nColors = reduceTree(initColorCnt, pixels.length);
 		this.colormap = makeColorMap();
 	}
 	
