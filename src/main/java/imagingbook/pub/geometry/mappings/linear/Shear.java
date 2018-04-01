@@ -12,7 +12,7 @@ package imagingbook.pub.geometry.mappings.linear;
 
 public class Shear extends AffineMapping {
 
-	Shear(double bx, double by) {
+	public Shear(double bx, double by) {
 		super( // calls constructor of AffineMapping
 			1,  bx, 0,
 			by, 1,  0, 

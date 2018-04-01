@@ -12,7 +12,7 @@ package imagingbook.pub.geometry.mappings.linear;
 
 public class Scaling extends AffineMapping {
 
-	Scaling(double sx, double sy) {
+	public Scaling(double sx, double sy) {
 		super(
 			sx, 0,  0,
 			0,  sy, 0, false);
