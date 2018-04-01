@@ -34,7 +34,7 @@ import ij.process.ShortProcessor;
  * It is abstract, because the implementation of some parts depends
  * on the region labeling algorithm being used.
  * 
- * @version 2016-11-08
+ * @version 2018/04/01
  */
 public abstract class RegionLabeling {
 	
@@ -364,13 +364,18 @@ public abstract class RegionLabeling {
 	
 	
 	/**
-	 * This inner class of {@link RegionLabeling} represents a connected 
+	 * This class of {@link RegionLabeling} represents a connected 
 	 * component or binary region. 
-	 * It supports iteration over the contained points, e.g., by
+	 * It is implemented as an inner class to {@link RegionLabeling} because
+	 * it references common region labeling data.
+	 * Instances of this class support iteration over the contained pixel
+	 * coordinates of type {@link Point}, e.g., by
 	 * <pre>
+	 * import java.awt.Point;
+	 * 
 	 * BinaryRegion R = ...;
 	 * for (Point p : R) {
-	 *    // process p ...
+	 *    // process point p ...
 	 * }
 	 * </pre>
 	 */
@@ -388,10 +393,11 @@ public abstract class RegionLabeling {
 		private List<Contour> innerContours;
 		
 		// summation variables used for various statistics
-		private long x1Sum  = 0;
-		private long y1Sum  = 0;
+		private long x1Sum = 0;
+		private long y1Sum = 0;
 		private long x2Sum = 0;
 		private long y2Sum = 0;
+		private long xySum = 0;
 		
 		// ------- constructor --------------------------
 		
@@ -418,7 +424,7 @@ public abstract class RegionLabeling {
 		}
 		
 		/**
-		 * Returns the sum of the x-values of the points
+		 * Returns the sum of the x-coordinates of the points
 		 * contained in this region.
 		 * 
 		 * @return the sum of x-values.
@@ -428,7 +434,7 @@ public abstract class RegionLabeling {
 		}
 
 		/**
-		 * Returns the sum of the y-values of the points
+		 * Returns the sum of the y-coordinates of the points
 		 * contained in this region.
 		 * 
 		 * @return the sum of y-values.
@@ -438,7 +444,7 @@ public abstract class RegionLabeling {
 		}
 
 		/**
-		 * Returns the sum of the squared x-values of the points
+		 * Returns the sum of the squared x-coordinates of the points
 		 * contained in this region.
 		 * 
 		 * @return the sum of squared x-values.
@@ -448,13 +454,23 @@ public abstract class RegionLabeling {
 		}
 
 		/**
-		 * Returns the sum of the squared y-values of the points
+		 * Returns the sum of the squared y-coordinates of the points
 		 * contained in this region.
 		 * 
 		 * @return the sum of squared y-values.
 		 */
 		public long getY2Sum() {
 			return y2Sum;
+		}
+		
+		/**
+		 * Returns the sum of the mixed x*y-coordinates of the points
+		 * contained in this region.
+		 * 
+		 * @return the sum of xy-values.
+		 */
+		public long getXYSum() {
+			return xySum;
 		}
 
 		// ------- public methods --------------------------
@@ -549,6 +565,7 @@ public abstract class RegionLabeling {
 			y1Sum = y1Sum + v;
 			x2Sum = x2Sum + u * u;
 			y2Sum = y2Sum + v * v;
+			xySum = xySum + u * v;
 			if (u < left)   left = u;
 			if (v < top)    top = v;
 			if (u > right)  right = u;
