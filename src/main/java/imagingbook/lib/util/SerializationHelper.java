@@ -22,7 +22,7 @@ import java.io.OutputStream;
  * a ClassNotFoundException to be thrown.
  * 
  * @author WB
- * @version 2015/04/19
+ * @version 2018/04/03
  */
 public class SerializationHelper {
 	
@@ -34,21 +34,32 @@ public class SerializationHelper {
 	 * Writes a serialized representation of an arbitrary Java object to 
 	 * a file. Make sure the serialized object is composed of standard Java types 
 	 * only to avoid class loader problems.
-	 *  
 	 * @param any The object to be serialized.
 	 * @param fileName The file to write to.
 	 * @return The full path of the written file.
+	 * @deprecated
 	 */
-	public static String writeObject(Object any, String fileName) {
+	public static String writeObject(Object obj, String fileName) {
 		File file = new File(fileName);
+		return writeObject(obj, file);
+	}
+	
+	/**
+	 * Writes a serialized representation of an arbitrary Java object to 
+	 * a file.
+	 * @param obj The object to be serialized.
+	 * @param file The file to write to.
+	 * @return The full path of the written file.
+	 */
+	public static String writeObject(Object obj, File file) {
 		String path = file.getAbsolutePath();
 		try (FileOutputStream strm = new FileOutputStream(file);
 			 OutputStream buffer = new BufferedOutputStream(strm);
 			 ObjectOutput output = new ObjectOutputStream(buffer);) 
 		{
-			output.writeObject(any);
+			output.writeObject(obj);
 		} catch (IOException e) {
-			System.err.println("Output error.");
+			System.err.println(e.toString());
 			return null;
 		}
 		return path;
@@ -58,23 +69,35 @@ public class SerializationHelper {
 	 * Reads an object (of known type) from a serialization file.
 	 * The return value must be cast to the appropriate type, which
 	 * must be known.
-	 * 
 	 * @param fileName The file containing serialized data.
 	 * @return The object reconstructed from the file representation or null if unsuccessful.
+	 * @deprecated
 	 */
 	public static Object readObject(String fileName) {
 		File file = new File(fileName);
-		Object any = null;
+		return readObject(file);
+	}
+	
+
+	/**
+	 * Reads an object (of known type) from a serialization file.
+	 * The return value must be cast to the appropriate type, which
+	 * must be known.
+	 * @param file The file to read.
+	 * @return The object reconstructed from the file representation or null if unsuccessful.
+	 */
+	public static Object readObject(File file) {
+		Object obj = null;
 		try (InputStream strm = new FileInputStream(file);
 			 InputStream buffer = new BufferedInputStream(strm);
 			 ObjectInput input = new ObjectInputStream(buffer);) 
 		{
-			any = input.readObject();
+			obj = input.readObject();
 		} catch (ClassNotFoundException | IOException e) {
-			System.err.println("Input error or class not found.");
+			System.err.println(e.toString());
 			return null;
 		}
-		return any;
+		return obj;
 	}
 
 }
