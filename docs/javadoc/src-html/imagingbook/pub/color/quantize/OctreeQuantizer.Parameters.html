@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html lang="de">
+<html lang="en">
 <head>
 <title>Source code</title>
 <link rel="stylesheet" type="text/css" href="../../../../../stylesheet.css" title="Style">
@@ -56,7 +56,7 @@
 <span class="sourceLineNo">048</span><a name="line.48"></a>
 <span class="sourceLineNo">049</span>        private final int maxColors;    // max. number of distinct colors after quantization<a name="line.49"></a>
 <span class="sourceLineNo">050</span>        <a name="line.50"></a>
-<span class="sourceLineNo">051</span>        private final int nColors;              // final number of colors<a name="line.51"></a>
+<span class="sourceLineNo">051</span>//      private final int nColors;              // final number of colors<a name="line.51"></a>
 <span class="sourceLineNo">052</span>        private final Node root;                // root node of the tree<a name="line.52"></a>
 <span class="sourceLineNo">053</span>        <a name="line.53"></a>
 <span class="sourceLineNo">054</span>        private int depth;                              // current depth of the tree<a name="line.54"></a>
@@ -89,7 +89,7 @@
 <span class="sourceLineNo">081</span>                this.root = new Node(null, 0);<a name="line.81"></a>
 <span class="sourceLineNo">082</span>                this.depth = Math.min(Math.max(log2(maxColors) - 1, 2), MAX_TREE_DEPTH);// 2 &lt;= depth &lt;= maxTreeDepth   <a name="line.82"></a>
 <span class="sourceLineNo">083</span>                int initColorCnt = addPixels(pixels);<a name="line.83"></a>
-<span class="sourceLineNo">084</span>                this.nColors = reduceTree(initColorCnt, pixels.length);<a name="line.84"></a>
+<span class="sourceLineNo">084</span>//              this.nColors = reduceTree(initColorCnt, pixels.length);<a name="line.84"></a>
 <span class="sourceLineNo">085</span>                this.colormap = makeColorMap();<a name="line.85"></a>
 <span class="sourceLineNo">086</span>        }<a name="line.86"></a>
 <span class="sourceLineNo">087</span>        <a name="line.87"></a>
