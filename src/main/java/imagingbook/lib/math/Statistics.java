@@ -106,7 +106,7 @@ public abstract class Statistics {
 	 * example from UTICS-C Appendix:
 	 * N = 4 samples
 	 * K = 3 dimensions
-	 * @param args
+	 * @param args ignored
 	 */
 	public static void main(String[] args) {
 		

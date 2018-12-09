@@ -34,7 +34,7 @@ public class SerializationHelper {
 	 * Writes a serialized representation of an arbitrary Java object to 
 	 * a file. Make sure the serialized object is composed of standard Java types 
 	 * only to avoid class loader problems.
-	 * @param any The object to be serialized.
+	 * @param obj The object to be serialized.
 	 * @param fileName The file to write to.
 	 * @return The full path of the written file.
 	 * @deprecated

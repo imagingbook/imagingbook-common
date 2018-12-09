@@ -101,7 +101,7 @@ public class Complex {
 	/**
 	 * Adds a complex quantity to this complex number and returns
 	 * a new complex number.
-	 * @param z
+	 * @param z complex value
 	 * @return the sum of this complex number and {@code z}
 	 */
 	public Complex add(Complex z) {
@@ -112,6 +112,7 @@ public class Complex {
 	 * Rotates this complex number by the angle {@code phi} and returns
 	 * a new complex number.
 	 * @param phi the angle
+	 * @return the rotated complex value
 	 */
 	public Complex rotate(double phi) {
 		return this.multiply(new Complex(phi));
@@ -133,7 +134,6 @@ public class Complex {
 	
 	/**
 	 * Returns the real part of this complex number.
-	 * @see {@link #re} (public member variable)
 	 * @return the real part
 	 */
 	public double getReal() {
@@ -142,7 +142,6 @@ public class Complex {
 	
 	/**
 	 * Returns the imaginary part of this complex number.
-	 * @see {@link #im} (public member variable)
 	 * @return the imaginary part
 	 */
 	public double getImaginary() {
