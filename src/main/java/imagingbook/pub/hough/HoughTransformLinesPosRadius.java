@@ -26,7 +26,7 @@ import java.util.Locale;
  * @author WB
  * @version 2015/11/13
  */
-
+@Deprecated
 public class HoughTransformLinesPosRadius {
 	
 	public static class Parameters {
