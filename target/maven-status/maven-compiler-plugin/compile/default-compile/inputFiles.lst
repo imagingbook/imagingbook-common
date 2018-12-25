@@ -73,6 +73,7 @@ D:\PROJECTS-GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook
 D:\PROJECTS-GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\color\image\XYZscalingAdaptation.java
 D:\PROJECTS-GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\regions\geometry\ConvexHull.java
 D:\PROJECTS-GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\fd\FourierDescriptorUniform.java
+D:\PROJECTS-GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\hough\lines\AlgebraicLine.java
 D:\PROJECTS-GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\sift\util\SiftKeyfileReaderLowe.java
 D:\PROJECTS-GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\lib\interpolation\BilinearInterpolator.java
 D:\PROJECTS-GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\lib\filters\GaussianFilter.java
@@ -140,6 +141,7 @@ D:\PROJECTS-GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook
 D:\PROJECTS-GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\lib\color\CssColor.java
 D:\PROJECTS-GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\fd\PolygonSampler.java
 D:\PROJECTS-GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\matching\ChamferMatcher.java
+D:\PROJECTS-GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\hough\lines\HoughLine.java
 D:\PROJECTS-GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\geometry\mappings\linear\ProjectiveMapping.java
 D:\PROJECTS-GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\threshold\global\IsodataThresholderSlow.java
 D:\PROJECTS-GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\threshold\BackgroundMode.java
@@ -157,6 +159,7 @@ D:\PROJECTS-GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook
 D:\PROJECTS-GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\hough\HoughTransformLinesPosRadius.java
 D:\PROJECTS-GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\lib\interpolation\LanczosInterpolator.java
 D:\PROJECTS-GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\dft\Dft2d.java
+D:\PROJECTS-GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\hough\lines\HessianLine.java
 D:\PROJECTS-GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\lib\ij\CallbackHandler.java
 D:\PROJECTS-GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\threshold\adaptive\SauvolaThresholder.java
 D:\PROJECTS-GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\sift\SiftMatch3.java
