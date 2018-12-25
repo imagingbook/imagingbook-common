@@ -3,7 +3,7 @@
  *  image processing published by Springer-Verlag in various languages and editions.
  * Permission to use and distribute this software is granted under the BSD 2-Clause 
  * "Simplified" License (see http://opensource.org/licenses/BSD-2-Clause). 
- * Copyright (c) 2006-2016 Wilhelm Burger, Mark J. Burge. All rights reserved. 
+ * Copyright (c) 2006-2018 Wilhelm Burger, Mark J. Burge. All rights reserved. 
  * Visit http://imagingbook.com for additional details.
  *******************************************************************************/
 package imagingbook.pub.hough;
@@ -26,6 +26,7 @@ import imagingbook.pub.hough.lines.HoughLine;
  * to a single accumulator cell but gets distributed over two neighboring
  * (radial) cells to reduce aliasing effects. Thus we accumulate non-integer
  * values and therefore the various accumulators are of type {@code float[][]}.
+ *
  * 
  * TODO: add bias correction
  * 
