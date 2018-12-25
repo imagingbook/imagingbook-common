@@ -28,6 +28,7 @@ imagingbook.pub.geometry.mappings.linear
 imagingbook.pub.geometry.mappings.nonlinear
 imagingbook.pub.histogram
 imagingbook.pub.hough
+imagingbook.pub.hough.lines
 imagingbook.pub.lucaskanade
 imagingbook.pub.matching
 imagingbook.pub.moments
