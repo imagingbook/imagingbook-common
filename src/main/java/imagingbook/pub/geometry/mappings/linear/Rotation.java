@@ -15,12 +15,23 @@ public class Rotation extends AffineMapping {
 	/**
 	 * Creates a new {@link AffineMapping} representing a pure 2D rotation
 	 * around the origin.
-	 * @param alpha Rotation angle (in radians).
+	 * @param alpha rotation angle (in radians)
 	 */
 	public Rotation(double alpha) {
 		super(
 			 Math.cos(alpha), -Math.sin(alpha), 0,
 			 Math.sin(alpha),  Math.cos(alpha), 0, false);
+	}
+	
+	public Rotation(Rotation r) {
+		super(r);
+//				r.a00, r.a01, 0,
+//				r.a10, r.a11, 0, false);
+	}
+	
+	@Override
+	public Rotation duplicate() {
+		return new Rotation(this);
 	}
 }
 

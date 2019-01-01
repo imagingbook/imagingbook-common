@@ -9,9 +9,6 @@
 
 package imagingbook.pub.geometry.mappings.linear;
 
-import imagingbook.lib.settings.PrintPrecision;
-import imagingbook.pub.geometry.mappings.WarpParameters;
-
 import java.awt.geom.Point2D;
 
 import org.apache.commons.math3.linear.DecompositionSolver;
@@ -20,24 +17,32 @@ import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.RealVector;
 import org.apache.commons.math3.linear.SingularValueDecomposition;
 
+import imagingbook.lib.settings.PrintPrecision;
+import imagingbook.pub.geometry.mappings.WarpParameters;
+
 
 /**
- * 2015-02-16: Added preliminary constructor for more than 4 point pairs 
- * (overdetermined, least-squares).
- * 
- * @author WB
- *
+ * This class represents a projective transformation in 2D (also known
+ * as a "homography"). It can be defined by four pairs of corresponding
+ * points.
  */
 public class ProjectiveMapping extends LinearMapping implements WarpParameters {
 	
-	
-	public static ProjectiveMapping makeMapping (Point2D[] P, Point2D[] Q) {
+	/**
+	 * Creates the most specific linear mapping from two sequences of corresponding
+	 * 2D points.
+	 * 
+	 * @param P first point sequence
+	 * @param Q second point sequence
+	 * @return a linear mapping derived from point correspondences
+	 */
+	public static ProjectiveMapping makeMapping(Point2D[] P, Point2D[] Q) { // TODO: Check for a better solution!
 		int minLen = Math.min(P.length, Q.length);
 		if (minLen < 1) {
 			throw new IllegalArgumentException("cannot create a mapping from zero points");
 		}
-		else if (minLen <= 2) {				// TODO: special case for minLen == 2?
-			return new Translation(P, Q);
+		else if (minLen <= 2) {				// TODO: special case for minLen == 2, rigid transformation??
+			return null; //new Translation(P, Q);
 		}
 		else if (minLen <= 3) {
 			return new AffineMapping(P, Q);
@@ -47,11 +52,25 @@ public class ProjectiveMapping extends LinearMapping implements WarpParameters {
 		}
 	}
 	
-	// creates the identity mapping:
+	/**
+	 * Creates the identity mapping.
+	 */
 	public ProjectiveMapping() {
 		super();
 	}
 	
+	/**
+	 * Creates an arbitrary linear mapping from the specified matrix elements.
+	 * @param a00 matrix element A_00
+	 * @param a01 matrix element A_01
+	 * @param a02 matrix element A_02
+	 * @param a10 matrix element A_10
+	 * @param a11 matrix element A_11
+	 * @param a12 matrix element A_12
+	 * @param a20 matrix element A_20
+	 * @param a21 matrix element A_21
+	 * @param inv set true if this mapping represents an inverse transformation
+	 */
 	public ProjectiveMapping(
 			double a00, double a01, double a02, 
 			double a10, double a11, double a12, 
@@ -60,40 +79,51 @@ public class ProjectiveMapping extends LinearMapping implements WarpParameters {
 		super(a00, a01, a02, a10, a11, a12, a20, a21, 1, inv);
 	}
 	
-	public ProjectiveMapping(LinearMapping lm) {
-		super(lm);
-		//this.normalize();	// needed??
+	/**
+	 * Creates a new projective mapping from an existing projective mapping.
+	 * @param pm a given projective mapping
+	 */
+	public ProjectiveMapping(ProjectiveMapping pm) {
+		super(pm);
 	}
 	
-	// creates the projective mapping from the unit square S to
-	// the arbitrary quadrilateral P given by points p0,...,p3:
+	// 
+	// 
+	/**
+	 * Creates the projective mapping from the unit square S to
+	 * the arbitrary quadrilateral P, specified by four points.
+	 * 
+	 * @param p0 point 0
+	 * @param p1 point 1
+	 * @param p2 point 2
+	 * @param p3 point 3
+	 */
 	public ProjectiveMapping(Point2D p0, Point2D p1, Point2D p2, Point2D p3) {
 		super();
-		double x0 = p0.getX(), x1 = p1.getX(), x2 = p2.getX(), x3 = p3.getX(); 
+		double x0 = p0.getX(), x1 = p1.getX(), x2 = p2.getX(), x3 = p3.getX();
 		double y0 = p0.getY(), y1 = p1.getY(), y2 = p2.getY(), y3 = p3.getY();
-		double S = (x1-x2)*(y3-y2) - (x3-x2)*(y1-y2);
+		double S = (x1 - x2) * (y3 - y2) - (x3 - x2) * (y1 - y2);
 		// TODO: check S for zero value and throw exception
-		a20 = ((x0-x1+x2-x3)*(y3-y2)-(y0-y1+y2-y3)*(x3-x2)) / S;
-		a21 = ((y0-y1+y2-y3)*(x1-x2)-(x0-x1+x2-x3)*(y1-y2)) / S;
-		a00 = x1 - x0 + a20*x1;
-		a01 = x3 - x0 + a21*x3;
+		a20 = ((x0 - x1 + x2 - x3) * (y3 - y2) - (y0 - y1 + y2 - y3) * (x3 - x2)) / S;
+		a21 = ((y0 - y1 + y2 - y3) * (x1 - x2) - (x0 - x1 + x2 - x3) * (y1 - y2)) / S;
+		a00 = x1 - x0 + a20 * x1;
+		a01 = x3 - x0 + a21 * x3;
 		a02 = x0;
-		a10 = y1 - y0 + a20*y1;
-		a11 = y3 - y0 + a21*y3;
+		a10 = y1 - y0 + a20 * y1;
+		a11 = y3 - y0 + a21 * y3;
 		a12 = y0;
 	}
 	
-	
 	/**
-	 * Creates a new {@link ProjectiveMapping} between arbitrary quadrilaterals P, Q.
-	 * @param p0 point 1 of source quad P.
-	 * @param p1 point 2 of source quad P.
-	 * @param p2 point 3 of source quad P.
-	 * @param p3 point 4 of source quad P.
-	 * @param q0 point 1 of target quad Q.
-	 * @param q1 point 2 of target quad Q.
-	 * @param q2 point 3 of target quad Q.
-	 * @param q3 point 4 of target quad Q.
+	 * Creates a projective mapping between arbitrary quadrilaterals P, Q.
+	 * @param p0 point 0 of source quad P
+	 * @param p1 point 1 of source quad P
+	 * @param p2 point 2 of source quad P
+	 * @param p3 point 3 of source quad P
+	 * @param q0 point 0 of target quad Q
+	 * @param q1 point 1 of target quad Q
+	 * @param q2 point 2 of target quad Q
+	 * @param q3 point 3 of target quad Q
 	 */
 	public ProjectiveMapping(
 			Point2D p0, Point2D p1, Point2D p2, Point2D p3, 
@@ -155,8 +185,13 @@ public class ProjectiveMapping extends LinearMapping implements WarpParameters {
 	
 	// -----------------------------------------------------------
 	
-	
-	public ProjectiveMapping concat(ProjectiveMapping B) {
+	/**
+	 * Concatenates this mapping A with another linear mapping B and returns
+	 * a new mapping C, such that C(x) = B(A(x)).
+	 * @param B the second mapping
+	 * @return the concatenated mapping
+	 */
+	public ProjectiveMapping concat(ProjectiveMapping B) {	// TODO: check if needed! Generics?
 		ProjectiveMapping A = new ProjectiveMapping(this);
 		A.concatDestructive(B);
 		return A;
@@ -178,7 +213,7 @@ public class ProjectiveMapping extends LinearMapping implements WarpParameters {
 	
 	@Override
 	public ProjectiveMapping duplicate() {
-		return (ProjectiveMapping) this.clone();
+		return new ProjectiveMapping(this);
 	}
 	
 	// Warp parameter support -------------------------------------
@@ -228,8 +263,12 @@ public class ProjectiveMapping extends LinearMapping implements WarpParameters {
 			 {0,   0,   x/c, y/c, -(x*b)/cc, -(y*b)/cc, 0,   1/c}};
 	}
 	
-	// for testing only -----------------------------------------------------------------
+	// -----------------------------------------------------------------
 	
+	/**
+	 * For testing only.
+	 * @param args ignored
+	 */
 	public static void main(String[] args) {
 		PrintPrecision.set(6);
 

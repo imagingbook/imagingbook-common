@@ -12,6 +12,12 @@ package imagingbook.pub.geometry.mappings.linear;
 
 public class Shear extends AffineMapping {
 
+	/**
+	 * Creates a new {@link AffineMapping} that represents a shear
+	 * transform.
+	 * @param bx shear factor in x-direction
+	 * @param by shear factor in y-direction
+	 */
 	public Shear(double bx, double by) {
 		super( // calls constructor of AffineMapping
 			1,  bx, 0,

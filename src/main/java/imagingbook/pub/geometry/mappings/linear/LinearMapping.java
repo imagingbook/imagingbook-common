@@ -12,19 +12,6 @@ package imagingbook.pub.geometry.mappings.linear;
 import imagingbook.lib.math.Matrix;
 import imagingbook.pub.geometry.mappings.Mapping;
 
-
-
-import java.awt.geom.Point2D;
-
-/*
- * 2013-02-02: 
- * 	Changed applyTo(Point2D) to return a new point (no reuse).
- * 	Changed LinearMapping invert() to return new mapping.
- * 	Changed LinearMapping concat() to return new mapping.
- * 2015-12-20:
- * 	Duplicated getInverse() to return a LinearMapping.
- */
-
 /**
  * This class represents an arbitrary linear transformation in 2D.
  * TODO: make fields final.
@@ -43,7 +30,7 @@ public class LinearMapping extends Mapping {
 	}
 
 	/**
-	 * Creates a new linear mapping with arbitrary parameters.
+	 * Creates an arbitrary linear mapping from the specified matrix elements.
 	 * @param a00 matrix element A_00
 	 * @param a01 matrix element A_01
 	 * @param a02 matrix element A_02
@@ -75,6 +62,8 @@ public class LinearMapping extends Mapping {
 		this.a20 = lmap.a20;  this.a21 = lmap.a21;  this.a22 = lmap.a22;
 		this.isInverseFlag = lmap.isInverseFlag;
 	}
+	
+	// TODO: add a constructor that accepts a sequence of linear mappings, make concatenation protected.
 	
 	// ----------------------------------------------------------
 	
@@ -164,28 +153,28 @@ public class LinearMapping extends Mapping {
 		a20 = b31;		a21 = b32;		a22 = b33;
 	}
 	
-	public double[][] getTransformationMatrix () {
+	/**
+	 * Retrieves the transformation matrix for this mapping.
+	 * @return the 3x3 transformation matrix
+	 */
+	public double[][] getTransformationMatrix() {
 		return new double[][]
 				{{a00, a01, a02},
 				 {a10, a11, a12},
 				 {a20, a21, a22}};
 	}
 
-	public LinearMapping duplicate() {
-		return (LinearMapping) this.clone();
+	/**
+	 * Returns a copy of this mapping.
+	 * @return a new linear mapping
+	 */
+	public LinearMapping duplicate() {	// TODO: use generics?
+//		return (LinearMapping) this.clone();
+		return new LinearMapping(this);
 	}
-	
-	
-	public double[][] toArray() {
-		double[][] A =
-			{{a00, a01, a02},
-			 {a10, a11, a12},
-			 {a20, a21, a22}};
-		return A;
-	}
-	
+
 	public String toString() {
-		return Matrix.toString(toArray());
+		return Matrix.toString(getTransformationMatrix());
 	}
 	
 }

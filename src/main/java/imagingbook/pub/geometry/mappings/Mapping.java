@@ -45,7 +45,6 @@ public abstract class Mapping implements Cloneable {
 		return applyTo(xy[0], xy[1]);
 	}
 
-	
 	/**
 	 * Returns true if this mapping represents an inverse transformation,
 	 * otherwise false. Inverse transformations are needed for target-to-source
@@ -179,6 +178,7 @@ public abstract class Mapping implements Cloneable {
 		return this.clone();
 	}
 	
+	@Deprecated		// do we need this??
 	protected Mapping clone() {
 		Mapping copy = null;
 		try {

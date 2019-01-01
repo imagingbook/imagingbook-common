@@ -9,42 +9,27 @@
 
 package imagingbook.pub.geometry.mappings.linear;
 
-import java.awt.geom.Point2D;
-
-
 public class Translation extends AffineMapping {
-	
-	public Translation() {
+
+	/**
+	 * Creates a new translation mapping.
+	 * @param tx translation in x
+	 * @param ty translation in y
+	 */
+	public Translation(double tx, double ty){
 		super();
+		a02 = tx;
+		a12 = ty;
 	}
 
-	public Translation(double dx, double dy){
-		super();
-		a02 = dx;
-		a12 = dy;
-	}
-	
-	public Translation(Point2D p1, Point2D p2) {
-		this(p2.getX() - p1.getX(), p2.getY() - p1.getY());
-	}
-	
-	// for consistency:
-	public Translation(Point2D[] A, Point2D[] B) {
-		this(A[0], B[0]);
-	}
-
-	public Translation(LinearMapping t) {
+	public Translation(Translation t) {
 		super();
 		this.a02 = t.a02;
 		this.a12 = t.a12;
 	}
 
 	public Translation invert() {
-		Translation t2 = new Translation();
-		t2.a02 = -this.a02;
-		t2.a12 = -this.a12;
-		//return (Translation) super.invert();
-		return t2;
+		return new Translation(-this.a02, -this.a12);
 	}
 	
 	@Override

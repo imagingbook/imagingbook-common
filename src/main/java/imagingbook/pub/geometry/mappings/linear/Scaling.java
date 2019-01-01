@@ -12,10 +12,25 @@ package imagingbook.pub.geometry.mappings.linear;
 
 public class Scaling extends AffineMapping {
 
+	/**
+	 * Creates a mapping that scales along the x- and y-axis
+	 * by the associated factors.
+	 * 
+	 * @param sx scale factor in x-direction
+	 * @param sy scale factor in y-direction
+	 */
 	public Scaling(double sx, double sy) {
 		super(
 			sx, 0,  0,
 			0,  sy, 0, false);
+	}
+	
+	/**
+	 * Creates a scaling that is uniform in x and y.
+	 * @param s scale factor
+	 */
+	public Scaling(double s) {
+		this(s, s);
 	}
 }
 
