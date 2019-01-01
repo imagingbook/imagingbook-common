@@ -63,11 +63,11 @@ public class BilinearMapping extends Mapping {
 		return new BilinearMapping(a1, a2, a3, a4, b1, b2, b3, b4, true);
 	}
 	
-	public double[] applyTo (double[] xy){
-		double x0 = xy[0];
-		double y0 = xy[1];
-		double x1 = a1 * x0 + a2 * y0 + a3 * x0 * y0 + a4;
-		double y1 = b1 * x0 + b2 * y0 + b3 * x0 * y0 + b4;
+	public double[] applyTo (double x, double y){
+//		double x0 = xy[0];
+//		double y0 = xy[1];
+		double x1 = a1 * x + a2 * y + a3 * x * y + a4;
+		double y1 = b1 * x + b2 * y + b3 * x * y + b4;
 		//pnt.setLocation(x1, y1);
 		return new double[] {x1, y1};
 	}	

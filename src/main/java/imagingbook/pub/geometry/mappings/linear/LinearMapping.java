@@ -25,40 +25,60 @@ import java.awt.geom.Point2D;
  * 	Duplicated getInverse() to return a LinearMapping.
  */
 
+/**
+ * This class represents an arbitrary linear transformation in 2D.
+ * TODO: make fields final.
+ */
 public class LinearMapping extends Mapping {
 	
 	protected double 
 		a00 = 1, a01 = 0, a02 = 0,
 		a10 = 0, a11 = 1, a12 = 0,
 		a20 = 0, a21 = 0, a22 = 1;
-		   
+
+	/**
+	 * Creates a new identity mapping.
+	 */
 	public LinearMapping() {
-		// creates the identity mapping
 	}
-		   
-	protected LinearMapping (
-			double a11, double a12, double a13, 
-			double a21, double a22, double a23,
-			double a31, double a32, double a33, boolean inv) {
-		this.a00 = a11;  this.a01 = a12;  this.a02 = a13;
-		this.a10 = a21;  this.a11 = a22;  this.a12 = a23;
-		this.a20 = a31;  this.a21 = a32;  this.a22 = a33;
+
+	/**
+	 * Creates a new linear mapping with arbitrary parameters.
+	 * @param a00 matrix element A_00
+	 * @param a01 matrix element A_01
+	 * @param a02 matrix element A_02
+	 * @param a10 matrix element A_10
+	 * @param a11 matrix element A_11
+	 * @param a12 matrix element A_12
+	 * @param a20 matrix element A_20
+	 * @param a21 matrix element A_21
+	 * @param a22 matrix element A_22
+	 * @param inv set true if this mapping represents an inverse transformation
+	 */
+	public LinearMapping (
+			double a00, double a01, double a02, 
+			double a10, double a11, double a12,
+			double a20, double a21, double a22, boolean inv) {
+		this.a00 = a00;  this.a01 = a01;  this.a02 = a02;
+		this.a10 = a10;  this.a11 = a11;  this.a12 = a12;
+		this.a20 = a20;  this.a21 = a21;  this.a22 = a22;
 		isInverseFlag = inv;
 	}
 	
-	protected LinearMapping (LinearMapping lm) {
-		this.a00 = lm.a00;  this.a01 = lm.a01;  this.a02 = lm.a02;
-		this.a10 = lm.a10;  this.a11 = lm.a11;  this.a12 = lm.a12;
-		this.a20 = lm.a20;  this.a21 = lm.a21;  this.a22 = lm.a22;
-		this.isInverseFlag = lm.isInverseFlag;
+	/**
+	 * Creates a new linear mapping from an existing linear mapping.
+	 * @param lmap a given linear mapping
+	 */
+	public LinearMapping (LinearMapping lmap) {
+		this.a00 = lmap.a00;  this.a01 = lmap.a01;  this.a02 = lmap.a02;
+		this.a10 = lmap.a10;  this.a11 = lmap.a11;  this.a12 = lmap.a12;
+		this.a20 = lmap.a20;  this.a21 = lmap.a21;  this.a22 = lmap.a22;
+		this.isInverseFlag = lmap.isInverseFlag;
 	}
 	
 	// ----------------------------------------------------------
 	
-	public double[] applyTo (double[] xy) {
-		return applyTo(xy[0], xy[1]);
-	}
-	
+	@Override
 	public double[] applyTo (double x, double y) {
 		double h =  (a20 * x + a21 * y + a22);
 		double x1 = (a00 * x + a01 * y + a02) / h;
@@ -66,32 +86,32 @@ public class LinearMapping extends Mapping {
 		// pnt.setLocation(x1, y1);
 		return new double[] {x1, y1};
 	}
-		   
-	public Point2D applyTo (Point2D pnt) {
-		double x = pnt.getX();
-		double y = pnt.getY();
-		double h =  (a20 * x + a21 * y + a22);
-		double x1 = (a00 * x + a01 * y + a02) / h;
-		double y1 = (a10 * x + a11 * y + a12) / h;
-		// pnt.setLocation(x1, y1);
-		return new Point2D.Double(x1, y1);
-	}
 	
+	// TODO: should be implemented differently (generics)
 	public LinearMapping getInverse() {
-		if (isInverseFlag)
-			return this;
-		else {
-			return this.invert();
-		}
+		return (LinearMapping) super.getInverse();
+//		if (isInverseFlag)
+//			return this;
+//		else {
+//			return this.invert();
+//		}
 	}
 	
+
+	/**
+	 * Calculates and returns the inverted mapping.
+	 */
 	public LinearMapping invert() {
 		LinearMapping lm = new LinearMapping(this);
 		lm.invertDestructive();
 		return lm;
 	}
 	
-	public void invertDestructive() {
+	/**
+	 * Invertes this mapping destructively ("in-place") i.e.,
+	 * without creating a new instance.
+	 */
+	protected void invertDestructive() {
 		double det = a00*a11*a22 + a01*a12*a20 + a02*a10*a21 - 
 					 a00*a12*a21 - a01*a10*a22 - a02*a11*a20;
 		double b11 = (a11*a22 - a12*a21) / det; 
@@ -109,13 +129,24 @@ public class LinearMapping extends Mapping {
 		isInverseFlag = !isInverseFlag;
 	}
 	
-	public LinearMapping concat(LinearMapping B) {	// TODO: this is unfinished and not clean!
+	/**
+	 * Concatenates this mapping A with another linear mapping B and returns
+	 * a new mapping C, such that C(x) = B(A(x)).
+	 * @param B the second mapping
+	 * @return the concatenated mapping
+	 */
+	public LinearMapping concat(LinearMapping B) {
 		LinearMapping A = new LinearMapping(this);
 		A.concatDestructive(B);
 		return A;
 	}
 	
-	// concatenates THIS transform matrix A with B: A-> B*A
+	/**
+	 * Concatenates this mapping A destructively with another linear mapping B,
+	 * such that A <- B * A.
+	 * TODO: This should not be public!
+	 * @param B the second mapping
+	 */
 	public void concatDestructive(LinearMapping B) {
 		double b11 = B.a00*a00 + B.a01*a10 + B.a02*a20;
 		double b12 = B.a00*a01 + B.a01*a11 + B.a02*a21;

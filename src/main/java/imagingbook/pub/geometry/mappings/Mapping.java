@@ -17,44 +17,87 @@ import java.awt.Point;
 import java.awt.geom.Point2D;
 
 /**
- * 2013-02-02: changed to use the returned new point of applyTo(Point2D),
- * not relying on side effect.
- * 2014-04-19: modified to work with ImageAccessor.
- * 2015-12-10: added isInverse() method.
+ * Abstract class which represents a general 2D transformation.
+ * @version 2019/01/01
  */
 public abstract class Mapping implements Cloneable {
 	
 	protected boolean isInverseFlag = false;
 	
-	// all subclasses must implement this method
-	public abstract double[] applyTo(double[] pnt);
+	/**
+	 * Applies this transformation to the given 2D point.
+	 * All sub-classes of {@link Mapping} must implement this method.
+	 * 
+	 * @param x the x-coordinate of the point to be mapped
+	 * @param y the y-coordinate of the point to be mapped
+	 * @return the transformed 2D coordinate
+	 */
+	public abstract double[] applyTo (double x, double y);
+	
+	/**
+	 * Applies this transformation to a 2D point given as
+	 * a {@code double} array.
+	 * 
+	 * @param pnt the point to be mapped
+	 * @return the transformed 2D coordinate
+	 */
+	public double[] applyTo (double[] xy) {
+		return applyTo(xy[0], xy[1]);
+	}
 
 	
+	/**
+	 * Returns true if this mapping represents an inverse transformation,
+	 * otherwise false. Inverse transformations are needed for target-to-source
+	 * image mappings.
+	 * 
+	 * @return true if this mapping represents an inverse transformation, otherwise false
+	 */
 	public boolean isInverse() {
 		return isInverseFlag;
 	}
 
+	/**
+	 * If this mapping is an inverse transformation already, a copy of this
+	 * mapping is returned. Otherwise its inverse is calculated (if possible)
+	 * and returned. Note that only subclasses of {@link LinearMapping} invert.
+	 * 
+	 * @return a copy of this mapping if inverse already, otherwise a newly calculated inverse mapping
+	 */
 	public Mapping getInverse() {
 		if (isInverseFlag)
-			return this;
+			return this.duplicate();
 		else {
 			return this.invert(); // only linear mappings invert
 		}
 	}
 	
+	/**
+	 * Tries to invert this mapping and returns the result. An {@link UnsupportedOperationException}
+	 * is thrown if the mapping cannot be inverted.
+	 * 
+	 * @return the inverse mapping
+	 */
 	protected Mapping invert() {
 		throw new UnsupportedOperationException("mapping cannot be inverted");
 	}
 	
+	/**
+	 * Applies this mapping to a single 2D point.
+	 * 
+	 * @param pnt the original point
+	 * @return the transformed point
+	 */
 	public Point2D applyTo(Point2D pnt) {
 		double[] xy = applyTo(new double[] {pnt.getX(), pnt.getY()});
 		return new Point2D.Double(xy[0], xy[1]);
 	}
 	
 	/**
-	 * Applies this mapping to all points in the pnts array.
-	 * @param pnts array of original points.
-	 * @return an array of modified points.
+	 * Applies this mapping to all points in the array of 2D points.
+	 * 
+	 * @param pnts the original points
+	 * @return the transformed points
 	 */
 	public Point2D[] applyTo(Point2D[] pnts) {
 		Point2D[] outPnts = new Point2D[pnts.length];
@@ -65,12 +108,12 @@ public abstract class Mapping implements Cloneable {
 	}
 
 	/**
-	 * Destructively transforms the image in "ip" using this geometric
+	 * Destructively transforms the passed image using this geometric
 	 * mapping and the specified pixel interpolation method.
 	 * TODO: this should not be here (geometry only)?
 	 * 
-	 * @param ip target image to which THIS mapping is applied.
-	 * @param im interpolation method.
+	 * @param ip target image to which this mapping is applied
+	 * @param im interpolation method
 	 */
 	public void applyTo(ImageProcessor ip, InterpolationMethod im) {
 		// make a temporary copy of the image:
@@ -81,17 +124,17 @@ public abstract class Mapping implements Cloneable {
 	}
 
 	/**
-	 * Transforms the "source" image to the "target" image using this geometric
-	 * mapping and the specified pixel interpolation method. Source and target
-	 * must be different images!
+	 * Transforms the source image to the target image using this geometric
+	 * mapping and the specified pixel interpolation method. Note that source
+	 * and target must be different images!
 	 * 
-	 * @param source input image (not modified).
-	 * @param target output image (modified).
-	 * @param im interpolation method.
+	 * @param source input image (not modified)
+	 * @param target output image (modified)
+	 * @param im interpolation method
 	 */
 	public void applyTo(ImageProcessor source, ImageProcessor target, InterpolationMethod im) {
 		if (target == source) {
-			throw new IllegalArgumentException("source and target image must not be the same");
+			throw new IllegalArgumentException("Source and target image must not be the same!");
 		}
 		ImageAccessor sourceAcc = ImageAccessor.create(source, null, im);
 		ImageAccessor targetAcc = ImageAccessor.create(target);
@@ -100,13 +143,18 @@ public abstract class Mapping implements Cloneable {
 
 
 	/**
-	 * Transforms the source image (contained in "srcInterpol") to the "target"
-	 * image using this geometric mapping and the specified pixel interpolator.
+	 * Transforms the source image to the target image using this geometric
+	 * mapping and the specified pixel interpolation method.
+	 * The two images are passed as instances of {@link ImageAccessor}.
+	 * Note that source and target reference different images!
 	 * 
 	 * @param sourceAcc accessor to the source image
 	 * @param targetAcc accessor to the target image
 	 */
 	public void applyTo(ImageAccessor sourceAcc, ImageAccessor targetAcc) {
+		if (targetAcc.getProcessor() == sourceAcc.getProcessor()) {
+			throw new IllegalArgumentException("Source and target image must not be the same!");
+		}
 		Mapping invMap = this.getInverse(); // get inverse mapping
 		ImageProcessor target = targetAcc.getProcessor();
 		final int w = target.getWidth();
@@ -120,7 +168,14 @@ public abstract class Mapping implements Cloneable {
 		}
 	}
 
-	public Mapping duplicate() { // duplicates any mapping, overwrite
+	/** 
+	 * Duplicates this mapping. Sub-classes are supposed to override
+	 * this method.
+	 * TODO: Let this method throw an {@link UnsupportedOperationException} instead of returning null!
+	 * 
+	 * @return a copy of this mapping or null if it cannot be cloned
+	 */
+	public Mapping duplicate() {
 		return this.clone();
 	}
 	

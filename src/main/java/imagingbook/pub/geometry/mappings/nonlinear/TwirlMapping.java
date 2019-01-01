@@ -26,9 +26,7 @@ public class TwirlMapping extends Mapping {
 		return new TwirlMapping(xc, yc, angle, rad, true);
 	}
 
-	public double[] applyTo (double[] xy){
-		double x = xy[0];
-		double y = xy[1];
+	public double[] applyTo (double x, double y){
 		double dx = x - xc;
 		double dy = y - yc;
 		double d = Math.sqrt(dx*dx + dy*dy);
@@ -39,7 +37,7 @@ public class TwirlMapping extends Mapping {
 			//pnt.setLocation(x1, y1);
 			return new double[] {x1, y1};
 		}
-		return xy.clone();
+		return new double[] {x, y};
 	}
 }
 

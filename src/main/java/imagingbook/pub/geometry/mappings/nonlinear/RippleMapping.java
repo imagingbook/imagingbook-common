@@ -33,11 +33,11 @@ public class RippleMapping extends Mapping {
 		return new RippleMapping(xWavel, xAmpl, yWavel, yAmpl, true);
 	}
 
-	public double[] applyTo (double[] xy){
-		double x0 = xy[0];
-		double y0 = xy[1];	
-		double x1 = x0 + xAmpl * Math.sin(y0 / xWavel);
-		double y1 = y0 + yAmpl * Math.sin(x0 / yWavel);
+	public double[] applyTo (double x, double y){
+//		double x0 = xy[0];
+//		double y0 = xy[1];	
+		double x1 = x + xAmpl * Math.sin(y / xWavel);
+		double y1 = y + yAmpl * Math.sin(x / yWavel);
 		//pnt.setLocation(x1, y1);
 		return new double[] {x1, y1};
 	}

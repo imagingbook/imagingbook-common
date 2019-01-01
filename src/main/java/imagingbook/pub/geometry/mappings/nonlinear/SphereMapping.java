@@ -28,9 +28,9 @@ public class SphereMapping extends Mapping {
 		return new SphereMapping(xc, yc, rad, true);
 	}
 
-	public double[] applyTo (double[] xy){
-		double dx = xy[0]-xc;
-		double dy = xy[1]-yc;
+	public double[] applyTo (double x, double y){
+		double dx = x-xc;
+		double dy = y-yc;
 		double dx2 = dx*dx;
 		double dy2 = dy*dy;
 		double rad2 = rad*rad;
@@ -43,16 +43,16 @@ public class SphereMapping extends Mapping {
 
 			double xAlpha = Math.asin(dx / Math.sqrt(dx2 + z2));
 			double xBeta = xAlpha - xAlpha * (1 / refIdx);
-			double x1 = xy[0] - z * Math.tan(xBeta);
+			double x1 = x - z * Math.tan(xBeta);
 
 			double yAlpha = Math.asin(dy / Math.sqrt(dy2 + z2));
 			double yBeta = yAlpha - yAlpha * (1 / refIdx);
-			double y1 = xy[1] - z * Math.tan(yBeta);
+			double y1 = y - z * Math.tan(yBeta);
 			//pnt.setLocation(x1, y1);
 			return new double[] {x1, y1};
 		} 
 		// otherwise leave point unchanged
-		return xy.clone();
+		return new double[] {x, y};
 	}
 }
 
