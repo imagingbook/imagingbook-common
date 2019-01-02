@@ -45,10 +45,10 @@ public class IcpTest1 {
 	private AffineMapping makeTransformation() {
 		double ctr = 0.5 * size;
 		AffineMapping am = new AffineMapping();
-		am.concatDestructive(new Translation(-ctr, -ctr));	// TODO: rename to concatD
-		am.concatDestructive(new Rotation(theta));
-		am.concatDestructive(new Translation(ctr, ctr));
-		am.concatDestructive(new Translation(dx, dy));
+		am = am.concat(new Translation(-ctr, -ctr));
+		am = am.concat(new Rotation(theta));
+		am = am.concat(new Translation(ctr, ctr));
+		am = am.concat(new Translation(dx, dy));
 		return am;
 	}
 

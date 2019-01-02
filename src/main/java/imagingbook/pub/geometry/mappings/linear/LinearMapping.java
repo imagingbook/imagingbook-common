@@ -30,7 +30,6 @@ public class LinearMapping extends Mapping {
 		a00 = 1; a01 = 0; a02 = 0;
 		a10 = 0; a11 = 1; a12 = 0;
 		a20 = 0; a21 = 0; a22 = 1;
-
 	}
 	
 	public LinearMapping(double[][] A) {
@@ -50,7 +49,6 @@ public class LinearMapping extends Mapping {
 	 * @param a20 matrix element A_20
 	 * @param a21 matrix element A_21
 	 * @param a22 matrix element A_22
-	 * @param inv set true if this mapping represents an inverse transformation
 	 */
 	public LinearMapping (
 			double a00, double a01, double a02, 
@@ -73,8 +71,6 @@ public class LinearMapping extends Mapping {
 //		this.isInverseFlag = lmap.isInverseFlag;
 	}
 	
-	// TODO: add a constructor that accepts a sequence of linear mappings, make concatenation protected.
-	
 	// ----------------------------------------------------------
 	
 	/**
@@ -87,12 +83,11 @@ public class LinearMapping extends Mapping {
 		// TODO: check a22 for zero value and throw exception, move to ProjectiveMapping, make constructor?
 		double b00 = a00/a22;	double b01 = a01/a22;	double b02 = a02/a22;
 		double b10 = a10/a22;	double b11 = a11/a22;	double b12 = a12/a22;
-		double b20 = a20/a22;	double b21 = a21/a22;	double b22 = 1;
+		double b20 = a20/a22;	double b21 = a21/a22;
 		return new ProjectiveMapping(b00, b01, b02, b10, b11, b12, b20, b21);
 	}
 	
 	// ----------------------------------------------------------
-	
 	
 	@Override
 	public double[] applyTo (double x, double y) {

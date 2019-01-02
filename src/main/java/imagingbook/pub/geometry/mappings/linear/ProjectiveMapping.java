@@ -45,10 +45,10 @@ public class ProjectiveMapping extends LinearMapping implements WarpParameters {
 			return null; //new Translation(P, Q);
 		}
 		else if (minLen <= 3) {
-			return new AffineMapping(P, Q);
+			return AffineMapping.fromPoints(P, Q);
 		}
 		else {
-			return new ProjectiveMapping(P, Q);	
+			return ProjectiveMapping.fromQuadToQuad(P, Q);
 		}
 	}
 	
@@ -69,7 +69,6 @@ public class ProjectiveMapping extends LinearMapping implements WarpParameters {
 	 * @param a12 matrix element A_12
 	 * @param a20 matrix element A_20
 	 * @param a21 matrix element A_21
-	 * @param inv set true if this mapping represents an inverse transformation
 	 */
 	public ProjectiveMapping(
 			double a00, double a01, double a02, 
@@ -79,15 +78,39 @@ public class ProjectiveMapping extends LinearMapping implements WarpParameters {
 	}
 	
 	/**
-	 * Creates a new projective mapping from an existing projective mapping.
-	 * @param pm a given projective mapping
+	 * Creates a new projective mapping from any linear mapping.
+	 * @param lm a given linear mapping
 	 */
-	public ProjectiveMapping(ProjectiveMapping pm) {
-		super(pm);
+	public ProjectiveMapping(LinearMapping lm) {
+		super(lm.normalize());
 	}
 	
-	// 
-	// 
+ 
+//	/**
+//	 * Creates the projective mapping from the unit square S to
+//	 * the arbitrary quadrilateral P, specified by four points.
+//	 * 
+//	 * @param p0 point 0
+//	 * @param p1 point 1
+//	 * @param p2 point 2
+//	 * @param p3 point 3
+//	 */
+//	public ProjectiveMapping(Point2D p0, Point2D p1, Point2D p2, Point2D p3) {
+//		super();
+//		double x0 = p0.getX(), x1 = p1.getX(), x2 = p2.getX(), x3 = p3.getX();
+//		double y0 = p0.getY(), y1 = p1.getY(), y2 = p2.getY(), y3 = p3.getY();
+//		double S = (x1 - x2) * (y3 - y2) - (x3 - x2) * (y1 - y2);
+//		// TODO: check S for zero value and throw exception
+//		a20 = ((x0 - x1 + x2 - x3) * (y3 - y2) - (y0 - y1 + y2 - y3) * (x3 - x2)) / S;
+//		a21 = ((y0 - y1 + y2 - y3) * (x1 - x2) - (x0 - x1 + x2 - x3) * (y1 - y2)) / S;
+//		a00 = x1 - x0 + a20 * x1;
+//		a01 = x3 - x0 + a21 * x3;
+//		a02 = x0;
+//		a10 = y1 - y0 + a20 * y1;
+//		a11 = y3 - y0 + a21 * y3;
+//		a12 = y0;
+//	}
+	
 	/**
 	 * Creates the projective mapping from the unit square S to
 	 * the arbitrary quadrilateral P, specified by four points.
@@ -96,22 +119,45 @@ public class ProjectiveMapping extends LinearMapping implements WarpParameters {
 	 * @param p1 point 1
 	 * @param p2 point 2
 	 * @param p3 point 3
+	 * @return a new projective mapping
 	 */
-	public ProjectiveMapping(Point2D p0, Point2D p1, Point2D p2, Point2D p3) {
-		super();
+	public static ProjectiveMapping fromUnitSquareToQuad(Point2D p0, Point2D p1, Point2D p2, Point2D p3) {
 		double x0 = p0.getX(), x1 = p1.getX(), x2 = p2.getX(), x3 = p3.getX();
 		double y0 = p0.getY(), y1 = p1.getY(), y2 = p2.getY(), y3 = p3.getY();
 		double S = (x1 - x2) * (y3 - y2) - (x3 - x2) * (y1 - y2);
 		// TODO: check S for zero value and throw exception
-		a20 = ((x0 - x1 + x2 - x3) * (y3 - y2) - (y0 - y1 + y2 - y3) * (x3 - x2)) / S;
-		a21 = ((y0 - y1 + y2 - y3) * (x1 - x2) - (x0 - x1 + x2 - x3) * (y1 - y2)) / S;
-		a00 = x1 - x0 + a20 * x1;
-		a01 = x3 - x0 + a21 * x3;
-		a02 = x0;
-		a10 = y1 - y0 + a20 * y1;
-		a11 = y3 - y0 + a21 * y3;
-		a12 = y0;
+		double a20 = ((x0 - x1 + x2 - x3) * (y3 - y2) - (y0 - y1 + y2 - y3) * (x3 - x2)) / S;
+		double a21 = ((y0 - y1 + y2 - y3) * (x1 - x2) - (x0 - x1 + x2 - x3) * (y1 - y2)) / S;
+		double a00 = x1 - x0 + a20 * x1;
+		double a01 = x3 - x0 + a21 * x3;
+		double a02 = x0;
+		double a10 = y1 - y0 + a20 * y1;
+		double a11 = y3 - y0 + a21 * y3;
+		double a12 = y0;
+		return new ProjectiveMapping(a00, a01, a02, a10, a11, a12, a20, a21);
 	}
+	
+//	/**
+//	 * Creates a projective mapping between arbitrary quadrilaterals P, Q.
+//	 * @param p0 point 0 of source quad P
+//	 * @param p1 point 1 of source quad P
+//	 * @param p2 point 2 of source quad P
+//	 * @param p3 point 3 of source quad P
+//	 * @param q0 point 0 of target quad Q
+//	 * @param q1 point 1 of target quad Q
+//	 * @param q2 point 2 of target quad Q
+//	 * @param q3 point 3 of target quad Q
+//	 */
+//	public ProjectiveMapping(
+//			Point2D p0, Point2D p1, Point2D p2, Point2D p3, 
+//			Point2D q0, Point2D q1, Point2D q2, Point2D q3)	{
+//		super();	// initialized to identity
+//		ProjectiveMapping T1 = new ProjectiveMapping(p0, p1, p2, p3);
+//		ProjectiveMapping T2 = new ProjectiveMapping(q0, q1, q2, q3);
+//		ProjectiveMapping T1i = T1.getInverse();
+//		ProjectiveMapping T12 = T1i.concat(T2);		
+//		this.concatDestructive(T12);	// transfer T12 -> this
+//	}
 	
 	/**
 	 * Creates a projective mapping between arbitrary quadrilaterals P, Q.
@@ -123,36 +169,83 @@ public class ProjectiveMapping extends LinearMapping implements WarpParameters {
 	 * @param q1 point 1 of target quad Q
 	 * @param q2 point 2 of target quad Q
 	 * @param q3 point 3 of target quad Q
+	 * @return a new projective mapping
 	 */
-	public ProjectiveMapping(
+	public static ProjectiveMapping fromQuadToQuad(
 			Point2D p0, Point2D p1, Point2D p2, Point2D p3, 
 			Point2D q0, Point2D q1, Point2D q2, Point2D q3)	{
-		super();	// initialized to identity
-		ProjectiveMapping T1 = new ProjectiveMapping(p0, p1, p2, p3);
-		ProjectiveMapping T2 = new ProjectiveMapping(q0, q1, q2, q3);
+		ProjectiveMapping T1 = ProjectiveMapping.fromUnitSquareToQuad(p0, p1, p2, p3);
+		ProjectiveMapping T2 = ProjectiveMapping.fromUnitSquareToQuad(q0, q1, q2, q3);
 		ProjectiveMapping T1i = T1.getInverse();
-		ProjectiveMapping T12 = T1i.concat(T2);		
-		this.concatDestructive(T12);	// transfer T12 -> this
+		return T1i.concat(T2);		
 	}
 	
+//	/**
+//	 * Creates a new {@link ProjectiveMapping} between arbitrary quadrilaterals P, Q.
+//	 * @param P source quad.
+//	 * @param Q target quad.
+//	 */
+//	public ProjectiveMapping(Point2D[] P, Point2D[] Q) {
+//		this(P[0], P[1], P[2], P[3], Q[0], Q[1], Q[2], Q[3]);
+//	}
+	
 	/**
-	 * Creates a new {@link ProjectiveMapping} between arbitrary quadrilaterals P, Q.
-	 * @param P source quad.
-	 * @param Q target quad.
+	 * Creates a new projective mapping between arbitrary quadrilaterals P, Q.
+	 * @param P source quad
+	 * @param Q target quad
+	 * @return a new projective mapping
 	 */
-	public ProjectiveMapping(Point2D[] P, Point2D[] Q) {
-		this(P[0], P[1], P[2], P[3], Q[0], Q[1], Q[2], Q[3]);
+	public static ProjectiveMapping fromQuadToQuad(Point2D[] P, Point2D[] Q) {
+		return ProjectiveMapping.fromQuadToQuad(P[0], P[1], P[2], P[3], Q[0], Q[1], Q[2], Q[3]);
 	}
 	
+//	/**
+//	 * Constructor for more than 4 point pairs, finds a least-squares solution
+//	 * for the homography parameters.
+//	 * NOTE: this is UNFINISHED code!
+//	 * @param P sequence of points (source)
+//	 * @param Q sequence of points (target)
+//	 * @param dummy unused (only to avoid duplicate signature)
+//	 */
+//	public ProjectiveMapping(Point2D[] P, Point2D[] Q, boolean dummy) {
+//		final int n = P.length;
+//		double[] ba = new double[2 * n];
+//		double[][] Ma = new double[2 * n][];
+//		for (int i = 0; i < n; i++) {
+//			double x = P[i].getX();
+//			double y = P[i].getY();
+//			double u = Q[i].getX();
+//			double v = Q[i].getY();
+//			ba[2 * i + 0] = u;
+//			ba[2 * i + 1] = v;
+//			Ma[2 * i + 0] = new double[] { x, y, 1, 0, 0, 0, -u * x, -u * y };
+//			Ma[2 * i + 1] = new double[] { 0, 0, 0, x, y, 1, -v * x, -v * y };
+//		}
+//		
+//		RealMatrix M = MatrixUtils.createRealMatrix(Ma);
+//		RealVector b = MatrixUtils.createRealVector(ba);
+//		DecompositionSolver solver = new SingularValueDecomposition(M).getSolver();
+//		RealVector h = solver.solve(b);
+//		a00 = h.getEntry(0);
+//		a01 = h.getEntry(1);
+//		a02 = h.getEntry(2);
+//		a10 = h.getEntry(3);
+//		a11 = h.getEntry(4);
+//		a12 = h.getEntry(5);
+//		a20 = h.getEntry(6);
+//		a21 = h.getEntry(7);
+//		a22 = 1;
+//	}
+	
 	/**
-	 * Constructor for more than 4 point pairs, finds a least-squares solution
+	 * Maps between more than 4 point pairs, finds a least-squares solution
 	 * for the homography parameters.
 	 * NOTE: this is UNFINISHED code!
 	 * @param P sequence of points (source)
 	 * @param Q sequence of points (target)
-	 * @param dummy unused (only to avoid duplicate signature)
+	 * @return a new projective mapping
 	 */
-	public ProjectiveMapping(Point2D[] P, Point2D[] Q, boolean dummy) {
+	public static ProjectiveMapping fromPointsToPoints(Point2D[] P, Point2D[] Q) {
 		final int n = P.length;
 		double[] ba = new double[2 * n];
 		double[][] Ma = new double[2 * n][];
@@ -171,15 +264,16 @@ public class ProjectiveMapping extends LinearMapping implements WarpParameters {
 		RealVector b = MatrixUtils.createRealVector(ba);
 		DecompositionSolver solver = new SingularValueDecomposition(M).getSolver();
 		RealVector h = solver.solve(b);
-		a00 = h.getEntry(0);
-		a01 = h.getEntry(1);
-		a02 = h.getEntry(2);
-		a10 = h.getEntry(3);
-		a11 = h.getEntry(4);
-		a12 = h.getEntry(5);
-		a20 = h.getEntry(6);
-		a21 = h.getEntry(7);
-		a22 = 1;
+		double a00 = h.getEntry(0);
+		double a01 = h.getEntry(1);
+		double a02 = h.getEntry(2);
+		double a10 = h.getEntry(3);
+		double a11 = h.getEntry(4);
+		double a12 = h.getEntry(5);
+		double a20 = h.getEntry(6);
+		double a21 = h.getEntry(7);
+
+		return new ProjectiveMapping(a00, a01, a02, a10, a11, a12, a20, a21);
 	}
 	
 	// -----------------------------------------------------------
@@ -191,10 +285,16 @@ public class ProjectiveMapping extends LinearMapping implements WarpParameters {
 	 * @return the concatenated mapping
 	 */
 	public ProjectiveMapping concat(ProjectiveMapping B) {
-		ProjectiveMapping A = new ProjectiveMapping(this);
-		A.concatDestructive(B);
-		return A;
+		LinearMapping A = this;
+		LinearMapping C = A.concat(B);
+		return new ProjectiveMapping(C);
 	}
+	
+//	public ProjectiveMapping concat(ProjectiveMapping B) {
+//		ProjectiveMapping A = new ProjectiveMapping(this);
+//		A.concatDestructive(B);
+//		return A;
+//	}
 	
 //	public ProjectiveMapping invert() {
 //		ProjectiveMapping pm = new ProjectiveMapping(this);
@@ -317,7 +417,7 @@ public class ProjectiveMapping extends LinearMapping implements WarpParameters {
 				//new Point2D.Double(7,4.9)	// 5 points, overdetermined!
 				};
 		
-		ProjectiveMapping pm = new ProjectiveMapping(A, B, true);
+		ProjectiveMapping pm = ProjectiveMapping.fromPointsToPoints(A, B);
 		
 		System.out.println("\nprojective mapping = \n" + pm.toString());
 		

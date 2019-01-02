@@ -35,7 +35,6 @@ public class AffineMapping extends ProjectiveMapping {
 	 * @param a10 matrix element A_10
 	 * @param a11 matrix element A_11
 	 * @param a12 matrix element A_12
-	 * @param inv set true if this mapping represents an inverse transformation
 	 */
 	public AffineMapping (
 			double a00, double a01, double a02, 
@@ -51,38 +50,68 @@ public class AffineMapping extends ProjectiveMapping {
 		super(am);
 	}
 
+//	/**
+//	 * Creates an affine mapping between arbitrary triangles A, B.
+//	 * @param A1 point 1 of source triangle A
+//	 * @param A2 point 2 of source triangle A
+//	 * @param A3 point 3 of source triangle A
+//	 * @param B1 point 1 of source triangle B
+//	 * @param B2 point 2 of source triangle B
+//	 * @param B3 point 3 of source triangle B
+//	 */
+//	public AffineMapping(Point2D A1, Point2D A2, Point2D A3, Point2D B1, Point2D B2, Point2D B3) {
+//		super();
+//		double ax1 = A1.getX(), ax2 = A2.getX(), ax3 = A3.getX();
+//		double ay1 = A1.getY(), ay2 = A2.getY(), ay3 = A3.getY();
+//		double bx1 = B1.getX(), bx2 = B2.getX(), bx3 = B3.getX();
+//		double by1 = B1.getY(), by2 = B2.getY(), by3 = B3.getY();
+//
+//		double S = ax1 * (ay3 - ay2) + ax2 * (ay1 - ay3) + ax3 * (ay2 - ay1); // TODO: check S for zero value and throw exception!
+//		a00 = (ay1 * (bx2 - bx3) + ay2 * (bx3 - bx1) + ay3 * (bx1 - bx2)) / S;
+//		a01 = (ax1 * (bx3 - bx2) + ax2 * (bx1 - bx3) + ax3 * (bx2 - bx1)) / S;
+//		a10 = (ay1 * (by2 - by3) + ay2 * (by3 - by1) + ay3 * (by1 - by2)) / S;
+//		a11 = (ax1 * (by3 - by2) + ax2 * (by1 - by3) + ax3 * (by2 - by1)) / S;
+//		a02 = (ax1*(ay3*bx2-ay2*bx3) + ax2*(ay1*bx3-ay3*bx1) + ax3*(ay2*bx1-ay1*bx2)) / S;
+//		a12 = (ax1*(ay3*by2-ay2*by3) + ax2*(ay1*by3-ay3*by1) + ax3*(ay2*by1-ay1*by2)) / S;
+//	}
+	
 	/**
-	 * Creates a projective mapping between arbitrary triangles A, B.
+	 * Creates an affine mapping from an arbitrary triangle A to another triangle B.
 	 * @param A1 point 1 of source triangle A
 	 * @param A2 point 2 of source triangle A
 	 * @param A3 point 3 of source triangle A
 	 * @param B1 point 1 of source triangle B
 	 * @param B2 point 2 of source triangle B
 	 * @param B3 point 3 of source triangle B
+	 * @return a new affine mapping
 	 */
-	public AffineMapping(Point2D A1, Point2D A2, Point2D A3, Point2D B1, Point2D B2, Point2D B3) {
-		super();
+	public static AffineMapping fromPoints(Point2D A1, Point2D A2, Point2D A3, Point2D B1, Point2D B2, Point2D B3) {
 		double ax1 = A1.getX(), ax2 = A2.getX(), ax3 = A3.getX();
 		double ay1 = A1.getY(), ay2 = A2.getY(), ay3 = A3.getY();
 		double bx1 = B1.getX(), bx2 = B2.getX(), bx3 = B3.getX();
 		double by1 = B1.getY(), by2 = B2.getY(), by3 = B3.getY();
 
 		double S = ax1 * (ay3 - ay2) + ax2 * (ay1 - ay3) + ax3 * (ay2 - ay1); // TODO: check S for zero value and throw exception!
-		a00 = (ay1 * (bx2 - bx3) + ay2 * (bx3 - bx1) + ay3 * (bx1 - bx2)) / S;
-		a01 = (ax1 * (bx3 - bx2) + ax2 * (bx1 - bx3) + ax3 * (bx2 - bx1)) / S;
-		a10 = (ay1 * (by2 - by3) + ay2 * (by3 - by1) + ay3 * (by1 - by2)) / S;
-		a11 = (ax1 * (by3 - by2) + ax2 * (by1 - by3) + ax3 * (by2 - by1)) / S;
-		a02 = (ax1*(ay3*bx2-ay2*bx3) + ax2*(ay1*bx3-ay3*bx1) + ax3*(ay2*bx1-ay1*bx2)) / S;
-		a12 = (ax1*(ay3*by2-ay2*by3) + ax2*(ay1*by3-ay3*by1) + ax3*(ay2*by1-ay1*by2)) / S;
+		double a00 = (ay1 * (bx2 - bx3) + ay2 * (bx3 - bx1) + ay3 * (bx1 - bx2)) / S;
+		double a01 = (ax1 * (bx3 - bx2) + ax2 * (bx1 - bx3) + ax3 * (bx2 - bx1)) / S;
+		double a10 = (ay1 * (by2 - by3) + ay2 * (by3 - by1) + ay3 * (by1 - by2)) / S;
+		double a11 = (ax1 * (by3 - by2) + ax2 * (by1 - by3) + ax3 * (by2 - by1)) / S;
+		double a02 = (ax1*(ay3*bx2-ay2*bx3) + ax2*(ay1*bx3-ay3*bx1) + ax3*(ay2*bx1-ay1*bx2)) / S;
+		double a12 = (ax1*(ay3*by2-ay2*by3) + ax2*(ay1*by3-ay3*by1) + ax3*(ay2*by1-ay1*by2)) / S;
+		return new AffineMapping(a00, a01, a02, a10, a11, a12);
 	}
 
-	/**
-	 * Creates a projective mapping between arbitrary triangles A, B.
-	 * @param A points of the source triangle
-	 * @param B points of the target triangle
-	 */
-	public AffineMapping(Point2D[] A, Point2D[] B) {	// TODO: check length of A, B
-		this(A[0], A[1], A[2], B[0], B[1], B[2]);
+//	/**
+//	 * Creates a projective mapping between arbitrary triangles A, B.
+//	 * @param A points of the source triangle
+//	 * @param B points of the target triangle
+//	 */
+//	public AffineMapping(Point2D[] A, Point2D[] B) {	// TODO: check length of A, B
+//		this(A[0], A[1], A[2], B[0], B[1], B[2]);
+//	}
+	
+	public static AffineMapping fromPoints(Point2D[] A, Point2D[] B) {	// TODO: check length of A, B
+		return AffineMapping.fromPoints(A[0], A[1], A[2], B[0], B[1], B[2]);
 	}
 
 	/**
