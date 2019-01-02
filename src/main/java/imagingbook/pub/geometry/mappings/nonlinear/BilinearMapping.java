@@ -33,7 +33,7 @@ public class BilinearMapping extends Mapping {
 					boolean isInverse) {
 		this.a1 = a1;   this.a2 = a2;   this.a3 = a3;   this.a4 = a4;
 		this.b1 = b1;   this.b2 = b2;   this.b3 = b3;   this.b4 = b4;	
-		this.isInverseFlag = isInverse;		
+//		this.isInverseFlag = isInverse;		
 	}
 	
 	//map between arbitrary quadrilaterals

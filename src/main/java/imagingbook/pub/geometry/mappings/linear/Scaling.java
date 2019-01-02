@@ -9,7 +9,6 @@
 
 package imagingbook.pub.geometry.mappings.linear;
 
-
 public class Scaling extends AffineMapping {
 
 	/**
@@ -22,7 +21,7 @@ public class Scaling extends AffineMapping {
 	public Scaling(double sx, double sy) {
 		super(
 			sx, 0,  0,
-			0,  sy, 0, false);
+			0,  sy, 0);
 	}
 	
 	/**
@@ -31,6 +30,18 @@ public class Scaling extends AffineMapping {
 	 */
 	public Scaling(double s) {
 		this(s, s);
+	}
+	
+	public Scaling(Scaling sc) {
+		super(sc);
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * @return a new scaling transformation
+	 */
+	public Scaling duplicate() {
+		return new Scaling(this);
 	}
 }
 

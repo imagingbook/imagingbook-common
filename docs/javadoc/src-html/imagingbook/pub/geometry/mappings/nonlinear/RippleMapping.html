@@ -41,11 +41,11 @@
 <span class="sourceLineNo">033</span>                return new RippleMapping(xWavel, xAmpl, yWavel, yAmpl, true);<a name="line.33"></a>
 <span class="sourceLineNo">034</span>        }<a name="line.34"></a>
 <span class="sourceLineNo">035</span><a name="line.35"></a>
-<span class="sourceLineNo">036</span>        public double[] applyTo (double[] xy){<a name="line.36"></a>
-<span class="sourceLineNo">037</span>                double x0 = xy[0];<a name="line.37"></a>
-<span class="sourceLineNo">038</span>                double y0 = xy[1];      <a name="line.38"></a>
-<span class="sourceLineNo">039</span>                double x1 = x0 + xAmpl * Math.sin(y0 / xWavel);<a name="line.39"></a>
-<span class="sourceLineNo">040</span>                double y1 = y0 + yAmpl * Math.sin(x0 / yWavel);<a name="line.40"></a>
+<span class="sourceLineNo">036</span>        public double[] applyTo (double x, double y){<a name="line.36"></a>
+<span class="sourceLineNo">037</span>//              double x0 = xy[0];<a name="line.37"></a>
+<span class="sourceLineNo">038</span>//              double y0 = xy[1];      <a name="line.38"></a>
+<span class="sourceLineNo">039</span>                double x1 = x + xAmpl * Math.sin(y / xWavel);<a name="line.39"></a>
+<span class="sourceLineNo">040</span>                double y1 = y + yAmpl * Math.sin(x / yWavel);<a name="line.40"></a>
 <span class="sourceLineNo">041</span>                //pnt.setLocation(x1, y1);<a name="line.41"></a>
 <span class="sourceLineNo">042</span>                return new double[] {x1, y1};<a name="line.42"></a>
 <span class="sourceLineNo">043</span>        }<a name="line.43"></a>

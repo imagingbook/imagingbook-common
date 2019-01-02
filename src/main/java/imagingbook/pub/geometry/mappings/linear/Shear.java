@@ -21,8 +21,19 @@ public class Shear extends AffineMapping {
 	public Shear(double bx, double by) {
 		super( // calls constructor of AffineMapping
 			1,  bx, 0,
-			by, 1,  0, 
-			false);
+			by, 1,  0);
+	}
+	
+	public Shear(Shear sh) {
+		super(sh);
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * @return a new shear mapping
+	 */
+	public Shear duplicate() {
+		return new Shear(this);
 	}
 	
 }

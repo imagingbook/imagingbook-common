@@ -21,7 +21,7 @@ public class SphereMapping extends Mapping {
 		this.xc = xc;
 		this.yc = yc;
 		this.rad = rad;
-		this.isInverseFlag = inv;
+//		this.isInverseFlag = inv;
 	}
 	
 	public static SphereMapping makeInverseMapping(double xc, double yc, double rad){

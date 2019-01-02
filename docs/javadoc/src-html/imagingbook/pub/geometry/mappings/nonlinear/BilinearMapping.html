@@ -71,11 +71,11 @@
 <span class="sourceLineNo">063</span>                return new BilinearMapping(a1, a2, a3, a4, b1, b2, b3, b4, true);<a name="line.63"></a>
 <span class="sourceLineNo">064</span>        }<a name="line.64"></a>
 <span class="sourceLineNo">065</span>        <a name="line.65"></a>
-<span class="sourceLineNo">066</span>        public double[] applyTo (double[] xy){<a name="line.66"></a>
-<span class="sourceLineNo">067</span>                double x0 = xy[0];<a name="line.67"></a>
-<span class="sourceLineNo">068</span>                double y0 = xy[1];<a name="line.68"></a>
-<span class="sourceLineNo">069</span>                double x1 = a1 * x0 + a2 * y0 + a3 * x0 * y0 + a4;<a name="line.69"></a>
-<span class="sourceLineNo">070</span>                double y1 = b1 * x0 + b2 * y0 + b3 * x0 * y0 + b4;<a name="line.70"></a>
+<span class="sourceLineNo">066</span>        public double[] applyTo (double x, double y){<a name="line.66"></a>
+<span class="sourceLineNo">067</span>//              double x0 = xy[0];<a name="line.67"></a>
+<span class="sourceLineNo">068</span>//              double y0 = xy[1];<a name="line.68"></a>
+<span class="sourceLineNo">069</span>                double x1 = a1 * x + a2 * y + a3 * x * y + a4;<a name="line.69"></a>
+<span class="sourceLineNo">070</span>                double y1 = b1 * x + b2 * y + b3 * x * y + b4;<a name="line.70"></a>
 <span class="sourceLineNo">071</span>                //pnt.setLocation(x1, y1);<a name="line.71"></a>
 <span class="sourceLineNo">072</span>                return new double[] {x1, y1};<a name="line.72"></a>
 <span class="sourceLineNo">073</span>        }       <a name="line.73"></a>

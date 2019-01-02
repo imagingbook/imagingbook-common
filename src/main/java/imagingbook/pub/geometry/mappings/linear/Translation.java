@@ -17,18 +17,15 @@ public class Translation extends AffineMapping {
 	 * @param ty translation in y
 	 */
 	public Translation(double tx, double ty){
-		super();
-		a02 = tx;
-		a12 = ty;
+		super(1, 0, tx, 0, 1, ty);
 	}
 
 	public Translation(Translation t) {
-		super();
-		this.a02 = t.a02;
-		this.a12 = t.a12;
+		super(t);
 	}
 
-	public Translation invert() {
+	@Override
+	public Translation getInverse() {
 		return new Translation(-this.a02, -this.a12);
 	}
 	
@@ -49,12 +46,16 @@ public class Translation extends AffineMapping {
 		double[] p = new double[] {a02,	a12};
 		return p;
 	}
-
-	@Override
-	public void setWarpParameters(double[] p) {
-		a02 = p[0];
-		a12 = p[1];
+	
+	public static Translation fromWarpParameters(double[] p) {
+		return new Translation(p[0], p[1]);
 	}
+
+//	@Override
+//	public void setWarpParameters(double[] p) {
+//		a02 = p[0];
+//		a12 = p[1];
+//	}
 	
 	private final double[][] J =	// this transformation has a constant Jacobian
 		{{1, 0},

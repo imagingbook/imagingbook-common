@@ -9,7 +9,6 @@
 
 package imagingbook.pub.geometry.mappings;
 
-
 /**
  * This interfaces prescribes methods for the parameterization of mappings
  * with 1D double vectors (used in Lucas-Kanade matcher etc.).
@@ -22,7 +21,7 @@ public interface WarpParameters {
 	
 	public int getWarpParameterCount();	
 	public double[] getWarpParameters();
-	public void setWarpParameters(double[] p);
+	//public void setWarpParameters(double[] p);
 	public double[][] getWarpJacobian(double[] x);
 	
 }

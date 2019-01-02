@@ -22,7 +22,7 @@ import java.awt.geom.Point2D;
  */
 public abstract class Mapping implements Cloneable {
 	
-	protected boolean isInverseFlag = false;
+//	protected boolean isInverseFlag = false;
 	
 	/**
 	 * Applies this transformation to the given 2D point.
@@ -38,7 +38,7 @@ public abstract class Mapping implements Cloneable {
 	 * Applies this transformation to a 2D point given as
 	 * a {@code double} array.
 	 * 
-	 * @param pnt the point to be mapped
+	 * @param xy the point to be mapped
 	 * @return the transformed 2D coordinate
 	 */
 	public double[] applyTo (double[] xy) {
@@ -52,34 +52,35 @@ public abstract class Mapping implements Cloneable {
 	 * 
 	 * @return true if this mapping represents an inverse transformation, otherwise false
 	 */
-	public boolean isInverse() {
-		return isInverseFlag;
-	}
+//	public boolean isInverse() {
+//		return isInverseFlag;
+//	}
 
 	/**
 	 * If this mapping is an inverse transformation already, a copy of this
 	 * mapping is returned. Otherwise its inverse is calculated (if possible)
-	 * and returned. Note that only subclasses of {@link LinearMapping} invert.
+	 * and returned.
 	 * 
 	 * @return a copy of this mapping if inverse already, otherwise a newly calculated inverse mapping
 	 */
 	public Mapping getInverse() {
-		if (isInverseFlag)
-			return this.duplicate();
-		else {
-			return this.invert(); // only linear mappings invert
-		}
+//		if (isInverseFlag)
+//			return this.duplicate();
+//		else {
+//			return this.invert(); // only linear mappings invert
+//		}
+		throw new UnsupportedOperationException("Cannot invert mapping " + this.toString());
 	}
 	
-	/**
-	 * Tries to invert this mapping and returns the result. An {@link UnsupportedOperationException}
-	 * is thrown if the mapping cannot be inverted.
-	 * 
-	 * @return the inverse mapping
-	 */
-	protected Mapping invert() {
-		throw new UnsupportedOperationException("mapping cannot be inverted");
-	}
+//	/**
+//	 * Tries to invert this mapping and returns the result. An {@link UnsupportedOperationException}
+//	 * is thrown if the mapping cannot be inverted.
+//	 * 
+//	 * @return the inverse mapping
+//	 */
+//	protected Mapping invert() {
+//		throw new UnsupportedOperationException("mapping cannot be inverted");
+//	}
 	
 	/**
 	 * Applies this mapping to a single 2D point.
@@ -170,22 +171,18 @@ public abstract class Mapping implements Cloneable {
 	/** 
 	 * Duplicates this mapping. Sub-classes are supposed to override
 	 * this method.
-	 * TODO: Let this method throw an {@link UnsupportedOperationException} instead of returning null!
 	 * 
-	 * @return a copy of this mapping or null if it cannot be cloned
+	 * @return a copy of this mapping
 	 */
 	public Mapping duplicate() {
-		return this.clone();
-	}
-	
-	@Deprecated		// do we need this??
-	protected Mapping clone() {
 		Mapping copy = null;
 		try {
 			copy = (Mapping) super.clone();
 		} 
-		catch (CloneNotSupportedException e) { }
+		catch (CloneNotSupportedException e) {
+			throw new UnsupportedOperationException("Cannot duplicate mapping " + this.toString());}
 		return copy;
 	}
+	
 
 }

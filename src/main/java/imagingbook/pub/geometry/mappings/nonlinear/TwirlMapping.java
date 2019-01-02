@@ -19,7 +19,7 @@ public class TwirlMapping extends Mapping {
 		this.yc = yc;
 		this.angle = angle;
 		this.rad = rad;
-		this.isInverseFlag = inv;
+//		this.isInverseFlag = inv;
 	}
 
 	public static TwirlMapping makeInverseMapping(double xc, double yc, double angle, double rad){

@@ -74,9 +74,8 @@ public class ProjectiveMapping extends LinearMapping implements WarpParameters {
 	public ProjectiveMapping(
 			double a00, double a01, double a02, 
 			double a10, double a11, double a12, 
-			double a20, double a21, 
-			boolean inv) {
-		super(a00, a01, a02, a10, a11, a12, a20, a21, 1, inv);
+			double a20, double a21) {
+		super(a00, a01, a02, a10, a11, a12, a20, a21, 1);
 	}
 	
 	/**
@@ -131,7 +130,7 @@ public class ProjectiveMapping extends LinearMapping implements WarpParameters {
 		super();	// initialized to identity
 		ProjectiveMapping T1 = new ProjectiveMapping(p0, p1, p2, p3);
 		ProjectiveMapping T2 = new ProjectiveMapping(q0, q1, q2, q3);
-		ProjectiveMapping T1i = T1.invert();
+		ProjectiveMapping T1i = T1.getInverse();
 		ProjectiveMapping T12 = T1i.concat(T2);		
 		this.concatDestructive(T12);	// transfer T12 -> this
 	}
@@ -191,29 +190,49 @@ public class ProjectiveMapping extends LinearMapping implements WarpParameters {
 	 * @param B the second mapping
 	 * @return the concatenated mapping
 	 */
-	public ProjectiveMapping concat(ProjectiveMapping B) {	// TODO: check if needed! Generics?
+	public ProjectiveMapping concat(ProjectiveMapping B) {
 		ProjectiveMapping A = new ProjectiveMapping(this);
 		A.concatDestructive(B);
 		return A;
 	}
 	
-	public ProjectiveMapping invert() {
-		ProjectiveMapping pm = new ProjectiveMapping(this);
-		pm.invertDestructive();
-		return pm;
-	}
+//	public ProjectiveMapping invert() {
+//		ProjectiveMapping pm = new ProjectiveMapping(this);
+//		pm.invertDestructive();
+//		return pm;
+//	}
 	
-	void normalize() {
-		// scales the matrix such that a22 becomes 1
-		// TODO: check a22 for zero value and throw exception
-		a00 = a00/a22;		a01 = a01/a22;		a02 = a02/a22;
-		a10 = a10/a22;		a11 = a11/a22;		a12 = a12/a22;
-		a20 = a20/a22;		a21 = a21/a22;		a22 = 1;
-	}
+
 	
-	@Override
+	/**
+	 * {@inheritDoc}
+	 * @return a new projective mapping
+	 */
 	public ProjectiveMapping duplicate() {
 		return new ProjectiveMapping(this);
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * Note that the inverse A' of a projective transformation matrix A is again a linear transformation
+	 * but its a'2' element is generally not 1. Scaling A' to A'' = A' / a22' yields a projective transformation
+	 * that reverses A. While A * A' = I, the result of A * A'' is a scaled identity matrix.
+	 */
+	public ProjectiveMapping getInverse() {	// TODO: use super-class method, implement with Apache Commons Math?
+		double det = a00*a11 + a01*a12*a20 + a02*a10*a21 - 
+				     a00*a12*a21 - a01*a10 - a02*a11*a20;
+		double b22 = (a00*a11 - a01*a10) / det;
+		// normalizing matrix elements by b22 (also see method normalize()):
+		double b00 = (a11 - a12*a21) / det / b22;
+		double b01 = (a02*a21 - a01) / det / b22; 
+		double b02 = (a01*a12 - a02*a11) / det / b22; 
+		double b10 = (a12*a20 - a10) / det / b22;
+		double b11 = (a00 - a02*a20) / det / b22; 
+		double b12 = (a02*a10 - a00*a12) / det / b22;
+		double b20 = (a10*a21 - a11*a20) / det / b22; 
+		double b21 = (a01*a20 - a00*a21) / det / b22;
+		
+		return new ProjectiveMapping(b00, b01, b02, b10, b11, b12, b20, b21);
 	}
 	
 	// Warp parameter support -------------------------------------
@@ -241,12 +260,21 @@ public class ProjectiveMapping extends LinearMapping implements WarpParameters {
 //	p[6] = M3x3[0][2];		// = tx
 //	p[7] = M3x3[1][2];		// = ty
 
-
-	public void setWarpParameters(double[] p) {
-		a00 = p[0] + 1;   a01 = p[1];        a02 = p[6];
-		a10 = p[2];       a11 = p[3] + 1;    a12 = p[7];
-		a20 = p[4];       a21 = p[5];        a22 = 1;
+	public static ProjectiveMapping fromWarpParameters(double[] p) {
+//		a00 = p[0] + 1;   a01 = p[1];        a02 = p[6];
+//		a10 = p[2];       a11 = p[3] + 1;    a12 = p[7];
+//		a20 = p[4];       a21 = p[5];        a22 = 1;
+		return new ProjectiveMapping(
+				p[0] + 1,   p[1],        p[6],
+				p[2],       p[3] + 1,    p[7],
+				p[4],       p[5]               );
 	}
+	
+//	public void setWarpParameters(double[] p) {
+//		a00 = p[0] + 1;   a01 = p[1];        a02 = p[6];
+//		a10 = p[2];       a11 = p[3] + 1;    a12 = p[7];
+//		a20 = p[4];       a21 = p[5];        a22 = 1;
+//	}
 	
 
 	public double[][] getWarpJacobian(double[] xy) {
@@ -278,7 +306,7 @@ public class ProjectiveMapping extends LinearMapping implements WarpParameters {
 				new Point2D.Double(4,6),
 				new Point2D.Double(7,9),
 				new Point2D.Double(5,9),
-				new Point2D.Double(5.2,9.1)	// 5 points, overdetermined!
+				//new Point2D.Double(5.2,9.1)	// 5 points, overdetermined!
 				};
 		
 		Point2D[] B = new Point2D[] {
@@ -286,25 +314,30 @@ public class ProjectiveMapping extends LinearMapping implements WarpParameters {
 				new Point2D.Double(5,2),
 				new Point2D.Double(9,3),
 				new Point2D.Double(7,5),
-				new Point2D.Double(7,4.9)	// 5 points, overdetermined!
+				//new Point2D.Double(7,4.9)	// 5 points, overdetermined!
 				};
 		
 		ProjectiveMapping pm = new ProjectiveMapping(A, B, true);
 		
-		System.out.println("\nprojective mapping = " + pm.toString());
+		System.out.println("\nprojective mapping = \n" + pm.toString());
 		
 		for (int i = 0; i < A.length; i++) {
 			Point2D Bi = pm.applyTo(A[i]);
 			System.out.println(A[i].toString() + " -> " + Bi.toString());
 		}
 		
-		System.out.println();
-		ProjectiveMapping pmi = pm.invert();
-		System.out.println("\ninverse projective mapping = " + pmi.toString());
+		System.out.println("pm is of class " + pm.getClass().getName());
+		ProjectiveMapping pmi = pm.getInverse();
+		pmi = pmi.normalize();
+		System.out.println("\ninverse projective mapping (normalized) = \n" + pmi.toString());
+		
 		for (int i = 0; i < B.length; i++) {
 			Point2D Ai = pmi.applyTo(B[i]);
 			System.out.println(B[i].toString() + " -> " + Ai.toString());
 		}
+		
+		ProjectiveMapping testId = pm.concat(pmi);
+		System.out.println("\ntest: should be a scaled identity matrix: = \n" + testId.toString());
 	}
 	
 	

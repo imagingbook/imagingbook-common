@@ -34,26 +34,24 @@
 <span class="sourceLineNo">026</span>                return new TwirlMapping(xc, yc, angle, rad, true);<a name="line.26"></a>
 <span class="sourceLineNo">027</span>        }<a name="line.27"></a>
 <span class="sourceLineNo">028</span><a name="line.28"></a>
-<span class="sourceLineNo">029</span>        public double[] applyTo (double[] xy){<a name="line.29"></a>
-<span class="sourceLineNo">030</span>                double x = xy[0];<a name="line.30"></a>
-<span class="sourceLineNo">031</span>                double y = xy[1];<a name="line.31"></a>
-<span class="sourceLineNo">032</span>                double dx = x - xc;<a name="line.32"></a>
-<span class="sourceLineNo">033</span>                double dy = y - yc;<a name="line.33"></a>
-<span class="sourceLineNo">034</span>                double d = Math.sqrt(dx*dx + dy*dy);<a name="line.34"></a>
-<span class="sourceLineNo">035</span>                if (d &lt; rad) {<a name="line.35"></a>
-<span class="sourceLineNo">036</span>                        double a = Math.atan2(dy,dx) + angle * (rad-d) / rad;<a name="line.36"></a>
-<span class="sourceLineNo">037</span>                        double x1 = xc + d * Math.cos(a);<a name="line.37"></a>
-<span class="sourceLineNo">038</span>                        double y1 = yc + d * Math.sin(a);<a name="line.38"></a>
-<span class="sourceLineNo">039</span>                        //pnt.setLocation(x1, y1);<a name="line.39"></a>
-<span class="sourceLineNo">040</span>                        return new double[] {x1, y1};<a name="line.40"></a>
-<span class="sourceLineNo">041</span>                }<a name="line.41"></a>
-<span class="sourceLineNo">042</span>                return xy.clone();<a name="line.42"></a>
-<span class="sourceLineNo">043</span>        }<a name="line.43"></a>
-<span class="sourceLineNo">044</span>}<a name="line.44"></a>
+<span class="sourceLineNo">029</span>        public double[] applyTo (double x, double y){<a name="line.29"></a>
+<span class="sourceLineNo">030</span>                double dx = x - xc;<a name="line.30"></a>
+<span class="sourceLineNo">031</span>                double dy = y - yc;<a name="line.31"></a>
+<span class="sourceLineNo">032</span>                double d = Math.sqrt(dx*dx + dy*dy);<a name="line.32"></a>
+<span class="sourceLineNo">033</span>                if (d &lt; rad) {<a name="line.33"></a>
+<span class="sourceLineNo">034</span>                        double a = Math.atan2(dy,dx) + angle * (rad-d) / rad;<a name="line.34"></a>
+<span class="sourceLineNo">035</span>                        double x1 = xc + d * Math.cos(a);<a name="line.35"></a>
+<span class="sourceLineNo">036</span>                        double y1 = yc + d * Math.sin(a);<a name="line.36"></a>
+<span class="sourceLineNo">037</span>                        //pnt.setLocation(x1, y1);<a name="line.37"></a>
+<span class="sourceLineNo">038</span>                        return new double[] {x1, y1};<a name="line.38"></a>
+<span class="sourceLineNo">039</span>                }<a name="line.39"></a>
+<span class="sourceLineNo">040</span>                return new double[] {x, y};<a name="line.40"></a>
+<span class="sourceLineNo">041</span>        }<a name="line.41"></a>
+<span class="sourceLineNo">042</span>}<a name="line.42"></a>
+<span class="sourceLineNo">043</span><a name="line.43"></a>
+<span class="sourceLineNo">044</span><a name="line.44"></a>
 <span class="sourceLineNo">045</span><a name="line.45"></a>
 <span class="sourceLineNo">046</span><a name="line.46"></a>
-<span class="sourceLineNo">047</span><a name="line.47"></a>
-<span class="sourceLineNo">048</span><a name="line.48"></a>
 
 
 

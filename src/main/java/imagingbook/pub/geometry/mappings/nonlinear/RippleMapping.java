@@ -25,7 +25,7 @@ public class RippleMapping extends Mapping {
 		this.yWavel = yWavel / (2 * Math.PI);
 		this.xAmpl = xAmpl;
 		this.yAmpl = yAmpl;
-		this.isInverseFlag = inv;
+//		this.isInverseFlag = inv;
 	}
 	
 	public static RippleMapping makeInverseMapping(

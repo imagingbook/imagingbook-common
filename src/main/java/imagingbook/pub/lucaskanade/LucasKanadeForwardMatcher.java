@@ -129,7 +129,7 @@ public class LucasKanadeForwardMatcher extends LucasKanadeMatcher {
 		}
 		
 		double[] p = Matrix.add(Tp.getWarpParameters(), qopt);
-		Tp.setWarpParameters(p);
+		
 
 		qmag = Matrix.normL2squared(qopt);
 
@@ -137,6 +137,8 @@ public class LucasKanadeForwardMatcher extends LucasKanadeMatcher {
 			showSteepestDescentImages(S);
 		}
 
-		return Tp;
+//		Tp.setWarpParameters(p);
+//		return Tp;
+		return ProjectiveMapping.fromWarpParameters(p);
 	}
 }

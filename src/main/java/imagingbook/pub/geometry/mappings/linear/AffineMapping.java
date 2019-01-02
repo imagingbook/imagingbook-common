@@ -11,8 +11,11 @@ package imagingbook.pub.geometry.mappings.linear;
 
 import java.awt.geom.Point2D;
 
+import imagingbook.lib.math.Matrix;
+import imagingbook.lib.settings.PrintPrecision;
+
 /**
- * This class represents aa affine transformation in 2D, which can be defined 
+ * This class represents an affine transformation in 2D, which can be defined 
  * by three pairs of corresponding points.
  */
 public class AffineMapping extends ProjectiveMapping {
@@ -36,9 +39,8 @@ public class AffineMapping extends ProjectiveMapping {
 	 */
 	public AffineMapping (
 			double a00, double a01, double a02, 
-			double a10, double a11, double a12, 
-			boolean inv) {
-		super(a00, a01, a02, a10, a11, a12, 0, 0, inv);
+			double a10, double a11, double a12) {
+		super(a00, a01, a02, a10, a11, a12, 0, 0);
 	}
 
 	/**
@@ -47,9 +49,6 @@ public class AffineMapping extends ProjectiveMapping {
 	 */
 	public AffineMapping(AffineMapping am) {
 		super(am);
-		//		a20 = 0;
-		//		a21 = 0;
-		//		a22 = 1;
 	}
 
 	/**
@@ -82,30 +81,50 @@ public class AffineMapping extends ProjectiveMapping {
 	 * @param A points of the source triangle
 	 * @param B points of the target triangle
 	 */
-	public AffineMapping(Point2D[] A, Point2D[] B) {
+	public AffineMapping(Point2D[] A, Point2D[] B) {	// TODO: check length of A, B
 		this(A[0], A[1], A[2], B[0], B[1], B[2]);
 	}
 
 	/**
-	 * Concatenates this mapping A with another linear mapping B and returns
+	 * Concatenates this mapping A with another affine mapping B and returns
 	 * a new mapping C, such that C(x) = B(A(x)).
 	 * @param B the second mapping
-	 * @return the concatenated mapping
+	 * @return the concatenated affine mapping
 	 */
-	public AffineMapping concat(AffineMapping B) {	// TODO: check if needed! Generics?
-		AffineMapping A = new AffineMapping(this);
-		A.concatDestructive(B);
-		return A;
+	public AffineMapping concat(AffineMapping B) {	
+		double c00 = B.a00*a00 + B.a01*a10;
+		double c01 = B.a00*a01 + B.a01*a11;
+		double c02 = B.a00*a02 + B.a01*a12 + B.a02;
+		
+		double c10 = B.a10*a00 + B.a11*a10;
+		double c11 = B.a10*a01 + B.a11*a11;
+		double c12 = B.a10*a02 + B.a11*a12 + B.a12;
+		
+		return new AffineMapping(c00, c01, c02, c10, c11, c12);
 	}
 
-	@Override
-	public AffineMapping invert() {
-		AffineMapping pm = new AffineMapping(this);
-		pm.invertDestructive();
-		return pm;
+
+	/**
+	 * {@inheritDoc}
+	 * Note that inverting an affine transformation always yields
+	 * another affine transformation.
+	 */
+	public AffineMapping getInverse() {
+		double det = a00*a11 - a01*a10;	
+		double b00 = a11 / det; 
+		double b01 = - a01 / det; 
+		double b02 = (a01*a12 - a02*a11) / det;	
+		double b10 = - a10 / det; 
+		double b11 = a00 / det; 
+		double b12 = (a02*a10 - a00*a12) / det;
+		
+		return new AffineMapping(b00, b01, b02, b10, b11, b12);
 	}
 
-	@Override
+	/**
+	 * {@inheritDoc}
+	 * @return a new affine mapping
+	 */
 	public AffineMapping duplicate() {
 		return new AffineMapping(this);
 	}
@@ -128,16 +147,26 @@ public class AffineMapping extends ProjectiveMapping {
 				a12 };
 		return p;
 	}
-
-	@Override
-	public void setWarpParameters(double[] p) {
-		a00 = p[0] + 1;
-		a01 = p[1];
-		a10 = p[2];
-		a11 = p[3] + 1;
-		a02 = p[4];
-		a12 = p[5];
+	
+	public static AffineMapping fromWarpParameters(double[] p) {
+//		a00 = p[0] + 1;
+//		a01 = p[1];
+//		a10 = p[2];
+//		a11 = p[3] + 1;
+//		a02 = p[4];
+//		a12 = p[5];
+		return new AffineMapping(p[0] + 1, p[1], p[2], p[3] + 1, p[4], p[5]);
 	}
+
+//	@Override
+//	public void setWarpParameters(double[] p) {
+//		a00 = p[0] + 1;
+//		a01 = p[1];
+//		a10 = p[2];
+//		a11 = p[3] + 1;
+//		a02 = p[4];
+//		a12 = p[5];
+//	}
 
 	@Override
 	public double[][] getWarpJacobian(double[] xy) {
@@ -146,6 +175,27 @@ public class AffineMapping extends ProjectiveMapping {
 		return new double[][]
 				{{x, y, 0, 0, 1, 0},
 			{0, 0, x, y, 0, 1}};
+	}
+	
+	// ----------------------------------------------------------------------
+	
+	/**
+	 * For testing only.
+	 * @param args ignored
+	 */
+	public static void main(String[] args) {
+		PrintPrecision.set(6);
+		double[][] A = 
+				{{-2, 4, -3}, 
+				{3, 7, 2}, 
+				{0.0, 0.0, 1.000000}};
+		System.out.println("A = \n" + Matrix.toString(A));
+		System.out.println();
+		double[][] Ai = Matrix.inverse(A);
+		System.out.println("Ai = \n" + Matrix.toString(Ai));
+		
+		double[][] I = Matrix.multiply(A, Ai);
+		System.out.println("\ntest: should be the  identity matrix: = \n" + Matrix.toString(I));
 	}
 
 }
