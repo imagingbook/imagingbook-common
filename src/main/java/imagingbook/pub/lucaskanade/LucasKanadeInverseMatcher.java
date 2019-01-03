@@ -47,7 +47,8 @@ public class LucasKanadeInverseMatcher extends LucasKanadeMatcher {
 	}
 	
 	private void initializeMatch(ProjectiveMapping Tinit) {
-		n = Tinit.getWarpParameterCount();
+//		n = Tinit.getWarpParameterCount();
+		n = Tinit.getWarpParameters().length;
 		S = new double[wR][hR][];			// S[u][v] holds a double vector of length n
 		Rx = gradientX(R).getFloatArray();	// gradient of R
 		Ry = gradientY(R).getFloatArray();

@@ -55,7 +55,8 @@ public class LucasKanadeForwardMatcher extends LucasKanadeMatcher {
 	}
 
 	private void initializeMatch(ProjectiveMapping Tinit) {
-		n = Tinit.getWarpParameterCount();
+//		n = Tinit.getWarpParameterCount();
+		n = Tinit.getWarpParameters().length;
 		Ix = gradientX(I);
 		Iy = gradientY(I);
 		iteration = 0;
@@ -129,8 +130,6 @@ public class LucasKanadeForwardMatcher extends LucasKanadeMatcher {
 		}
 		
 		double[] p = Matrix.add(Tp.getWarpParameters(), qopt);
-		
-
 		qmag = Matrix.normL2squared(qopt);
 
 		if (params.showSteepestDescentImages && iteration == 1) {

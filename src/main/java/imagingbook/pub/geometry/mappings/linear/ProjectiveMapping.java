@@ -17,8 +17,8 @@ import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.RealVector;
 import org.apache.commons.math3.linear.SingularValueDecomposition;
 
-import imagingbook.lib.math.Matrix;
 import imagingbook.lib.settings.PrintPrecision;
+import imagingbook.pub.geometry.mappings.Jacobian;
 
 
 /**
@@ -26,7 +26,7 @@ import imagingbook.lib.settings.PrintPrecision;
  * as a "homography"). It can be specified uniquely by four pairs of corresponding
  * points.
  */
-public class ProjectiveMapping extends LinearMapping {
+public class ProjectiveMapping extends LinearMapping implements Jacobian {
 	
 	/**
 	 * Creates the most specific linear mapping from two sequences of corresponding
@@ -233,19 +233,19 @@ public class ProjectiveMapping extends LinearMapping {
 		return new ProjectiveMapping(super.getInverse());
 	}
 	
-	// Warp parameter support -------------------------------------
+	// Jacobian support -------------------------------------
 	
-	public int getWarpParameterCount() {
-//		p[0] = M3x3[0][0] - 1;	// = a
-//		p[1] = M3x3[0][1];		// = b
-//		p[2] = M3x3[1][0];		// = c
-//		p[3] = M3x3[1][1] - 1;	// = d
-//		p[4] = M3x3[2][0];		// = e
-//		p[5] = M3x3[2][1];		// = f
-//		p[6] = M3x3[0][2];		// = tx
-//		p[7] = M3x3[1][2];		// = ty
-		return 8;
-	}
+//	public int getWarpParameterCount() {
+////		p[0] = M3x3[0][0] - 1;	// = a
+////		p[1] = M3x3[0][1];		// = b
+////		p[2] = M3x3[1][0];		// = c
+////		p[3] = M3x3[1][1] - 1;	// = d
+////		p[4] = M3x3[2][0];		// = e
+////		p[5] = M3x3[2][1];		// = f
+////		p[6] = M3x3[0][2];		// = tx
+////		p[7] = M3x3[1][2];		// = ty
+//		return 8;
+//	}
 	
 	public double[] getWarpParameters() {
 		return new double[] { a00 - 1, a01, a10, a11 - 1, a20, a21, a02, a12 };

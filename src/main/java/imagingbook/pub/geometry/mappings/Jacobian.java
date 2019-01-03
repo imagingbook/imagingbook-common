@@ -16,12 +16,11 @@ package imagingbook.pub.geometry.mappings;
  * {@link AffineMapping} and {@link Translation}.
  * An interface is used to allow implementation by other (non-linear) mappings
  * that ore not sub-classes of {@link ProjectiveMapping}.
- * @deprecated
  */
-public interface WarpParameters {
+public interface Jacobian {
 	
 //	public int getWarpParameterCount();	
-//	public double[] getWarpParameters();
-//	public double[][] getWarpJacobian(double[] x);
+	public double[] getWarpParameters();
+	public double[][] getWarpJacobian(double[] x);
 	
 }

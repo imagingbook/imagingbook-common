@@ -63,10 +63,10 @@ public class Translation extends AffineMapping {
 	
 	// Warp parameter support -------------------------------------
 	
-	@Override
-	public int getWarpParameterCount() {
-		return 2;
-	}
+//	@Override
+//	public int getWarpParameterCount() {
+//		return 2;
+//	}
 	
 	@Override
 	public double[] getWarpParameters() {

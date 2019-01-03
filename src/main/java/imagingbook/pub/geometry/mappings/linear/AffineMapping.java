@@ -163,11 +163,11 @@ public class AffineMapping extends ProjectiveMapping {
 
 	// warp parameter support (used in Lucas-Kanade-matcher) --------------------------
 
-	@Override
-	public int getWarpParameterCount() {
-		// a00 = p[0] + 1; a01 = p[1]; a10 = p[2]; a11 = p[3] + 1; a02 = p[4]; a12 = p[5];
-		return 6;
-	}
+//	@Override
+//	public int getWarpParameterCount() {
+//		// a00 = p[0] + 1; a01 = p[1]; a10 = p[2]; a11 = p[3] + 1; a02 = p[4]; a12 = p[5];
+//		return 6;
+//	}
 
 	@Override
 	public double[] getWarpParameters() {
