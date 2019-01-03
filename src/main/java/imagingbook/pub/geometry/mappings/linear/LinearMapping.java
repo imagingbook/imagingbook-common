@@ -98,6 +98,9 @@ public class LinearMapping extends Mapping {
 		return new double[] {x1, y1};
 	}
 	
+	/**
+	 * Calculates and returns the inverse mapping.
+	 */
 	public LinearMapping getInverse() {
 		// System.out.println("LinearMapping getInverse()");
 		double[][] ai = Matrix.inverse(this.getTransformationMatrix());

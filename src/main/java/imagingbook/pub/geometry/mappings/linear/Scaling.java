@@ -10,6 +10,17 @@
 package imagingbook.pub.geometry.mappings.linear;
 
 public class Scaling extends AffineMapping {
+	
+	/**
+	 * Creates a null scaling (identity transformation).
+	 */
+	public Scaling() {
+		super();
+	}
+	
+	public Scaling(Scaling sc) {
+		super(sc);
+	}
 
 	/**
 	 * Creates a mapping that scales along the x- and y-axis
@@ -30,10 +41,6 @@ public class Scaling extends AffineMapping {
 	 */
 	public Scaling(double s) {
 		this(s, s);
-	}
-	
-	public Scaling(Scaling sc) {
-		super(sc);
 	}
 	
 	/**

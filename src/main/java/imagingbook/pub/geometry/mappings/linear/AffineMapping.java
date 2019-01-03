@@ -21,6 +21,43 @@ import imagingbook.lib.settings.PrintPrecision;
 public class AffineMapping extends ProjectiveMapping {
 
 	/**
+	 * Creates an affine mapping from an arbitrary 2D triangle A to another triangle B.
+	 * @param A1 point 1 of source triangle A
+	 * @param A2 point 2 of source triangle A
+	 * @param A3 point 3 of source triangle A
+	 * @param B1 point 1 of source triangle B
+	 * @param B2 point 2 of source triangle B
+	 * @param B3 point 3 of source triangle B
+	 * @return a new affine mapping
+	 */
+	public static AffineMapping fromTriangles(Point2D A1, Point2D A2, Point2D A3, Point2D B1, Point2D B2, Point2D B3) {
+		double ax1 = A1.getX(), ax2 = A2.getX(), ax3 = A3.getX();
+		double ay1 = A1.getY(), ay2 = A2.getY(), ay3 = A3.getY();
+		double bx1 = B1.getX(), bx2 = B2.getX(), bx3 = B3.getX();
+		double by1 = B1.getY(), by2 = B2.getY(), by3 = B3.getY();
+
+		double S = ax1 * (ay3 - ay2) + ax2 * (ay1 - ay3) + ax3 * (ay2 - ay1); // TODO: check S for zero value and throw exception!
+		double a00 = (ay1 * (bx2 - bx3) + ay2 * (bx3 - bx1) + ay3 * (bx1 - bx2)) / S;
+		double a01 = (ax1 * (bx3 - bx2) + ax2 * (bx1 - bx3) + ax3 * (bx2 - bx1)) / S;
+		double a10 = (ay1 * (by2 - by3) + ay2 * (by3 - by1) + ay3 * (by1 - by2)) / S;
+		double a11 = (ax1 * (by3 - by2) + ax2 * (by1 - by3) + ax3 * (by2 - by1)) / S;
+		double a02 = (ax1*(ay3*bx2-ay2*bx3) + ax2*(ay1*bx3-ay3*bx1) + ax3*(ay2*bx1-ay1*bx2)) / S;
+		double a12 = (ax1*(ay3*by2-ay2*by3) + ax2*(ay1*by3-ay3*by1) + ax3*(ay2*by1-ay1*by2)) / S;
+		return new AffineMapping(a00, a01, a02, a10, a11, a12);
+	}
+	
+	/**
+	 * Creates an affine mapping from an arbitrary 2D triangle A to another triangle B.
+	 * @param A the first triangle
+	 * @param B the second triangle
+	 * @return a new affine mapping
+	 */
+	public static AffineMapping fromTriangles(Point2D[] A, Point2D[] B) {	// TODO: check length of A, B
+		return AffineMapping.fromTriangles(A[0], A[1], A[2], B[0], B[1], B[2]);
+	}
+	// ---------------------------------------------------------------------------
+	
+	/**
 	 * Creates the identity mapping.
 	 */
 	public AffineMapping() {
@@ -49,69 +86,25 @@ public class AffineMapping extends ProjectiveMapping {
 	public AffineMapping(AffineMapping am) {
 		super(am);
 	}
-
-//	/**
-//	 * Creates an affine mapping between arbitrary triangles A, B.
-//	 * @param A1 point 1 of source triangle A
-//	 * @param A2 point 2 of source triangle A
-//	 * @param A3 point 3 of source triangle A
-//	 * @param B1 point 1 of source triangle B
-//	 * @param B2 point 2 of source triangle B
-//	 * @param B3 point 3 of source triangle B
-//	 */
-//	public AffineMapping(Point2D A1, Point2D A2, Point2D A3, Point2D B1, Point2D B2, Point2D B3) {
-//		super();
-//		double ax1 = A1.getX(), ax2 = A2.getX(), ax3 = A3.getX();
-//		double ay1 = A1.getY(), ay2 = A2.getY(), ay3 = A3.getY();
-//		double bx1 = B1.getX(), bx2 = B2.getX(), bx3 = B3.getX();
-//		double by1 = B1.getY(), by2 = B2.getY(), by3 = B3.getY();
-//
-//		double S = ax1 * (ay3 - ay2) + ax2 * (ay1 - ay3) + ax3 * (ay2 - ay1); // TODO: check S for zero value and throw exception!
-//		a00 = (ay1 * (bx2 - bx3) + ay2 * (bx3 - bx1) + ay3 * (bx1 - bx2)) / S;
-//		a01 = (ax1 * (bx3 - bx2) + ax2 * (bx1 - bx3) + ax3 * (bx2 - bx1)) / S;
-//		a10 = (ay1 * (by2 - by3) + ay2 * (by3 - by1) + ay3 * (by1 - by2)) / S;
-//		a11 = (ax1 * (by3 - by2) + ax2 * (by1 - by3) + ax3 * (by2 - by1)) / S;
-//		a02 = (ax1*(ay3*bx2-ay2*bx3) + ax2*(ay1*bx3-ay3*bx1) + ax3*(ay2*bx1-ay1*bx2)) / S;
-//		a12 = (ax1*(ay3*by2-ay2*by3) + ax2*(ay1*by3-ay3*by1) + ax3*(ay2*by1-ay1*by2)) / S;
-//	}
+	
+	// ---------------------------------------------------------------------------
+	
+	/** Deviation limit for checking 0 and 1 values. */
+	protected static double EPSILON = 1e-15;
 	
 	/**
-	 * Creates an affine mapping from an arbitrary triangle A to another triangle B.
-	 * @param A1 point 1 of source triangle A
-	 * @param A2 point 2 of source triangle A
-	 * @param A3 point 3 of source triangle A
-	 * @param B1 point 1 of source triangle B
-	 * @param B2 point 2 of source triangle B
-	 * @param B3 point 3 of source triangle B
-	 * @return a new affine mapping
+	 * Checks if the given linear mapping could be affine, i.e. if the
+	 * bottom row of its transformation matrix is (0, 0, 1). 
+	 * Note that this is a necessary but not sufficient requirement.
+	 * The threshold {@link EPSILON} is used in this check.
+	 * @param lm a linear mapping
+	 * @return true if the mapping could be affine
 	 */
-	public static AffineMapping fromPoints(Point2D A1, Point2D A2, Point2D A3, Point2D B1, Point2D B2, Point2D B3) {
-		double ax1 = A1.getX(), ax2 = A2.getX(), ax3 = A3.getX();
-		double ay1 = A1.getY(), ay2 = A2.getY(), ay3 = A3.getY();
-		double bx1 = B1.getX(), bx2 = B2.getX(), bx3 = B3.getX();
-		double by1 = B1.getY(), by2 = B2.getY(), by3 = B3.getY();
-
-		double S = ax1 * (ay3 - ay2) + ax2 * (ay1 - ay3) + ax3 * (ay2 - ay1); // TODO: check S for zero value and throw exception!
-		double a00 = (ay1 * (bx2 - bx3) + ay2 * (bx3 - bx1) + ay3 * (bx1 - bx2)) / S;
-		double a01 = (ax1 * (bx3 - bx2) + ax2 * (bx1 - bx3) + ax3 * (bx2 - bx1)) / S;
-		double a10 = (ay1 * (by2 - by3) + ay2 * (by3 - by1) + ay3 * (by1 - by2)) / S;
-		double a11 = (ax1 * (by3 - by2) + ax2 * (by1 - by3) + ax3 * (by2 - by1)) / S;
-		double a02 = (ax1*(ay3*bx2-ay2*bx3) + ax2*(ay1*bx3-ay3*bx1) + ax3*(ay2*bx1-ay1*bx2)) / S;
-		double a12 = (ax1*(ay3*by2-ay2*by3) + ax2*(ay1*by3-ay3*by1) + ax3*(ay2*by1-ay1*by2)) / S;
-		return new AffineMapping(a00, a01, a02, a10, a11, a12);
-	}
-
-//	/**
-//	 * Creates a projective mapping between arbitrary triangles A, B.
-//	 * @param A points of the source triangle
-//	 * @param B points of the target triangle
-//	 */
-//	public AffineMapping(Point2D[] A, Point2D[] B) {	// TODO: check length of A, B
-//		this(A[0], A[1], A[2], B[0], B[1], B[2]);
-//	}
-	
-	public static AffineMapping fromPoints(Point2D[] A, Point2D[] B) {	// TODO: check length of A, B
-		return AffineMapping.fromPoints(A[0], A[1], A[2], B[0], B[1], B[2]);
+	public static boolean isAffine(LinearMapping lm) {
+		if (Math.abs(lm.a20) > EPSILON) return false;
+		if (Math.abs(lm.a21) > EPSILON) return false;
+		if (Math.abs(lm.a22 - 1.0) > EPSILON) return false;
+		return true;
 	}
 
 	/**
@@ -120,14 +113,14 @@ public class AffineMapping extends ProjectiveMapping {
 	 * @param B the second mapping
 	 * @return the concatenated affine mapping
 	 */
-	public AffineMapping concat(AffineMapping B) {	
-		double c00 = B.a00*a00 + B.a01*a10;
-		double c01 = B.a00*a01 + B.a01*a11;
-		double c02 = B.a00*a02 + B.a01*a12 + B.a02;
-		
-		double c10 = B.a10*a00 + B.a11*a10;
-		double c11 = B.a10*a01 + B.a11*a11;
-		double c12 = B.a10*a02 + B.a11*a12 + B.a12;
+	public AffineMapping concat(AffineMapping B) {	// TODO: check if super method could be used instead
+		double c00 = B.a00 * a00 + B.a01 * a10;
+		double c01 = B.a00 * a01 + B.a01 * a11;
+		double c02 = B.a00 * a02 + B.a01 * a12 + B.a02;
+
+		double c10 = B.a10 * a00 + B.a11 * a10;
+		double c11 = B.a10 * a01 + B.a11 * a11;
+		double c12 = B.a10 * a02 + B.a11 * a12 + B.a12;
 		
 		return new AffineMapping(c00, c01, c02, c10, c11, c12);
 	}
@@ -214,17 +207,21 @@ public class AffineMapping extends ProjectiveMapping {
 	 */
 	public static void main(String[] args) {
 		PrintPrecision.set(6);
-		double[][] A = 
+		double[][] a = 
 				{{-2, 4, -3}, 
 				{3, 7, 2}, 
 				{0.0, 0.0, 1.000000}};
-		System.out.println("A = \n" + Matrix.toString(A));
+		System.out.println("a = \n" + Matrix.toString(a));
 		System.out.println();
-		double[][] Ai = Matrix.inverse(A);
-		System.out.println("Ai = \n" + Matrix.toString(Ai));
+		double[][] ai = Matrix.inverse(a);
+		System.out.println("ai = \n" + Matrix.toString(ai));
 		
-		double[][] I = Matrix.multiply(A, Ai);
+		LinearMapping Ai = new LinearMapping(ai);
+		System.out.println("Ai is affine: " + isAffine(Ai));
+		
+		double[][] I = Matrix.multiply(a, ai);
 		System.out.println("\ntest: should be the  identity matrix: = \n" + Matrix.toString(I));
+	
 	}
 
 }

@@ -19,7 +19,18 @@ public class Translation extends AffineMapping {
 	public Translation(double tx, double ty){
 		super(1, 0, tx, 0, 1, ty);
 	}
+	
+	/**
+	 * Creates a blank (zero) translation.
+	 */
+	public Translation() {
+		super();
+	}
 
+	/** 
+	 * Creates a new translation instance from a given translation.
+	 * @param t an existing translation
+	 */
 	public Translation(Translation t) {
 		super(t);
 	}
@@ -50,20 +61,14 @@ public class Translation extends AffineMapping {
 	public static Translation fromWarpParameters(double[] p) {
 		return new Translation(p[0], p[1]);
 	}
-
-//	@Override
-//	public void setWarpParameters(double[] p) {
-//		a02 = p[0];
-//		a12 = p[1];
-//	}
 	
-	private final double[][] J =	// this transformation has a constant Jacobian
+	private static final double[][] JT =	// this transformation has a constant Jacobian
 		{{1, 0},
 		 {0, 1}};
 	
 	@Override
 	public double[][] getWarpJacobian(double[] X) {
-		return J;
+		return JT;
 	}
 
 }

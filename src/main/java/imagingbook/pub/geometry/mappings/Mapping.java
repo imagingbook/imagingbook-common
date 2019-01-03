@@ -22,7 +22,21 @@ import java.awt.geom.Point2D;
  */
 public abstract class Mapping implements Cloneable {
 	
-//	protected boolean isInverseFlag = false;
+
+	/** 
+	 * Duplicates this mapping by using {@link Object}'s shallow clone method.
+	 * Sub-classes are supposed to override this method.
+	 * @return a copy of this mapping
+	 */
+	public Mapping duplicate() {
+		Mapping copy = null;
+		try {
+			copy = (Mapping) super.clone();
+		} 
+		catch (CloneNotSupportedException e) {
+			throw new UnsupportedOperationException("Cannot duplicate mapping " + this.toString());}
+		return copy;
+	}
 	
 	/**
 	 * Applies this transformation to the given 2D point.
@@ -46,41 +60,14 @@ public abstract class Mapping implements Cloneable {
 	}
 
 	/**
-	 * Returns true if this mapping represents an inverse transformation,
-	 * otherwise false. Inverse transformations are needed for target-to-source
-	 * image mappings.
-	 * 
-	 * @return true if this mapping represents an inverse transformation, otherwise false
-	 */
-//	public boolean isInverse() {
-//		return isInverseFlag;
-//	}
-
-	/**
-	 * If this mapping is an inverse transformation already, a copy of this
-	 * mapping is returned. Otherwise its inverse is calculated (if possible)
+	 * The inverse of this mapping is calculated (if possible)
 	 * and returned.
 	 * 
-	 * @return a copy of this mapping if inverse already, otherwise a newly calculated inverse mapping
+	 * @return the inverse mapping
 	 */
 	public Mapping getInverse() {
-//		if (isInverseFlag)
-//			return this.duplicate();
-//		else {
-//			return this.invert(); // only linear mappings invert
-//		}
 		throw new UnsupportedOperationException("Cannot invert mapping " + this.toString());
 	}
-	
-//	/**
-//	 * Tries to invert this mapping and returns the result. An {@link UnsupportedOperationException}
-//	 * is thrown if the mapping cannot be inverted.
-//	 * 
-//	 * @return the inverse mapping
-//	 */
-//	protected Mapping invert() {
-//		throw new UnsupportedOperationException("mapping cannot be inverted");
-//	}
 	
 	/**
 	 * Applies this mapping to a single 2D point.
@@ -94,7 +81,8 @@ public abstract class Mapping implements Cloneable {
 	}
 	
 	/**
-	 * Applies this mapping to all points in the array of 2D points.
+	 * Applies this mapping to all points in the array of 2D points
+	 * (convenience method).
 	 * 
 	 * @param pnts the original points
 	 * @return the transformed points
@@ -168,21 +156,6 @@ public abstract class Mapping implements Cloneable {
 		}
 	}
 
-	/** 
-	 * Duplicates this mapping. Sub-classes are supposed to override
-	 * this method.
-	 * 
-	 * @return a copy of this mapping
-	 */
-	public Mapping duplicate() {
-		Mapping copy = null;
-		try {
-			copy = (Mapping) super.clone();
-		} 
-		catch (CloneNotSupportedException e) {
-			throw new UnsupportedOperationException("Cannot duplicate mapping " + this.toString());}
-		return copy;
-	}
-	
+
 
 }

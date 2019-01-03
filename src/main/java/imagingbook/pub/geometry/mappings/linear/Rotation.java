@@ -15,8 +15,7 @@ import imagingbook.lib.settings.PrintPrecision;
 public class Rotation extends AffineMapping {
 	
 	/**
-	 * Creates a new {@link AffineMapping} representing a pure 2D rotation
-	 * around the origin.
+	 * Creates a 2D rotation around the origin.
 	 * @param alpha rotation angle (in radians)
 	 */
 	public Rotation(double alpha) {
