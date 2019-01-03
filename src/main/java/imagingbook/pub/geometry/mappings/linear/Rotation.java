@@ -39,7 +39,7 @@ public class Rotation extends AffineMapping {
 	}
 	
 	@Override
-	public AffineMapping getInverse() {
+	public Rotation getInverse() {
 		return new Rotation(a00, -a01, -a10, a11);
 	}
 	
