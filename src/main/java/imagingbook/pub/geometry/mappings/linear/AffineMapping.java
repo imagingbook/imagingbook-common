@@ -84,10 +84,20 @@ public class AffineMapping extends ProjectiveMapping {
 	 * @param am a given projective mapping
 	 */
 	public AffineMapping(AffineMapping am) {
-		super(am);
+		this(am.getParameters());
+	}
+	
+	public AffineMapping(double[] p) {
+		super(p[0], p[1], p[2], p[3], p[4], p[5], 0, 0);  // projective mapping
 	}
 	
 	// ---------------------------------------------------------------------------
+	
+	public double[] getParameters() {
+		return new double[] { a00, a01, a02, a10, a11, a12 };
+	}
+	
+	// ----------------------------------------------------------
 	
 	/** Deviation limit for checking 0 and 1 values. */
 	protected static double EPSILON = 1e-15;
@@ -151,31 +161,31 @@ public class AffineMapping extends ProjectiveMapping {
 		return new AffineMapping(this);
 	}
 
-//	// warp parameter support (used in Lucas-Kanade-matcher) --------------------------
-//
-//	@Override
-//	public int getWarpParameterCount() {
-//		// a00 = p[0] + 1; a01 = p[1]; a10 = p[2]; a11 = p[3] + 1; a02 = p[4]; a12 = p[5];
-//		return 6;
-//	}
-//
-//	@Override
-//	public double[] getWarpParameters() {
-//		return new double[] { a00 - 1, a01, a10, a11 - 1, a02, a12 };
-//	}
-//	
-//	public static AffineMapping fromWarpParameters(double[] p) {
-//		return new AffineMapping(p[0] + 1, p[1], p[2], p[3] + 1, p[4], p[5]);
-//	}
-//
-//	@Override
-//	public double[][] getWarpJacobian(double[] xy) {
-//		final double x = xy[0];
-//		final double y = xy[1];
-//		return new double[][]
-//			{{x, y, 0, 0, 1, 0},
-//			 {0, 0, x, y, 0, 1}};
-//	}
+	// warp parameter support (used in Lucas-Kanade-matcher) --------------------------
+
+	@Override
+	public int getWarpParameterCount() {
+		// a00 = p[0] + 1; a01 = p[1]; a10 = p[2]; a11 = p[3] + 1; a02 = p[4]; a12 = p[5];
+		return 6;
+	}
+
+	@Override
+	public double[] getWarpParameters() {
+		return new double[] { a00 - 1, a01, a10, a11 - 1, a02, a12 };
+	}
+	
+	public static AffineMapping fromWarpParameters(double[] p) {
+		return new AffineMapping(p[0] + 1, p[1], p[2], p[3] + 1, p[4], p[5]);
+	}
+
+	@Override
+	public double[][] getWarpJacobian(double[] xy) {
+		final double x = xy[0];
+		final double y = xy[1];
+		return new double[][]
+			{{x, y, 0, 0, 1, 0},
+			 {0, 0, x, y, 0, 1}};
+	}
 	
 	// ----------------------------------------------------------------------
 	

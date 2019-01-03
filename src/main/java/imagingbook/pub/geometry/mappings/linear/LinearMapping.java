@@ -42,6 +42,10 @@ public class LinearMapping extends Mapping {
 		a10 = A[1][0]; a11 = A[1][1]; a12 = A[1][2];
 		a20 = A[2][0]; a21 = A[2][1]; a22 = A[2][2];
 	}
+	
+	public LinearMapping(double[] p) {
+		this(p[0], p[1], p[2], p[3], p[4], p[5], p[6], p[7], p[8]);
+	}
 
 	/**
 	 * Creates an arbitrary linear mapping from the specified matrix elements.
@@ -74,6 +78,12 @@ public class LinearMapping extends Mapping {
 	
 	// ----------------------------------------------------------
 	
+	public double[] getParameters() {
+		return new double[] { a00, a01, a02, a10, a11, a12, a20, a21, a22 };
+	}
+	
+	// ----------------------------------------------------------
+	
 	/**
 	 * Scales the transformation matrix such that a22 becomes 1.
 	 * Any linear mapping can be normalized and thereby be converted to
@@ -87,6 +97,8 @@ public class LinearMapping extends Mapping {
 		double b20 = a20/a22;	double b21 = a21/a22;
 		return new ProjectiveMapping(b00, b01, b02, b10, b11, b12, b20, b21);
 	}
+	
+
 	
 	// ----------------------------------------------------------
 	

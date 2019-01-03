@@ -12,7 +12,6 @@ import ij.ImagePlus;
 import ij.process.FloatProcessor;
 import imagingbook.lib.math.Matrix;
 import imagingbook.pub.geometry.mappings.linear.ProjectiveMapping;
-import imagingbook.pub.lucaskanade.geom.ProjectiveMappingP;
 
 import java.awt.geom.Point2D;
 
@@ -20,7 +19,7 @@ import java.awt.geom.Point2D;
  * This is the common super-class for different variants of the Lucas-Kanade
  * matcher.
  *  @author Wilhelm Burger
- *  @version 2014/02/08
+ *  @version 2019/01/03
  */
 public abstract class LucasKanadeMatcher {
 
@@ -73,9 +72,9 @@ public abstract class LucasKanadeMatcher {
 	 * @param Q an arbitrary quad (should be inside the search image I);
 	 * @return the transformation from {@code R}'s bounding rectangle to {@code Q}.
 	 */
-	public ProjectiveMappingP getReferenceMappingTo(Point2D[] Q) {
+	public ProjectiveMapping getReferenceMappingTo(Point2D[] Q) {
 		Point2D[] Rpts = getReferencePoints();
-		return new ProjectiveMappingP(ProjectiveMapping.fromQuads(Rpts, Q));
+		return ProjectiveMapping.fromQuads(Rpts, Q);
 	}
 	
 	/**
@@ -104,10 +103,10 @@ public abstract class LucasKanadeMatcher {
 	 * (again assuming that R is centered at the coordinate origin) or null if
 	 * no match was found.
 	 */
-	public ProjectiveMappingP getMatch(ProjectiveMappingP Tinit) {
+	public ProjectiveMapping getMatch(ProjectiveMapping Tinit) {
 //		initializeMatch(Tinit);			// to be implemented by sub-classes
 		// ProjectiveMappingP Tp = Tinit.duplicate();
-		ProjectiveMappingP Tp = Tinit;
+		ProjectiveMapping Tp = Tinit;
 		do {
 			Tp = iterateOnce(Tp);		// to be implemented by sub-classes
 		} while (Tp != null && !hasConverged() && getIteration() < params.maxIterations);
@@ -124,7 +123,7 @@ public abstract class LucasKanadeMatcher {
 	 * @return a new warp transformation (again assuming that R is centered at 
 	 * the coordinate origin) or null if the iteration was unsuccessful.
 	 */
-	public abstract ProjectiveMappingP iterateOnce(ProjectiveMappingP Tp);
+	public abstract ProjectiveMapping iterateOnce(ProjectiveMapping Tp);
 	
 	
 	/**

@@ -29,13 +29,25 @@ public class Rotation extends AffineMapping {
 	}
 	
 	public Rotation(Rotation r) {
-		super(r);
+		this(r.getParameters());
+	}
+	
+	public Rotation(double[] p) {
+		super(p[0], -p[1], 0, p[1], p[0], 0);  // AffineMapping
 	}
 
 	// private constructor (used for getInverse() only)
 	private Rotation(double a00, double a01, double a10, double a11) {
 		super(a00, a01, 0, a10, a11, 0);
 	}
+	
+	// -----------------------------------------------------------
+	
+	public double[] getParameters() {
+		return new double[] { a00, a10 };
+	}
+	
+	// ----------------------------------------------------------
 	
 	@Override
 	public Rotation duplicate() {

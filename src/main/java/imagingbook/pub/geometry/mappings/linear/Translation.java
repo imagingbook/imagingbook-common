@@ -36,8 +36,20 @@ public class Translation extends AffineMapping {
 	 * @param t an existing translation
 	 */
 	public Translation(Translation t) {
-		super(t);
+		this(t.getParameters());
 	}
+	
+	public Translation(double[] p) {
+		super(1, 0, p[0], 0, 1, p[1]);  // AffineMapping
+	}
+	
+	// --------------------------------------------------------
+	
+	public double[] getParameters() {
+		return new double[] { a02, a12 };
+	}
+	
+	// ----------------------------------------------------------
 
 	@Override
 	public Translation getInverse() {
@@ -49,30 +61,30 @@ public class Translation extends AffineMapping {
 		return new Translation(this);
 	}
 	
-//	// Warp parameter support -------------------------------------
-//	
-//	@Override
-//	public int getWarpParameterCount() {
-//		return 2;
-//	}
-//	
-//	@Override
-//	public double[] getWarpParameters() {
-//		double[] p = new double[] {a02,	a12};
-//		return p;
-//	}
-//	
-//	public static Translation fromWarpParameters(double[] p) {
-//		return new Translation(p[0], p[1]);
-//	}
-//	
-//	private static final double[][] JT =	// this transformation has a constant Jacobian
-//		{{1, 0},
-//		 {0, 1}};
-//	
-//	@Override
-//	public double[][] getWarpJacobian(double[] X) {
-//		return JT;
-//	}
+	// Warp parameter support -------------------------------------
+	
+	@Override
+	public int getWarpParameterCount() {
+		return 2;
+	}
+	
+	@Override
+	public double[] getWarpParameters() {
+		double[] p = new double[] {a02,	a12};
+		return p;
+	}
+	
+	public static Translation fromWarpParameters(double[] p) {
+		return new Translation(p[0], p[1]);
+	}
+	
+	private static final double[][] JT =	// this transformation has a constant Jacobian
+		{{1, 0},
+		 {0, 1}};
+	
+	@Override
+	public double[][] getWarpJacobian(double[] X) {
+		return JT;
+	}
 
 }
