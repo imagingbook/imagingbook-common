@@ -10,11 +10,12 @@
 package imagingbook.pub.geometry.mappings.linear;
 
 import imagingbook.lib.math.Matrix;
+import imagingbook.lib.settings.PrintPrecision;
 import imagingbook.pub.geometry.mappings.Mapping;
 
 /**
  * This class represents an arbitrary linear transformation in 2D.
- * TODO: make fields final.
+ * Instances of this class and any subclass are immutable.
  */
 public class LinearMapping extends Mapping {
 	
@@ -32,6 +33,10 @@ public class LinearMapping extends Mapping {
 		a20 = 0; a21 = 0; a22 = 1;
 	}
 	
+	/**
+	 * Creates a linear mapping from a transformation matrix A.
+	 * @param A a 3 x 3 matrix
+	 */
 	public LinearMapping(double[][] A) {
 		a00 = A[0][0]; a01 = A[0][1]; a02 = A[0][2];
 		a10 = A[1][0]; a11 = A[1][1]; a12 = A[1][2];
@@ -57,7 +62,6 @@ public class LinearMapping extends Mapping {
 		this.a00 = a00;  this.a01 = a01;  this.a02 = a02;
 		this.a10 = a10;  this.a11 = a11;  this.a12 = a12;
 		this.a20 = a20;  this.a21 = a21;  this.a22 = a22;
-//		isInverseFlag = inv;
 	}
 	
 	/**
@@ -65,10 +69,7 @@ public class LinearMapping extends Mapping {
 	 * @param lmap a given linear mapping
 	 */
 	public LinearMapping (LinearMapping lmap) {
-		this.a00 = lmap.a00;  this.a01 = lmap.a01;  this.a02 = lmap.a02;
-		this.a10 = lmap.a10;  this.a11 = lmap.a11;  this.a12 = lmap.a12;
-		this.a20 = lmap.a20;  this.a21 = lmap.a21;  this.a22 = lmap.a22;
-//		this.isInverseFlag = lmap.isInverseFlag;
+		this(lmap.getTransformationMatrix());
 	}
 	
 	// ----------------------------------------------------------
@@ -94,63 +95,14 @@ public class LinearMapping extends Mapping {
 		double h =  (a20 * x + a21 * y + a22);
 		double x1 = (a00 * x + a01 * y + a02) / h;
 		double y1 = (a10 * x + a11 * y + a12) / h;
-		// pnt.setLocation(x1, y1);
 		return new double[] {x1, y1};
 	}
 	
-//	public LinearMapping getInverse() {	// TODO: implement with Apache Commons Math
-//		System.out.println("LinearMapping getInverse()");
-//		double[][] Ai = Matrix.inverse(this.getTransformationMatrix());
-//		return new LinearMapping(Ai);
-//	}
-	
-	
-	public LinearMapping getInverse() {	// TODO: implement with Apache Commons Math
-		System.out.println("LinearMapping getInverse() - closed solution");
-		double det = a00*a11*a22 + a01*a12*a20 + a02*a10*a21 - 
-				     a00*a12*a21 - a01*a10*a22 - a02*a11*a20;
-		double b00 = (a11*a22 - a12*a21) / det; 
-		double b01 = (a02*a21 - a01*a22) / det; 
-		double b02 = (a01*a12 - a02*a11) / det; 
-		double b10 = (a12*a20 - a10*a22) / det; 
-		double b11 = (a00*a22 - a02*a20) / det; 
-		double b12 = (a02*a10 - a00*a12) / det;
-		double b20 = (a10*a21 - a11*a20) / det; 
-		double b21 = (a01*a20 - a00*a21) / det; 
-		double b22 = (a00*a11 - a01*a10) / det;
-		return new LinearMapping(b00, b01, b02, b10, b11, b12, b20, b21, b22);
+	public LinearMapping getInverse() {
+		// System.out.println("LinearMapping getInverse()");
+		double[][] ai = Matrix.inverse(this.getTransformationMatrix());
+		return new LinearMapping(ai);
 	}
-	
-	/**
-	 * Calculates and returns the inverted mapping.
-	 */
-//	public LinearMapping invert() {
-//		LinearMapping lm = new LinearMapping(this);
-//		lm.invertDestructive();
-//		return lm;
-//	}
-	
-//	/**
-//	 * Invertes this mapping destructively ("in-place") i.e.,
-//	 * without creating a new instance.
-//	 */
-//	protected void invertDestructive() {
-//		double det = a00*a11*a22 + a01*a12*a20 + a02*a10*a21 - 
-//					 a00*a12*a21 - a01*a10*a22 - a02*a11*a20;
-//		double b00 = (a11*a22 - a12*a21) / det; 
-//		double b01 = (a02*a21 - a01*a22) / det; 
-//		double b02 = (a01*a12 - a02*a11) / det; 
-//		double b10 = (a12*a20 - a10*a22) / det; 
-//		double b11 = (a00*a22 - a02*a20) / det; 
-//		double b12 = (a02*a10 - a00*a12) / det;
-//		double b20 = (a10*a21 - a11*a20) / det; 
-//		double b21 = (a01*a20 - a00*a21) / det; 
-//		double b22 = (a00*a11 - a01*a10) / det;
-//		a00 = b00;		a01 = b01;		a02 = b02;
-//		a10 = b10;		a11 = b11;		a12 = b12;
-//		a20 = b20;		a21 = b21;		a22 = b22;
-////		isInverseFlag = !isInverseFlag;
-//	}
 	
 	/**
 	 * Concatenates this mapping A with another linear mapping B and returns
@@ -159,43 +111,34 @@ public class LinearMapping extends Mapping {
 	 * @return the concatenated mapping
 	 */
 	public LinearMapping concat(LinearMapping B) {
-		double b00 = B.a00*a00 + B.a01*a10 + B.a02*a20;
-		double b01 = B.a00*a01 + B.a01*a11 + B.a02*a21;
-		double b02 = B.a00*a02 + B.a01*a12 + B.a02*a22;
-		
-		double b10 = B.a10*a00 + B.a11*a10 + B.a12*a20;
-		double b11 = B.a10*a01 + B.a11*a11 + B.a12*a21;
-		double b12 = B.a10*a02 + B.a11*a12 + B.a12*a22;
-		
-		double b20 = B.a20*a00 + B.a21*a10 + B.a22*a20;
-		double b21 = B.a20*a01 + B.a21*a11 + B.a22*a21;
-		double b22 = B.a20*a02 + B.a21*a12 + B.a22*a22;
-		return new LinearMapping(b00, b01, b02, b10, b11, b12, b20, b21, b22);
+		double[][] a = this.getTransformationMatrix();
+		double[][] b = B.getTransformationMatrix();
+		return new LinearMapping(Matrix.multiply(b, a));
 	}
 	
 	/**
-	 * Concatenates this mapping A destructively with another linear mapping B,
-	 * such that A(x) becomes B(A(x)).
-	 * TODO: This should not be public!
-	 * @param B the second mapping
+	 * Concatenates a sequence of linear mappings AA = (A1, A2, ..., An), with
+	 * the result A(x) = A1(A2(...(An(x))...)). Thus, the mapping
+	 * An is applied first and A1 last, with the associated transformation
+	 * matrix a = a1 * a2 * ... * an.
+	 * If AA is empty, the identity mapping is returned.
+	 * If AA contains only a single mapping, a copy of this mapping is returned.
+	 * 
+	 * @param AA a (possibly empty) sequence of linear transformations
+	 * @return the concatenated linear transformation 
 	 */
-//	@Deprecated
-//	public void concatDestructive(LinearMapping B) {
-//		double b00 = B.a00*a00 + B.a01*a10 + B.a02*a20;
-//		double b01 = B.a00*a01 + B.a01*a11 + B.a02*a21;
-//		double b02 = B.a00*a02 + B.a01*a12 + B.a02*a22;
-//		
-//		double b10 = B.a10*a00 + B.a11*a10 + B.a12*a20;
-//		double b11 = B.a10*a01 + B.a11*a11 + B.a12*a21;
-//		double b12 = B.a10*a02 + B.a11*a12 + B.a12*a22;
-//		
-//		double b20 = B.a20*a00 + B.a21*a10 + B.a22*a20;
-//		double b21 = B.a20*a01 + B.a21*a11 + B.a22*a21;
-//		double b22 = B.a20*a02 + B.a21*a12 + B.a22*a22;
-//		a00 = b00;		a01 = b01;		a02 = b02;
-//		a10 = b10;		a11 = b11;		a12 = b12;
-//		a20 = b20;		a21 = b21;		a22 = b22;
-//	}
+	public static LinearMapping concatenate(LinearMapping... AA) {
+		if (AA.length == 0) {
+			return new LinearMapping();	// identity
+		}
+		else {
+			double[][] a = AA[0].getTransformationMatrix();
+			for (int i = 1; i < AA.length; i++) {
+				a = Matrix.multiply(a, AA[i].getTransformationMatrix());
+			}
+			return new LinearMapping(a);
+		}
+	}
 	
 	/**
 	 * Retrieves the transformation matrix for this mapping.
@@ -222,16 +165,32 @@ public class LinearMapping extends Mapping {
 	
 	// -----------------------------------------------------------
 	
+	/**
+	 * For testing only.
+	 * @param args ignored
+	 */
 	public static void main(String[] args) {
+		PrintPrecision.set(6);
 		double[][] A = 
 				{{-1.230769, 2.076923, -1.769231}, 
 				{-2.461538, 2.615385, -3.538462}, 
 				{-0.307692, 0.230769, 1.000000}};
-		
 		System.out.println("A = " + Matrix.toString(A));
+		
 		double[][] Ai = Matrix.inverse(A);
 		System.out.println("Ai = " + Matrix.toString(Ai));
 		
+		double[][] I = Matrix.multiply(A, Ai);
+		System.out.println("\ntest: should be the  identity matrix: = \n" + Matrix.toString(I));
+		
+		ProjectiveMapping pA = (new LinearMapping(A)).normalize();
+		System.out.println("mapping pA = \n" + pA.toString());
+		
+		ProjectiveMapping AA1 = pA.concat(pA);
+		System.out.println("mapping AA1 = \n" + AA1.toString());
+		
+		ProjectiveMapping AA2 = LinearMapping.concatenate(pA, pA).normalize();
+		System.out.println("mapping AA1 = \n" + AA2.toString());
 	}
 	
 }
