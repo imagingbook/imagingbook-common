@@ -11,34 +11,52 @@ package imagingbook.pub.geometry.mappings.nonlinear;
 
 import imagingbook.pub.geometry.mappings.Mapping;
 
+
+/**
+ * A non-linear mapping that produces a spherical distortion.
+ * The transformation is implicitly inverted, i.e., maps target to source image
+ * coordinates.
+ * 
+ * @author WB
+ *
+ */
 public class SphereMapping extends Mapping {
-	double xc;				// center of sphere
-	double yc;
-	double rad;				// radius of sphere
-	double refIdx = 1.8;	// refraction index
+	
+	static double DefaultRefIdx = 1.8;
+			
+	private final double xc;			// center of sphere
+	private final double yc;
+	private final double rad;			// radius of sphere
+	private final double refIdx;		// refraction index
    
-	SphereMapping (double xc, double yc, double rad, boolean inv) {
+	public SphereMapping(double xc, double yc, double rad) {
+		this(xc, yc, rad, DefaultRefIdx);
+	}
+	
+	public SphereMapping(double xc, double yc, double rad, double refIdx) {
 		this.xc = xc;
 		this.yc = yc;
 		this.rad = rad;
-//		this.isInverseFlag = inv;
+		this.refIdx = refIdx;
 	}
 	
-	public static SphereMapping makeInverseMapping(double xc, double yc, double rad){
-		return new SphereMapping(xc, yc, rad, true);
+	@Deprecated
+	public static SphereMapping create(double xc, double yc, double rad) {
+		return new SphereMapping(xc, yc, rad);
 	}
 
+	@Override
 	public double[] applyTo (double x, double y){
-		double dx = x-xc;
-		double dy = y-yc;
-		double dx2 = dx*dx;
-		double dy2 = dy*dy;
-		double rad2 = rad*rad;
-		
-		double r2 = dx*dx + dy*dy;
-		
+		double dx = x - xc;
+		double dy = y - yc;
+		double dx2 = dx * dx;
+		double dy2 = dy * dy;
+		double rad2 = rad * rad;
+
+		double r2 = dx * dx + dy * dy;
+
 		if (r2 > 0 && r2 < rad2) {
-			double z2 = rad2 - r2; 
+			double z2 = rad2 - r2;
 			double z = Math.sqrt(z2);
 
 			double xAlpha = Math.asin(dx / Math.sqrt(dx2 + z2));
@@ -48,11 +66,11 @@ public class SphereMapping extends Mapping {
 			double yAlpha = Math.asin(dy / Math.sqrt(dy2 + z2));
 			double yBeta = yAlpha - yAlpha * (1 / refIdx);
 			double y1 = y - z * Math.tan(yBeta);
-			//pnt.setLocation(x1, y1);
-			return new double[] {x1, y1};
-		} 
-		// otherwise leave point unchanged
-		return new double[] {x, y};
+			return new double[] { x1, y1 };
+		}
+		else { // otherwise leave point unchanged
+			return new double[] { x, y };
+		}
 	}
 }
 

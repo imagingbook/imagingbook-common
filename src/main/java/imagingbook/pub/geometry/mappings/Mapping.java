@@ -94,10 +94,14 @@ public abstract class Mapping implements Cloneable {
 		}
 		return outPnts;
 	}
+	
+	// image-to-image mappings (needs to be moved!) ----------------------
 
 	/**
 	 * Destructively transforms the passed image using this geometric
 	 * mapping and the specified pixel interpolation method.
+	 * The geometric mapping is supposed to be INVERTED, i.e. transforming
+	 * target to source image coordinates!
 	 * TODO: this should not be here (geometry only)?
 	 * 
 	 * @param ip target image to which this mapping is applied
@@ -115,6 +119,8 @@ public abstract class Mapping implements Cloneable {
 	 * Transforms the source image to the target image using this geometric
 	 * mapping and the specified pixel interpolation method. Note that source
 	 * and target must be different images!
+	 * The geometric mapping is supposed to be INVERTED, i.e. transforming
+	 * target to source image coordinates!
 	 * 
 	 * @param source input image (not modified)
 	 * @param target output image (modified)
@@ -135,6 +141,8 @@ public abstract class Mapping implements Cloneable {
 	 * mapping and the specified pixel interpolation method.
 	 * The two images are passed as instances of {@link ImageAccessor}.
 	 * Note that source and target reference different images!
+	 * The geometric mapping is supposed to be INVERTED, i.e. transforming
+	 * target to source image coordinates!
 	 * 
 	 * @param sourceAcc accessor to the source image
 	 * @param targetAcc accessor to the target image
@@ -150,12 +158,9 @@ public abstract class Mapping implements Cloneable {
 		for (int v = 0; v < h; v++) {
 			for (int u = 0; u < w; u++) {
 				Point2D sourcePt = invMap.applyTo(new Point(u, v));
-				float[] val = sourceAcc.getPix(sourcePt.getX(),sourcePt.getY());
+				float[] val = sourceAcc.getPix(sourcePt.getX(), sourcePt.getY());
 				targetAcc.setPix(u, v, val);
 			}
 		}
 	}
-
-
-
 }

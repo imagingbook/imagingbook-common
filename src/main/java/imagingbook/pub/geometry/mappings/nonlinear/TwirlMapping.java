@@ -12,18 +12,19 @@ package imagingbook.pub.geometry.mappings.nonlinear;
 import imagingbook.pub.geometry.mappings.Mapping;
 
 public class TwirlMapping extends Mapping {
-	double xc, yc, angle, rad;
+	
+	private final double xc, yc, angle, rad;
    
-	public TwirlMapping (double xc, double yc, double angle, double rad, boolean inv) {
+	public TwirlMapping (double xc, double yc, double angle, double rad) {
 		this.xc = xc;
 		this.yc = yc;
 		this.angle = angle;
 		this.rad = rad;
-//		this.isInverseFlag = inv;
 	}
 
-	public static TwirlMapping makeInverseMapping(double xc, double yc, double angle, double rad){
-		return new TwirlMapping(xc, yc, angle, rad, true);
+	@Deprecated
+	public static TwirlMapping create(double xc, double yc, double angle, double rad){
+		return new TwirlMapping(xc, yc, angle, rad);
 	}
 
 	public double[] applyTo (double x, double y){
