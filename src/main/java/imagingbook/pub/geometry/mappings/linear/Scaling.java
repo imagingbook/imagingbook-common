@@ -9,6 +9,10 @@
 
 package imagingbook.pub.geometry.mappings.linear;
 
+/**
+ * This class represents a 2D scaling transformation (as a special case of 
+ * affine transformation).
+ */
 public class Scaling extends AffineMapping {
 	
 	/**

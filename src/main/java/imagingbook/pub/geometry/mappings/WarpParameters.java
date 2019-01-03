@@ -12,16 +12,16 @@ package imagingbook.pub.geometry.mappings;
 /**
  * This interfaces prescribes methods for the parameterization of mappings
  * with 1D double vectors (used in Lucas-Kanade matcher etc.).
- * Currently only used with ProjectiveMapping, AffineMapping, Translation.
- * TODO: Interface really needed? Reconsider name.
- * 
- * @author WB
+ * Currently only implemented by mapping classes {@link ProjectiveMapping}, 
+ * {@link AffineMapping} and {@link Translation}.
+ * An interface is used to allow implementation by other (non-linear) mappings
+ * that ore not sub-classes of {@link ProjectiveMapping}.
+ * @deprecated
  */
 public interface WarpParameters {
 	
-	public int getWarpParameterCount();	
-	public double[] getWarpParameters();
-	//public void setWarpParameters(double[] p);
-	public double[][] getWarpJacobian(double[] x);
+//	public int getWarpParameterCount();	
+//	public double[] getWarpParameters();
+//	public double[][] getWarpJacobian(double[] x);
 	
 }

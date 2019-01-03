@@ -66,10 +66,10 @@ public class LinearMapping extends Mapping {
 	
 	/**
 	 * Creates a new linear mapping from an existing linear mapping.
-	 * @param lmap a given linear mapping
+	 * @param lm a given linear mapping
 	 */
-	public LinearMapping (LinearMapping lmap) {
-		this(lmap.getTransformationMatrix());
+	public LinearMapping (LinearMapping lm) {
+		this(lm.getTransformationMatrix());
 	}
 	
 	// ----------------------------------------------------------

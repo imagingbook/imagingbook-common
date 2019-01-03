@@ -9,7 +9,10 @@
 
 package imagingbook.pub.geometry.mappings.linear;
 
-
+/**
+ * This class represents a 2D shear transformation (as a special case of 
+ * affine transformation).
+ */
 public class Shear extends AffineMapping {
 	
 	/**

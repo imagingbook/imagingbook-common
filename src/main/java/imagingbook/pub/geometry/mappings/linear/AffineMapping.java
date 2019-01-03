@@ -151,53 +151,31 @@ public class AffineMapping extends ProjectiveMapping {
 		return new AffineMapping(this);
 	}
 
-	// warp parameter support (used in Lucas-Kanade-matcher) --------------------------
-
-	@Override
-	public int getWarpParameterCount() {
-		return 6;
-	}
-
-	@Override
-	public double[] getWarpParameters() {
-		double[] p = new double[] {
-				a00 - 1, 
-				a01,
-				a10,
-				a11 - 1,
-				a02,
-				a12 };
-		return p;
-	}
-	
-	public static AffineMapping fromWarpParameters(double[] p) {
-//		a00 = p[0] + 1;
-//		a01 = p[1];
-//		a10 = p[2];
-//		a11 = p[3] + 1;
-//		a02 = p[4];
-//		a12 = p[5];
-		return new AffineMapping(p[0] + 1, p[1], p[2], p[3] + 1, p[4], p[5]);
-	}
-
+//	// warp parameter support (used in Lucas-Kanade-matcher) --------------------------
+//
 //	@Override
-//	public void setWarpParameters(double[] p) {
-//		a00 = p[0] + 1;
-//		a01 = p[1];
-//		a10 = p[2];
-//		a11 = p[3] + 1;
-//		a02 = p[4];
-//		a12 = p[5];
+//	public int getWarpParameterCount() {
+//		// a00 = p[0] + 1; a01 = p[1]; a10 = p[2]; a11 = p[3] + 1; a02 = p[4]; a12 = p[5];
+//		return 6;
 //	}
-
-	@Override
-	public double[][] getWarpJacobian(double[] xy) {
-		final double x = xy[0];
-		final double y = xy[1];
-		return new double[][]
-				{{x, y, 0, 0, 1, 0},
-			{0, 0, x, y, 0, 1}};
-	}
+//
+//	@Override
+//	public double[] getWarpParameters() {
+//		return new double[] { a00 - 1, a01, a10, a11 - 1, a02, a12 };
+//	}
+//	
+//	public static AffineMapping fromWarpParameters(double[] p) {
+//		return new AffineMapping(p[0] + 1, p[1], p[2], p[3] + 1, p[4], p[5]);
+//	}
+//
+//	@Override
+//	public double[][] getWarpJacobian(double[] xy) {
+//		final double x = xy[0];
+//		final double y = xy[1];
+//		return new double[][]
+//			{{x, y, 0, 0, 1, 0},
+//			 {0, 0, x, y, 0, 1}};
+//	}
 	
 	// ----------------------------------------------------------------------
 	

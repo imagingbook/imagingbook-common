@@ -13,6 +13,8 @@ import ij.process.FloatProcessor;
 import imagingbook.lib.ij.IjUtils;
 import imagingbook.lib.math.Matrix;
 import imagingbook.pub.geometry.mappings.linear.ProjectiveMapping;
+//import imagingbook.pub.geometry.mappings.linear.ProjectiveMapping;
+import imagingbook.pub.lucaskanade.geom.ProjectiveMappingP;
 
 
 /**
@@ -45,14 +47,15 @@ public class LucasKanadeInverseMatcher extends LucasKanadeMatcher {
 		super(I, R, new Parameters());
 	}
 	
-	private void initializeMatch(ProjectiveMapping Tinit) {
+	private void initializeMatch(ProjectiveMappingP Tinit) {
 		n = Tinit.getWarpParameterCount();
 		S = new double[wR][hR][];			// S[u][v] holds a double vector of length n
 		Rx = gradientX(R).getFloatArray();	// gradient of R
 		Ry = gradientY(R).getFloatArray();
 		double[][] H = new double[n][n]; 	// cumulated Hessian matrix of size n x n (initially zero)
 		
-		ProjectiveMapping Tp = Tinit.duplicate();
+		//ProjectiveMapping Tp = Tinit.duplicate();
+		ProjectiveMappingP Tp = Tinit;
 		
 		for (int u = 0; u < wR; u++) {			// for all coordinates (u,v) in R do
 			for (int v = 0; v < hR; v++) {
@@ -87,7 +90,7 @@ public class LucasKanadeInverseMatcher extends LucasKanadeMatcher {
 	}
 	
 	@Override
-	public ProjectiveMapping iterateOnce(ProjectiveMapping Tp) {
+	public ProjectiveMappingP iterateOnce(ProjectiveMappingP Tp) {
 		if (iteration < 0) {
 			initializeMatch(Tp);
 		}
@@ -126,9 +129,9 @@ public class LucasKanadeInverseMatcher extends LucasKanadeMatcher {
 		// Calculate the warp parameters p', such that T_p'(x) = T_p (T^-1_q (x), for any point x.
 //		ProjectiveMapping Tqopt = new ProjectiveMapping();
 //		Tqopt.setWarpParameters(qopt);
-		ProjectiveMapping Tqopt = ProjectiveMapping.fromWarpParameters(qopt);
+		ProjectiveMappingP Tqopt = ProjectiveMappingP.fromWarpParameters(qopt);
 		ProjectiveMapping Tqopti = Tqopt.getInverse();
-		Tp = Tqopti.concat(Tp);
+		Tp = new ProjectiveMappingP(Tqopti.concat(Tp));
 		return Tp;
 	}
 	

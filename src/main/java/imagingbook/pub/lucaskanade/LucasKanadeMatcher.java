@@ -12,6 +12,7 @@ import ij.ImagePlus;
 import ij.process.FloatProcessor;
 import imagingbook.lib.math.Matrix;
 import imagingbook.pub.geometry.mappings.linear.ProjectiveMapping;
+import imagingbook.pub.lucaskanade.geom.ProjectiveMappingP;
 
 import java.awt.geom.Point2D;
 
@@ -72,9 +73,9 @@ public abstract class LucasKanadeMatcher {
 	 * @param Q an arbitrary quad (should be inside the search image I);
 	 * @return the transformation from {@code R}'s bounding rectangle to {@code Q}.
 	 */
-	public ProjectiveMapping getReferenceMappingTo(Point2D[] Q) {
+	public ProjectiveMappingP getReferenceMappingTo(Point2D[] Q) {
 		Point2D[] Rpts = getReferencePoints();
-		return ProjectiveMapping.makeMapping(Rpts, Q);
+		return new ProjectiveMappingP(ProjectiveMapping.fromQuads(Rpts, Q));
 	}
 	
 	/**
@@ -103,9 +104,10 @@ public abstract class LucasKanadeMatcher {
 	 * (again assuming that R is centered at the coordinate origin) or null if
 	 * no match was found.
 	 */
-	public ProjectiveMapping getMatch(ProjectiveMapping Tinit) {
+	public ProjectiveMappingP getMatch(ProjectiveMappingP Tinit) {
 //		initializeMatch(Tinit);			// to be implemented by sub-classes
-		ProjectiveMapping Tp = Tinit.duplicate();
+		// ProjectiveMappingP Tp = Tinit.duplicate();
+		ProjectiveMappingP Tp = Tinit;
 		do {
 			Tp = iterateOnce(Tp);		// to be implemented by sub-classes
 		} while (Tp != null && !hasConverged() && getIteration() < params.maxIterations);
@@ -122,7 +124,7 @@ public abstract class LucasKanadeMatcher {
 	 * @return a new warp transformation (again assuming that R is centered at 
 	 * the coordinate origin) or null if the iteration was unsuccessful.
 	 */
-	public abstract ProjectiveMapping iterateOnce(ProjectiveMapping Tp);
+	public abstract ProjectiveMappingP iterateOnce(ProjectiveMappingP Tp);
 	
 	
 	/**

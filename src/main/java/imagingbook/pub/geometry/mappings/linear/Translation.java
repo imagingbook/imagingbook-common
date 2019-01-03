@@ -9,6 +9,10 @@
 
 package imagingbook.pub.geometry.mappings.linear;
 
+/**
+ * This class represents a pure 2D translation (as a special case of 
+ * affine transformation).
+ */
 public class Translation extends AffineMapping {
 
 	/**
@@ -45,30 +49,30 @@ public class Translation extends AffineMapping {
 		return new Translation(this);
 	}
 	
-	// Warp parameter support -------------------------------------
-	
-	@Override
-	public int getWarpParameterCount() {
-		return 2;
-	}
-	
-	@Override
-	public double[] getWarpParameters() {
-		double[] p = new double[] {a02,	a12};
-		return p;
-	}
-	
-	public static Translation fromWarpParameters(double[] p) {
-		return new Translation(p[0], p[1]);
-	}
-	
-	private static final double[][] JT =	// this transformation has a constant Jacobian
-		{{1, 0},
-		 {0, 1}};
-	
-	@Override
-	public double[][] getWarpJacobian(double[] X) {
-		return JT;
-	}
+//	// Warp parameter support -------------------------------------
+//	
+//	@Override
+//	public int getWarpParameterCount() {
+//		return 2;
+//	}
+//	
+//	@Override
+//	public double[] getWarpParameters() {
+//		double[] p = new double[] {a02,	a12};
+//		return p;
+//	}
+//	
+//	public static Translation fromWarpParameters(double[] p) {
+//		return new Translation(p[0], p[1]);
+//	}
+//	
+//	private static final double[][] JT =	// this transformation has a constant Jacobian
+//		{{1, 0},
+//		 {0, 1}};
+//	
+//	@Override
+//	public double[][] getWarpJacobian(double[] X) {
+//		return JT;
+//	}
 
 }

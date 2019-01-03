@@ -12,6 +12,10 @@ package imagingbook.pub.geometry.mappings.linear;
 import imagingbook.lib.math.Matrix;
 import imagingbook.lib.settings.PrintPrecision;
 
+/**
+ * This class represents a pure 2D rotation about the coordinate origin 
+ * (as a special case of affine transformation).
+ */
 public class Rotation extends AffineMapping {
 	
 	/**

@@ -12,6 +12,7 @@ import ij.process.FloatProcessor;
 import imagingbook.lib.ij.IjUtils;
 import imagingbook.lib.math.Matrix;
 import imagingbook.pub.geometry.mappings.linear.ProjectiveMapping;
+import imagingbook.pub.lucaskanade.geom.ProjectiveMappingP;
 
 /**
  * Lucas-Kanade (forward-additive) matcher, as described in Simon Baker and Iain Matthews, 
@@ -54,7 +55,7 @@ public class LucasKanadeForwardMatcher extends LucasKanadeMatcher {
 		return Math.sqrt(sqrError);
 	}
 
-	private void initializeMatch(ProjectiveMapping Tinit) {
+	private void initializeMatch(ProjectiveMappingP Tinit) {
 		n = Tinit.getWarpParameterCount();
 		Ix = gradientX(I);
 		Iy = gradientY(I);
@@ -62,7 +63,7 @@ public class LucasKanadeForwardMatcher extends LucasKanadeMatcher {
 	}
 
 	@Override
-	public ProjectiveMapping iterateOnce(ProjectiveMapping Tp) {
+	public ProjectiveMappingP iterateOnce(ProjectiveMappingP Tp) {
 		if (iteration < 0) {
 			initializeMatch(Tp);
 		}
@@ -137,8 +138,6 @@ public class LucasKanadeForwardMatcher extends LucasKanadeMatcher {
 			showSteepestDescentImages(S);
 		}
 
-//		Tp.setWarpParameters(p);
-//		return Tp;
-		return ProjectiveMapping.fromWarpParameters(p);
+		return ProjectiveMappingP.fromWarpParameters(p);
 	}
 }
