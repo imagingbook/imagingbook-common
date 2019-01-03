@@ -151,7 +151,7 @@ public abstract class Mapping implements Cloneable {
 		if (targetAcc.getProcessor() == sourceAcc.getProcessor()) {
 			throw new IllegalArgumentException("Source and target image must not be the same!");
 		}
-		Mapping invMap = this.getInverse(); // get inverse mapping
+		Mapping invMap = this; 		// this always IS an inverse mapping!!
 		ImageProcessor target = targetAcc.getProcessor();
 		final int w = target.getWidth();
 		final int h = target.getHeight();

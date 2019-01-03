@@ -15,23 +15,25 @@ import imagingbook.pub.geometry.mappings.Mapping;
 import java.awt.geom.Point2D;
 
 
-/*
- * 2007: Changed to use the JAMA numerical math package 
- * (http://math.nist.gov/javanumerics/jama/) instead of JAMPACK.
- * 2013: changed to use methods from the local matrix library
- * (based on Apache Common Maths) to solve linear systems of 
- * equations.
+/**
+ * This class represents a bilinear transformation in 2D with 8
+ * parameters a0, ..., a3, b0, ..., b3 of the form
+ * <pre>
+ * x' = a0 * x + a1 * y + a2 * x * y + a3
+ * y' = b0 * x + b1 * y + b2 * x * y + b3
+ * </pre>
+ * Note that this is a non-linear transformation because of the mixed term.
  */
-
 public class BilinearMapping extends Mapping {
 	
-	private final double a1, a2, a3, a4;
-	private final double b1, b2, b3, b4;
+	private final double a0, a1, a2, a3;
+	private final double b0, b1, b2, b3;
 	
-	public BilinearMapping(double a1, double a2, double a3, double a4,
-					double b1, double b2, double b3, double b4) {
-		this.a1 = a1;   this.a2 = a2;   this.a3 = a3;   this.a4 = a4;
-		this.b1 = b1;   this.b2 = b2;   this.b3 = b3;   this.b4 = b4;		
+	public BilinearMapping(
+			double a0, double a1, double a2, double a3,
+			double b0, double b1, double b2, double b3) {
+		this.a0 = a0;   this.a1 = a1;   this.a2 = a2;   this.a3 = a3;
+		this.b0 = b0;   this.b1 = b1;   this.b2 = b2;   this.b3 = b3;		
 	}
 	
 	public static BilinearMapping fromQuads(Point2D[] P, Point2D[] Q) {
@@ -50,7 +52,7 @@ public class BilinearMapping extends Mapping {
 	 * @param Q2 point Q2
 	 * @param Q3 point Q3
 	 * @param Q4 point Q4
-	 * @return
+	 * @return a new bilinear mapping
 	 */
 	public static BilinearMapping fromQuads(
 			Point2D P1, Point2D P2, Point2D P3, Point2D P4,	// source quad
@@ -77,15 +79,15 @@ public class BilinearMapping extends Mapping {
 	
 	@Override
 	public double[] applyTo (double x, double y) {
-		double xx = a1 * x + a2 * y + a3 * x * y + a4;
-		double yy = b1 * x + b2 * y + b3 * x * y + b4;
+		double xx = a0 * x + a1 * y + a2 * x * y + a3;
+		double yy = b0 * x + b1 * y + b2 * x * y + b3;
 		return new double[] {xx, yy};
 	}	
 	
 	public String toString() {
 		return String.format(
 				"A = (%.3f, %.3f, %.3f, %.3f) / B = (%.3f, %.3f, %.3f, %.3f)",
-				a1, a2, a3, a4, b1, b2, b3, b4);
+				a0, a1, a2, a3, b0, b1, b2, b3);
 	}
 	
 	// ------------------------------------------------------------------------

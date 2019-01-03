@@ -130,7 +130,7 @@
 <span class="sourceLineNo">122</span>                ProjectiveMapping T = null;<a name="line.122"></a>
 <span class="sourceLineNo">123</span>                switch (sourcePnts.length) {<a name="line.123"></a>
 <span class="sourceLineNo">124</span>                case (3) : T = AffineMapping.fromPoints(targetPnts, sourcePnts); break;<a name="line.124"></a>
-<span class="sourceLineNo">125</span>                case (4) : T = ProjectiveMapping.fromQuadToQuad(targetPnts, sourcePnts); break;<a name="line.125"></a>
+<span class="sourceLineNo">125</span>                case (4) : T = ProjectiveMapping.fromQuads(targetPnts, sourcePnts); break;<a name="line.125"></a>
 <span class="sourceLineNo">126</span>                default : throw new IllegalArgumentException("wrong number of source points");<a name="line.126"></a>
 <span class="sourceLineNo">127</span>                }<a name="line.127"></a>
 <span class="sourceLineNo">128</span>                return T;<a name="line.128"></a>

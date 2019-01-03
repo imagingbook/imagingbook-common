@@ -29,217 +29,214 @@
 <span class="sourceLineNo">021</span>public class AffineMapping extends ProjectiveMapping {<a name="line.21"></a>
 <span class="sourceLineNo">022</span><a name="line.22"></a>
 <span class="sourceLineNo">023</span>        /**<a name="line.23"></a>
-<span class="sourceLineNo">024</span>         * Creates the identity mapping.<a name="line.24"></a>
-<span class="sourceLineNo">025</span>         */<a name="line.25"></a>
-<span class="sourceLineNo">026</span>        public AffineMapping() {<a name="line.26"></a>
-<span class="sourceLineNo">027</span>                super();<a name="line.27"></a>
-<span class="sourceLineNo">028</span>        }<a name="line.28"></a>
-<span class="sourceLineNo">029</span><a name="line.29"></a>
-<span class="sourceLineNo">030</span>        /**<a name="line.30"></a>
-<span class="sourceLineNo">031</span>         * Creates an affine mapping from the specified matrix elements.<a name="line.31"></a>
-<span class="sourceLineNo">032</span>         * @param a00 matrix element A_00<a name="line.32"></a>
-<span class="sourceLineNo">033</span>         * @param a01 matrix element A_01<a name="line.33"></a>
-<span class="sourceLineNo">034</span>         * @param a02 matrix element A_02<a name="line.34"></a>
-<span class="sourceLineNo">035</span>         * @param a10 matrix element A_10<a name="line.35"></a>
-<span class="sourceLineNo">036</span>         * @param a11 matrix element A_11<a name="line.36"></a>
-<span class="sourceLineNo">037</span>         * @param a12 matrix element A_12<a name="line.37"></a>
-<span class="sourceLineNo">038</span>         */<a name="line.38"></a>
-<span class="sourceLineNo">039</span>        public AffineMapping (<a name="line.39"></a>
-<span class="sourceLineNo">040</span>                        double a00, double a01, double a02, <a name="line.40"></a>
-<span class="sourceLineNo">041</span>                        double a10, double a11, double a12) {<a name="line.41"></a>
-<span class="sourceLineNo">042</span>                super(a00, a01, a02, a10, a11, a12, 0, 0);<a name="line.42"></a>
-<span class="sourceLineNo">043</span>        }<a name="line.43"></a>
-<span class="sourceLineNo">044</span><a name="line.44"></a>
-<span class="sourceLineNo">045</span>        /**<a name="line.45"></a>
-<span class="sourceLineNo">046</span>         * Creates a new affine mapping from an existing affine mapping.<a name="line.46"></a>
-<span class="sourceLineNo">047</span>         * @param am a given projective mapping<a name="line.47"></a>
-<span class="sourceLineNo">048</span>         */<a name="line.48"></a>
-<span class="sourceLineNo">049</span>        public AffineMapping(AffineMapping am) {<a name="line.49"></a>
-<span class="sourceLineNo">050</span>                super(am);<a name="line.50"></a>
-<span class="sourceLineNo">051</span>        }<a name="line.51"></a>
-<span class="sourceLineNo">052</span><a name="line.52"></a>
-<span class="sourceLineNo">053</span>//      /**<a name="line.53"></a>
-<span class="sourceLineNo">054</span>//       * Creates an affine mapping between arbitrary triangles A, B.<a name="line.54"></a>
-<span class="sourceLineNo">055</span>//       * @param A1 point 1 of source triangle A<a name="line.55"></a>
-<span class="sourceLineNo">056</span>//       * @param A2 point 2 of source triangle A<a name="line.56"></a>
-<span class="sourceLineNo">057</span>//       * @param A3 point 3 of source triangle A<a name="line.57"></a>
-<span class="sourceLineNo">058</span>//       * @param B1 point 1 of source triangle B<a name="line.58"></a>
-<span class="sourceLineNo">059</span>//       * @param B2 point 2 of source triangle B<a name="line.59"></a>
-<span class="sourceLineNo">060</span>//       * @param B3 point 3 of source triangle B<a name="line.60"></a>
-<span class="sourceLineNo">061</span>//       */<a name="line.61"></a>
-<span class="sourceLineNo">062</span>//      public AffineMapping(Point2D A1, Point2D A2, Point2D A3, Point2D B1, Point2D B2, Point2D B3) {<a name="line.62"></a>
-<span class="sourceLineNo">063</span>//              super();<a name="line.63"></a>
-<span class="sourceLineNo">064</span>//              double ax1 = A1.getX(), ax2 = A2.getX(), ax3 = A3.getX();<a name="line.64"></a>
-<span class="sourceLineNo">065</span>//              double ay1 = A1.getY(), ay2 = A2.getY(), ay3 = A3.getY();<a name="line.65"></a>
-<span class="sourceLineNo">066</span>//              double bx1 = B1.getX(), bx2 = B2.getX(), bx3 = B3.getX();<a name="line.66"></a>
-<span class="sourceLineNo">067</span>//              double by1 = B1.getY(), by2 = B2.getY(), by3 = B3.getY();<a name="line.67"></a>
-<span class="sourceLineNo">068</span>//<a name="line.68"></a>
-<span class="sourceLineNo">069</span>//              double S = ax1 * (ay3 - ay2) + ax2 * (ay1 - ay3) + ax3 * (ay2 - ay1); // TODO: check S for zero value and throw exception!<a name="line.69"></a>
-<span class="sourceLineNo">070</span>//              a00 = (ay1 * (bx2 - bx3) + ay2 * (bx3 - bx1) + ay3 * (bx1 - bx2)) / S;<a name="line.70"></a>
-<span class="sourceLineNo">071</span>//              a01 = (ax1 * (bx3 - bx2) + ax2 * (bx1 - bx3) + ax3 * (bx2 - bx1)) / S;<a name="line.71"></a>
-<span class="sourceLineNo">072</span>//              a10 = (ay1 * (by2 - by3) + ay2 * (by3 - by1) + ay3 * (by1 - by2)) / S;<a name="line.72"></a>
-<span class="sourceLineNo">073</span>//              a11 = (ax1 * (by3 - by2) + ax2 * (by1 - by3) + ax3 * (by2 - by1)) / S;<a name="line.73"></a>
-<span class="sourceLineNo">074</span>//              a02 = (ax1*(ay3*bx2-ay2*bx3) + ax2*(ay1*bx3-ay3*bx1) + ax3*(ay2*bx1-ay1*bx2)) / S;<a name="line.74"></a>
-<span class="sourceLineNo">075</span>//              a12 = (ax1*(ay3*by2-ay2*by3) + ax2*(ay1*by3-ay3*by1) + ax3*(ay2*by1-ay1*by2)) / S;<a name="line.75"></a>
-<span class="sourceLineNo">076</span>//      }<a name="line.76"></a>
-<span class="sourceLineNo">077</span>        <a name="line.77"></a>
-<span class="sourceLineNo">078</span>        /**<a name="line.78"></a>
-<span class="sourceLineNo">079</span>         * Creates an affine mapping from an arbitrary triangle A to another triangle B.<a name="line.79"></a>
-<span class="sourceLineNo">080</span>         * @param A1 point 1 of source triangle A<a name="line.80"></a>
-<span class="sourceLineNo">081</span>         * @param A2 point 2 of source triangle A<a name="line.81"></a>
-<span class="sourceLineNo">082</span>         * @param A3 point 3 of source triangle A<a name="line.82"></a>
-<span class="sourceLineNo">083</span>         * @param B1 point 1 of source triangle B<a name="line.83"></a>
-<span class="sourceLineNo">084</span>         * @param B2 point 2 of source triangle B<a name="line.84"></a>
-<span class="sourceLineNo">085</span>         * @param B3 point 3 of source triangle B<a name="line.85"></a>
-<span class="sourceLineNo">086</span>         * @return a new affine mapping<a name="line.86"></a>
-<span class="sourceLineNo">087</span>         */<a name="line.87"></a>
-<span class="sourceLineNo">088</span>        public static AffineMapping fromPoints(Point2D A1, Point2D A2, Point2D A3, Point2D B1, Point2D B2, Point2D B3) {<a name="line.88"></a>
-<span class="sourceLineNo">089</span>                double ax1 = A1.getX(), ax2 = A2.getX(), ax3 = A3.getX();<a name="line.89"></a>
-<span class="sourceLineNo">090</span>                double ay1 = A1.getY(), ay2 = A2.getY(), ay3 = A3.getY();<a name="line.90"></a>
-<span class="sourceLineNo">091</span>                double bx1 = B1.getX(), bx2 = B2.getX(), bx3 = B3.getX();<a name="line.91"></a>
-<span class="sourceLineNo">092</span>                double by1 = B1.getY(), by2 = B2.getY(), by3 = B3.getY();<a name="line.92"></a>
-<span class="sourceLineNo">093</span><a name="line.93"></a>
-<span class="sourceLineNo">094</span>                double S = ax1 * (ay3 - ay2) + ax2 * (ay1 - ay3) + ax3 * (ay2 - ay1); // TODO: check S for zero value and throw exception!<a name="line.94"></a>
-<span class="sourceLineNo">095</span>                double a00 = (ay1 * (bx2 - bx3) + ay2 * (bx3 - bx1) + ay3 * (bx1 - bx2)) / S;<a name="line.95"></a>
-<span class="sourceLineNo">096</span>                double a01 = (ax1 * (bx3 - bx2) + ax2 * (bx1 - bx3) + ax3 * (bx2 - bx1)) / S;<a name="line.96"></a>
-<span class="sourceLineNo">097</span>                double a10 = (ay1 * (by2 - by3) + ay2 * (by3 - by1) + ay3 * (by1 - by2)) / S;<a name="line.97"></a>
-<span class="sourceLineNo">098</span>                double a11 = (ax1 * (by3 - by2) + ax2 * (by1 - by3) + ax3 * (by2 - by1)) / S;<a name="line.98"></a>
-<span class="sourceLineNo">099</span>                double a02 = (ax1*(ay3*bx2-ay2*bx3) + ax2*(ay1*bx3-ay3*bx1) + ax3*(ay2*bx1-ay1*bx2)) / S;<a name="line.99"></a>
-<span class="sourceLineNo">100</span>                double a12 = (ax1*(ay3*by2-ay2*by3) + ax2*(ay1*by3-ay3*by1) + ax3*(ay2*by1-ay1*by2)) / S;<a name="line.100"></a>
-<span class="sourceLineNo">101</span>                return new AffineMapping(a00, a01, a02, a10, a11, a12);<a name="line.101"></a>
-<span class="sourceLineNo">102</span>        }<a name="line.102"></a>
-<span class="sourceLineNo">103</span><a name="line.103"></a>
-<span class="sourceLineNo">104</span>//      /**<a name="line.104"></a>
-<span class="sourceLineNo">105</span>//       * Creates a projective mapping between arbitrary triangles A, B.<a name="line.105"></a>
-<span class="sourceLineNo">106</span>//       * @param A points of the source triangle<a name="line.106"></a>
-<span class="sourceLineNo">107</span>//       * @param B points of the target triangle<a name="line.107"></a>
-<span class="sourceLineNo">108</span>//       */<a name="line.108"></a>
-<span class="sourceLineNo">109</span>//      public AffineMapping(Point2D[] A, Point2D[] B) {        // TODO: check length of A, B<a name="line.109"></a>
-<span class="sourceLineNo">110</span>//              this(A[0], A[1], A[2], B[0], B[1], B[2]);<a name="line.110"></a>
-<span class="sourceLineNo">111</span>//      }<a name="line.111"></a>
-<span class="sourceLineNo">112</span>        <a name="line.112"></a>
-<span class="sourceLineNo">113</span>        public static AffineMapping fromPoints(Point2D[] A, Point2D[] B) {      // TODO: check length of A, B<a name="line.113"></a>
-<span class="sourceLineNo">114</span>                return AffineMapping.fromPoints(A[0], A[1], A[2], B[0], B[1], B[2]);<a name="line.114"></a>
-<span class="sourceLineNo">115</span>        }<a name="line.115"></a>
-<span class="sourceLineNo">116</span><a name="line.116"></a>
-<span class="sourceLineNo">117</span>        /**<a name="line.117"></a>
-<span class="sourceLineNo">118</span>         * Concatenates this mapping A with another affine mapping B and returns<a name="line.118"></a>
-<span class="sourceLineNo">119</span>         * a new mapping C, such that C(x) = B(A(x)).<a name="line.119"></a>
-<span class="sourceLineNo">120</span>         * @param B the second mapping<a name="line.120"></a>
-<span class="sourceLineNo">121</span>         * @return the concatenated affine mapping<a name="line.121"></a>
-<span class="sourceLineNo">122</span>         */<a name="line.122"></a>
-<span class="sourceLineNo">123</span>        public AffineMapping concat(AffineMapping B) {  <a name="line.123"></a>
-<span class="sourceLineNo">124</span>                double c00 = B.a00*a00 + B.a01*a10;<a name="line.124"></a>
-<span class="sourceLineNo">125</span>                double c01 = B.a00*a01 + B.a01*a11;<a name="line.125"></a>
-<span class="sourceLineNo">126</span>                double c02 = B.a00*a02 + B.a01*a12 + B.a02;<a name="line.126"></a>
-<span class="sourceLineNo">127</span>                <a name="line.127"></a>
-<span class="sourceLineNo">128</span>                double c10 = B.a10*a00 + B.a11*a10;<a name="line.128"></a>
-<span class="sourceLineNo">129</span>                double c11 = B.a10*a01 + B.a11*a11;<a name="line.129"></a>
-<span class="sourceLineNo">130</span>                double c12 = B.a10*a02 + B.a11*a12 + B.a12;<a name="line.130"></a>
-<span class="sourceLineNo">131</span>                <a name="line.131"></a>
-<span class="sourceLineNo">132</span>                return new AffineMapping(c00, c01, c02, c10, c11, c12);<a name="line.132"></a>
-<span class="sourceLineNo">133</span>        }<a name="line.133"></a>
-<span class="sourceLineNo">134</span><a name="line.134"></a>
-<span class="sourceLineNo">135</span><a name="line.135"></a>
-<span class="sourceLineNo">136</span>        /**<a name="line.136"></a>
-<span class="sourceLineNo">137</span>         * {@inheritDoc}<a name="line.137"></a>
-<span class="sourceLineNo">138</span>         * Note that inverting an affine transformation always yields<a name="line.138"></a>
-<span class="sourceLineNo">139</span>         * another affine transformation.<a name="line.139"></a>
-<span class="sourceLineNo">140</span>         */<a name="line.140"></a>
-<span class="sourceLineNo">141</span>        public AffineMapping getInverse() {<a name="line.141"></a>
-<span class="sourceLineNo">142</span>                double det = a00*a11 - a01*a10; <a name="line.142"></a>
-<span class="sourceLineNo">143</span>                double b00 = a11 / det; <a name="line.143"></a>
-<span class="sourceLineNo">144</span>                double b01 = - a01 / det; <a name="line.144"></a>
-<span class="sourceLineNo">145</span>                double b02 = (a01*a12 - a02*a11) / det; <a name="line.145"></a>
-<span class="sourceLineNo">146</span>                double b10 = - a10 / det; <a name="line.146"></a>
-<span class="sourceLineNo">147</span>                double b11 = a00 / det; <a name="line.147"></a>
-<span class="sourceLineNo">148</span>                double b12 = (a02*a10 - a00*a12) / det;<a name="line.148"></a>
-<span class="sourceLineNo">149</span>                <a name="line.149"></a>
-<span class="sourceLineNo">150</span>                return new AffineMapping(b00, b01, b02, b10, b11, b12);<a name="line.150"></a>
-<span class="sourceLineNo">151</span>        }<a name="line.151"></a>
-<span class="sourceLineNo">152</span><a name="line.152"></a>
-<span class="sourceLineNo">153</span>        /**<a name="line.153"></a>
-<span class="sourceLineNo">154</span>         * {@inheritDoc}<a name="line.154"></a>
-<span class="sourceLineNo">155</span>         * @return a new affine mapping<a name="line.155"></a>
-<span class="sourceLineNo">156</span>         */<a name="line.156"></a>
-<span class="sourceLineNo">157</span>        public AffineMapping duplicate() {<a name="line.157"></a>
-<span class="sourceLineNo">158</span>                return new AffineMapping(this);<a name="line.158"></a>
+<span class="sourceLineNo">024</span>         * Creates an affine mapping from an arbitrary 2D triangle A to another triangle B.<a name="line.24"></a>
+<span class="sourceLineNo">025</span>         * @param A1 point 1 of source triangle A<a name="line.25"></a>
+<span class="sourceLineNo">026</span>         * @param A2 point 2 of source triangle A<a name="line.26"></a>
+<span class="sourceLineNo">027</span>         * @param A3 point 3 of source triangle A<a name="line.27"></a>
+<span class="sourceLineNo">028</span>         * @param B1 point 1 of source triangle B<a name="line.28"></a>
+<span class="sourceLineNo">029</span>         * @param B2 point 2 of source triangle B<a name="line.29"></a>
+<span class="sourceLineNo">030</span>         * @param B3 point 3 of source triangle B<a name="line.30"></a>
+<span class="sourceLineNo">031</span>         * @return a new affine mapping<a name="line.31"></a>
+<span class="sourceLineNo">032</span>         */<a name="line.32"></a>
+<span class="sourceLineNo">033</span>        public static AffineMapping fromTriangles(Point2D A1, Point2D A2, Point2D A3, Point2D B1, Point2D B2, Point2D B3) {<a name="line.33"></a>
+<span class="sourceLineNo">034</span>                double ax1 = A1.getX(), ax2 = A2.getX(), ax3 = A3.getX();<a name="line.34"></a>
+<span class="sourceLineNo">035</span>                double ay1 = A1.getY(), ay2 = A2.getY(), ay3 = A3.getY();<a name="line.35"></a>
+<span class="sourceLineNo">036</span>                double bx1 = B1.getX(), bx2 = B2.getX(), bx3 = B3.getX();<a name="line.36"></a>
+<span class="sourceLineNo">037</span>                double by1 = B1.getY(), by2 = B2.getY(), by3 = B3.getY();<a name="line.37"></a>
+<span class="sourceLineNo">038</span><a name="line.38"></a>
+<span class="sourceLineNo">039</span>                double S = ax1 * (ay3 - ay2) + ax2 * (ay1 - ay3) + ax3 * (ay2 - ay1); // TODO: check S for zero value and throw exception!<a name="line.39"></a>
+<span class="sourceLineNo">040</span>                double a00 = (ay1 * (bx2 - bx3) + ay2 * (bx3 - bx1) + ay3 * (bx1 - bx2)) / S;<a name="line.40"></a>
+<span class="sourceLineNo">041</span>                double a01 = (ax1 * (bx3 - bx2) + ax2 * (bx1 - bx3) + ax3 * (bx2 - bx1)) / S;<a name="line.41"></a>
+<span class="sourceLineNo">042</span>                double a10 = (ay1 * (by2 - by3) + ay2 * (by3 - by1) + ay3 * (by1 - by2)) / S;<a name="line.42"></a>
+<span class="sourceLineNo">043</span>                double a11 = (ax1 * (by3 - by2) + ax2 * (by1 - by3) + ax3 * (by2 - by1)) / S;<a name="line.43"></a>
+<span class="sourceLineNo">044</span>                double a02 = (ax1*(ay3*bx2-ay2*bx3) + ax2*(ay1*bx3-ay3*bx1) + ax3*(ay2*bx1-ay1*bx2)) / S;<a name="line.44"></a>
+<span class="sourceLineNo">045</span>                double a12 = (ax1*(ay3*by2-ay2*by3) + ax2*(ay1*by3-ay3*by1) + ax3*(ay2*by1-ay1*by2)) / S;<a name="line.45"></a>
+<span class="sourceLineNo">046</span>                return new AffineMapping(a00, a01, a02, a10, a11, a12);<a name="line.46"></a>
+<span class="sourceLineNo">047</span>        }<a name="line.47"></a>
+<span class="sourceLineNo">048</span>        <a name="line.48"></a>
+<span class="sourceLineNo">049</span>        /**<a name="line.49"></a>
+<span class="sourceLineNo">050</span>         * Creates an affine mapping from an arbitrary 2D triangle A to another triangle B.<a name="line.50"></a>
+<span class="sourceLineNo">051</span>         * @param A the first triangle<a name="line.51"></a>
+<span class="sourceLineNo">052</span>         * @param B the second triangle<a name="line.52"></a>
+<span class="sourceLineNo">053</span>         * @return a new affine mapping<a name="line.53"></a>
+<span class="sourceLineNo">054</span>         */<a name="line.54"></a>
+<span class="sourceLineNo">055</span>        public static AffineMapping fromTriangles(Point2D[] A, Point2D[] B) {   // TODO: check length of A, B<a name="line.55"></a>
+<span class="sourceLineNo">056</span>                return AffineMapping.fromTriangles(A[0], A[1], A[2], B[0], B[1], B[2]);<a name="line.56"></a>
+<span class="sourceLineNo">057</span>        }<a name="line.57"></a>
+<span class="sourceLineNo">058</span>        // ---------------------------------------------------------------------------<a name="line.58"></a>
+<span class="sourceLineNo">059</span>        <a name="line.59"></a>
+<span class="sourceLineNo">060</span>        /**<a name="line.60"></a>
+<span class="sourceLineNo">061</span>         * Creates the identity mapping.<a name="line.61"></a>
+<span class="sourceLineNo">062</span>         */<a name="line.62"></a>
+<span class="sourceLineNo">063</span>        public AffineMapping() {<a name="line.63"></a>
+<span class="sourceLineNo">064</span>                super();<a name="line.64"></a>
+<span class="sourceLineNo">065</span>        }<a name="line.65"></a>
+<span class="sourceLineNo">066</span><a name="line.66"></a>
+<span class="sourceLineNo">067</span>        /**<a name="line.67"></a>
+<span class="sourceLineNo">068</span>         * Creates an affine mapping from the specified matrix elements.<a name="line.68"></a>
+<span class="sourceLineNo">069</span>         * @param a00 matrix element A_00<a name="line.69"></a>
+<span class="sourceLineNo">070</span>         * @param a01 matrix element A_01<a name="line.70"></a>
+<span class="sourceLineNo">071</span>         * @param a02 matrix element A_02<a name="line.71"></a>
+<span class="sourceLineNo">072</span>         * @param a10 matrix element A_10<a name="line.72"></a>
+<span class="sourceLineNo">073</span>         * @param a11 matrix element A_11<a name="line.73"></a>
+<span class="sourceLineNo">074</span>         * @param a12 matrix element A_12<a name="line.74"></a>
+<span class="sourceLineNo">075</span>         */<a name="line.75"></a>
+<span class="sourceLineNo">076</span>        public AffineMapping (<a name="line.76"></a>
+<span class="sourceLineNo">077</span>                        double a00, double a01, double a02, <a name="line.77"></a>
+<span class="sourceLineNo">078</span>                        double a10, double a11, double a12) {<a name="line.78"></a>
+<span class="sourceLineNo">079</span>                super(a00, a01, a02, a10, a11, a12, 0, 0);<a name="line.79"></a>
+<span class="sourceLineNo">080</span>        }<a name="line.80"></a>
+<span class="sourceLineNo">081</span><a name="line.81"></a>
+<span class="sourceLineNo">082</span>        /**<a name="line.82"></a>
+<span class="sourceLineNo">083</span>         * Creates a new affine mapping from an existing affine mapping.<a name="line.83"></a>
+<span class="sourceLineNo">084</span>         * @param am a given projective mapping<a name="line.84"></a>
+<span class="sourceLineNo">085</span>         */<a name="line.85"></a>
+<span class="sourceLineNo">086</span>        public AffineMapping(AffineMapping am) {<a name="line.86"></a>
+<span class="sourceLineNo">087</span>                super(am);<a name="line.87"></a>
+<span class="sourceLineNo">088</span>        }<a name="line.88"></a>
+<span class="sourceLineNo">089</span>        <a name="line.89"></a>
+<span class="sourceLineNo">090</span>        // ---------------------------------------------------------------------------<a name="line.90"></a>
+<span class="sourceLineNo">091</span>        <a name="line.91"></a>
+<span class="sourceLineNo">092</span>        /** Deviation limit for checking 0 and 1 values. */<a name="line.92"></a>
+<span class="sourceLineNo">093</span>        protected static double EPSILON = 1e-15;<a name="line.93"></a>
+<span class="sourceLineNo">094</span>        <a name="line.94"></a>
+<span class="sourceLineNo">095</span>        /**<a name="line.95"></a>
+<span class="sourceLineNo">096</span>         * Checks if the given linear mapping could be affine, i.e. if the<a name="line.96"></a>
+<span class="sourceLineNo">097</span>         * bottom row of its transformation matrix is (0, 0, 1). <a name="line.97"></a>
+<span class="sourceLineNo">098</span>         * Note that this is a necessary but not sufficient requirement.<a name="line.98"></a>
+<span class="sourceLineNo">099</span>         * The threshold {@link EPSILON} is used in this check.<a name="line.99"></a>
+<span class="sourceLineNo">100</span>         * @param lm a linear mapping<a name="line.100"></a>
+<span class="sourceLineNo">101</span>         * @return true if the mapping could be affine<a name="line.101"></a>
+<span class="sourceLineNo">102</span>         */<a name="line.102"></a>
+<span class="sourceLineNo">103</span>        public static boolean isAffine(LinearMapping lm) {<a name="line.103"></a>
+<span class="sourceLineNo">104</span>                if (Math.abs(lm.a20) &gt; EPSILON) return false;<a name="line.104"></a>
+<span class="sourceLineNo">105</span>                if (Math.abs(lm.a21) &gt; EPSILON) return false;<a name="line.105"></a>
+<span class="sourceLineNo">106</span>                if (Math.abs(lm.a22 - 1.0) &gt; EPSILON) return false;<a name="line.106"></a>
+<span class="sourceLineNo">107</span>                return true;<a name="line.107"></a>
+<span class="sourceLineNo">108</span>        }<a name="line.108"></a>
+<span class="sourceLineNo">109</span><a name="line.109"></a>
+<span class="sourceLineNo">110</span>        /**<a name="line.110"></a>
+<span class="sourceLineNo">111</span>         * Concatenates this mapping A with another affine mapping B and returns<a name="line.111"></a>
+<span class="sourceLineNo">112</span>         * a new mapping C, such that C(x) = B(A(x)).<a name="line.112"></a>
+<span class="sourceLineNo">113</span>         * @param B the second mapping<a name="line.113"></a>
+<span class="sourceLineNo">114</span>         * @return the concatenated affine mapping<a name="line.114"></a>
+<span class="sourceLineNo">115</span>         */<a name="line.115"></a>
+<span class="sourceLineNo">116</span>        public AffineMapping concat(AffineMapping B) {  // TODO: check if super method could be used instead<a name="line.116"></a>
+<span class="sourceLineNo">117</span>                double c00 = B.a00 * a00 + B.a01 * a10;<a name="line.117"></a>
+<span class="sourceLineNo">118</span>                double c01 = B.a00 * a01 + B.a01 * a11;<a name="line.118"></a>
+<span class="sourceLineNo">119</span>                double c02 = B.a00 * a02 + B.a01 * a12 + B.a02;<a name="line.119"></a>
+<span class="sourceLineNo">120</span><a name="line.120"></a>
+<span class="sourceLineNo">121</span>                double c10 = B.a10 * a00 + B.a11 * a10;<a name="line.121"></a>
+<span class="sourceLineNo">122</span>                double c11 = B.a10 * a01 + B.a11 * a11;<a name="line.122"></a>
+<span class="sourceLineNo">123</span>                double c12 = B.a10 * a02 + B.a11 * a12 + B.a12;<a name="line.123"></a>
+<span class="sourceLineNo">124</span>                <a name="line.124"></a>
+<span class="sourceLineNo">125</span>                return new AffineMapping(c00, c01, c02, c10, c11, c12);<a name="line.125"></a>
+<span class="sourceLineNo">126</span>        }<a name="line.126"></a>
+<span class="sourceLineNo">127</span><a name="line.127"></a>
+<span class="sourceLineNo">128</span><a name="line.128"></a>
+<span class="sourceLineNo">129</span>        /**<a name="line.129"></a>
+<span class="sourceLineNo">130</span>         * {@inheritDoc}<a name="line.130"></a>
+<span class="sourceLineNo">131</span>         * Note that inverting an affine transformation always yields<a name="line.131"></a>
+<span class="sourceLineNo">132</span>         * another affine transformation.<a name="line.132"></a>
+<span class="sourceLineNo">133</span>         */<a name="line.133"></a>
+<span class="sourceLineNo">134</span>        public AffineMapping getInverse() {<a name="line.134"></a>
+<span class="sourceLineNo">135</span>                double det = a00*a11 - a01*a10; <a name="line.135"></a>
+<span class="sourceLineNo">136</span>                double b00 = a11 / det; <a name="line.136"></a>
+<span class="sourceLineNo">137</span>                double b01 = - a01 / det; <a name="line.137"></a>
+<span class="sourceLineNo">138</span>                double b02 = (a01*a12 - a02*a11) / det; <a name="line.138"></a>
+<span class="sourceLineNo">139</span>                double b10 = - a10 / det; <a name="line.139"></a>
+<span class="sourceLineNo">140</span>                double b11 = a00 / det; <a name="line.140"></a>
+<span class="sourceLineNo">141</span>                double b12 = (a02*a10 - a00*a12) / det;<a name="line.141"></a>
+<span class="sourceLineNo">142</span>                <a name="line.142"></a>
+<span class="sourceLineNo">143</span>                return new AffineMapping(b00, b01, b02, b10, b11, b12);<a name="line.143"></a>
+<span class="sourceLineNo">144</span>        }<a name="line.144"></a>
+<span class="sourceLineNo">145</span><a name="line.145"></a>
+<span class="sourceLineNo">146</span>        /**<a name="line.146"></a>
+<span class="sourceLineNo">147</span>         * {@inheritDoc}<a name="line.147"></a>
+<span class="sourceLineNo">148</span>         * @return a new affine mapping<a name="line.148"></a>
+<span class="sourceLineNo">149</span>         */<a name="line.149"></a>
+<span class="sourceLineNo">150</span>        public AffineMapping duplicate() {<a name="line.150"></a>
+<span class="sourceLineNo">151</span>                return new AffineMapping(this);<a name="line.151"></a>
+<span class="sourceLineNo">152</span>        }<a name="line.152"></a>
+<span class="sourceLineNo">153</span><a name="line.153"></a>
+<span class="sourceLineNo">154</span>        // warp parameter support (used in Lucas-Kanade-matcher) --------------------------<a name="line.154"></a>
+<span class="sourceLineNo">155</span><a name="line.155"></a>
+<span class="sourceLineNo">156</span>        @Override<a name="line.156"></a>
+<span class="sourceLineNo">157</span>        public int getWarpParameterCount() {<a name="line.157"></a>
+<span class="sourceLineNo">158</span>                return 6;<a name="line.158"></a>
 <span class="sourceLineNo">159</span>        }<a name="line.159"></a>
 <span class="sourceLineNo">160</span><a name="line.160"></a>
-<span class="sourceLineNo">161</span>        // warp parameter support (used in Lucas-Kanade-matcher) --------------------------<a name="line.161"></a>
-<span class="sourceLineNo">162</span><a name="line.162"></a>
-<span class="sourceLineNo">163</span>        @Override<a name="line.163"></a>
-<span class="sourceLineNo">164</span>        public int getWarpParameterCount() {<a name="line.164"></a>
-<span class="sourceLineNo">165</span>                return 6;<a name="line.165"></a>
-<span class="sourceLineNo">166</span>        }<a name="line.166"></a>
-<span class="sourceLineNo">167</span><a name="line.167"></a>
-<span class="sourceLineNo">168</span>        @Override<a name="line.168"></a>
-<span class="sourceLineNo">169</span>        public double[] getWarpParameters() {<a name="line.169"></a>
-<span class="sourceLineNo">170</span>                double[] p = new double[] {<a name="line.170"></a>
-<span class="sourceLineNo">171</span>                                a00 - 1, <a name="line.171"></a>
-<span class="sourceLineNo">172</span>                                a01,<a name="line.172"></a>
-<span class="sourceLineNo">173</span>                                a10,<a name="line.173"></a>
-<span class="sourceLineNo">174</span>                                a11 - 1,<a name="line.174"></a>
-<span class="sourceLineNo">175</span>                                a02,<a name="line.175"></a>
-<span class="sourceLineNo">176</span>                                a12 };<a name="line.176"></a>
-<span class="sourceLineNo">177</span>                return p;<a name="line.177"></a>
-<span class="sourceLineNo">178</span>        }<a name="line.178"></a>
-<span class="sourceLineNo">179</span>        <a name="line.179"></a>
-<span class="sourceLineNo">180</span>        public static AffineMapping fromWarpParameters(double[] p) {<a name="line.180"></a>
-<span class="sourceLineNo">181</span>//              a00 = p[0] + 1;<a name="line.181"></a>
-<span class="sourceLineNo">182</span>//              a01 = p[1];<a name="line.182"></a>
-<span class="sourceLineNo">183</span>//              a10 = p[2];<a name="line.183"></a>
-<span class="sourceLineNo">184</span>//              a11 = p[3] + 1;<a name="line.184"></a>
-<span class="sourceLineNo">185</span>//              a02 = p[4];<a name="line.185"></a>
-<span class="sourceLineNo">186</span>//              a12 = p[5];<a name="line.186"></a>
-<span class="sourceLineNo">187</span>                return new AffineMapping(p[0] + 1, p[1], p[2], p[3] + 1, p[4], p[5]);<a name="line.187"></a>
-<span class="sourceLineNo">188</span>        }<a name="line.188"></a>
-<span class="sourceLineNo">189</span><a name="line.189"></a>
-<span class="sourceLineNo">190</span>//      @Override<a name="line.190"></a>
-<span class="sourceLineNo">191</span>//      public void setWarpParameters(double[] p) {<a name="line.191"></a>
-<span class="sourceLineNo">192</span>//              a00 = p[0] + 1;<a name="line.192"></a>
-<span class="sourceLineNo">193</span>//              a01 = p[1];<a name="line.193"></a>
-<span class="sourceLineNo">194</span>//              a10 = p[2];<a name="line.194"></a>
-<span class="sourceLineNo">195</span>//              a11 = p[3] + 1;<a name="line.195"></a>
-<span class="sourceLineNo">196</span>//              a02 = p[4];<a name="line.196"></a>
-<span class="sourceLineNo">197</span>//              a12 = p[5];<a name="line.197"></a>
-<span class="sourceLineNo">198</span>//      }<a name="line.198"></a>
-<span class="sourceLineNo">199</span><a name="line.199"></a>
-<span class="sourceLineNo">200</span>        @Override<a name="line.200"></a>
-<span class="sourceLineNo">201</span>        public double[][] getWarpJacobian(double[] xy) {<a name="line.201"></a>
-<span class="sourceLineNo">202</span>                final double x = xy[0];<a name="line.202"></a>
-<span class="sourceLineNo">203</span>                final double y = xy[1];<a name="line.203"></a>
-<span class="sourceLineNo">204</span>                return new double[][]<a name="line.204"></a>
-<span class="sourceLineNo">205</span>                                {{x, y, 0, 0, 1, 0},<a name="line.205"></a>
-<span class="sourceLineNo">206</span>                        {0, 0, x, y, 0, 1}};<a name="line.206"></a>
-<span class="sourceLineNo">207</span>        }<a name="line.207"></a>
-<span class="sourceLineNo">208</span>        <a name="line.208"></a>
-<span class="sourceLineNo">209</span>        // ----------------------------------------------------------------------<a name="line.209"></a>
-<span class="sourceLineNo">210</span>        <a name="line.210"></a>
-<span class="sourceLineNo">211</span>        /**<a name="line.211"></a>
-<span class="sourceLineNo">212</span>         * For testing only.<a name="line.212"></a>
-<span class="sourceLineNo">213</span>         * @param args ignored<a name="line.213"></a>
-<span class="sourceLineNo">214</span>         */<a name="line.214"></a>
-<span class="sourceLineNo">215</span>        public static void main(String[] args) {<a name="line.215"></a>
-<span class="sourceLineNo">216</span>                PrintPrecision.set(6);<a name="line.216"></a>
-<span class="sourceLineNo">217</span>                double[][] A = <a name="line.217"></a>
-<span class="sourceLineNo">218</span>                                {{-2, 4, -3}, <a name="line.218"></a>
-<span class="sourceLineNo">219</span>                                {3, 7, 2}, <a name="line.219"></a>
-<span class="sourceLineNo">220</span>                                {0.0, 0.0, 1.000000}};<a name="line.220"></a>
-<span class="sourceLineNo">221</span>                System.out.println("A = \n" + Matrix.toString(A));<a name="line.221"></a>
-<span class="sourceLineNo">222</span>                System.out.println();<a name="line.222"></a>
-<span class="sourceLineNo">223</span>                double[][] Ai = Matrix.inverse(A);<a name="line.223"></a>
-<span class="sourceLineNo">224</span>                System.out.println("Ai = \n" + Matrix.toString(Ai));<a name="line.224"></a>
-<span class="sourceLineNo">225</span>                <a name="line.225"></a>
-<span class="sourceLineNo">226</span>                double[][] I = Matrix.multiply(A, Ai);<a name="line.226"></a>
-<span class="sourceLineNo">227</span>                System.out.println("\ntest: should be the  identity matrix: = \n" + Matrix.toString(I));<a name="line.227"></a>
-<span class="sourceLineNo">228</span>        }<a name="line.228"></a>
+<span class="sourceLineNo">161</span>        @Override<a name="line.161"></a>
+<span class="sourceLineNo">162</span>        public double[] getWarpParameters() {<a name="line.162"></a>
+<span class="sourceLineNo">163</span>                double[] p = new double[] {<a name="line.163"></a>
+<span class="sourceLineNo">164</span>                                a00 - 1, <a name="line.164"></a>
+<span class="sourceLineNo">165</span>                                a01,<a name="line.165"></a>
+<span class="sourceLineNo">166</span>                                a10,<a name="line.166"></a>
+<span class="sourceLineNo">167</span>                                a11 - 1,<a name="line.167"></a>
+<span class="sourceLineNo">168</span>                                a02,<a name="line.168"></a>
+<span class="sourceLineNo">169</span>                                a12 };<a name="line.169"></a>
+<span class="sourceLineNo">170</span>                return p;<a name="line.170"></a>
+<span class="sourceLineNo">171</span>        }<a name="line.171"></a>
+<span class="sourceLineNo">172</span>        <a name="line.172"></a>
+<span class="sourceLineNo">173</span>        public static AffineMapping fromWarpParameters(double[] p) {<a name="line.173"></a>
+<span class="sourceLineNo">174</span>//              a00 = p[0] + 1;<a name="line.174"></a>
+<span class="sourceLineNo">175</span>//              a01 = p[1];<a name="line.175"></a>
+<span class="sourceLineNo">176</span>//              a10 = p[2];<a name="line.176"></a>
+<span class="sourceLineNo">177</span>//              a11 = p[3] + 1;<a name="line.177"></a>
+<span class="sourceLineNo">178</span>//              a02 = p[4];<a name="line.178"></a>
+<span class="sourceLineNo">179</span>//              a12 = p[5];<a name="line.179"></a>
+<span class="sourceLineNo">180</span>                return new AffineMapping(p[0] + 1, p[1], p[2], p[3] + 1, p[4], p[5]);<a name="line.180"></a>
+<span class="sourceLineNo">181</span>        }<a name="line.181"></a>
+<span class="sourceLineNo">182</span><a name="line.182"></a>
+<span class="sourceLineNo">183</span>//      @Override<a name="line.183"></a>
+<span class="sourceLineNo">184</span>//      public void setWarpParameters(double[] p) {<a name="line.184"></a>
+<span class="sourceLineNo">185</span>//              a00 = p[0] + 1;<a name="line.185"></a>
+<span class="sourceLineNo">186</span>//              a01 = p[1];<a name="line.186"></a>
+<span class="sourceLineNo">187</span>//              a10 = p[2];<a name="line.187"></a>
+<span class="sourceLineNo">188</span>//              a11 = p[3] + 1;<a name="line.188"></a>
+<span class="sourceLineNo">189</span>//              a02 = p[4];<a name="line.189"></a>
+<span class="sourceLineNo">190</span>//              a12 = p[5];<a name="line.190"></a>
+<span class="sourceLineNo">191</span>//      }<a name="line.191"></a>
+<span class="sourceLineNo">192</span><a name="line.192"></a>
+<span class="sourceLineNo">193</span>        @Override<a name="line.193"></a>
+<span class="sourceLineNo">194</span>        public double[][] getWarpJacobian(double[] xy) {<a name="line.194"></a>
+<span class="sourceLineNo">195</span>                final double x = xy[0];<a name="line.195"></a>
+<span class="sourceLineNo">196</span>                final double y = xy[1];<a name="line.196"></a>
+<span class="sourceLineNo">197</span>                return new double[][]<a name="line.197"></a>
+<span class="sourceLineNo">198</span>                                {{x, y, 0, 0, 1, 0},<a name="line.198"></a>
+<span class="sourceLineNo">199</span>                        {0, 0, x, y, 0, 1}};<a name="line.199"></a>
+<span class="sourceLineNo">200</span>        }<a name="line.200"></a>
+<span class="sourceLineNo">201</span>        <a name="line.201"></a>
+<span class="sourceLineNo">202</span>        // ----------------------------------------------------------------------<a name="line.202"></a>
+<span class="sourceLineNo">203</span>        <a name="line.203"></a>
+<span class="sourceLineNo">204</span>        /**<a name="line.204"></a>
+<span class="sourceLineNo">205</span>         * For testing only.<a name="line.205"></a>
+<span class="sourceLineNo">206</span>         * @param args ignored<a name="line.206"></a>
+<span class="sourceLineNo">207</span>         */<a name="line.207"></a>
+<span class="sourceLineNo">208</span>        public static void main(String[] args) {<a name="line.208"></a>
+<span class="sourceLineNo">209</span>                PrintPrecision.set(6);<a name="line.209"></a>
+<span class="sourceLineNo">210</span>                double[][] a = <a name="line.210"></a>
+<span class="sourceLineNo">211</span>                                {{-2, 4, -3}, <a name="line.211"></a>
+<span class="sourceLineNo">212</span>                                {3, 7, 2}, <a name="line.212"></a>
+<span class="sourceLineNo">213</span>                                {0.0, 0.0, 1.000000}};<a name="line.213"></a>
+<span class="sourceLineNo">214</span>                System.out.println("a = \n" + Matrix.toString(a));<a name="line.214"></a>
+<span class="sourceLineNo">215</span>                System.out.println();<a name="line.215"></a>
+<span class="sourceLineNo">216</span>                double[][] ai = Matrix.inverse(a);<a name="line.216"></a>
+<span class="sourceLineNo">217</span>                System.out.println("ai = \n" + Matrix.toString(ai));<a name="line.217"></a>
+<span class="sourceLineNo">218</span>                <a name="line.218"></a>
+<span class="sourceLineNo">219</span>                LinearMapping Ai = new LinearMapping(ai);<a name="line.219"></a>
+<span class="sourceLineNo">220</span>                System.out.println("Ai is affine: " + isAffine(Ai));<a name="line.220"></a>
+<span class="sourceLineNo">221</span>                <a name="line.221"></a>
+<span class="sourceLineNo">222</span>                double[][] I = Matrix.multiply(a, ai);<a name="line.222"></a>
+<span class="sourceLineNo">223</span>                System.out.println("\ntest: should be the  identity matrix: = \n" + Matrix.toString(I));<a name="line.223"></a>
+<span class="sourceLineNo">224</span>        <a name="line.224"></a>
+<span class="sourceLineNo">225</span>        }<a name="line.225"></a>
+<span class="sourceLineNo">226</span><a name="line.226"></a>
+<span class="sourceLineNo">227</span>}<a name="line.227"></a>
+<span class="sourceLineNo">228</span><a name="line.228"></a>
 <span class="sourceLineNo">229</span><a name="line.229"></a>
-<span class="sourceLineNo">230</span>}<a name="line.230"></a>
+<span class="sourceLineNo">230</span><a name="line.230"></a>
 <span class="sourceLineNo">231</span><a name="line.231"></a>
-<span class="sourceLineNo">232</span><a name="line.232"></a>
-<span class="sourceLineNo">233</span><a name="line.233"></a>
-<span class="sourceLineNo">234</span><a name="line.234"></a>
 
 
 
