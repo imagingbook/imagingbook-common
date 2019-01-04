@@ -12,19 +12,19 @@ package imagingbook.pub.geometry.mappings;
 /**
  * This interfaces defines methods for the parameterization of mappings
  * with 1D double vectors (used in Lucas-Kanade matcher etc.).
- * Currently only implemented by mapping classes {@link ProjectiveMapping}, 
- * {@link AffineMapping} and {@link Translation}.
+ * Currently only implemented by mapping classes {@code ProjectiveMapping}, 
+ * {@code AffineMapping} and {@code Translation}.
  * This functionality is used, e.g., in package {@link imagingbook.pub.lucaskanade}.
  * 
  * <p> Use of an interface allows implementation by other (non-linear) mappings
- * that ore not sub-classes of {@link ProjectiveMapping}.</p>
+ * that ore not sub-classes of {@code ProjectiveMapping}.</p>
  */
 public interface JacobianSupport {
 	
 	/**
 	 * Returns the parameters of the associated geometric transformation
 	 * as a vector.
-	 * @return
+	 * @return parameter vector
 	 */
 	public double[] getParameters();
 	
@@ -33,14 +33,14 @@ public interface JacobianSupport {
 	 * Note that this is a non-static method, i.e., must be called
 	 * on an instance of this mapping (which is usually available).
 	 * @param p parameter vector
-	 * @return
+	 * @return a new instance of this mapping
 	 */
 	public Mapping fromParameters(double[] p);
 	
 	/** Returns the Jacobian matrix of this geometric transformation,
 	 * evaluated for the given 2D position.
 	 * @param xy 2D position
-	 * @return
+	 * @return the Jacobian matrix
 	 */
 	public double[][] getJacobian(double[] xy);
 	
