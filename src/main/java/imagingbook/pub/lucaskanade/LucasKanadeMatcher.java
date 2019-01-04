@@ -74,7 +74,7 @@ public abstract class LucasKanadeMatcher {
 	 */
 	public ProjectiveMapping getReferenceMappingTo(Point2D[] Q) {
 		Point2D[] Rpts = getReferencePoints();
-		return ProjectiveMapping.fromQuads(Rpts, Q);
+		return ProjectiveMapping.from4Points(Rpts, Q);
 	}
 	
 	/**

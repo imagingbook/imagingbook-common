@@ -9,9 +9,12 @@
 
 package imagingbook.pub.geometry.mappings.linear;
 
+import java.awt.geom.Point2D;
+
 /**
  * This class represents a pure 2D translation (as a special case of 
  * affine transformation).
+ * It can be assumed that every instance of this class is indeed a translation.
  */
 public class Translation extends AffineMapping {
 
@@ -39,18 +42,38 @@ public class Translation extends AffineMapping {
 		this(m.a02, m.a12);
 	}
 	
-	// ----------------------------------------------------------
-
-	@Override
-	public Translation getInverse() {
-		return new Translation(-this.a02, -this.a12);
+	/**
+	 * Creates a new translation from two points.
+	 * @param p first point
+	 * @param q second point
+	 */
+	public Translation(Point2D p, Point2D q) {
+		this(q.getX() - p.getX(), q.getY() - p.getY());
 	}
 	
+	// ----------------------------------------------------------
+
 	@Override
 	public Translation duplicate() {
 		return new Translation(this);
 	}
 	
+	/**
+	 * Concatenates this translation A with another translation B and returns
+	 * a new translation C, such that C(x) = B(A(x)).
+	 * @param B the second translation
+	 * @return the concatenated translations
+	 */
+	public Translation concat(Translation B) {
+		return new Translation(this.a02 + B.a02, this.a12 + B.a12);
+	}
+	
+	@Override
+	public Translation getInverse() {
+		return new Translation(-this.a02, -this.a12);
+	}
+
+
 	// Jacobian support -------------------------------------
 	
 	@Override

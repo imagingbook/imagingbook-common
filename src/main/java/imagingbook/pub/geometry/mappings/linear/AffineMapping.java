@@ -11,12 +11,14 @@ package imagingbook.pub.geometry.mappings.linear;
 
 import java.awt.geom.Point2D;
 
+import imagingbook.lib.math.Arithmetic;
 import imagingbook.lib.math.Matrix;
 import imagingbook.lib.settings.PrintPrecision;
 
 /**
  * This class represents an affine transformation in 2D, which can be defined 
  * by three pairs of corresponding points.
+ * It can be assumed that every instance of this class is indeed an affine mapping.
  */
 public class AffineMapping extends ProjectiveMapping {
 
@@ -30,13 +32,16 @@ public class AffineMapping extends ProjectiveMapping {
 	 * @param B3 point 3 of source triangle B
 	 * @return a new affine mapping
 	 */
-	public static AffineMapping fromTriangles(Point2D A1, Point2D A2, Point2D A3, Point2D B1, Point2D B2, Point2D B3) {
+	public static AffineMapping from3Points(Point2D A1, Point2D A2, Point2D A3, Point2D B1, Point2D B2, Point2D B3) {
 		double ax1 = A1.getX(), ax2 = A2.getX(), ax3 = A3.getX();
 		double ay1 = A1.getY(), ay2 = A2.getY(), ay3 = A3.getY();
 		double bx1 = B1.getX(), bx2 = B2.getX(), bx3 = B3.getX();
 		double by1 = B1.getY(), by2 = B2.getY(), by3 = B3.getY();
 
-		double S = ax1 * (ay3 - ay2) + ax2 * (ay1 - ay3) + ax3 * (ay2 - ay1); // TODO: check S for zero value and throw exception!
+		double S = ax1 * (ay3 - ay2) + ax2 * (ay1 - ay3) + ax3 * (ay2 - ay1); //
+		if (Arithmetic.isZero(S)) {
+			throw new ArithmeticException("from3Points(): division by zero!");
+		}
 		double a00 = (ay1 * (bx2 - bx3) + ay2 * (bx3 - bx1) + ay3 * (bx1 - bx2)) / S;
 		double a01 = (ax1 * (bx3 - bx2) + ax2 * (bx1 - bx3) + ax3 * (bx2 - bx1)) / S;
 		double a10 = (ay1 * (by2 - by3) + ay2 * (by3 - by1) + ay3 * (by1 - by2)) / S;
@@ -52,8 +57,8 @@ public class AffineMapping extends ProjectiveMapping {
 	 * @param B the second triangle
 	 * @return a new affine mapping
 	 */
-	public static AffineMapping fromTriangles(Point2D[] A, Point2D[] B) {	// TODO: check length of A, B
-		return AffineMapping.fromTriangles(A[0], A[1], A[2], B[0], B[1], B[2]);
+	public static AffineMapping from3Points(Point2D[] A, Point2D[] B) {
+		return AffineMapping.from3Points(A[0], A[1], A[2], B[0], B[1], B[2]);
 	}
 	// ---------------------------------------------------------------------------
 	
@@ -90,7 +95,7 @@ public class AffineMapping extends ProjectiveMapping {
 	// ----------------------------------------------------------
 	
 	/** Deviation limit for checking 0 and 1 values. */
-	protected static double EPSILON = 1e-15;
+	protected static double AffineTolerance = 1e-15;
 	
 	/**
 	 * Checks if the given linear mapping could be affine, i.e. if the
@@ -101,9 +106,9 @@ public class AffineMapping extends ProjectiveMapping {
 	 * @return true if the mapping could be affine
 	 */
 	public static boolean isAffine(LinearMapping lm) {
-		if (Math.abs(lm.a20) > EPSILON) return false;
-		if (Math.abs(lm.a21) > EPSILON) return false;
-		if (Math.abs(lm.a22 - 1.0) > EPSILON) return false;
+		if (Math.abs(lm.a20) > AffineTolerance) return false;
+		if (Math.abs(lm.a21) > AffineTolerance) return false;
+		if (Math.abs(lm.a22 - 1.0) > AffineTolerance) return false;
 		return true;
 	}
 
@@ -113,18 +118,23 @@ public class AffineMapping extends ProjectiveMapping {
 	 * @param B the second mapping
 	 * @return the concatenated affine mapping
 	 */
-	public AffineMapping concat(AffineMapping B) {	// TODO: check if super method could be used instead
-		double c00 = B.a00 * a00 + B.a01 * a10;
-		double c01 = B.a00 * a01 + B.a01 * a11;
-		double c02 = B.a00 * a02 + B.a01 * a12 + B.a02;
-
-		double c10 = B.a10 * a00 + B.a11 * a10;
-		double c11 = B.a10 * a01 + B.a11 * a11;
-		double c12 = B.a10 * a02 + B.a11 * a12 + B.a12;
-		
-		return new AffineMapping(c00, c01, c02, c10, c11, c12);
+	public AffineMapping concat(AffineMapping B) {	// use some super method instead?
+		double[][] C = Matrix.multiply(B.getTransformationMatrix(), this.getTransformationMatrix());
+		return new AffineMapping(C[0][0], C[0][1], C[0][2], C[1][0], C[1][1], C[1][2]);
 	}
 
+	// Alternative (old) version:
+//	public AffineMapping concat(AffineMapping B) {	// use some super method instead?
+//		double c00 = B.a00 * a00 + B.a01 * a10;
+//		double c01 = B.a00 * a01 + B.a01 * a11;
+//		double c02 = B.a00 * a02 + B.a01 * a12 + B.a02;
+//
+//		double c10 = B.a10 * a00 + B.a11 * a10;
+//		double c11 = B.a10 * a01 + B.a11 * a11;
+//		double c12 = B.a10 * a02 + B.a11 * a12 + B.a12;
+//		
+//		return new AffineMapping(c00, c01, c02, c10, c11, c12);
+//	}
 
 	/**
 	 * {@inheritDoc}
@@ -183,7 +193,7 @@ public class AffineMapping extends ProjectiveMapping {
 		double[][] a = 
 				{{-2, 4, -3}, 
 				{3, 7, 2}, 
-				{0.0, 0.0, 1.000000}};
+				{0, 0, 1}};
 		System.out.println("a = \n" + Matrix.toString(a));
 		System.out.println();
 		double[][] ai = Matrix.inverse(a);

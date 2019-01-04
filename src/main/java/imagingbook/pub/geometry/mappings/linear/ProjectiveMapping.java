@@ -17,15 +17,16 @@ import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.RealVector;
 import org.apache.commons.math3.linear.SingularValueDecomposition;
 
+import imagingbook.lib.math.Arithmetic;
 import imagingbook.lib.settings.PrintPrecision;
 import imagingbook.pub.geometry.mappings.JacobianSupport;
-import imagingbook.pub.geometry.mappings.Mapping;
 
 
 /**
  * This class represents a projective transformation in 2D (also known
  * as a "homography"). It can be specified uniquely by four pairs of corresponding
  * points.
+ * It can be assumed that every instance of this class is indeed a projective mapping.
  */
 public class ProjectiveMapping extends LinearMapping implements JacobianSupport {
 	
@@ -34,43 +35,48 @@ public class ProjectiveMapping extends LinearMapping implements JacobianSupport 
 	/**
 	 * Creates the most specific linear mapping from two sequences of corresponding
 	 * 2D points.
-	 * 
 	 * @param P first point sequence
 	 * @param Q second point sequence
 	 * @return a linear mapping derived from point correspondences
-	 * @deprecated
 	 */
-	public static ProjectiveMapping makeMapping(Point2D[] P, Point2D[] Q) { // TODO: Check for a better solution!
-		int minLen = Math.min(P.length, Q.length);
-		if (minLen < 1) {
+	public static ProjectiveMapping makeMapping(Point2D[] P, Point2D[] Q) {
+		int n = Math.min(P.length, Q.length);
+		if (n < 1) {
 			throw new IllegalArgumentException("cannot create a mapping from zero points");
 		}
-		else if (minLen <= 2) {				// TODO: special case for minLen == 2, rigid transformation??
-			return null; //new Translation(P, Q);
+		else if (n == 1) {
+			return new Translation(P[0], Q[0]);
 		}
-		else if (minLen <= 3) {
-			return AffineMapping.fromTriangles(P, Q);
+		else if (n == 2) {	// TODO: similarity transformation?
+			throw new UnsupportedOperationException("makeMapping: don't know yet how to handle 2 points");
 		}
-		else {
-			return ProjectiveMapping.fromQuads(P, Q);
+		else if (n == 3) {
+			return AffineMapping.from3Points(P, Q);
+		}
+		else if (n == 4) {
+			return ProjectiveMapping.from4Points(P, Q);
+		}
+		else {	// n > 4 (over-determined)
+			return ProjectiveMapping.fromNPoints(P, Q);
 		}
 	}
 	
 	/**
 	 * Creates the projective mapping from the unit square S to
 	 * the arbitrary quadrilateral P, specified by four points.
-	 * 
 	 * @param p0 point 0
 	 * @param p1 point 1
 	 * @param p2 point 2
 	 * @param p3 point 3
 	 * @return a new projective mapping
 	 */
-	public static ProjectiveMapping fromUnitSquareToQuad(Point2D p0, Point2D p1, Point2D p2, Point2D p3) {
+	public static ProjectiveMapping fromUnitSquareTo4Points(Point2D p0, Point2D p1, Point2D p2, Point2D p3) {
 		double x0 = p0.getX(), x1 = p1.getX(), x2 = p2.getX(), x3 = p3.getX();
 		double y0 = p0.getY(), y1 = p1.getY(), y2 = p2.getY(), y3 = p3.getY();
 		double S = (x1 - x2) * (y3 - y2) - (x3 - x2) * (y1 - y2);
-		// TODO: check S for zero value and throw exception
+		if (Arithmetic.isZero(S)) {
+			throw new ArithmeticException("fromUnitSquareTo4Points(): division by zero!");
+		}
 		double a20 = ((x0 - x1 + x2 - x3) * (y3 - y2) - (y0 - y1 + y2 - y3) * (x3 - x2)) / S;
 		double a21 = ((y0 - y1 + y2 - y3) * (x1 - x2) - (x0 - x1 + x2 - x3) * (y1 - y2)) / S;
 		double a00 = x1 - x0 + a20 * x1;
@@ -94,11 +100,11 @@ public class ProjectiveMapping extends LinearMapping implements JacobianSupport 
 	 * @param q3 point 3 of target quad Q
 	 * @return a new projective mapping
 	 */
-	public static ProjectiveMapping fromQuads(
+	public static ProjectiveMapping from4Points(
 			Point2D p0, Point2D p1, Point2D p2, Point2D p3, 
 			Point2D q0, Point2D q1, Point2D q2, Point2D q3)	{
-		ProjectiveMapping T1 = ProjectiveMapping.fromUnitSquareToQuad(p0, p1, p2, p3);
-		ProjectiveMapping T2 = ProjectiveMapping.fromUnitSquareToQuad(q0, q1, q2, q3);
+		ProjectiveMapping T1 = ProjectiveMapping.fromUnitSquareTo4Points(p0, p1, p2, p3);
+		ProjectiveMapping T2 = ProjectiveMapping.fromUnitSquareTo4Points(q0, q1, q2, q3);
 		ProjectiveMapping T1i = T1.getInverse();
 		return T1i.concat(T2);		
 	}
@@ -109,20 +115,23 @@ public class ProjectiveMapping extends LinearMapping implements JacobianSupport 
 	 * @param Q target quad
 	 * @return a new projective mapping
 	 */
-	public static final ProjectiveMapping fromQuads(Point2D[] P, Point2D[] Q) {
-		return ProjectiveMapping.fromQuads(P[0], P[1], P[2], P[3], Q[0], Q[1], Q[2], Q[3]);
+	public static final ProjectiveMapping from4Points(Point2D[] P, Point2D[] Q) {
+		return ProjectiveMapping.from4Points(P[0], P[1], P[2], P[3], Q[0], Q[1], Q[2], Q[3]);
 	}
 	
 	/**
 	 * Maps between n &gt; 4 point pairs, finds a least-squares solution
 	 * for the homography parameters.
-	 * TODO: find better name, this is UNFINISHED code!
+	 * TODO: this is UNFINISHED code! check against DLT estimation of homography
 	 * @param P sequence of points (source)
 	 * @param Q sequence of points (target)
 	 * @return a new projective mapping
 	 */
-	public static ProjectiveMapping fromPoints(Point2D[] P, Point2D[] Q) {
+	public static ProjectiveMapping fromNPoints(Point2D[] P, Point2D[] Q) {
 		final int n = P.length;
+		if (n <= 4) {
+			throw new IllegalArgumentException(ProjectiveMapping.class.getName() + ": fromNPoints() needs > 4 points!");
+		}
 		double[] ba = new double[2 * n];
 		double[][] Ma = new double[2 * n][];
 		for (int i = 0; i < n; i++) {
@@ -250,8 +259,10 @@ public class ProjectiveMapping extends LinearMapping implements JacobianSupport 
 		final double a = a00 * x + a01 * y + a02;	// = alpha
 		final double b = a10 * x + a11 * y + a12;	// = beta
 		final double c = a20 * x + a21 * y + 1;		// = gamma
+		if (Arithmetic.isZero(c)) {
+			throw new ArithmeticException("getJacobian(): division by zero!");
+		}
 		final double cc = c * c;
-		// TODO: check c for zero-value and throw exception, make more efficient
 		return new double[][]
 			{{x/c, y/c, 0,   0,   -(x*a)/cc, -(y*a)/cc, 1/c, 0  },
 			 {0,   0,   x/c, y/c, -(x*b)/cc, -(y*b)/cc, 0,   1/c}};
@@ -283,7 +294,7 @@ public class ProjectiveMapping extends LinearMapping implements JacobianSupport 
 				//new Point2D.Double(7,4.9)	// 5 points, overdetermined!
 				};
 		
-		ProjectiveMapping pm = ProjectiveMapping.fromPoints(A, B);
+		ProjectiveMapping pm = ProjectiveMapping.fromNPoints(A, B);
 		
 		System.out.println("\nprojective mapping = \n" + pm.toString());
 		

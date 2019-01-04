@@ -15,6 +15,7 @@ import imagingbook.lib.settings.PrintPrecision;
 /**
  * This class represents a pure 2D rotation about the coordinate origin 
  * (as a special case of affine transformation).
+ * It can be assumed that every instance of this class is indeed a rotation.
  */
 public class Rotation extends AffineMapping {
 	
@@ -49,6 +50,17 @@ public class Rotation extends AffineMapping {
 	}
 	
 	// ----------------------------------------------------------
+	
+	/**
+	 * Concatenates this rotation A with another rotation B and returns
+	 * a new rotation C, such that C(x) = B(A(x)).
+	 * @param B the second rotation
+	 * @return the concatenated rotations
+	 */
+	public Rotation concat(Rotation B) {
+		double[][] C = Matrix.multiply(B.getTransformationMatrix(), this.getTransformationMatrix());
+		return new Rotation(C[0][0], C[0][1], C[1][0], C[1][1]);
+	}
 	
 	@Override
 	public Rotation duplicate() {

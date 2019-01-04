@@ -121,8 +121,8 @@ public class ImageExtractor {
 			};
 		ProjectiveMapping T = null;
 		switch (sourcePnts.length) {
-		case (3) : T = AffineMapping.fromPoints(targetPnts, sourcePnts); break;
-		case (4) : T = ProjectiveMapping.fromQuads(targetPnts, sourcePnts); break;
+		case (3) : T = AffineMapping.fromNPoints(targetPnts, sourcePnts); break;
+		case (4) : T = ProjectiveMapping.from4Points(targetPnts, sourcePnts); break;
 		default : throw new IllegalArgumentException("wrong number of source points");
 		}
 		return T;
