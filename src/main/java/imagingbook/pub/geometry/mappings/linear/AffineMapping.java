@@ -101,7 +101,7 @@ public class AffineMapping extends ProjectiveMapping {
 	 * Checks if the given linear mapping could be affine, i.e. if the
 	 * bottom row of its transformation matrix is (0, 0, 1). 
 	 * Note that this is a necessary but not sufficient requirement.
-	 * The threshold {@link EPSILON} is used in this check.
+	 * The threshold {@link AffineTolerance} is used in this check.
 	 * @param lm a linear mapping
 	 * @return true if the mapping could be affine
 	 */
