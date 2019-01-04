@@ -81,20 +81,10 @@ public class AffineMapping extends ProjectiveMapping {
 
 	/**
 	 * Creates a new affine mapping from an existing affine mapping.
-	 * @param am a given projective mapping
+	 * @param m an affine mapping
 	 */
-	public AffineMapping(AffineMapping am) {
-		this(am.getParameters());
-	}
-	
-	public AffineMapping(double[] p) {
-		super(p[0], p[1], p[2], p[3], p[4], p[5], 0, 0);  // projective mapping
-	}
-	
-	// ---------------------------------------------------------------------------
-	
-	public double[] getParameters() {
-		return new double[] { a00, a01, a02, a10, a11, a12 };
+	public AffineMapping(AffineMapping m) {
+		this(m.a00, m.a01, m.a02, m.a10, m.a11, m.a11);
 	}
 	
 	// ----------------------------------------------------------
@@ -161,25 +151,20 @@ public class AffineMapping extends ProjectiveMapping {
 		return new AffineMapping(this);
 	}
 
-	// warp parameter support (used in Lucas-Kanade-matcher) --------------------------
-
-//	@Override
-//	public int getWarpParameterCount() {
-//		// a00 = p[0] + 1; a01 = p[1]; a10 = p[2]; a11 = p[3] + 1; a02 = p[4]; a12 = p[5];
-//		return 6;
-//	}
+	// Jacobian support -------------------------------------
 
 	@Override
-	public double[] getWarpParameters() {
+	public double[] getParameters() {
 		return new double[] { a00 - 1, a01, a10, a11 - 1, a02, a12 };
 	}
 	
-	public static AffineMapping fromWarpParameters(double[] p) {
+	@Override
+	public AffineMapping fromParameters(double[] p) {
 		return new AffineMapping(p[0] + 1, p[1], p[2], p[3] + 1, p[4], p[5]);
 	}
 
 	@Override
-	public double[][] getWarpJacobian(double[] xy) {
+	public double[][] getJacobian(double[] xy) {
 		final double x = xy[0];
 		final double y = xy[1];
 		return new double[][]

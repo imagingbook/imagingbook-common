@@ -95,8 +95,8 @@ D:\PROJECTS-GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook
 D:\PROJECTS-GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\color\statistics\ColorHistogram.java
 D:\PROJECTS-GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\color\filters\VectorMedianFilterSharpen.java
 D:\PROJECTS-GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\lib\interpolation\SplineInterpolator.java
-D:\PROJECTS-GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\geometry\mappings\WarpParameters.java
 D:\PROJECTS-GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\sift\scalespace\HierarchicalScaleSpace.java
+D:\PROJECTS-GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\lucaskanade\Mappings.java
 D:\PROJECTS-GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\geometry\icp\IterativeClosestPointMatcher.java
 D:\PROJECTS-GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\test\TestMe.java
 D:\PROJECTS-GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\lib\interpolation\InterpolationMethod.java
@@ -156,6 +156,7 @@ D:\PROJECTS-GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook
 D:\PROJECTS-GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\sift\scalespace\DogScaleSpace.java
 D:\PROJECTS-GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\threshold\adaptive\InterpolatingThresholder.java
 D:\PROJECTS-GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\color\image\Illuminant.java
+D:\PROJECTS-GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\geometry\mappings\JacobianSupport.java
 D:\PROJECTS-GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\lib\interpolation\LanczosInterpolator.java
 D:\PROJECTS-GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\dft\Dft2d.java
 D:\PROJECTS-GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\hough\lines\HessianLine.java

@@ -23,28 +23,29 @@ public class Rotation extends AffineMapping {
 	 * @param alpha rotation angle (in radians)
 	 */
 	public Rotation(double alpha) {
-		super(
+		super(	// AffineTransformation
 			 Math.cos(alpha), -Math.sin(alpha), 0,
 			 Math.sin(alpha),  Math.cos(alpha), 0);
 	}
 	
-	public Rotation(Rotation r) {
-		this(r.getParameters());
-	}
-	
-	public Rotation(double[] p) {
-		super(p[0], -p[1], 0, p[1], p[0], 0);  // AffineMapping
-	}
-
-	// private constructor (used for getInverse() only)
-	private Rotation(double a00, double a01, double a10, double a11) {
+	/**
+	 * Auxiliary constructor used internally for duplicating 
+	 * existing instances.
+	 * @param a00 matrix element A_00
+	 * @param a01 matrix element A_01
+	 * @param a10 matrix element A_10
+	 * @param a11 matrix element A_11
+	 */
+	protected Rotation(double a00, double a01, double a10, double a11) {
 		super(a00, a01, 0, a10, a11, 0);
 	}
 	
-	// -----------------------------------------------------------
-	
-	public double[] getParameters() {
-		return new double[] { a00, a10 };
+	/**
+	 * Creates a new rotation from an existing instance.
+	 * @param m a rotation
+	 */
+	public Rotation(Rotation m) {
+		this(m.a00, m.a01, m.a10, m.a11);
 	}
 	
 	// ----------------------------------------------------------

@@ -24,6 +24,8 @@ public class LinearMapping extends Mapping {
 		a10, a11, a12,
 		a20, a21, a22;
 
+	//  constructors -----------------------------------------------------
+	
 	/**
 	 * Creates a new identity mapping.
 	 */
@@ -43,9 +45,10 @@ public class LinearMapping extends Mapping {
 		a20 = A[2][0]; a21 = A[2][1]; a22 = A[2][2];
 	}
 	
-	public LinearMapping(double[] p) {
-		this(p[0], p[1], p[2], p[3], p[4], p[5], p[6], p[7], p[8]);
-	}
+//	@Deprecated
+//	public LinearMapping(double[] p) {
+//		this(p[0], p[1], p[2], p[3], p[4], p[5], p[6], p[7], p[8]);
+//	}
 
 	/**
 	 * Creates an arbitrary linear mapping from the specified matrix elements.
@@ -74,12 +77,6 @@ public class LinearMapping extends Mapping {
 	 */
 	public LinearMapping (LinearMapping lm) {
 		this(lm.getTransformationMatrix());
-	}
-	
-	// ----------------------------------------------------------
-	
-	public double[] getParameters() {
-		return new double[] { a00, a01, a02, a10, a11, a12, a20, a21, a22 };
 	}
 	
 	// ----------------------------------------------------------

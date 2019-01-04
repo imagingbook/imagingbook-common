@@ -23,7 +23,6 @@ import imagingbook.pub.geometry.mappings.linear.ProjectiveMapping;
  */
 public class LucasKanadeForwardMatcher extends LucasKanadeMatcher {
 	
-	
 	private int n;								// number of warp parameters
 	private FloatProcessor Ix, Iy;				// gradient of the search image
 	private double qmag = Double.MAX_VALUE; 	// magnitude of parameter difference vector
@@ -55,8 +54,7 @@ public class LucasKanadeForwardMatcher extends LucasKanadeMatcher {
 	}
 
 	private void initializeMatch(ProjectiveMapping Tinit) {
-//		n = Tinit.getWarpParameterCount();
-		n = Tinit.getWarpParameters().length;
+		n = Tinit.getParameters().length;
 		Ix = gradientX(I);
 		Iy = gradientY(I);
 		iteration = 0;
@@ -87,7 +85,7 @@ public class LucasKanadeForwardMatcher extends LucasKanadeMatcher {
 				double[] G = new double[] {gx, gy};				// interpolated gradient vector
 
 				// Step 4: Evaluate the Jacobian of the warp W at position x
-				double[][] J = Tp.getWarpJacobian(x);
+				double[][] J = Tp.getJacobian(x);
 
 				// Step 5: compute the steepest descent image:
 				double[] sx = Matrix.multiply(G, J); // I_steepest = gradI(xy) * dW/dp(xy)  is a n-dim vector
@@ -124,18 +122,18 @@ public class LucasKanadeForwardMatcher extends LucasKanadeMatcher {
 
 		// Step 8/9 (alternative)
 		double[] qopt = Matrix.solve(H, dp);
-		if (qopt == null) {
-			// IJ.log("singular Hessian!");
-			return null;
+		if (qopt == null) {	// this should not happen
+			throw new RuntimeException(this.getClass().getName() + ": Encountered singular Hessian matrix!");
+			//return null;
 		}
 		
-		double[] p = Matrix.add(Tp.getWarpParameters(), qopt);
+		double[] p = Matrix.add(Tp.getParameters(), qopt);
 		qmag = Matrix.normL2squared(qopt);
 
 		if (params.showSteepestDescentImages && iteration == 1) {
 			showSteepestDescentImages(S);
 		}
 
-		return ProjectiveMapping.fromWarpParameters(p);
+		return Tp.fromParameters(p);
 	}
 }

@@ -16,6 +16,13 @@ package imagingbook.pub.geometry.mappings.linear;
 public class Translation extends AffineMapping {
 
 	/**
+	 * Creates a blank (zero) translation.
+	 */
+	public Translation() {
+		super();
+	}
+	
+	/**
 	 * Creates a new translation mapping.
 	 * @param tx translation in x
 	 * @param ty translation in y
@@ -23,30 +30,13 @@ public class Translation extends AffineMapping {
 	public Translation(double tx, double ty){
 		super(1, 0, tx, 0, 1, ty);
 	}
-	
-	/**
-	 * Creates a blank (zero) translation.
-	 */
-	public Translation() {
-		super();
-	}
 
 	/** 
 	 * Creates a new translation instance from a given translation.
-	 * @param t an existing translation
+	 * @param m a translation
 	 */
-	public Translation(Translation t) {
-		this(t.getParameters());
-	}
-	
-	public Translation(double[] p) {
-		super(1, 0, p[0], 0, 1, p[1]);  // AffineMapping
-	}
-	
-	// --------------------------------------------------------
-	
-	public double[] getParameters() {
-		return new double[] { a02, a12 };
+	public Translation(Translation m) {
+		this(m.a02, m.a12);
 	}
 	
 	// ----------------------------------------------------------
@@ -61,30 +51,25 @@ public class Translation extends AffineMapping {
 		return new Translation(this);
 	}
 	
-	// Warp parameter support -------------------------------------
-	
-//	@Override
-//	public int getWarpParameterCount() {
-//		return 2;
-//	}
+	// Jacobian support -------------------------------------
 	
 	@Override
-	public double[] getWarpParameters() {
+	public double[] getParameters() {
 		double[] p = new double[] {a02,	a12};
 		return p;
 	}
 	
-	public static Translation fromWarpParameters(double[] p) {
+	@Override
+	public AffineMapping fromParameters(double[] p) {
 		return new Translation(p[0], p[1]);
 	}
 	
-	private static final double[][] JT =	// this transformation has a constant Jacobian
+	@Override
+	public double[][] getJacobian(double[] xy) {
+		return JT; // this transformation has a constant Jacobian (indep. of xy)
+	}
+	
+	private static final double[][] JT =
 		{{1, 0},
 		 {0, 1}};
-	
-	@Override
-	public double[][] getWarpJacobian(double[] X) {
-		return JT;
-	}
-
 }
