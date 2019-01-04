@@ -22,114 +22,113 @@
 <span class="sourceLineNo">014</span><a name="line.14"></a>
 <span class="sourceLineNo">015</span>import java.awt.geom.Point2D;<a name="line.15"></a>
 <span class="sourceLineNo">016</span><a name="line.16"></a>
-<span class="sourceLineNo">017</span><a name="line.17"></a>
-<span class="sourceLineNo">018</span>/**<a name="line.18"></a>
-<span class="sourceLineNo">019</span> * This class represents a bilinear transformation in 2D with 8<a name="line.19"></a>
-<span class="sourceLineNo">020</span> * parameters a0, ..., a3, b0, ..., b3 of the form<a name="line.20"></a>
-<span class="sourceLineNo">021</span> * &lt;pre&gt;<a name="line.21"></a>
-<span class="sourceLineNo">022</span> * x' = a0 * x + a1 * y + a2 * x * y + a3<a name="line.22"></a>
-<span class="sourceLineNo">023</span> * y' = b0 * x + b1 * y + b2 * x * y + b3<a name="line.23"></a>
-<span class="sourceLineNo">024</span> * &lt;/pre&gt;<a name="line.24"></a>
-<span class="sourceLineNo">025</span> * Note that this is a non-linear transformation because of the mixed term.<a name="line.25"></a>
-<span class="sourceLineNo">026</span> */<a name="line.26"></a>
-<span class="sourceLineNo">027</span>public class BilinearMapping extends Mapping {<a name="line.27"></a>
-<span class="sourceLineNo">028</span>        <a name="line.28"></a>
-<span class="sourceLineNo">029</span>        private final double a0, a1, a2, a3;<a name="line.29"></a>
-<span class="sourceLineNo">030</span>        private final double b0, b1, b2, b3;<a name="line.30"></a>
-<span class="sourceLineNo">031</span>        <a name="line.31"></a>
-<span class="sourceLineNo">032</span>        public BilinearMapping(<a name="line.32"></a>
-<span class="sourceLineNo">033</span>                        double a0, double a1, double a2, double a3,<a name="line.33"></a>
-<span class="sourceLineNo">034</span>                        double b0, double b1, double b2, double b3) {<a name="line.34"></a>
-<span class="sourceLineNo">035</span>                this.a0 = a0;   this.a1 = a1;   this.a2 = a2;   this.a3 = a3;<a name="line.35"></a>
-<span class="sourceLineNo">036</span>                this.b0 = b0;   this.b1 = b1;   this.b2 = b2;   this.b3 = b3;           <a name="line.36"></a>
-<span class="sourceLineNo">037</span>        }<a name="line.37"></a>
-<span class="sourceLineNo">038</span>        <a name="line.38"></a>
-<span class="sourceLineNo">039</span>        public static BilinearMapping fromQuads(Point2D[] P, Point2D[] Q) {<a name="line.39"></a>
-<span class="sourceLineNo">040</span>                return fromQuads(P[0], P[1], P[2], P[3], Q[0], Q[1], Q[2], Q[3]);<a name="line.40"></a>
-<span class="sourceLineNo">041</span>        }<a name="line.41"></a>
-<span class="sourceLineNo">042</span><a name="line.42"></a>
-<span class="sourceLineNo">043</span>        /**<a name="line.43"></a>
-<span class="sourceLineNo">044</span>         * Calculates and returns the bilinear mapping M between two point<a name="line.44"></a>
-<span class="sourceLineNo">045</span>         * sets P, Q, with 4 points each, such that q = M(p).<a name="line.45"></a>
-<span class="sourceLineNo">046</span>         * The inverse mapping can be obtained by simply swapping the two point sets.<a name="line.46"></a>
-<span class="sourceLineNo">047</span>         * @param P1 point P1<a name="line.47"></a>
-<span class="sourceLineNo">048</span>         * @param P2 point P2<a name="line.48"></a>
-<span class="sourceLineNo">049</span>         * @param P3 point P3<a name="line.49"></a>
-<span class="sourceLineNo">050</span>         * @param P4 point P4<a name="line.50"></a>
-<span class="sourceLineNo">051</span>         * @param Q1 point Q1<a name="line.51"></a>
-<span class="sourceLineNo">052</span>         * @param Q2 point Q2<a name="line.52"></a>
-<span class="sourceLineNo">053</span>         * @param Q3 point Q3<a name="line.53"></a>
-<span class="sourceLineNo">054</span>         * @param Q4 point Q4<a name="line.54"></a>
-<span class="sourceLineNo">055</span>         * @return a new bilinear mapping<a name="line.55"></a>
-<span class="sourceLineNo">056</span>         */<a name="line.56"></a>
-<span class="sourceLineNo">057</span>        public static BilinearMapping fromQuads(<a name="line.57"></a>
-<span class="sourceLineNo">058</span>                        Point2D P1, Point2D P2, Point2D P3, Point2D P4, // source quad<a name="line.58"></a>
-<span class="sourceLineNo">059</span>                        Point2D Q1, Point2D Q2, Point2D Q3, Point2D Q4) // target quad<a name="line.59"></a>
-<span class="sourceLineNo">060</span>                {       <a name="line.60"></a>
-<span class="sourceLineNo">061</span>                //define column vectors x, y<a name="line.61"></a>
-<span class="sourceLineNo">062</span>                double[] x = {Q1.getX(), Q2.getX(), Q3.getX(), Q4.getX()};<a name="line.62"></a>
-<span class="sourceLineNo">063</span>                double[] y = {Q1.getY(), Q2.getY(), Q3.getY(), Q4.getY()};<a name="line.63"></a>
-<span class="sourceLineNo">064</span>                <a name="line.64"></a>
-<span class="sourceLineNo">065</span>                //define matrix M<a name="line.65"></a>
-<span class="sourceLineNo">066</span>                double[][] M = new double[][]<a name="line.66"></a>
-<span class="sourceLineNo">067</span>                        {{P1.getX(), P1.getY(), P1.getX() * P1.getY(), 1},<a name="line.67"></a>
-<span class="sourceLineNo">068</span>                         {P2.getX(), P2.getY(), P2.getX() * P2.getY(), 1},<a name="line.68"></a>
-<span class="sourceLineNo">069</span>                         {P3.getX(), P3.getY(), P3.getX() * P3.getY(), 1},<a name="line.69"></a>
-<span class="sourceLineNo">070</span>                         {P4.getX(), P4.getY(), P4.getX() * P4.getY(), 1}};<a name="line.70"></a>
-<span class="sourceLineNo">071</span>                double[] a = Matrix.solve(M, x);                // solve x = M * a = x (a is unknown)<a name="line.71"></a>
-<span class="sourceLineNo">072</span>                double[] b = Matrix.solve(M, y);                // solve y = M * b = y (b is unknown)           <a name="line.72"></a>
-<span class="sourceLineNo">073</span>                double a1 = a[0];               double b1 = b[0];<a name="line.73"></a>
-<span class="sourceLineNo">074</span>                double a2 = a[1];               double b2 = b[1];<a name="line.74"></a>
-<span class="sourceLineNo">075</span>                double a3 = a[2];               double b3 = b[2];<a name="line.75"></a>
-<span class="sourceLineNo">076</span>                double a4 = a[3];               double b4 = b[3];<a name="line.76"></a>
-<span class="sourceLineNo">077</span>                return new BilinearMapping(a1, a2, a3, a4, b1, b2, b3, b4);<a name="line.77"></a>
-<span class="sourceLineNo">078</span>        }<a name="line.78"></a>
-<span class="sourceLineNo">079</span>        <a name="line.79"></a>
-<span class="sourceLineNo">080</span>        @Override<a name="line.80"></a>
-<span class="sourceLineNo">081</span>        public double[] applyTo (double x, double y) {<a name="line.81"></a>
-<span class="sourceLineNo">082</span>                double xx = a0 * x + a1 * y + a2 * x * y + a3;<a name="line.82"></a>
-<span class="sourceLineNo">083</span>                double yy = b0 * x + b1 * y + b2 * x * y + b3;<a name="line.83"></a>
-<span class="sourceLineNo">084</span>                return new double[] {xx, yy};<a name="line.84"></a>
-<span class="sourceLineNo">085</span>        }       <a name="line.85"></a>
-<span class="sourceLineNo">086</span>        <a name="line.86"></a>
-<span class="sourceLineNo">087</span>        public String toString() {<a name="line.87"></a>
-<span class="sourceLineNo">088</span>                return String.format(<a name="line.88"></a>
-<span class="sourceLineNo">089</span>                                "A = (%.3f, %.3f, %.3f, %.3f) / B = (%.3f, %.3f, %.3f, %.3f)",<a name="line.89"></a>
-<span class="sourceLineNo">090</span>                                a0, a1, a2, a3, b0, b1, b2, b3);<a name="line.90"></a>
-<span class="sourceLineNo">091</span>        }<a name="line.91"></a>
-<span class="sourceLineNo">092</span>        <a name="line.92"></a>
-<span class="sourceLineNo">093</span>        // ------------------------------------------------------------------------<a name="line.93"></a>
-<span class="sourceLineNo">094</span>        <a name="line.94"></a>
-<span class="sourceLineNo">095</span>        /**<a name="line.95"></a>
-<span class="sourceLineNo">096</span>         * For testing only.<a name="line.96"></a>
-<span class="sourceLineNo">097</span>         * @param args ignored<a name="line.97"></a>
-<span class="sourceLineNo">098</span>         */<a name="line.98"></a>
-<span class="sourceLineNo">099</span>        public static void main(String[] args) {<a name="line.99"></a>
-<span class="sourceLineNo">100</span>                Point2D[] P = new Point2D[] {<a name="line.100"></a>
-<span class="sourceLineNo">101</span>                                new Point2D.Double(2,5),<a name="line.101"></a>
-<span class="sourceLineNo">102</span>                                new Point2D.Double(4,6),<a name="line.102"></a>
-<span class="sourceLineNo">103</span>                                new Point2D.Double(7,9),<a name="line.103"></a>
-<span class="sourceLineNo">104</span>                                new Point2D.Double(5,9),<a name="line.104"></a>
-<span class="sourceLineNo">105</span>                                };<a name="line.105"></a>
-<span class="sourceLineNo">106</span>                <a name="line.106"></a>
-<span class="sourceLineNo">107</span>                Point2D[] Q = new Point2D[] {<a name="line.107"></a>
-<span class="sourceLineNo">108</span>                                new Point2D.Double(4,3),<a name="line.108"></a>
-<span class="sourceLineNo">109</span>                                new Point2D.Double(5,2),<a name="line.109"></a>
-<span class="sourceLineNo">110</span>                                new Point2D.Double(9,3),<a name="line.110"></a>
-<span class="sourceLineNo">111</span>                                new Point2D.Double(7,5),<a name="line.111"></a>
-<span class="sourceLineNo">112</span>                                };<a name="line.112"></a>
-<span class="sourceLineNo">113</span>                <a name="line.113"></a>
-<span class="sourceLineNo">114</span>                BilinearMapping bm = fromQuads(P, Q);<a name="line.114"></a>
-<span class="sourceLineNo">115</span>                System.out.println("\nbilinear mapping = \n" + bm.toString());<a name="line.115"></a>
-<span class="sourceLineNo">116</span>                <a name="line.116"></a>
-<span class="sourceLineNo">117</span>                for (int i = 0; i &lt; P.length; i++) {<a name="line.117"></a>
-<span class="sourceLineNo">118</span>                        Point2D Qi = bm.applyTo(P[i]);<a name="line.118"></a>
-<span class="sourceLineNo">119</span>                        System.out.println(P[i].toString() + " -&gt; " + Qi.toString());<a name="line.119"></a>
-<span class="sourceLineNo">120</span>                }<a name="line.120"></a>
-<span class="sourceLineNo">121</span>                <a name="line.121"></a>
-<span class="sourceLineNo">122</span>        }<a name="line.122"></a>
-<span class="sourceLineNo">123</span><a name="line.123"></a>
-<span class="sourceLineNo">124</span>}<a name="line.124"></a>
+<span class="sourceLineNo">017</span>/**<a name="line.17"></a>
+<span class="sourceLineNo">018</span> * This class represents a bilinear transformation in 2D with 8<a name="line.18"></a>
+<span class="sourceLineNo">019</span> * parameters a0, ..., a3, b0, ..., b3 of the form<a name="line.19"></a>
+<span class="sourceLineNo">020</span> * &lt;pre&gt;<a name="line.20"></a>
+<span class="sourceLineNo">021</span> * x' = a0 * x + a1 * y + a2 * x * y + a3<a name="line.21"></a>
+<span class="sourceLineNo">022</span> * y' = b0 * x + b1 * y + b2 * x * y + b3<a name="line.22"></a>
+<span class="sourceLineNo">023</span> * &lt;/pre&gt;<a name="line.23"></a>
+<span class="sourceLineNo">024</span> * Note that this is a non-linear transformation because of the mixed term.<a name="line.24"></a>
+<span class="sourceLineNo">025</span> */<a name="line.25"></a>
+<span class="sourceLineNo">026</span>public class BilinearMapping extends Mapping {<a name="line.26"></a>
+<span class="sourceLineNo">027</span>        <a name="line.27"></a>
+<span class="sourceLineNo">028</span>        private final double a0, a1, a2, a3;<a name="line.28"></a>
+<span class="sourceLineNo">029</span>        private final double b0, b1, b2, b3;<a name="line.29"></a>
+<span class="sourceLineNo">030</span>        <a name="line.30"></a>
+<span class="sourceLineNo">031</span>        public BilinearMapping(<a name="line.31"></a>
+<span class="sourceLineNo">032</span>                        double a0, double a1, double a2, double a3,<a name="line.32"></a>
+<span class="sourceLineNo">033</span>                        double b0, double b1, double b2, double b3) {<a name="line.33"></a>
+<span class="sourceLineNo">034</span>                this.a0 = a0;   this.a1 = a1;   this.a2 = a2;   this.a3 = a3;<a name="line.34"></a>
+<span class="sourceLineNo">035</span>                this.b0 = b0;   this.b1 = b1;   this.b2 = b2;   this.b3 = b3;           <a name="line.35"></a>
+<span class="sourceLineNo">036</span>        }<a name="line.36"></a>
+<span class="sourceLineNo">037</span>        <a name="line.37"></a>
+<span class="sourceLineNo">038</span>        public static BilinearMapping fromQuads(Point2D[] P, Point2D[] Q) {<a name="line.38"></a>
+<span class="sourceLineNo">039</span>                return fromQuads(P[0], P[1], P[2], P[3], Q[0], Q[1], Q[2], Q[3]);<a name="line.39"></a>
+<span class="sourceLineNo">040</span>        }<a name="line.40"></a>
+<span class="sourceLineNo">041</span><a name="line.41"></a>
+<span class="sourceLineNo">042</span>        /**<a name="line.42"></a>
+<span class="sourceLineNo">043</span>         * Calculates and returns the bilinear mapping M between two point<a name="line.43"></a>
+<span class="sourceLineNo">044</span>         * sets P, Q, with 4 points each, such that q = M(p).<a name="line.44"></a>
+<span class="sourceLineNo">045</span>         * The inverse mapping can be obtained by simply swapping the two point sets.<a name="line.45"></a>
+<span class="sourceLineNo">046</span>         * @param P1 point P1<a name="line.46"></a>
+<span class="sourceLineNo">047</span>         * @param P2 point P2<a name="line.47"></a>
+<span class="sourceLineNo">048</span>         * @param P3 point P3<a name="line.48"></a>
+<span class="sourceLineNo">049</span>         * @param P4 point P4<a name="line.49"></a>
+<span class="sourceLineNo">050</span>         * @param Q1 point Q1<a name="line.50"></a>
+<span class="sourceLineNo">051</span>         * @param Q2 point Q2<a name="line.51"></a>
+<span class="sourceLineNo">052</span>         * @param Q3 point Q3<a name="line.52"></a>
+<span class="sourceLineNo">053</span>         * @param Q4 point Q4<a name="line.53"></a>
+<span class="sourceLineNo">054</span>         * @return a new bilinear mapping<a name="line.54"></a>
+<span class="sourceLineNo">055</span>         */<a name="line.55"></a>
+<span class="sourceLineNo">056</span>        public static BilinearMapping fromQuads(<a name="line.56"></a>
+<span class="sourceLineNo">057</span>                        Point2D P1, Point2D P2, Point2D P3, Point2D P4, // source quad<a name="line.57"></a>
+<span class="sourceLineNo">058</span>                        Point2D Q1, Point2D Q2, Point2D Q3, Point2D Q4) // target quad<a name="line.58"></a>
+<span class="sourceLineNo">059</span>                {       <a name="line.59"></a>
+<span class="sourceLineNo">060</span>                //define column vectors x, y<a name="line.60"></a>
+<span class="sourceLineNo">061</span>                double[] x = {Q1.getX(), Q2.getX(), Q3.getX(), Q4.getX()};<a name="line.61"></a>
+<span class="sourceLineNo">062</span>                double[] y = {Q1.getY(), Q2.getY(), Q3.getY(), Q4.getY()};<a name="line.62"></a>
+<span class="sourceLineNo">063</span>                <a name="line.63"></a>
+<span class="sourceLineNo">064</span>                //define matrix M<a name="line.64"></a>
+<span class="sourceLineNo">065</span>                double[][] M = new double[][]<a name="line.65"></a>
+<span class="sourceLineNo">066</span>                        {{P1.getX(), P1.getY(), P1.getX() * P1.getY(), 1},<a name="line.66"></a>
+<span class="sourceLineNo">067</span>                         {P2.getX(), P2.getY(), P2.getX() * P2.getY(), 1},<a name="line.67"></a>
+<span class="sourceLineNo">068</span>                         {P3.getX(), P3.getY(), P3.getX() * P3.getY(), 1},<a name="line.68"></a>
+<span class="sourceLineNo">069</span>                         {P4.getX(), P4.getY(), P4.getX() * P4.getY(), 1}};<a name="line.69"></a>
+<span class="sourceLineNo">070</span>                double[] a = Matrix.solve(M, x);                // solve x = M * a = x (a is unknown)<a name="line.70"></a>
+<span class="sourceLineNo">071</span>                double[] b = Matrix.solve(M, y);                // solve y = M * b = y (b is unknown)           <a name="line.71"></a>
+<span class="sourceLineNo">072</span>                double a1 = a[0];               double b1 = b[0];<a name="line.72"></a>
+<span class="sourceLineNo">073</span>                double a2 = a[1];               double b2 = b[1];<a name="line.73"></a>
+<span class="sourceLineNo">074</span>                double a3 = a[2];               double b3 = b[2];<a name="line.74"></a>
+<span class="sourceLineNo">075</span>                double a4 = a[3];               double b4 = b[3];<a name="line.75"></a>
+<span class="sourceLineNo">076</span>                return new BilinearMapping(a1, a2, a3, a4, b1, b2, b3, b4);<a name="line.76"></a>
+<span class="sourceLineNo">077</span>        }<a name="line.77"></a>
+<span class="sourceLineNo">078</span>        <a name="line.78"></a>
+<span class="sourceLineNo">079</span>        @Override<a name="line.79"></a>
+<span class="sourceLineNo">080</span>        public double[] applyTo (double x, double y) {<a name="line.80"></a>
+<span class="sourceLineNo">081</span>                double xx = a0 * x + a1 * y + a2 * x * y + a3;<a name="line.81"></a>
+<span class="sourceLineNo">082</span>                double yy = b0 * x + b1 * y + b2 * x * y + b3;<a name="line.82"></a>
+<span class="sourceLineNo">083</span>                return new double[] {xx, yy};<a name="line.83"></a>
+<span class="sourceLineNo">084</span>        }       <a name="line.84"></a>
+<span class="sourceLineNo">085</span>        <a name="line.85"></a>
+<span class="sourceLineNo">086</span>        public String toString() {<a name="line.86"></a>
+<span class="sourceLineNo">087</span>                return String.format(<a name="line.87"></a>
+<span class="sourceLineNo">088</span>                                "A = (%.3f, %.3f, %.3f, %.3f) / B = (%.3f, %.3f, %.3f, %.3f)",<a name="line.88"></a>
+<span class="sourceLineNo">089</span>                                a0, a1, a2, a3, b0, b1, b2, b3);<a name="line.89"></a>
+<span class="sourceLineNo">090</span>        }<a name="line.90"></a>
+<span class="sourceLineNo">091</span>        <a name="line.91"></a>
+<span class="sourceLineNo">092</span>        // ------------------------------------------------------------------------<a name="line.92"></a>
+<span class="sourceLineNo">093</span>        <a name="line.93"></a>
+<span class="sourceLineNo">094</span>        /**<a name="line.94"></a>
+<span class="sourceLineNo">095</span>         * For testing only.<a name="line.95"></a>
+<span class="sourceLineNo">096</span>         * @param args ignored<a name="line.96"></a>
+<span class="sourceLineNo">097</span>         */<a name="line.97"></a>
+<span class="sourceLineNo">098</span>        public static void main(String[] args) {<a name="line.98"></a>
+<span class="sourceLineNo">099</span>                Point2D[] P = new Point2D[] {<a name="line.99"></a>
+<span class="sourceLineNo">100</span>                                new Point2D.Double(2,5),<a name="line.100"></a>
+<span class="sourceLineNo">101</span>                                new Point2D.Double(4,6),<a name="line.101"></a>
+<span class="sourceLineNo">102</span>                                new Point2D.Double(7,9),<a name="line.102"></a>
+<span class="sourceLineNo">103</span>                                new Point2D.Double(5,9),<a name="line.103"></a>
+<span class="sourceLineNo">104</span>                                };<a name="line.104"></a>
+<span class="sourceLineNo">105</span>                <a name="line.105"></a>
+<span class="sourceLineNo">106</span>                Point2D[] Q = new Point2D[] {<a name="line.106"></a>
+<span class="sourceLineNo">107</span>                                new Point2D.Double(4,3),<a name="line.107"></a>
+<span class="sourceLineNo">108</span>                                new Point2D.Double(5,2),<a name="line.108"></a>
+<span class="sourceLineNo">109</span>                                new Point2D.Double(9,3),<a name="line.109"></a>
+<span class="sourceLineNo">110</span>                                new Point2D.Double(7,5),<a name="line.110"></a>
+<span class="sourceLineNo">111</span>                                };<a name="line.111"></a>
+<span class="sourceLineNo">112</span>                <a name="line.112"></a>
+<span class="sourceLineNo">113</span>                BilinearMapping bm = fromQuads(P, Q);<a name="line.113"></a>
+<span class="sourceLineNo">114</span>                System.out.println("\nbilinear mapping = \n" + bm.toString());<a name="line.114"></a>
+<span class="sourceLineNo">115</span>                <a name="line.115"></a>
+<span class="sourceLineNo">116</span>                for (int i = 0; i &lt; P.length; i++) {<a name="line.116"></a>
+<span class="sourceLineNo">117</span>                        Point2D Qi = bm.applyTo(P[i]);<a name="line.117"></a>
+<span class="sourceLineNo">118</span>                        System.out.println(P[i].toString() + " -&gt; " + Qi.toString());<a name="line.118"></a>
+<span class="sourceLineNo">119</span>                }<a name="line.119"></a>
+<span class="sourceLineNo">120</span>                <a name="line.120"></a>
+<span class="sourceLineNo">121</span>        }<a name="line.121"></a>
+<span class="sourceLineNo">122</span><a name="line.122"></a>
+<span class="sourceLineNo">123</span>}<a name="line.123"></a>
 
 
 
