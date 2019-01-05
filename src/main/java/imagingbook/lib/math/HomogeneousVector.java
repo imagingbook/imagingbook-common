@@ -13,11 +13,11 @@ import org.apache.commons.math3.linear.RealVector;
 
 /**
  * This class represents a homogeneous coordinate vector.
+ * Obsolete, not used anywhere.
  * @author W. Burger
- *
+ * @deprecated
  */
 public class HomogeneousVector extends ArrayRealVector {
-
 	private static final long serialVersionUID = 1;
 	
 	public static HomogeneousVector Homogen(RealVector c) {

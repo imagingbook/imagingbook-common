@@ -50,7 +50,6 @@ public class Complex {
 		this.im = z.im;
 	}
 
-
 	/**
 	 * Create a complex quantity on the unit circle with angle 'phi':
 	 * e^{\i \phi} = \cos(\phi) + \i \cdot \sin(\phi)

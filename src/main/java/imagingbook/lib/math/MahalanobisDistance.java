@@ -22,6 +22,7 @@ import ij.IJ;
  * See the numerical example in Theodoridis/Koutrumbras, "Pattern Recognition",
  * Academic Press 1999 (p. 27).
  * No statistical bias correction is applied.
+ * TODO: Add constructor from existing covariance matrix
  */
 public class MahalanobisDistance extends VectorNorm {
 	
@@ -197,8 +198,8 @@ public class MahalanobisDistance extends VectorNorm {
 	 * Calculates the Mahalanobis distance between point X and
 	 * the mean of the reference distribution.
 	 * @param X an arbitrary K-dimensional vector
-	 * @return Mahalanobis distance between the point X and
-	 * 			the mean of the reference distribution.
+	 * @return the Mahalanobis distance between the point X and
+	 * 			the mean of the reference distribution
 	 */
 	public double distance(double[] X) {
 		return distance(X, mean);
@@ -208,8 +209,8 @@ public class MahalanobisDistance extends VectorNorm {
 	 * Calculates the sqared Mahalanobis distance between point X and
 	 * the mean of the reference distribution.
 	 * @param X an arbitrary K-dimensional vector
-	 * @return squared Mahalanobis distance between the point X and
-	 * 			the mean of the reference distribution.
+	 * @return the squared Mahalanobis distance between the point X and
+	 * 			the mean of the reference distribution
 	 */
 	public double distance2(double[] X) {
 		return distance2(X, mean);

@@ -13,9 +13,10 @@ package imagingbook.lib.math;
 /**
  * The this class computes the eigenvalues/eigenvectors for a 2x2
  * matrix
+ * <pre>
  *   | A B |
- *   | C D |
- * The implementation was inspired by Blinn, Jim: Consider the lowly 2x2 matrix. 
+ *   | C D | </pre>
+ * The implementation is inspired by Blinn, Jim: Consider the lowly 2x2 matrix. 
  * IEEE Computer Graphics and Applications, 16(2):82-88, 1996.
  * @author W. Burger
  * @version 2013-07-29

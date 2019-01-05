@@ -13,62 +13,62 @@ import org.apache.commons.math3.linear.MatrixUtils;
 //import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.stat.correlation.Covariance;
 
-
+@Deprecated	// this class is used nowhere
 public abstract class Statistics {
 	
-	public static int getMax(int[] A) {
-		int maxVal = A[0];
-		for (int i = 1; i < A.length; i++) {
-			if (A[i] > maxVal)
-				maxVal = A[i];
-		}
-		return maxVal;
-	}
-	
-	public static int getMin(int[] A) {
-		int minVal = A[0];
-		for (int i = 1; i < A.length; i++) {
-			if (A[i] < minVal)
-				minVal = A[i];
-		}
-		return minVal;
-	}
-	
-	public static float getMax(float[] A) {
-		float maxVal = A[0];
-		for (int i = 1; i < A.length; i++) {
-			if (A[i] > maxVal)
-				maxVal = A[i];
-		}
-		return maxVal;
-	}
-	
-	public static float getMin(float[] A) {
-		float minVal = A[0];
-		for (int i = 1; i < A.length; i++) {
-			if (A[i] < minVal)
-				minVal = A[i];
-		}
-		return minVal;
-	}
-	
-	public static double getMax(double[] A) {
-		double maxVal = A[0];
-		for (int i = 1; i < A.length; i++) {
-			if (A[i] > maxVal)
-				maxVal = A[i];
-		}
-		return maxVal;
-	}
-	
-	public static double getMin(double[] A) {
-		double minVal = A[0];
-		for (int i = 1; i < A.length; i++) {
-			if (A[i] < minVal)
-				minVal = A[i];
-		}
-		return minVal;
-	}
+//	public static int getMax(int[] A) {
+//		int maxVal = A[0];
+//		for (int i = 1; i < A.length; i++) {
+//			if (A[i] > maxVal)
+//				maxVal = A[i];
+//		}
+//		return maxVal;
+//	}
+//	
+//	public static int getMin(int[] A) {
+//		int minVal = A[0];
+//		for (int i = 1; i < A.length; i++) {
+//			if (A[i] < minVal)
+//				minVal = A[i];
+//		}
+//		return minVal;
+//	}
+//	
+//	public static float getMax(float[] A) {
+//		float maxVal = A[0];
+//		for (int i = 1; i < A.length; i++) {
+//			if (A[i] > maxVal)
+//				maxVal = A[i];
+//		}
+//		return maxVal;
+//	}
+//	
+//	public static float getMin(float[] A) {
+//		float minVal = A[0];
+//		for (int i = 1; i < A.length; i++) {
+//			if (A[i] < minVal)
+//				minVal = A[i];
+//		}
+//		return minVal;
+//	}
+//	
+//	public static double getMax(double[] A) {
+//		double maxVal = A[0];
+//		for (int i = 1; i < A.length; i++) {
+//			if (A[i] > maxVal)
+//				maxVal = A[i];
+//		}
+//		return maxVal;
+//	}
+//	
+//	public static double getMin(double[] A) {
+//		double minVal = A[0];
+//		for (int i = 1; i < A.length; i++) {
+//			if (A[i] < minVal)
+//				minVal = A[i];
+//		}
+//		return minVal;
+//	}
 	
 	// --------------------------------------------------------------------
 	

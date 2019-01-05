@@ -14,7 +14,7 @@ public abstract class Arithmetic {
 	// machine accuracy for IEEE 754 float/double;
 	public static final float EPSILON_FLOAT 	= 1e-7f;	// 1.19 x 10^-7
 	public static final double EPSILON_DOUBLE 	= 2e-16;	// 2.22 x 10^-16
-		
+
 	public static int sqr(int x) {
 		return x * x;
 	}
@@ -30,42 +30,41 @@ public abstract class Arithmetic {
 	/**
 	 * Integer version of the modulus operator ({@code a mod b}).
 	 * Also see <a href="http://en.wikipedia.org/wiki/Modulo_operation">here</a>.
-	 * This implementation has the same behavior as the {@code Math.floorMod(a,b)}
-	 * in Java 8 and higher (does not allow {@code b!=0}, however).
+	 * This implementation has the same behavior as the {@code Math.floorMod(a,b)},
+	 * available in Java 8 and higher.
+	 * An exception is thrown if b is zero.
 	 * @param a the dividend
 	 * @param b the divisor
 	 * @return {@code a mod b}
 	 */
 	public static int mod(int a, int b) {
-		if (b == 0)
-			return a;
-		// a, b have the same sign OR the remainder is zero
-        if ((long)a * b >= 0 || a % b == 0)	// or (a / b) * b == a
-        	return a - b * (a / b);
-        else
-        	return a - b * (a / b - 1);
+		return Math.floorMod(a, b);
 	}
 	
-	//  Original (published) method (gives wrong results for negative a):
-	//	public static int mod(int a, int b) {
-	//		if (b == 0)
-	//			return a;
-	//		if (a * b > 0)	// a, b are either both positive or negative
-	//			return a - b * (a / b);	
-	//		else
-	//			return a - b * (a / b - 1);
-	//	}
+	// original implementation (obsolete)
+//	public static int mod(int a, int b) {
+//		if (b == 0)
+//			return a;
+//		// a, b have the same sign OR the remainder is zero
+//        if ((long)a * b >= 0 || a % b == 0)	// or (a / b) * b == a
+//        	return a - b * (a / b);
+//        else
+//        	return a - b * (a / b - 1);
+//	}
 
 	
 	/**
 	 * Non-integer version of modulus operator, with results identical to Mathematica. 
-	 * Calulates {@code a mod b}.
+	 * Calculates {@code a mod b}.
 	 * Also see <a href="http://en.wikipedia.org/wiki/Modulo_operation">here</a>.
+	 * An exception is thrown if b is zero.
 	 * @param a dividend
 	 * @param b divisor
 	 * @return {@code a mod b}
 	 */
 	public static double mod(double a, double b) {
+		if (isZero(b))
+				throw new DivideByZeroException();
 		return a - b * Math.floor(a / b);
 	}
 	
@@ -98,7 +97,6 @@ public abstract class Arithmetic {
 		}
 	}
 	
-	
 	// -------------------------------------
 	
 	public static void main(String[] args) {
@@ -108,6 +106,7 @@ public abstract class Arithmetic {
 		System.out.println(Arithmetic.mod(-13, -4));
 		
 		int b = 7;
+		System.out.format("   i  -> floor |  mod\n");
 		for (int i = -25; i < 25; i++) {
 			System.out.format("%4d  -> %4d  | %4d \n", i, Math.floorMod(i, b), Arithmetic.mod(i, b));
 		}
