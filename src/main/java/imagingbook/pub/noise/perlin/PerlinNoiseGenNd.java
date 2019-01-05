@@ -10,6 +10,7 @@
 package imagingbook.pub.noise.perlin;
 
 import imagingbook.lib.math.Matrix;
+import imagingbook.lib.math.Matrix.IncompatibleDimensionsException;
 import imagingbook.pub.noise.hashing.HashFun;
 
 /**
@@ -53,20 +54,20 @@ public class PerlinNoiseGenNd extends PerlinNoiseGen {
 	 * noise function for the N-dimensional position X.
 	 */
 	public double noise(double[] X) {
-		int[] P0 = Matrix.floor(X);		// origin of hypercube around X
+		int[] P0 = floor(X);		// origin of hypercube around X
 		 
 		// get the 2^N gradient vectors for all hypercube corners:
 		double[][] G = new double[K][N];
 		for(int j=0; j<K; j++) { 	
-			G[j] = gradient(Matrix.add(P0,Q[j])); 			// gradient vector at cube corner j
+			G[j] = gradient(add(P0,Q[j])); 			// gradient vector at cube corner j
 		}
 		
-		double[] X01 = Matrix.subtract(X,P0);					// X01[k] are in [0,1]
+		double[] X01 = subtract(X,P0);					// X01[k] are in [0,1]
 		
 		// get the 2^N gradient values at all vertices for position X
 		double[] W = new double[K];
 		for (int j = 0; j < K; j++) { 	
-			W[j] = Matrix.dotProduct(G[j], Matrix.subtract(X01, Q[j]));
+			W[j] = Matrix.dotProduct(G[j], subtract(X01, Q[j]));
 		}
 		
 		return interpolate(X01, W, 0);
@@ -132,15 +133,42 @@ public class PerlinNoiseGenNd extends PerlinNoiseGen {
 		return v;
 	}
 	
-
-
-	
 	// from 2D example
 	double[] gradient(int i, int j) {
 		double[] g = hashFun.hash(i,j);		// hash() always returns a new double[]
 		g[0] = 2.0 * g[0] - 1;
 		g[1] = 2.0 * g[1] - 1;
 		return g;
+	}
+	
+	double[] subtract(double[] a, int[] b) {
+		if (a.length != b.length)
+			throw new IncompatibleDimensionsException();
+		final int n = a.length;
+		double[] c = new double[n];
+		for (int i = 0; i < n; i++) {
+			c[i] = a[i] - b[i];
+		}
+		return c;
+	}
+	
+	int[] add(int[] a, int[] b) {
+		if (a.length != b.length)
+			throw new IncompatibleDimensionsException();
+		final int n = a.length;
+		int[] c = new int[n];
+		for (int i = 0; i < n; i++) {
+			c[i] = c[i] + b[i];
+		}
+		return c;
+	}
+	
+	int[] floor(double[] a) {
+		int[] b = new int[a.length];
+		for (int i = 0; i < a.length; i++) {
+			b[i] = (int) Math.floor(a[i]);
+		}
+		return b;
 	}
 
 //	private int Power2(int k) {

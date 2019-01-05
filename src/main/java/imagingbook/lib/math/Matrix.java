@@ -3,18 +3,16 @@
  *  image processing published by Springer-Verlag in various languages and editions.
  * Permission to use and distribute this software is granted under the BSD 2-Clause 
  * "Simplified" License (see http://opensource.org/licenses/BSD-2-Clause). 
- * Copyright (c) 2006-2016 Wilhelm Burger, Mark J. Burge. All rights reserved. 
+ * Copyright (c) 2006-2019 Wilhelm Burger, Mark J. Burge. All rights reserved. 
  * Visit http://imagingbook.com for additional details.
  *******************************************************************************/
 
 package imagingbook.lib.math;
 
-import imagingbook.lib.settings.PrintPrecision;
+import static imagingbook.lib.math.Arithmetic.isZero;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 
 import org.apache.commons.math3.linear.DecompositionSolver;
@@ -22,32 +20,38 @@ import org.apache.commons.math3.linear.LUDecomposition;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.RealVector;
-import org.apache.commons.math3.linear.SingularMatrixException;
+
+import imagingbook.lib.math.Arithmetic.DivideByZeroException;
+import imagingbook.lib.settings.PrintPrecision;
 
 /**
- * This class contains a collection of static methods for calculations
+ * <p>This class defines a set of static methods for calculations
  * with vectors and matrices using native Java arrays without any enclosing 
  * objects structures. 
- * Matrices are simply two-dimensional array M[r][c], where r is the row index
+ * Matrices are simply two-dimensional arrays A[r][c], where r is the row index
  * and c is the column index (as common in linear algebra). This means that
  * matrices are really vectors of row vectors.
+ * Only arrays of type {@code float} and {@code double} are supported.
+ * All matrices are assumed to be rectangular (i.e., all rows are of equal length).</p>
  * 
- * Methods named with a trailing 'D' (e.g., 'multiplyD') operate destructively,
- * i.e., modify one of the passed arguments.
+ * <p>Methods named with a trailing 'D' (e.g., {@code multiplyD}) operate destructively,
+ * i.e., modify one of the passed arguments.</p>
  * 
- * TODO: add JavaDoc comments.
+ * <p>Most methods are self-explanatory and are therefore left undocumented.</p>
  * 
- * @author WB
- * @version 2017/02/20
+ * @author W. Burger
+ * @version 2019/01/05
  */
-
 public abstract class Matrix {
 	
-//	static {
-//		Locale.setDefault(Locale.US);
-//	}
-	
-	static Locale loc = Locale.US;
+	/** Locale used for printing decimal numbers. */
+	public static Locale PrintLocale = Locale.US;
+	/** Character used to separate successive vector and matrix elements. */
+	public static char SeparationChar = ',';
+	/** Leading delimiter used for lists of vector and matrix elements. */
+	public static char LeftDelimitChar = '{';
+	/** Trailing delimiter used for lists of vector and matrix elements. */
+	public static char RightDelimitChar = '}';
 	
 	// Vector and matrix creation
 
@@ -69,11 +73,27 @@ public abstract class Matrix {
 	
 	// Specific vector/matrix creation:
 	
-	public static double[] zeroVector(int size) {
-		return new double[size];
+	/**
+	 * Creates and returns a new zero-valued vector of the 
+	 * specified length.
+	 * @param length the length of the vector
+	 * @return a vector with zero values
+	 */
+	public static double[] zeroVector(int length) {
+		if (length < 1)
+			throw new IllegalArgumentException("vector size cannot be < 1");
+		return new double[length];
 	}
 	
+	/**
+	 * Creates and returns a new identity matrix of the 
+	 * specified size.
+	 * @param size the size of the matrix
+	 * @return an identity matrix
+	 */
 	public static double[][] idMatrix(int size) {
+		if (size < 1)
+			throw new IllegalArgumentException("matrix size cannot be < 1");
 		double[][] A = new double[size][size];
 		for (int i = 0; i < size; i++) {
 			A[i][i] = 1;
@@ -113,6 +133,30 @@ public abstract class Matrix {
 		}
 		return col;
 	}
+	
+	public static boolean isSquare(double[][] A) {
+		return A.length > 0 && A.length == A[0].length;
+	}
+	
+	public static boolean isSquare(float[][] A) {
+		return A.length > 0 && A.length == A[0].length;
+	}
+	
+	public static boolean sameSize(double[] a, double[] b) {
+		return a.length == b.length;
+	}
+	
+	public static boolean sameSize(float[] a, float[] b) {
+		return a.length == b.length;
+	}
+	
+	public static boolean sameSize(double[][] A, double[][] B) {
+		return (A.length == B.length) && (A[0].length == B[0].length);
+	}
+	
+	public static boolean sameSize(float[][] A, float[][] B) {
+		return (A.length == B.length) && (A[0].length == B[0].length);
+	}
 
 	// Matrix and vector duplication ------------------------------
 
@@ -133,7 +177,16 @@ public abstract class Matrix {
 		return B;
 	}
 	
-	public static float[][] duplicateToFloat(final double[][] A) {
+	public static float[][] duplicate(final float[][] A) {
+		final int m = A.length;
+		float[][] B = new float[m][];
+		for (int i = 0; i < m; i++) {
+			B[i] = A[i].clone();
+		}
+		return B;
+	}
+	
+	public static float[][] toFloat(final double[][] A) {
 		final int m = A.length;
 		final int n = A[0].length;
 		final float[][] B = new float[m][n];
@@ -145,16 +198,7 @@ public abstract class Matrix {
 		return B;
 	}
 	
-	public static float[][] duplicate(final float[][] A) {
-		final int m = A.length;
-		float[][] B = new float[m][];
-		for (int i = 0; i < m; i++) {
-			B[i] = A[i].clone();
-		}
-		return B;
-	}
-	
-	public static double[][] duplicateToDouble(final float[][] A) {
+	public static double[][] toDouble(final float[][] A) {
 		final int m = A.length;
 		final int n = A[0].length;
 		final double[][] B = new double[m][n];
@@ -168,25 +212,20 @@ public abstract class Matrix {
 	
 	// Element-wise arithmetic -------------------------------
 	
-	//TODO: change to multiple args: public static int[] add(int[]... as)
-	
-	public static int[] add(int[] a, int[] b) {
-		int[] c = new int[a.length];
-		for (int i = 0; i < a.length; i++) {
-			c[i] = c[i] + b[i];
-		}
-		return c;
-	}
-	
 	public static double[] add(double[] a, double[] b) {
-		double[] c = new double[a.length];
-		for (int i = 0; i < a.length; i++) {
+		if (!sameSize(a, b))
+			throw new IncompatibleDimensionsException();
+		final int n = a.length;
+		double[] c = new double[n];
+		for (int i = 0; i < n; i++) {
 			c[i] = a[i] + b[i];
 		}
 		return c;
 	}
 
 	public static double[][] add(double[][] A, double[][] B) {
+		if (!sameSize(A, B))
+			throw new IncompatibleDimensionsException();
 		final int m = A.length;
 		final int n = A[0].length;
 		double[][] C = new double[m][n];
@@ -199,27 +238,14 @@ public abstract class Matrix {
 	}
 	
 	public static double[] subtract(double[] a, double[] b) {
-		double[] c = a.clone();
-		for (int i = 0; i < a.length; i++) {
-			c[i] = c[i] - b[i];
+		if (!sameSize(a, b))
+			throw new IncompatibleDimensionsException();
+		final int n = a.length;
+		double[] c = new double[n];
+		for (int i = 0; i < n; i++) {
+			c[i] = a[i] - b[i];
 		}
 		return c;
-	}
-	
-	public static double[] subtract(double[] a, int[] b) {
-		double[] c = a.clone();
-		for (int i = 0; i < a.length; i++) {
-			c[i] = c[i] - b[i];
-		}
-		return c;
-	}
-	
-	public static int[] floor(double[] a) {
-		int[] b = new int[a.length];
-		for (int i = 0; i < a.length; i++) {
-			b[i] = (int) Math.floor(a[i]);
-		}
-		return b;
 	}
 
 	// Scalar multiplications -------------------------------
@@ -271,11 +297,7 @@ public abstract class Matrix {
 	// non-destructive
 	public static float[][] multiply(final float s, final float[][] A) {
 		float[][] B = duplicate(A);
-		for (int i = 0; i < B.length; i++) {
-			for (int j = 0; j < B[i].length; j++) {
-				B[i][j] = B[i][j] * s;
-			}
-		}
+		multiplyD(s, B);
 		return B;
 	}
 	
@@ -290,24 +312,32 @@ public abstract class Matrix {
 	
 	// matrix-vector multiplications ----------------------------------------
 
-	// non-destructive
+	/**
+	 * Multiplies a vector x with a matrix A from the right, i.e., y = x * A,
+	 * where x is treated as a row vector and the result y is also a row vector.
+	 * @param x a (row) vector of length m
+	 * @param A a matrix of size (m,n)
+	 * @return a (row) vector of length n
+	 */
 	public static double[] multiply(final double[] x, final double[][] A) {
-		double[] Y = new double[getNumberOfColumns(A)];
-		multiplyD(x, A, Y);
-		return Y;
+		double[] y = new double[getNumberOfColumns(A)];
+		multiplyD(x, A, y);
+		return y;
 	}
 	
-	/*  
-	 * Implements a right (post-) matrix-vector multiplication: x . A -> y
-	 * x is treated as a row vector of length m, matrix A is of size (m,n).
-	 * y (a row vector of length n) is modified.
-	 * destructive
+	/**
+	 * Destructive version of {@link #multiply(double[], double[][])}.
+	 * @param x a (row) vector of length m
+	 * @param A matrix of size (m,n)
+	 * @param y a (row) vector of length n
 	 */
 	public static void multiplyD(final double[] x, final double[][] A, double[] y) {
+		if (x == y) 
+			throw new SameSourceTargetException();
 		final int m = getNumberOfRows(A);
 		final int n = getNumberOfColumns(A);
 		if (x.length != m || y.length != n) 
-			throw new IllegalArgumentException("incompatible vector-matrix dimensions");
+			throw new IncompatibleDimensionsException();
 		for (int i = 0; i < n; i++) {
 			double s = 0;
 			for (int j = 0; j < m; j++) {
@@ -316,13 +346,13 @@ public abstract class Matrix {
 			y[i] = s;
 		}
 	}
-	
 
-	/*  
-	 * implements a left (pre-) matrix-vector multiplication:  A . x -> y
-	 * Matrix A is of size (m,n), column vector x is of length n.
-	 * The result y is a column vector of length m.
-	 * non-destructive
+	/**
+	 * Multiplies a matrix A with a vector x from the right, i.e., y = A * x,
+	 * where x is treated as a column vector and the result y is also a column vector.
+	 * @param x a (column) vector of length n
+	 * @param A a matrix of size (m,n)
+	 * @return a (column) vector of length m
 	 */
 	public static double[] multiply(final double[][] A, final double[] x) {
 		double[] y = new double[getNumberOfRows(A)];
@@ -330,12 +360,19 @@ public abstract class Matrix {
 		return y;
 	}
 	
-	// destructive
+	/**
+	 * Destructive version of {@link #multiply(double[][], double[])}.
+	 * @param A matrix of size (m,n)
+	 * @param x a (column) vector of length n
+	 * @param y a (column) vector of length m
+	 */
 	public static void multiplyD(final double[][] A, final double[] x, double[] y) {
+		if (x == y) 
+			throw new SameSourceTargetException();
 		final int m = getNumberOfRows(A);
 		final int n = getNumberOfColumns(A);
 		if (x.length != n || y.length != m) 
-			throw new IllegalArgumentException("incompatible matrix-vector dimensions");
+			throw new IncompatibleDimensionsException();
 		for (int i = 0; i < m; i++) {
 			double s = 0;
 			for (int j = 0; j < n; j++) {
@@ -345,7 +382,13 @@ public abstract class Matrix {
 		}
 	}
 	
-	// non-destructive
+	/**
+	 * Multiplies a matrix A with a vector x from the right, i.e., y = A * x,
+	 * where x is treated as a column vector and the result y is also a column vector.
+	 * @param x a (column) vector of length n
+	 * @param A a matrix of size (m,n)
+	 * @return a (column) vector of length m
+	 */
 	public static float[] multiply(final float[][] A, final float[] x) {
 		float[] y = new float[getNumberOfRows(A)];
 		multiplyD(A, x, y);
@@ -353,17 +396,18 @@ public abstract class Matrix {
 	}
 	
 	/**
-	 * Matrix-vector product: A . x = y 
-	 * All arguments must be appropriately sized. Destructive.
-	 * @param A matrix of size m,n (input)
-	 * @param x vector of length n (input)
-	 * @param y vector of length m (result)
+	 * Destructive version of {@link #multiply(float[][], float[])}.
+	 * @param A matrix of size (m,n)
+	 * @param x a (column) vector of length n
+	 * @param y a (column) vector of length m
 	 */
 	public static void multiplyD(final float[][] A, final float[] x, float[] y) {
+		if (x == y) 
+			throw new SameSourceTargetException();
 		final int m = getNumberOfRows(A);
 		final int n = getNumberOfColumns(A);
 		if (x.length != n || y.length != m) 
-			throw new IllegalArgumentException("incompatible matrix-vector dimensions");
+			throw new IncompatibleDimensionsException();
 		for (int i = 0; i < m; i++) {
 			double s = 0;
 			for (int j = 0; j < n; j++) {
@@ -388,9 +432,14 @@ public abstract class Matrix {
 	
 	// A * B -> C (destructive)
 	public static void multiplyD(final double[][] A, final double[][] B, final double[][] C) {
+		if (A == C || B == C) 
+			throw new SameSourceTargetException();
 		final int mA = getNumberOfRows(A);
 		final int nA = getNumberOfColumns(A);
+		final int mB = getNumberOfRows(B);
 		final int nB = getNumberOfColumns(B);
+		if (nA != mB)
+			throw new IncompatibleDimensionsException();
 		for (int i = 0; i < mA; i++) {
 			for (int j = 0; j < nB; j++) {
 				double s = 0;
@@ -408,18 +457,20 @@ public abstract class Matrix {
 		final int mA = getNumberOfRows(A);
 		final int nB = getNumberOfColumns(B);
 		float[][] C = createFloatMatrix(mA, nB);
-		multiply(A, B, C);
+		multiplyD(A, B, C);
 		return C;
 	}
 
 	// A * B -> C (destructive)
-	public static void multiply(final float[][] A, final float[][] B, final float[][] C) {
+	public static void multiplyD(final float[][] A, final float[][] B, final float[][] C) {
+		if (A == C || B == C) 
+			throw new SameSourceTargetException();
 		final int mA = getNumberOfRows(A);
 		final int nA = getNumberOfColumns(A);
 		final int mB = getNumberOfRows(B);
 		final int nB = getNumberOfColumns(B);
 		if (nA != mB)
-			throw new IllegalArgumentException("Matrix.multiply: wrong row/col dimensions");
+			throw new IncompatibleDimensionsException();
 		for (int i = 0; i < mA; i++) {
 			for (int j = 0; j < nB; j++) {
 				float s = 0;
@@ -433,25 +484,40 @@ public abstract class Matrix {
 	
 	// Vector-vector products ---------------------------------------
 	
-	// A is considered a row vector, B is a column vector, both of length n.
-	// returns a scalar value.
-	public static double dotProduct(final double[] A, final double[] B) {
+	/**
+	 * Calculates and returns the dot (inner or scalar) product of two vectors,
+	 * which must have the same length.
+	 * @param x first vector
+	 * @param y second vector
+	 * @return the dot product
+	 */
+	public static double dotProduct(final double[] x, final double[] y) {
+		if (!sameSize(x, y))
+			throw new IncompatibleDimensionsException();
 		double sum = 0;
-		for (int i = 0; i < A.length; i++) {
-			sum = sum + A[i] * B[i];
+		for (int i = 0; i < x.length; i++) {
+			sum = sum + x[i] * y[i];
 		}
 		return sum;
 	}
 	
 	// A is considered a column vector, B is a row vector, of length m, n, resp.
 	// returns a matrix M of size (m,n).
-	public static double[][] outerProduct(final double[] A, final double[] B) {
-		final int m = A.length;
-		final int n = B.length;
+	/**
+	 * Calculates and returns the outer product of two vectors, which is a
+	 * matrix of size (m,n), where m is the length of the first vector and
+	 * m is the length of the second vector.
+	 * @param x first vector (of length m)
+	 * @param y second vector (of length n)
+	 * @return the outer product (matrix)
+	 */
+	public static double[][] outerProduct(final double[] x, final double[] y) {
+		final int m = x.length;
+		final int n = y.length;
 		final double[][] M = new double[m][n];
 		for (int i = 0; i < m; i++) {
 			for (int j = 0; j < n; j++) {
-				M[i][j] = A[i] * B[j];
+				M[i][j] = x[i] * y[j];
 			}
 		}
 		return M;
@@ -459,52 +525,105 @@ public abstract class Matrix {
 
 	//  Vector norms ---------------------------------------------------
 
-	public static double normL1(final double[] A) {
+	/**
+	 * Calculates and returns the L1 norm of the given vector.
+	 * @param x a vector
+	 * @return the L1 norm of the vector
+	 */
+	public static double normL1(final double[] x) {
 		double sum = 0;
-		for (double x : A) {
-			sum = sum + Math.abs(x);
+		for (double val : x) {
+			sum = sum + Math.abs(val);
 		}
 		return sum;
 	}
 
-	public static double normL2(final double[] A) {
-		return Math.sqrt(normL2squared(A));
+	/**
+	 * Calculates and returns the L2 norm of the given vector.
+	 * @param x a vector
+	 * @return the L2 norm of the vector
+	 */
+	public static double normL2(final double[] x) {
+		return Math.sqrt(normL2squared(x));
 	}
 
-	public static double normL2squared(final double[] A) {
+	/**
+	 * Calculates and returns the squared L2 norm of the given vector.
+	 * The squared norm is less costly to calculate (no square root
+	 * needed) than the L2 norm and is thus often used for efficiency. 
+	 * @param x a vector
+	 * @return the squared L2 norm of the vector
+	 */
+	public static double normL2squared(final double[] x) {
 		double sum = 0;
-		for (double x : A) {
-			sum = sum + (x * x);
+		for (double val : x) {
+			sum = sum + (val * val);
 		}
 		return sum;
 	}
 	
-	public static float normL1(final float[] A) {
+	/**
+	 * Calculates and returns the L1 norm of the given vector.
+	 * @param x a vector
+	 * @return the L1 norm of the vector
+	 */
+	public static float normL1(final float[] x) {
 		double sum = 0;
-		for (double x : A) {
-			sum = sum + Math.abs(x);
+		for (double val : x) {
+			sum = sum + Math.abs(val);
 		}
 		return (float) sum;
 	}
 
-	public static float normL2(final float[] A) {
-		return (float) Math.sqrt(normL2squared(A));
+	/**
+	 * Calculates and returns the L2 norm of the given vector.
+	 * @param x a vector
+	 * @return the L2 norm of the vector
+	 */
+	public static float normL2(final float[] x) {
+		return (float) Math.sqrt(normL2squared(x));
 	}
 
-	public static float normL2squared(final float[] A) {
+	/**
+	 * Calculates and returns the squared L2 norm of the given vector.
+	 * The squared norm is less costly to calculate (no square root
+	 * needed) than the L2 norm and is thus often used for efficiency. 
+	 * @param x a vector
+	 * @return the squared L2 norm of the vector
+	 */
+	public static float normL2squared(final float[] x) {
 		double sum = 0;
-		for (double x : A) {
-			sum = sum + (x * x);
+		for (double val : x) {
+			sum = sum + (val * val);
 		}
 		return (float) sum;
+	}
+	
+	// Matrix (Froebenius) norm ---------------------------------------
+	
+	/**
+	 * Calculates and returns the Froebenius norm of the given matrix.
+	 * @param A a matrix
+	 * @return the norm of the matrix
+	 */
+	public static double norm(final double[][] A) {
+		final int m = getNumberOfRows(A);
+		final int n = getNumberOfColumns(A);
+		double s = 0;
+		for (int i = 0; i < m; i++) {
+			for (int j = 0; j < n; j++) {
+				s = s + A[i][j] * A[i][j];
+			}
+		}
+		return Math.sqrt(s);
 	}
 
 	// Summation --------------------------------------------------
 
-	public static double sum(final double[] A) {
+	public static double sum(final double[] x) {
 		double sum = 0;
-		for (int i = 0; i < A.length; i++) {
-			sum = sum + A[i];
+		for (int i = 0; i < x.length; i++) {
+			sum = sum + x[i];
 		}
 		return sum;
 	}
@@ -519,10 +638,10 @@ public abstract class Matrix {
 		return sum;
 	}
 	
-	public static float sum(final float[] A) {
+	public static float sum(final float[] x) {
 		double sum = 0;
-		for (int i = 0; i < A.length; i++) {
-			sum = sum + A[i];
+		for (int i = 0; i < x.length; i++) {
+			sum = sum + x[i];
 		}
 		return (float) sum;
 	}
@@ -540,9 +659,10 @@ public abstract class Matrix {
 	// --------------------------------------------------
 	
 	/**
-	 * Calculates the sum of all matrix columns.
-	 * @param A The input matrix
-	 * @return A vector with sum of all matrix columns
+	 * Calculates the sums of all matrix columns and returns 
+	 * them as a vector.
+	 * @param A  a matrix
+	 * @return a vector containing the sums of all matrix columns
 	 */
 	public static double[] sumColumns(final double[][] A) {
 		double[] sumVec = new double[getNumberOfRows(A)];
@@ -557,9 +677,10 @@ public abstract class Matrix {
 	}
 	
 	/**
-	 * Calculates the sum of all matrix columns.
-	 * @param A The input matrix
-	 * @return A vector with sum of all matrix columns
+	 * Calculates the sums of all matrix columns and returns 
+	 * them as a vector.
+	 * @param A a matrix
+	 * @return a vector containing the sums of all matrix columns
 	 */
 	public static float[] sumColumns(final float[][] A) {
 		float[] sumVec = new float[getNumberOfRows(A)];
@@ -574,7 +695,7 @@ public abstract class Matrix {
 	}
 	
 	/**
-	 * Calculates the sum of all matrix rows.
+	 * Calculates the sums of all matrix rows.
 	 * @param A The input matrix
 	 * @return A vector with sum of all matrix rows
 	 */
@@ -591,7 +712,7 @@ public abstract class Matrix {
 	}
 	
 	/**
-	 * Calculates the sum of all matrix rows.
+	 * Calculates the sums of all matrix rows.
 	 * @param A The input matrix
 	 * @return A vector with sum of all matrix rows
 	 */
@@ -607,11 +728,13 @@ public abstract class Matrix {
 		return sumVec;
 	}
 	
-	// Min/max of vectors ------------------------
+	// min/max of vectors ------------------------
 	
-	public static float min(final float[] A) {
+	public static float min(final float[] x) {
+		if (x.length == 0)
+			throw new ZeroLengthVectorException();
 		float minval = Float.POSITIVE_INFINITY;
-		for (float val : A) {
+		for (float val : x) {
 			if (val < minval) {
 				minval = val;
 			}
@@ -619,10 +742,11 @@ public abstract class Matrix {
 		return minval;
 	}
 	
-	
-	public static double min(final double[] A) {
+	public static double min(final double[] x) {
+		if (x.length == 0)
+			throw new ZeroLengthVectorException();
 		double minval = Double.POSITIVE_INFINITY;
-		for (double val : A) {
+		for (double val : x) {
 			if (val < minval) {
 				minval = val;
 			}
@@ -630,9 +754,11 @@ public abstract class Matrix {
 		return minval;
 	}
 	
-	public static float max(final float[] A) {
+	public static float max(final float[] x) {
+		if (x.length == 0)
+			throw new ZeroLengthVectorException();
 		float maxval = Float.NEGATIVE_INFINITY;
-		for (float val : A) {
+		for (float val : x) {
 			if (val > maxval) {
 				maxval = val;
 			}
@@ -640,10 +766,11 @@ public abstract class Matrix {
 		return maxval;
 	}
 	
-	
-	public static double max(final double[] A) {
+	public static double max(final double[] x) {
+		if (x.length == 0)
+			throw new ZeroLengthVectorException();
 		double maxval = Double.NEGATIVE_INFINITY;
-		for (double val : A) {
+		for (double val : x) {
 			if (val > maxval) {
 				maxval = val;
 			}
@@ -653,71 +780,99 @@ public abstract class Matrix {
 	
 	// Vector concatenation -----------------------
 	
-	public static float[] concatenate(float[]... xs) {
-		List<Float> vlist = new ArrayList<Float>();
-		for (float[] a : xs) {
-			for (float val : a) {
-				vlist.add(val);
+	/**
+	 * Joins (concatenates) a sequence of vectors into a single vector.
+	 * @param xs a sequence of vectors (at least one vector)
+	 * @return a vector containing all elements of the input vectors
+	 */
+	public static float[] join(float[]... xs) {
+		int n = 0;
+		for (float[] x : xs) {
+			n = n + x.length;
+		}
+		float[] va = new float[n];
+		int j = 0;
+		for (float[] x : xs) {
+			for (int i = 0; i < x.length; i++) {
+				va[j] = x[i];
+				j++;
 			}
-		}
-		
-		float[] va = new float[vlist.size()];
-		int i = 0;
-		for (float val : vlist) {
-			va[i] = val;
-			i++;
-		}
+		}		
 		return va;
 	}
-	
-	public static double[] concatenate(double[]... xs) {
-		List<Double> vlist = new ArrayList<Double>();
-		for (double[] a : xs) {
-			for (double val : a) {
-				vlist.add(val);
+
+	/**
+	 * Joins (concatenates) a sequence of vectors into a single vector.
+	 * @param xs a sequence of vectors (at least one vector)
+	 * @return a vector containing all elements of the input vectors
+	 */
+	public static double[] join(double[]... xs) {
+		int n = 0;
+		for (double[] x : xs) {
+			n = n + x.length;
+		}
+		double[] va = new double[n];	
+		int j = 0;
+		for (double[] x : xs) {
+			for (int i = 0; i < x.length; i++) {
+				va[j] = x[i];
+				j++;
 			}
-		}
-		
-		double[] va = new double[vlist.size()];
-		int i = 0;
-		for (double val : vlist) {
-			va[i] = val;
-			i++;
-		}
+		}		
 		return va;
 	}
 	
 	// Homogeneous coordinates ---------------------------------
 	
-	public static double[] toHomogeneous(double[] cvec) {
-		double[] hvec = new double[cvec.length + 1];
-		for (int i = 0; i < cvec.length; i++) {
-			hvec[i] = cvec[i];
-			hvec[hvec.length - 1] = 1;
+	/**
+	 * Converts a Cartesian vector to an equivalent homogeneous
+	 * vector, which contains an additional 1-element.
+	 * @param xc a Cartesian vector
+	 * @return an equivalent homogeneous vector
+	 */
+	public static double[] toHomogeneous(double[] xc) {
+		double[] xh = new double[xc.length + 1];
+		for (int i = 0; i < xc.length; i++) {
+			xh[i] = xc[i];
+			xh[xh.length - 1] = 1;
 		}
-		return hvec;
+		return xh;
 	}
 	
-	public static double[] toCartesian(double[] hvec) {
-		double[] cvec = new double[hvec.length - 1];
-		final double s = 1 / hvec[hvec.length - 1];	// TODO: check for zero factor
-		for (int i = 0; i < hvec.length - 1; i++) {
-			cvec[i] = s * hvec[i];
+	/**
+	 * Converts a homogeneous vector to its equivalent Cartesian
+	 * vector, which is one element shorter.
+	 * @param xh a homogeneous vector
+	 * @return the equivalent Cartesian vector
+	 */
+	public static double[] toCartesian(double[] xh) {
+		double[] xc = new double[xh.length - 1];
+		final double s = 1 / xh[xh.length - 1];
+		if (isZero(s))
+			throw new DivideByZeroException();
+		for (int i = 0; i < xh.length - 1; i++) {
+			xc[i] = s * xh[i];
 		}
-		return cvec;
+		return xc;
 	}
 	
 	// Determinants --------------------------------------------
 	
 	public static float determinant2x2(final float[][] A) {
+		if (A.length != 2 || A[0].length != 2)
+			throw new IncompatibleDimensionsException();
 		return A[0][0] * A[1][1] - A[0][1] * A[1][0];
 	}
 	
 	public static double determinant2x2(final double[][] A) {
+		if (A.length != 2 || A[0].length != 2)
+			throw new IncompatibleDimensionsException();
 		return A[0][0] * A[1][1] - A[0][1] * A[1][0];
 	}
 	
 	public static float determinant3x3(final float[][] A) {
+		if (A.length != 3 || A[0].length != 3)
+			throw new IncompatibleDimensionsException();
 		return
 				A[0][0] * A[1][1] * A[2][2] +
 				A[0][1] * A[1][2] * A[2][0] +
@@ -728,6 +883,8 @@ public abstract class Matrix {
 	}
 
 	public static double determinant3x3(final double[][] A) {
+		if (A.length != 3 || A[0].length != 3)
+			throw new IncompatibleDimensionsException();
 		return 
 			A[0][0] * A[1][1] * A[2][2] + 
 			A[0][1] * A[1][2] * A[2][0]	+ 
@@ -738,8 +895,24 @@ public abstract class Matrix {
 	}
 	
 	public static double determinant(final double[][] A) {
+		if (!isSquare(A))
+			throw new NonsquareMatrixException();
 		RealMatrix M = MatrixUtils.createRealMatrix(A);
 		return new LUDecomposition(M).getDeterminant();
+	}
+	
+	// Matrix trace ---------------------------------------
+	
+	public static double trace(final double[][] A) {
+		final int m = getNumberOfRows(A);
+		final int n = getNumberOfColumns(A);
+		if (m != n) 
+			throw new NonsquareMatrixException();
+		double s = 0;
+		for (int i = 0; i < m; i++) {
+				s = s + A[i][i];
+		}
+		return s;
 	}
 	
 	// Matrix transposition ---------------------------------------
@@ -768,185 +941,58 @@ public abstract class Matrix {
 		return At;
 	}
 	
-	// Matrix Froebenius norm ---------------------------------------
-	
-	public static double froebeniusNorm(final double[][] A) {
-		final int m = getNumberOfRows(A);
-		final int n = getNumberOfColumns(A);
-		double s = 0;
-		for (int i = 0; i < m; i++) {
-			for (int j = 0; j < n; j++) {
-				s = s + A[i][j] * A[i][j];
-			}
-		}
-		return Math.sqrt(s);
-	}
-	
-	// Matrix trace ---------------------------------------
-	
-	public static double trace(final double[][] A) {
-		final int m = getNumberOfRows(A);
-		final int n = getNumberOfColumns(A);
-		if (m != n) 
-			throw new IllegalArgumentException("square matrix expected");
-		double s = 0;
-		for (int i = 0; i < m; i++) {
-				s = s + A[i][i];
-		}
-		return s;
-	}
-	
-	
 	// Matrix inversion ---------------------------------------
 	
-	
 	/**
-	 * @param A a square matrix.
-	 * @return the inverse of A or null if A is non-square or singular.
+	 * Calculates and returns the inverse of the given matrix, which
+	 * must be square. Exceptions are thrown if the supplied matrix is
+	 * not square or ill-conditioned (singular).
+	 * @param A a square matrix
+	 * @return the inverse matrix
 	 */
 	public static double[][] inverse(final double[][] A) {
+		if (!isSquare(A))
+			throw new NonsquareMatrixException();
 		RealMatrix M = MatrixUtils.createRealMatrix(A);
-		if (!M.isSquare())
-			return null;
-		else {
-			double[][] Ai = null;
-			try {
-				RealMatrix Mi = MatrixUtils.inverse(M); //new LUDecomposition(M).getSolver().getInverse();
-				Ai = Mi.getData();
-			} catch (SingularMatrixException e) {}
-			return Ai;
-		}
+		return MatrixUtils.inverse(M).getData();
 	}
 	
+	/**
+	 * Calculates and returns the inverse of the given matrix, which
+	 * must be square. Exceptions are thrown if the supplied matrix is
+	 * not square or ill-conditioned (singular).
+	 * @param A a square matrix
+	 * @return the inverse matrix
+	 */
 	public static float[][] inverse(final float[][] A) {
-		double[][] B = duplicateToDouble(A);
-		double[][] Bi = inverse(B);
-		if (Bi == null)
-			return null;
-		else
-			return duplicateToFloat(Bi);
-	}
-	
-	// numerically stable?
-	@Deprecated
-	public static float[][] inverse2x2(final float[][] A) {
-		float[][] B = duplicate(A);
-		final double det = determinant2x2(B);
-		if (Math.abs(det) < Arithmetic.EPSILON_DOUBLE)
-			return null;
-		else {
-			final double a00 = B[0][0];
-			final double a01 = B[0][1];
-			final double a10 = B[1][0];
-			final double a11 = B[1][1];
-			B[0][0] = (float) ( a11 / det);
-			B[0][1] = (float) (-a01 / det);
-			B[1][0] = (float) (-a10 / det);
-			B[1][1] = (float) ( a00 / det);
-			return B;
-		}
+		if (!isSquare(A))
+			throw new NonsquareMatrixException();
+		double[][] Ad = toDouble(A);
+		return toFloat(inverse(Ad));
 	}
 
-	// numerically stable?
-	@Deprecated
-	public static double[][] inverse2x2(final double[][] A) {
-		double[][] B = duplicate(A);
-		final double det = determinant2x2(B);
-		if (Math.abs(det) < Arithmetic.EPSILON_DOUBLE)
-			return null;
-		else {
-			final double a00 = B[0][0];
-			final double a01 = B[0][1];
-			final double a10 = B[1][0];
-			final double a11 = B[1][1];
-			B[0][0] =  a11 / det;
-			B[0][1] = -a01 / det;
-			B[1][0] = -a10 / det;
-			B[1][1] =  a00 / det;
-			return B;
-		}
-	}
-
-	// use general method, i.e. double[][] inverse(double[][] A)
-//	@Deprecated
-//	public static double[][] inverse3x3(final double[][] A) {
-//		double[][] B = duplicate(A);
-//		final double det = determinant3x3(B);
-//		if (Math.abs(det) < Arithmetic.EPSILON_DOUBLE)
-//			return null;
-//		else {
-//			final double a00 = B[0][0];
-//			final double a01 = B[0][1];
-//			final double a02 = B[0][2];
-//			final double a10 = B[1][0];
-//			final double a11 = B[1][1];
-//			final double a12 = B[1][2];
-//			final double a20 = B[2][0];
-//			final double a21 = B[2][1];
-//			final double a22 = B[2][2];
-//			B[0][0] = (a11 * a22 - a12 * a21) / det;
-//			B[0][1] = (a02 * a21 - a01 * a22) / det;
-//			B[0][2] = (a01 * a12 - a02 * a11) / det;
-//
-//			B[1][0] = (a12 * a20 - a10 * a22) / det;
-//			B[1][1] = (a00 * a22 - a02 * a20) / det;
-//			B[1][2] = (a02 * a10 - a00 * a12) / det;
-//
-//			B[2][0] = (a10 * a21 - a11 * a20) / det;
-//			B[2][1] = (a01 * a20 - a00 * a21) / det;
-//			B[2][2] = (a00 * a11 - a01 * a10) / det;
-//			return B;
-//		}
-//	}
-	
-	// numerically stable? should be replaced by standard inversion
-//	@Deprecated
-//	public static float[][] inverse3x3(final float[][] A) {
-//		final float[][] B = duplicate(A);
-//		final double det = determinant3x3(B);
-//		// IJ.log("   determinant = " + det);
-//		if (Math.abs(det) < Arithmetic.EPSILON_DOUBLE)
-//			return null;
-//		else {
-//			final double a00 = B[0][0];
-//			final double a01 = B[0][1];
-//			final double a02 = B[0][2];
-//			final double a10 = B[1][0];
-//			final double a11 = B[1][1];
-//			final double a12 = B[1][2];
-//			final double a20 = B[2][0];
-//			final double a21 = B[2][1];
-//			final double a22 = B[2][2];
-//			B[0][0] = (float) ((a11 * a22 - a12 * a21) / det);
-//			B[0][1] = (float) ((a02 * a21 - a01 * a22) / det);
-//			B[0][2] = (float) ((a01 * a12 - a02 * a11) / det);
-//
-//			B[1][0] = (float) ((a12 * a20 - a10 * a22) / det);
-//			B[1][1] = (float) ((a00 * a22 - a02 * a20) / det);
-//			B[1][2] = (float) ((a02 * a10 - a00 * a12) / det);
-//
-//			B[2][0] = (float) ((a10 * a21 - a11 * a20) / det);
-//			B[2][1] = (float) ((a01 * a20 - a00 * a21) / det);
-//			B[2][2] = (float) ((a00 * a11 - a01 * a10) / det);
-//			return B;
-//		}
-//	}
-	
 	// ------------------------------------------------------------------------
 	
-	// Finds the EXACT solution x for A.x = b
+	/**
+	 * Finds the exact solution x for the linear systems of equations
+	 * A * x = b. Exceptions are thrown if the supplied matrix is
+	 * not square or ill-conditioned (singular).
+	 * @param A a square matrix of size n x n
+	 * @param b a vector of length n
+	 * @return the solution vector of length n
+	 */
 	public static double[] solve(final double[][] A, double[] b) {
 		RealMatrix AA = MatrixUtils.createRealMatrix(A);
 		RealVector bb = MatrixUtils.createRealVector(b);
 		DecompositionSolver solver = new LUDecomposition(AA).getSolver();
-		double[] x = null;
-		try {
-			x = solver.solve(bb).toArray();
-		} catch (SingularMatrixException e) {}
-		return x;
+//		double[] x = null;
+//		try {
+//			x = solver.solve(bb).toArray();
+//		} catch (SingularMatrixException e) {}
+		return solver.solve(bb).toArray();
 	}
 	
-	// Output to streams and strings ------------------------------------------
+	// Output to strings and streams ------------------------------------------
 	
 	public static String toString(double[] x) {
 		ByteArrayOutputStream bas = new ByteArrayOutputStream();
@@ -955,16 +1001,11 @@ public abstract class Matrix {
 		return bas.toString();
 	}
 	
-	public static void printToStream(double[] A, PrintStream strm) {
-		String fStr = PrintPrecision.getFormatStringFloat();
-		strm.format("{");
-		for (int i = 0; i < A.length; i++) {
-			if (i > 0)
-				strm.format(", ");
-			strm.format(loc, fStr, A[i]);
-		}
-		strm.format("}");
-		strm.flush();
+	public static String toString(float[] x) {
+		ByteArrayOutputStream bas = new ByteArrayOutputStream();
+		PrintStream strm = new PrintStream(bas);
+		printToStream(x, strm);
+		return bas.toString();
 	}
 	
 	public static String toString(double[][] A) {
@@ -974,45 +1015,6 @@ public abstract class Matrix {
 		return bas.toString();
 	}
 	
-	public static void printToStream(double[][] A, PrintStream strm) {
-		String fStr = PrintPrecision.getFormatStringFloat();
-		strm.format("{");
-		for (int i=0; i< A.length; i++) {
-			if (i == 0)
-				strm.format("{");
-			else
-				strm.format(", \n{");
-			for (int j=0; j< A[i].length; j++) {
-				if (j == 0) 
-					strm.format(loc, fStr, A[i][j]);
-				else
-					strm.format(loc, ", " + fStr, A[i][j]);
-			}
-			strm.format("}");
-		}
-		strm.format("}");
-		strm.flush();
-	}
-	
-	public static String toString(float[] A) {
-		ByteArrayOutputStream bas = new ByteArrayOutputStream();
-		PrintStream strm = new PrintStream(bas);
-		printToStream(A, strm);
-		return bas.toString();
-	}
-	
-	public static void printToStream(float[] A, PrintStream strm) {
-		String fStr = PrintPrecision.getFormatStringFloat();
-		strm.format("{");
-		for (int i = 0; i < A.length; i++) {
-			if (i > 0)
-				strm.format(", ");
-			strm.format(loc, fStr, A[i]);
-		}
-		strm.format("}");
-		strm.flush();
-	}
-
 	public static String toString(float[][] A) {
 		ByteArrayOutputStream bas = new ByteArrayOutputStream();
 		PrintStream strm = new PrintStream(bas);
@@ -1020,29 +1022,116 @@ public abstract class Matrix {
 		return bas.toString();
 	}
 	
-	public static void printToStream(float[][] A, PrintStream strm) {
+	// --------------------
+	
+	public static void printToStream(double[] x, PrintStream strm) {
 		String fStr = PrintPrecision.getFormatStringFloat();
-		strm.format("{");
+		strm.format("%c", LeftDelimitChar);
+		for (int i = 0; i < x.length; i++) {
+			if (i > 0)
+				strm.format("%c ", SeparationChar);
+			strm.format(PrintLocale, fStr, x[i]);
+		}
+		strm.format("%c", RightDelimitChar);
+		strm.flush();
+	}
+	
+	public static void printToStream(double[][] A, PrintStream strm) {
+		String fStr = PrintPrecision.getFormatStringFloat();
+		strm.format("%c", LeftDelimitChar);
 		for (int i=0; i< A.length; i++) {
 			if (i == 0)
-				strm.format("{");
+				strm.format("%c", LeftDelimitChar);
 			else
-				strm.format(", \n{");
+				strm.format("%c \n%c", SeparationChar, LeftDelimitChar);
 			for (int j=0; j< A[i].length; j++) {
 				if (j == 0) 
-					strm.format(loc, fStr, A[i][j]);
+					strm.format(PrintLocale, fStr, A[i][j]);
 				else
-					strm.format(loc, ", " + fStr, A[i][j]);
+					strm.format(PrintLocale, "%c " + fStr, SeparationChar, A[i][j]);
 			}
-			strm.format("}");
+			strm.format("%c", RightDelimitChar);
 		}
-		strm.format("}");
+		strm.format("%c", RightDelimitChar);
+		strm.flush();
+	}
+	
+	public static void printToStream(float[] A, PrintStream strm) {
+		String fStr = PrintPrecision.getFormatStringFloat();
+		strm.format("%c", LeftDelimitChar);
+		for (int i = 0; i < A.length; i++) {
+			if (i > 0)
+				strm.format("%c ", SeparationChar);
+			strm.format(PrintLocale, fStr, A[i]);
+		}
+		strm.format("%c", RightDelimitChar);
+		strm.flush();
+	}
+	
+	public static void printToStream(float[][] A, PrintStream strm) {
+		String fStr = PrintPrecision.getFormatStringFloat();
+		strm.format("%c", LeftDelimitChar);
+		for (int i=0; i< A.length; i++) {
+			if (i == 0)
+				strm.format("%c", LeftDelimitChar);
+			else
+				strm.format("%c \n%c", SeparationChar, LeftDelimitChar);
+			for (int j = 0; j < A[i].length; j++) {
+				if (j == 0) 
+					strm.format(PrintLocale, fStr, A[i][j]);
+				else
+					strm.format(PrintLocale, "%c " + fStr, SeparationChar, A[i][j]);
+			}
+			strm.format("%c", RightDelimitChar);
+		}
+		strm.format("%c", RightDelimitChar);
 		strm.flush();
 	}
 
+	// Exceptions ---------------------
+	
+	public static class IncompatibleDimensionsException extends RuntimeException {
+		private static final long serialVersionUID = 1L;
+		private static String DefaultMessage = "incompatible matrix-vector dimensions";
+		
+		public IncompatibleDimensionsException() {
+			super(DefaultMessage);
+		}
+	}
+	
+	public static class NonsquareMatrixException extends RuntimeException {
+		private static final long serialVersionUID = 1L;
+		private static String DefaultMessage = "square matrix expected";
+		
+		public NonsquareMatrixException() {
+			super(DefaultMessage);
+		}
+	}
+	
+	public static class SameSourceTargetException extends RuntimeException {
+		private static final long serialVersionUID = 1L;
+		private static String DefaultMessage = "source and target must not be the same";
+		
+		public SameSourceTargetException() {
+			super(DefaultMessage);
+		}
+	}
+	
+	public static class ZeroLengthVectorException extends RuntimeException {
+		private static final long serialVersionUID = 1L;
+		private static String DefaultMessage = "vector length must be greater that 0";
+		
+		public ZeroLengthVectorException() {
+			super(DefaultMessage);
+		}
+	}
+	
 	//--------------------------------------------------------------------------
 	
-
+	/**
+	 * For testing only.
+	 * @param args ignored
+	 */
 	public static void main(String[] args) {
 		float[][] A = {
 				{ -1, 2, 3 }, 
@@ -1084,8 +1173,9 @@ public abstract class Matrix {
 		
 		float[] v1 = {1,2,3};
 		float[] v2 = {4,5,6,7};
-		float[] v3 = {8};
-		float[] v123 = concatenate(v1, v2, v3);
+		float[] v3 = {};
+		float[] v4 = {8};
+		float[] v123 = join(v1, v2, v3, v4);
 		System.out.println("v123 = \n" + toString(v123));
 		
 		System.out.println("mind1 = " + Matrix.min(new double[] {-20,30,60,-40, 0}));
@@ -1093,4 +1183,6 @@ public abstract class Matrix {
 		System.out.println("minf1 = " + Matrix.min(new float[] {-20,30,60,-40, 0}));
 		System.out.println("maxf2 = " + Matrix.max(new float[] {-20,30,60,-40, 0}));
 	}
+	
+
 }

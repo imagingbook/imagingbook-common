@@ -87,6 +87,17 @@ public abstract class Arithmetic {
 		return Math.abs(x) < Arithmetic.EPSILON_DOUBLE;
 	}
 	
+	//--------------------------------------------------------------------------
+	
+	public static class DivideByZeroException extends ArithmeticException {
+		private static final long serialVersionUID = 1L;
+		private static String DefaultMessage = "zero denominator in division";
+		
+		public DivideByZeroException() {
+			super(DefaultMessage);
+		}
+	}
+	
 	
 	// -------------------------------------
 	
