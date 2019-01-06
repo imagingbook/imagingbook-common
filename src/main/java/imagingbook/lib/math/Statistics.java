@@ -101,7 +101,6 @@ public abstract class Statistics {
 		return cov.getCovarianceMatrix().getData();
 	}
 	
-	
 	/** 
 	 * example from UTICS-C Appendix:
 	 * N = 4 samples
