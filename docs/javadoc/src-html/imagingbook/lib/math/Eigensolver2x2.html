@@ -21,122 +21,123 @@
 <span class="sourceLineNo">013</span>/**<a name="line.13"></a>
 <span class="sourceLineNo">014</span> * The this class computes the eigenvalues/eigenvectors for a 2x2<a name="line.14"></a>
 <span class="sourceLineNo">015</span> * matrix<a name="line.15"></a>
-<span class="sourceLineNo">016</span> *   | A B |<a name="line.16"></a>
-<span class="sourceLineNo">017</span> *   | C D |<a name="line.17"></a>
-<span class="sourceLineNo">018</span> * The implementation was inspired by Blinn, Jim: Consider the lowly 2x2 matrix. <a name="line.18"></a>
-<span class="sourceLineNo">019</span> * IEEE Computer Graphics and Applications, 16(2):82-88, 1996.<a name="line.19"></a>
-<span class="sourceLineNo">020</span> * @author W. Burger<a name="line.20"></a>
-<span class="sourceLineNo">021</span> * @version 2013-07-29<a name="line.21"></a>
-<span class="sourceLineNo">022</span> */<a name="line.22"></a>
-<span class="sourceLineNo">023</span>public class Eigensolver2x2 {<a name="line.23"></a>
-<span class="sourceLineNo">024</span>        <a name="line.24"></a>
-<span class="sourceLineNo">025</span>        private final double A, B, C, D;<a name="line.25"></a>
-<span class="sourceLineNo">026</span>        <a name="line.26"></a>
-<span class="sourceLineNo">027</span>        public Eigensolver2x2(double[][] A) {<a name="line.27"></a>
-<span class="sourceLineNo">028</span>                this(A[0][0], A[0][1], A[1][0], A[1][1]);<a name="line.28"></a>
-<span class="sourceLineNo">029</span>        }<a name="line.29"></a>
-<span class="sourceLineNo">030</span>        <a name="line.30"></a>
-<span class="sourceLineNo">031</span>        public Eigensolver2x2(double A, double B, double C, double D) {<a name="line.31"></a>
-<span class="sourceLineNo">032</span>                this.A = A;<a name="line.32"></a>
-<span class="sourceLineNo">033</span>                this.B = B;<a name="line.33"></a>
-<span class="sourceLineNo">034</span>                this.C = C;<a name="line.34"></a>
-<span class="sourceLineNo">035</span>                this.D = D;<a name="line.35"></a>
-<span class="sourceLineNo">036</span>        }<a name="line.36"></a>
-<span class="sourceLineNo">037</span><a name="line.37"></a>
-<span class="sourceLineNo">038</span>        public EigenPair[] realEigenValues2x2() {<a name="line.38"></a>
-<span class="sourceLineNo">039</span>                final double R = (A + D) / 2;<a name="line.39"></a>
-<span class="sourceLineNo">040</span>                final double S = (A - D) / 2;<a name="line.40"></a>
-<span class="sourceLineNo">041</span>                if ((S * S + B * C) &lt; 0) // no real eigenvalues<a name="line.41"></a>
-<span class="sourceLineNo">042</span>                        return null;<a name="line.42"></a>
-<span class="sourceLineNo">043</span>                else {<a name="line.43"></a>
-<span class="sourceLineNo">044</span>                        double T = Math.sqrt(S * S + B * C);<a name="line.44"></a>
-<span class="sourceLineNo">045</span>                        double eVal1 = R + T;<a name="line.45"></a>
-<span class="sourceLineNo">046</span>                        double eVal2 = R - T;<a name="line.46"></a>
-<span class="sourceLineNo">047</span>                        double[] eVec1, eVec2;<a name="line.47"></a>
-<span class="sourceLineNo">048</span>                        if ((A - D) &gt;= 0) {<a name="line.48"></a>
-<span class="sourceLineNo">049</span>                                eVec1 = new double[] {S + T, C};<a name="line.49"></a>
-<span class="sourceLineNo">050</span>                                eVec2 = new double[] {B, -S - T};<a name="line.50"></a>
-<span class="sourceLineNo">051</span>                        } else {<a name="line.51"></a>
-<span class="sourceLineNo">052</span>                                eVec1 = new double[] {B, -S + T};<a name="line.52"></a>
-<span class="sourceLineNo">053</span>                                eVec2 = new double[] {S - T, C};<a name="line.53"></a>
-<span class="sourceLineNo">054</span>                        }<a name="line.54"></a>
-<span class="sourceLineNo">055</span><a name="line.55"></a>
-<span class="sourceLineNo">056</span>                        EigenPair[] e = new EigenPair[2];<a name="line.56"></a>
-<span class="sourceLineNo">057</span>                        // put eigenpair with larger eigenvalue up front<a name="line.57"></a>
-<span class="sourceLineNo">058</span>                        if (Math.abs(eVal1) &gt;= Math.abs(eVal2)) {<a name="line.58"></a>
-<span class="sourceLineNo">059</span>                                e[0] = new EigenPair(eVal1, eVec1);<a name="line.59"></a>
-<span class="sourceLineNo">060</span>                                e[1] = new EigenPair(eVal2, eVec2);<a name="line.60"></a>
-<span class="sourceLineNo">061</span>                        } else {<a name="line.61"></a>
-<span class="sourceLineNo">062</span>                                e[1] = new EigenPair(eVal1, eVec1);<a name="line.62"></a>
-<span class="sourceLineNo">063</span>                                e[0] = new EigenPair(eVal2, eVec2);<a name="line.63"></a>
-<span class="sourceLineNo">064</span>                        }<a name="line.64"></a>
-<span class="sourceLineNo">065</span>                        return e;<a name="line.65"></a>
-<span class="sourceLineNo">066</span>                }<a name="line.66"></a>
-<span class="sourceLineNo">067</span>        }<a name="line.67"></a>
-<span class="sourceLineNo">068</span><a name="line.68"></a>
-<span class="sourceLineNo">069</span>        /**<a name="line.69"></a>
-<span class="sourceLineNo">070</span>         * EigenPair is a tuple (eigenvalue, eigenvector) and represents<a name="line.70"></a>
-<span class="sourceLineNo">071</span>         * the solution to an eigen problem.<a name="line.71"></a>
-<span class="sourceLineNo">072</span>         */<a name="line.72"></a>
-<span class="sourceLineNo">073</span>        public static class EigenPair {<a name="line.73"></a>
-<span class="sourceLineNo">074</span>                final double eival;<a name="line.74"></a>
-<span class="sourceLineNo">075</span>                final double[] eivec;<a name="line.75"></a>
-<span class="sourceLineNo">076</span><a name="line.76"></a>
-<span class="sourceLineNo">077</span>                public EigenPair(double eival, double[] eivec) {<a name="line.77"></a>
-<span class="sourceLineNo">078</span>                        this.eival = eival;<a name="line.78"></a>
-<span class="sourceLineNo">079</span>                        this.eivec = eivec.clone();<a name="line.79"></a>
-<span class="sourceLineNo">080</span>                }<a name="line.80"></a>
-<span class="sourceLineNo">081</span><a name="line.81"></a>
-<span class="sourceLineNo">082</span>                public double getEigenvalue() {<a name="line.82"></a>
-<span class="sourceLineNo">083</span>                        return this.eival;<a name="line.83"></a>
-<span class="sourceLineNo">084</span>                }<a name="line.84"></a>
-<span class="sourceLineNo">085</span><a name="line.85"></a>
-<span class="sourceLineNo">086</span>                public double[] getEigenvector() {<a name="line.86"></a>
-<span class="sourceLineNo">087</span>                        return this.eivec;<a name="line.87"></a>
-<span class="sourceLineNo">088</span>                }<a name="line.88"></a>
-<span class="sourceLineNo">089</span>                <a name="line.89"></a>
-<span class="sourceLineNo">090</span>                public String toString() {<a name="line.90"></a>
-<span class="sourceLineNo">091</span>                        if (eivec == null)<a name="line.91"></a>
-<span class="sourceLineNo">092</span>                                return "no eigenvalue / eigenvector";<a name="line.92"></a>
-<span class="sourceLineNo">093</span>                        else {<a name="line.93"></a>
-<span class="sourceLineNo">094</span>                                return String.format("eigenvalue: %.5f | eigenvector: %s", eival, Matrix.toString(eivec)) ;<a name="line.94"></a>
-<span class="sourceLineNo">095</span>                        }<a name="line.95"></a>
-<span class="sourceLineNo">096</span>                }<a name="line.96"></a>
-<span class="sourceLineNo">097</span>        }<a name="line.97"></a>
-<span class="sourceLineNo">098</span>        <a name="line.98"></a>
+<span class="sourceLineNo">016</span> * &lt;pre&gt;<a name="line.16"></a>
+<span class="sourceLineNo">017</span> *   | A B |<a name="line.17"></a>
+<span class="sourceLineNo">018</span> *   | C D | &lt;/pre&gt;<a name="line.18"></a>
+<span class="sourceLineNo">019</span> * The implementation is inspired by Blinn, Jim: Consider the lowly 2x2 matrix. <a name="line.19"></a>
+<span class="sourceLineNo">020</span> * IEEE Computer Graphics and Applications, 16(2):82-88, 1996.<a name="line.20"></a>
+<span class="sourceLineNo">021</span> * @author W. Burger<a name="line.21"></a>
+<span class="sourceLineNo">022</span> * @version 2013-07-29<a name="line.22"></a>
+<span class="sourceLineNo">023</span> */<a name="line.23"></a>
+<span class="sourceLineNo">024</span>public class Eigensolver2x2 {<a name="line.24"></a>
+<span class="sourceLineNo">025</span>        <a name="line.25"></a>
+<span class="sourceLineNo">026</span>        private final double A, B, C, D;<a name="line.26"></a>
+<span class="sourceLineNo">027</span>        <a name="line.27"></a>
+<span class="sourceLineNo">028</span>        public Eigensolver2x2(double[][] A) {<a name="line.28"></a>
+<span class="sourceLineNo">029</span>                this(A[0][0], A[0][1], A[1][0], A[1][1]);<a name="line.29"></a>
+<span class="sourceLineNo">030</span>        }<a name="line.30"></a>
+<span class="sourceLineNo">031</span>        <a name="line.31"></a>
+<span class="sourceLineNo">032</span>        public Eigensolver2x2(double A, double B, double C, double D) {<a name="line.32"></a>
+<span class="sourceLineNo">033</span>                this.A = A;<a name="line.33"></a>
+<span class="sourceLineNo">034</span>                this.B = B;<a name="line.34"></a>
+<span class="sourceLineNo">035</span>                this.C = C;<a name="line.35"></a>
+<span class="sourceLineNo">036</span>                this.D = D;<a name="line.36"></a>
+<span class="sourceLineNo">037</span>        }<a name="line.37"></a>
+<span class="sourceLineNo">038</span><a name="line.38"></a>
+<span class="sourceLineNo">039</span>        public EigenPair[] realEigenValues2x2() {<a name="line.39"></a>
+<span class="sourceLineNo">040</span>                final double R = (A + D) / 2;<a name="line.40"></a>
+<span class="sourceLineNo">041</span>                final double S = (A - D) / 2;<a name="line.41"></a>
+<span class="sourceLineNo">042</span>                if ((S * S + B * C) &lt; 0) // no real eigenvalues<a name="line.42"></a>
+<span class="sourceLineNo">043</span>                        return null;<a name="line.43"></a>
+<span class="sourceLineNo">044</span>                else {<a name="line.44"></a>
+<span class="sourceLineNo">045</span>                        double T = Math.sqrt(S * S + B * C);<a name="line.45"></a>
+<span class="sourceLineNo">046</span>                        double eVal1 = R + T;<a name="line.46"></a>
+<span class="sourceLineNo">047</span>                        double eVal2 = R - T;<a name="line.47"></a>
+<span class="sourceLineNo">048</span>                        double[] eVec1, eVec2;<a name="line.48"></a>
+<span class="sourceLineNo">049</span>                        if ((A - D) &gt;= 0) {<a name="line.49"></a>
+<span class="sourceLineNo">050</span>                                eVec1 = new double[] {S + T, C};<a name="line.50"></a>
+<span class="sourceLineNo">051</span>                                eVec2 = new double[] {B, -S - T};<a name="line.51"></a>
+<span class="sourceLineNo">052</span>                        } else {<a name="line.52"></a>
+<span class="sourceLineNo">053</span>                                eVec1 = new double[] {B, -S + T};<a name="line.53"></a>
+<span class="sourceLineNo">054</span>                                eVec2 = new double[] {S - T, C};<a name="line.54"></a>
+<span class="sourceLineNo">055</span>                        }<a name="line.55"></a>
+<span class="sourceLineNo">056</span><a name="line.56"></a>
+<span class="sourceLineNo">057</span>                        EigenPair[] e = new EigenPair[2];<a name="line.57"></a>
+<span class="sourceLineNo">058</span>                        // put eigenpair with larger eigenvalue up front<a name="line.58"></a>
+<span class="sourceLineNo">059</span>                        if (Math.abs(eVal1) &gt;= Math.abs(eVal2)) {<a name="line.59"></a>
+<span class="sourceLineNo">060</span>                                e[0] = new EigenPair(eVal1, eVec1);<a name="line.60"></a>
+<span class="sourceLineNo">061</span>                                e[1] = new EigenPair(eVal2, eVec2);<a name="line.61"></a>
+<span class="sourceLineNo">062</span>                        } else {<a name="line.62"></a>
+<span class="sourceLineNo">063</span>                                e[1] = new EigenPair(eVal1, eVec1);<a name="line.63"></a>
+<span class="sourceLineNo">064</span>                                e[0] = new EigenPair(eVal2, eVec2);<a name="line.64"></a>
+<span class="sourceLineNo">065</span>                        }<a name="line.65"></a>
+<span class="sourceLineNo">066</span>                        return e;<a name="line.66"></a>
+<span class="sourceLineNo">067</span>                }<a name="line.67"></a>
+<span class="sourceLineNo">068</span>        }<a name="line.68"></a>
+<span class="sourceLineNo">069</span><a name="line.69"></a>
+<span class="sourceLineNo">070</span>        /**<a name="line.70"></a>
+<span class="sourceLineNo">071</span>         * EigenPair is a tuple (eigenvalue, eigenvector) and represents<a name="line.71"></a>
+<span class="sourceLineNo">072</span>         * the solution to an eigen problem.<a name="line.72"></a>
+<span class="sourceLineNo">073</span>         */<a name="line.73"></a>
+<span class="sourceLineNo">074</span>        public static class EigenPair {<a name="line.74"></a>
+<span class="sourceLineNo">075</span>                final double eival;<a name="line.75"></a>
+<span class="sourceLineNo">076</span>                final double[] eivec;<a name="line.76"></a>
+<span class="sourceLineNo">077</span><a name="line.77"></a>
+<span class="sourceLineNo">078</span>                public EigenPair(double eival, double[] eivec) {<a name="line.78"></a>
+<span class="sourceLineNo">079</span>                        this.eival = eival;<a name="line.79"></a>
+<span class="sourceLineNo">080</span>                        this.eivec = eivec.clone();<a name="line.80"></a>
+<span class="sourceLineNo">081</span>                }<a name="line.81"></a>
+<span class="sourceLineNo">082</span><a name="line.82"></a>
+<span class="sourceLineNo">083</span>                public double getEigenvalue() {<a name="line.83"></a>
+<span class="sourceLineNo">084</span>                        return this.eival;<a name="line.84"></a>
+<span class="sourceLineNo">085</span>                }<a name="line.85"></a>
+<span class="sourceLineNo">086</span><a name="line.86"></a>
+<span class="sourceLineNo">087</span>                public double[] getEigenvector() {<a name="line.87"></a>
+<span class="sourceLineNo">088</span>                        return this.eivec;<a name="line.88"></a>
+<span class="sourceLineNo">089</span>                }<a name="line.89"></a>
+<span class="sourceLineNo">090</span>                <a name="line.90"></a>
+<span class="sourceLineNo">091</span>                public String toString() {<a name="line.91"></a>
+<span class="sourceLineNo">092</span>                        if (eivec == null)<a name="line.92"></a>
+<span class="sourceLineNo">093</span>                                return "no eigenvalue / eigenvector";<a name="line.93"></a>
+<span class="sourceLineNo">094</span>                        else {<a name="line.94"></a>
+<span class="sourceLineNo">095</span>                                return String.format("eigenvalue: %.5f | eigenvector: %s", eival, Matrix.toString(eivec)) ;<a name="line.95"></a>
+<span class="sourceLineNo">096</span>                        }<a name="line.96"></a>
+<span class="sourceLineNo">097</span>                }<a name="line.97"></a>
+<span class="sourceLineNo">098</span>        }<a name="line.98"></a>
 <span class="sourceLineNo">099</span>        <a name="line.99"></a>
-<span class="sourceLineNo">100</span>        // for Testing:<a name="line.100"></a>
-<span class="sourceLineNo">101</span>//      public static void main(String[] args) {<a name="line.101"></a>
-<span class="sourceLineNo">102</span>//              <a name="line.102"></a>
-<span class="sourceLineNo">103</span>//              double[][] A = {<a name="line.103"></a>
-<span class="sourceLineNo">104</span>//                              {-0.009562, 0.011933}, <a name="line.104"></a>
-<span class="sourceLineNo">105</span>//                              {0.011933, -0.021158}<a name="line.105"></a>
-<span class="sourceLineNo">106</span>//                              };<a name="line.106"></a>
-<span class="sourceLineNo">107</span>//              /*<a name="line.107"></a>
-<span class="sourceLineNo">108</span>//               * eigenvalue: -0.02863 | eigenvector: {0.012, -0.019}<a name="line.108"></a>
-<span class="sourceLineNo">109</span>//               * eigenvalue: -0.00209 | eigenvector: {0.019, 0.012}<a name="line.109"></a>
-<span class="sourceLineNo">110</span>//               */<a name="line.110"></a>
-<span class="sourceLineNo">111</span>//              <a name="line.111"></a>
-<span class="sourceLineNo">112</span>//              double[][] B = {<a name="line.112"></a>
-<span class="sourceLineNo">113</span>//                              {-0.004710, -0.006970},<a name="line.113"></a>
-<span class="sourceLineNo">114</span>//                              {-0.006970, -0.029195}};<a name="line.114"></a>
-<span class="sourceLineNo">115</span>//              /*<a name="line.115"></a>
-<span class="sourceLineNo">116</span>//               * eigenvalue: -0.03104 | eigenvector: {-0.007, -0.026}<a name="line.116"></a>
-<span class="sourceLineNo">117</span>//               * eigenvalue: -0.00286 | eigenvector: {0.026, -0.007}<a name="line.117"></a>
-<span class="sourceLineNo">118</span>//               */<a name="line.118"></a>
-<span class="sourceLineNo">119</span>//              <a name="line.119"></a>
-<span class="sourceLineNo">120</span>//              EigenPair[] eigenvals; <a name="line.120"></a>
-<span class="sourceLineNo">121</span>//              eigenvals = new Eigensolver2x2(A).realEigenValues2x2();<a name="line.121"></a>
-<span class="sourceLineNo">122</span>//              System.out.println(eigenvals[0].toString());<a name="line.122"></a>
-<span class="sourceLineNo">123</span>//              System.out.println(eigenvals[1].toString());<a name="line.123"></a>
-<span class="sourceLineNo">124</span>//              <a name="line.124"></a>
-<span class="sourceLineNo">125</span>//              eigenvals = new Eigensolver2x2(B).realEigenValues2x2();<a name="line.125"></a>
-<span class="sourceLineNo">126</span>//              System.out.println(eigenvals[0].toString());<a name="line.126"></a>
-<span class="sourceLineNo">127</span>//              System.out.println(eigenvals[1].toString());<a name="line.127"></a>
-<span class="sourceLineNo">128</span>//      }<a name="line.128"></a>
-<span class="sourceLineNo">129</span>        <a name="line.129"></a>
-<span class="sourceLineNo">130</span><a name="line.130"></a>
-<span class="sourceLineNo">131</span>}<a name="line.131"></a>
+<span class="sourceLineNo">100</span>        <a name="line.100"></a>
+<span class="sourceLineNo">101</span>        // for Testing:<a name="line.101"></a>
+<span class="sourceLineNo">102</span>//      public static void main(String[] args) {<a name="line.102"></a>
+<span class="sourceLineNo">103</span>//              <a name="line.103"></a>
+<span class="sourceLineNo">104</span>//              double[][] A = {<a name="line.104"></a>
+<span class="sourceLineNo">105</span>//                              {-0.009562, 0.011933}, <a name="line.105"></a>
+<span class="sourceLineNo">106</span>//                              {0.011933, -0.021158}<a name="line.106"></a>
+<span class="sourceLineNo">107</span>//                              };<a name="line.107"></a>
+<span class="sourceLineNo">108</span>//              /*<a name="line.108"></a>
+<span class="sourceLineNo">109</span>//               * eigenvalue: -0.02863 | eigenvector: {0.012, -0.019}<a name="line.109"></a>
+<span class="sourceLineNo">110</span>//               * eigenvalue: -0.00209 | eigenvector: {0.019, 0.012}<a name="line.110"></a>
+<span class="sourceLineNo">111</span>//               */<a name="line.111"></a>
+<span class="sourceLineNo">112</span>//              <a name="line.112"></a>
+<span class="sourceLineNo">113</span>//              double[][] B = {<a name="line.113"></a>
+<span class="sourceLineNo">114</span>//                              {-0.004710, -0.006970},<a name="line.114"></a>
+<span class="sourceLineNo">115</span>//                              {-0.006970, -0.029195}};<a name="line.115"></a>
+<span class="sourceLineNo">116</span>//              /*<a name="line.116"></a>
+<span class="sourceLineNo">117</span>//               * eigenvalue: -0.03104 | eigenvector: {-0.007, -0.026}<a name="line.117"></a>
+<span class="sourceLineNo">118</span>//               * eigenvalue: -0.00286 | eigenvector: {0.026, -0.007}<a name="line.118"></a>
+<span class="sourceLineNo">119</span>//               */<a name="line.119"></a>
+<span class="sourceLineNo">120</span>//              <a name="line.120"></a>
+<span class="sourceLineNo">121</span>//              EigenPair[] eigenvals; <a name="line.121"></a>
+<span class="sourceLineNo">122</span>//              eigenvals = new Eigensolver2x2(A).realEigenValues2x2();<a name="line.122"></a>
+<span class="sourceLineNo">123</span>//              System.out.println(eigenvals[0].toString());<a name="line.123"></a>
+<span class="sourceLineNo">124</span>//              System.out.println(eigenvals[1].toString());<a name="line.124"></a>
+<span class="sourceLineNo">125</span>//              <a name="line.125"></a>
+<span class="sourceLineNo">126</span>//              eigenvals = new Eigensolver2x2(B).realEigenValues2x2();<a name="line.126"></a>
+<span class="sourceLineNo">127</span>//              System.out.println(eigenvals[0].toString());<a name="line.127"></a>
+<span class="sourceLineNo">128</span>//              System.out.println(eigenvals[1].toString());<a name="line.128"></a>
+<span class="sourceLineNo">129</span>//      }<a name="line.129"></a>
+<span class="sourceLineNo">130</span>        <a name="line.130"></a>
+<span class="sourceLineNo">131</span><a name="line.131"></a>
+<span class="sourceLineNo">132</span>}<a name="line.132"></a>
 
 
 
