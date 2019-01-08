@@ -14,6 +14,7 @@ package imagingbook.pub.color.image;
  * used by LabColorSpace and LuvColorSpace color spaces.
  * Implemented with double values for better accuracy.
  * Should be modified to implement a a subclass of ColorSpace.
+ * TODO: duplicate in lib.color? add JavaDoc!
  */
 public abstract class sRgbUtil {
 	

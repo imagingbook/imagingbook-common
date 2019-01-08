@@ -13,6 +13,7 @@ package imagingbook.lib.color;
 /*
  * This is only a utility class to hold static methods used by CIELAB and CIELUV color spaces.
  * Should be modified to implement a a subclass of ColorSpace!
+ * TODO: duplicate in pub/color/image?? Add add JavaDoc!
  */
 
 public abstract class sRgbUtil {
