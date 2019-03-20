@@ -82,7 +82,7 @@ public class IterativeClosestPointMatcher {
 		} while(!converged && k < kMax);
 	}
 
-	private RealMatrix initialTransformation() {
+	private RealMatrix initialTransformation() {					// TODO: align centroids of point clouds!
 		RealMatrix iT = MatrixUtils.createRealMatrix(n, n + 1);
 		iT.setSubMatrix(MatrixUtils.createRealIdentityMatrix(n).getData(), 0, 0);
 		return iT;
@@ -97,7 +97,7 @@ public class IterativeClosestPointMatcher {
 			int jMin = 0;
 			int j = 0;
 			for (double[] yi : Y) {
-				double d = Matrix.normL2squared(Matrix.subtract(xiT,yi));
+				double d = Matrix.normL2squared(Matrix.subtract(xiT, yi));
 				if (d < dMin) {
 					dMin = d;
 					jMin = j;
@@ -118,7 +118,7 @@ public class IterativeClosestPointMatcher {
 			YY.add(Y.get(A[i]));
 		}
 		
-		ProcrustesFit pf = new ProcrustesFit(true, false, true);
+		ProcrustesFit pf = new ProcrustesFit(2, true, false, true);
 		pf.fit(X, YY);
 		
 		T = pf.getTransformationMatrix();

@@ -41,7 +41,7 @@ class ProcrustesTest {
 		{
 		System.out.println("     --- Case 1: rotation NOT enforced (reflection allowed) -------------");
 		
-		ProcrustesFit pf = new ProcrustesFit(true, true, false);
+		ProcrustesFit pf = new ProcrustesFit(2, true, true, false);
 		pf.fit(lA, lB);
 		System.out.println("c = " + pf.getScale());
 		System.out.println("Q = \n" + Matrix.toString(pf.getR().getData()));
@@ -59,7 +59,7 @@ class ProcrustesTest {
 		{
 		System.out.println("     --- Case 2: rotation enforced (NO reflection allowed) -------------");
 		
-		ProcrustesFit pf = new ProcrustesFit(true, true, true);
+		ProcrustesFit pf = new ProcrustesFit(2, true, true, true);
 		pf.fit(lA, lB);
 		System.out.println("c = " + pf.getScale());
 		System.out.println("Q = \n" + Matrix.toString(pf.getR().getData()));
@@ -81,3 +81,47 @@ class ProcrustesTest {
 		}
 	}
 }
+
+/*
+ * ProcrustesTest ( Umeyama-Test)
+lA = 
+   {0.000, 0.000}
+   {1.000, 0.000}
+   {0.000, 2.000}
+lB = 
+   {0.000, 0.000}
+   {-1.000, 0.000}
+   {0.000, 2.000}
+     --- Case 1: rotation NOT enforced (reflection allowed) -------------
+c = 0.9999999999999999
+Q = 
+{{-1.000, -0.000}, 
+{-0.000, 1.000}}
+t = 
+{0.000, 0.000}
+err1 = 1.3322676295501878E-15
+err2 = 7.395570986446985E-32
+affine map = 
+{{-1.000, -0.000, 0.000}, 
+{-0.000, 1.000, 0.000}, 
+{0.000, 0.000, 1.000}}
+general map = 
+{{-1.000, -0.000, 0.000}, 
+{-0.000, 1.000, 0.000}}
+     --- Case 2: rotation enforced (NO reflection allowed) -------------
+c = 0.7211102550927977
+Q = 
+{{0.832, 0.555}, 
+{-0.555, 0.832}}
+t = 
+{-0.800, 0.400}
+err1 = 1.6000000000000005
+err2 = 1.5999999999999999
+affine map = 
+{{0.600, 0.400, -0.800}, 
+{-0.400, 0.600, 0.400}, 
+{0.000, 0.000, 1.000}}
+general map = 
+{{0.600, 0.400, -0.800}, 
+{-0.400, 0.600, 0.400}}
+*/

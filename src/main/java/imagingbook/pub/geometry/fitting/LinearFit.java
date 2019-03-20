@@ -13,6 +13,12 @@ import org.apache.commons.math3.linear.RealMatrix;
  */
 public abstract class LinearFit {
 	
+	protected final int n;	// dimensionality of samples
+	
+	protected LinearFit(int n) {
+		this.n= n;
+	}
+	
 	/**
 	 * Calculates the least-squares fit for the supplied point sequences,
 	 * which must have the same length and order (i.e., points must be in 

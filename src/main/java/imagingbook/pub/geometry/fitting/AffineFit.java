@@ -9,37 +9,50 @@ import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.RealVector;
 import org.apache.commons.math3.linear.SingularValueDecomposition;
 
+import ij.IJ;
+
 public class AffineFit extends LinearFit {
 	
-	private int m;		// number of samples
-	private int n;		// dimension of samples
+	private int m;			// number of samples
 	
 	private RealMatrix A = null;
+	
+	public AffineFit() {
+		this(2);	// 2D by default
+	}
+	
+	public AffineFit(int n) {
+		super(n);
+	}
 
 	@Override
 	public void fit(List<double[]> X, List<double[]> Y) {	// fits n-dimensional data sets with affine model
 		if (X.size() != Y.size())
 			throw new IllegalArgumentException("point sequences X, Y must have same length");
+		if (X.get(0).length < n)
+			throw new IllegalArgumentException("dimensionality of samples must be >= " + n);
 		this.m = X.size();
-		this.n = X.get(0).length;
 		
 		RealMatrix M = MatrixUtils.createRealMatrix(2 * m, 2 * (n + 1));
 		RealVector b = new ArrayRealVector(2 * m);
 		
-		// mount matrix M:
+		IJ.log("M = " + M.getRowDimension() + " / " + M.getColumnDimension());
+		
+		// mount matrix M:	TODO: needs to be checked for n > 2!
 		int row = 0;
 		for (double[] x : X) {
 			for (int j = 0; j < n; j++) {
 				M.setEntry(row, j, x[j]);
 				M.setEntry(row, n, 1);
-				row++;
 			}
+			row++;
 			for (int j = 0; j < n; j++) {
 				M.setEntry(row, j + n + 1, x[j]);
 				M.setEntry(row, 2 * n + 1, 1);
-				row++;
 			}
+			row++;
 		}
+		//IJ.log("M = \n" + Matrix.toString(M.getData()));
 		
 		// mount vector b
 		row = 0;
@@ -49,6 +62,8 @@ public class AffineFit extends LinearFit {
 				row++;
 			}
 		}
+		
+		//IJ.log("b = \n" + Matrix.toString(b.toArray()));
 		
 		SingularValueDecomposition svd = new SingularValueDecomposition(M);
 		DecompositionSolver solver = svd.getSolver();
@@ -67,7 +82,7 @@ public class AffineFit extends LinearFit {
 				i++;
 			}
 		}
-		A.setEntry(n - 1, n, 1);
+		//A.setEntry(n - 1, n, 1);
 		return A;
 	}
 
@@ -81,7 +96,5 @@ public class AffineFit extends LinearFit {
 		// TODO Auto-generated method stub
 		return 0;
 	}
-	
-
 
 }

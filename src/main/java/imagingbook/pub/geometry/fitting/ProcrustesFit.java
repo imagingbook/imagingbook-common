@@ -47,7 +47,6 @@ public class ProcrustesFit extends LinearFit {
 	private final boolean forceRotation;
 	
 	private int m;		// number of samples
-	private int n;		// dimension of samples
 	
 	private RealMatrix R = null;					// orthogonal (rotation) matrix
 	private RealVector t = null;					// translation vector
@@ -65,7 +64,8 @@ public class ProcrustesFit extends LinearFit {
 	 * @param forceRotation If {@code true}, the orthogonal part of the transformation (Q)
 	 * 		is forced to a true rotation and no reflection is allowed.
 	 */
-	public ProcrustesFit(boolean allowTranslation, boolean allowScaling, boolean forceRotation) {
+	public ProcrustesFit(int n, boolean allowTranslation, boolean allowScaling, boolean forceRotation) {
+		super(n);
 		this.allowTranslation = allowTranslation;
 		this.allowScaling = allowScaling;
 		this.forceRotation = forceRotation;
@@ -75,7 +75,7 @@ public class ProcrustesFit extends LinearFit {
 	 * Convenience constructor. 
 	 */
 	public ProcrustesFit() {
-		this(true, true, true);
+		this(2, true, true, true);
 	}
 	
 
@@ -84,7 +84,8 @@ public class ProcrustesFit extends LinearFit {
 		if (X.size() != Y.size())
 			throw new IllegalArgumentException("point sequences X, Y must have same length");
 		this.m = X.size();
-		this.n = X.get(0).length;
+		if (X.get(0).length < n)
+			throw new IllegalArgumentException("dimensionality of samples must be >= " + n);
 		
 		double[] meanX = null;
 		double[] meanY = null;
@@ -236,7 +237,7 @@ public class ProcrustesFit extends LinearFit {
 	
 	private RealMatrix makeDataMatrix(List<double[]> X) {
 		final int m = X.size();
-		final int n = X.get(0).length;
+//		final int n = X.get(0).length;
 		RealMatrix M = MatrixUtils.createRealMatrix(n, m);
 		int i = 0;
 		for (double[] x : X) {
@@ -252,7 +253,7 @@ public class ProcrustesFit extends LinearFit {
 			return makeDataMatrix(X);
 		}
 		final int m = X.size();
-		final int n = X.get(0).length;
+//		final int n = X.get(0).length;
 		RealMatrix M = MatrixUtils.createRealMatrix(n, m);
 		RealVector mean = MatrixUtils.createRealVector(meanX);
 		int i = 0;
@@ -317,7 +318,7 @@ public class ProcrustesFit extends LinearFit {
 		boolean allowTranslation = true;
 		boolean allowScaling = true;
 		boolean forceRotation = true;
-		ProcrustesFit pf = new ProcrustesFit(allowTranslation, allowScaling, forceRotation);
+		ProcrustesFit pf = new ProcrustesFit(2, allowTranslation, allowScaling, forceRotation);
 		pf.fit(X, Y);
 
 		System.out.println("R = \n" + Matrix.toString(pf.getR().getData()));
@@ -328,7 +329,6 @@ public class ProcrustesFit extends LinearFit {
 		RealMatrix M = pf.getTransformationMatrix();
 		System.out.println("M = \n" + Matrix.toString(M.getData()));
 	}
-	
 
 }
 

@@ -102,7 +102,7 @@ public class IterativeClosestPointMatcher_OLD {
 			YY.add(Y.get(A[i]));
 		}
 		
-		ProcrustesFit pf = new ProcrustesFit(true, false, true);
+		ProcrustesFit pf = new ProcrustesFit(2, true, false, true);
 		pf.fit(X, YY);
 		T = pf.getTransformationMatrix();
 		System.out.println("EuclideanError = " + pf.getEuclideanError(X, Y));
