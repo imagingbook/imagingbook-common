@@ -68,6 +68,7 @@ public abstract class FileUtils {
 	 */   
 	public static String getClassPath(Class<?> clazz) {
 		return clazz.getProtectionDomain().getCodeSource().getLocation().getFile();
+		//return clazz.getProtectionDomain().getCodeSource().getLocation().toString();
 	}
 	
 	// ----------------------------------------------------------------
@@ -171,6 +172,7 @@ public abstract class FileUtils {
 		System.out.println("name = " + fileName);
 		System.out.println("stripped = " + stripFileExtension(fileName));
 		System.out.println("ext = " + getFileExtension(fileName));
+		System.out.println(getClassPath(FileUtils.class));
 	}
 	
 

@@ -11,38 +11,54 @@ package imagingbook.pub.dft;
 
 import imagingbook.lib.math.Complex;
 
+/**
+ * One-dimensional Discrete Fourier Transform (no FFT but using
+ * tabulated sine and cosines values).
+ * 
+ * @version 2019/12/07
+ *
+ */
 public class Dft1d {
 
-	double[] cosTable;
-	double[] sinTable;
-	Complex[] G;			// TODO: clean up creation of G (made instances of Complex immutable)!
+	private final int M;
+	private final double[] cosTable;
+	private final double[] sinTable;
 	
-	Dft1d(int M){ //Constructor
-		makeCosTable(M);
-		makeSinTable(M);
-		G = new Complex[M];	//this is done only ONCE when object is created!
+	Dft1d(int M) {
+		this.M = M;
+		this.cosTable = makeCosTable();
+		this.sinTable = makeSinTable();
+	}
+	
+	double[] makeCosTable() {
+		double[] cosTable = new double[M];
 		for (int i = 0; i < M; i++) {
-			G[i] = new Complex(0,0);
+			cosTable[i] = Math.cos(2 * Math.PI * i / M);
 		}
+		return cosTable;
 	}
-	
-	void makeCosTable(int M){
-		cosTable = new double[M];
-		for (int i=0; i<M; i++){
-			cosTable[i]= Math.cos(2*Math.PI*i/M);
+
+	double[] makeSinTable() {
+		double[] sinTable = new double[M];
+		for (int i = 0; i < M; i++) {
+			sinTable[i] = Math.sin(2 * Math.PI * i / M);
 		}
+		return sinTable;
 	}
-	
-	void makeSinTable(int M){
-		sinTable = new double[M];
-		for (int i=0; i<M; i++){
-			sinTable[i]= Math.sin(2*Math.PI*i/M);
-		}		
-	}
-	
-	public Complex[] DFT(Complex[] g, boolean forward) {
-		int M = g.length;
-		double s = 1 / Math.sqrt(M); //common scale factor
+
+	/**
+	 * Forward/inverse DFT applied to a complex-valued input signal.
+	 * @param g complex-valued 1D input signal: g[i][0] = Re, g[i][1] = Im 
+	 * @param forward true: forward DFT, false: inverse DFT
+	 * @return a complex-valued spectrum (forward) or reconstructed signal (inverse)
+	 * @deprecated
+	 */
+	public Complex[] dft(Complex[] g, boolean forward) {
+		if (M != g.length) {
+			throw new IllegalArgumentException(String.format("Dft1d: length of input signal g (%d) must be %d", g.length, M));
+		}
+		Complex[] G = new Complex[M];
+		double s = 1.0 / Math.sqrt(M); //common scale factor
 		for (int u = 0; u < M; u++) {
 			double sumRe = 0;
 			double sumIm = 0;
@@ -58,9 +74,73 @@ public class Dft1d {
 				sumRe += gRe * cosPhi - gIm * sinPhi;
 				sumIm += gRe * sinPhi + gIm * cosPhi;
 			}
-//			G[u].re = s * sumRe;	
-//			G[u].im = s * sumIm;
 			G[u] = new Complex(s * sumRe, s * sumIm);
+		}
+		return G;
+	}
+	
+	/**
+	 * Forward DFT applied to a complex-valued input signal.
+	 * @param g	complex-valued 1D input signal: g[i][0] = Re, g[i][1] = Im 
+	 * @return a complex-valued spectrum (forward) or reconstructed signal (inverse)
+	 */
+	public double[][] dft(double[][] g, boolean forward) {
+		if (M != g.length) {
+			throw new IllegalArgumentException(String.format("Dft1d: length of input signal g (%d) must be %d", g.length, M));
+		}
+		double[][] G = new double[M][2];
+		double s = 1.0 / Math.sqrt(M); //common scale factor
+		for (int u = 0; u < M; u++) {
+			double sumRe = 0;
+			double sumIm = 0;
+			for (int m = 0; m < M; m++) {
+				double gRe = g[m][0];
+				double gIm = g[m][1];
+				int k = (u * m) % M;
+				double cosPhi = cosTable[k];
+				double sinPhi = sinTable[k];
+				if (forward)
+					sinPhi = -sinPhi;
+				//complex multiplication: (gRe + i gIm) * (cosPhi + i sinPhi)
+				sumRe += gRe * cosPhi - gIm * sinPhi;
+				sumIm += gRe * sinPhi + gIm * cosPhi;
+			}
+			G[u][0] = s * sumRe;	
+			G[u][1] = s * sumIm;
+		}
+		return G;
+	}
+	
+	/**
+	 * Forward/inverse DFT applied to a real-valued input signal.
+	 * @param g	real-valued 1D input signal: g[i] = Re, 
+	 * @param forward true: forward DFT, false: inverse DFT
+	 * @return a complex-valued spectrum (forward) or reconstructed signal (inverse)
+	 */
+	public double[][] dft(double[] g) {
+		if (M != g.length) {
+			throw new IllegalArgumentException(String.format("Dft1d: length of input signal g (%d) must be %d", g.length, M));
+		}
+		final boolean forward = true;
+		double[][] G = new double[M][2];
+		double s = 1.0 / Math.sqrt(M); //common scale factor
+		for (int u = 0; u < M; u++) {
+			double sumRe = 0;
+			double sumIm = 0;
+			for (int m = 0; m < M; m++) {
+				double gRe = g[m];
+				double gIm = 0;
+				int k = (u * m) % M;
+				double cosPhi = cosTable[k];
+				double sinPhi = sinTable[k];
+				if (forward)
+					sinPhi = -sinPhi;
+				//complex multiplication: (gRe + i gIm) * (cosPhi + i sinPhi)
+				sumRe += gRe * cosPhi - gIm * sinPhi;
+				sumIm += gRe * sinPhi + gIm * cosPhi;
+			}
+			G[u][0] = s * sumRe;	
+			G[u][1] = s * sumIm;
 		}
 		return G;
 	}

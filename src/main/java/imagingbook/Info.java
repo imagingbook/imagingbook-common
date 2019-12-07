@@ -32,12 +32,12 @@ public abstract class Info {
 		//IJ.log("listing attributes");
 		Attributes attr = mf.getMainAttributes();
 		String version = null;
-		String buildDate = null;
+		String buildTime = null;
 		try {
 			version = attr.getValue("Implementation-Version");
-			buildDate = attr.getValue("Build-Date");
+			buildTime = attr.getValue("Build-Time");
 		} catch (IllegalArgumentException e) { }
-		return version + " (" + buildDate + ")";
+		return version + " (" + buildTime + ")";
 	}
 	
 	
