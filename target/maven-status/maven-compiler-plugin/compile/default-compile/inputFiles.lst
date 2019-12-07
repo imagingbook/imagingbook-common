@@ -128,7 +128,6 @@ D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingb
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\edgepreservingfilters\PeronaMalikFilter.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\fd\Colors.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\sift\util\SiftKeyDisplay.java
-D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\dft\Dft2d_old.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\sift\scalespace\HierarchicalScaleSpace.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\color\image\sRgb65ColorSpace.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\lib\ij\LookupTables.java
@@ -139,6 +138,7 @@ D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingb
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\color\quantize\KMeansClusteringQuantizerApache.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\lib\color\CssColor.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\color\edge\GrayscaleEdgeDetector.java
+D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\dft\DFT1.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\dct\Dct1d.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\sift\scalespace\ScaleOctave.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\lib\image\Statistics.java
@@ -179,6 +179,7 @@ D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingb
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\color\statistics\ColorStatistics.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\color\image\ChromaticAdaptation.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\sift\util\SiftKeyfileReaderLowe.java
+D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\dft\DFT2.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\edgepreservingfilters\NagaoMatsuyamaFilter.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\regions\geometry\AxisAlignedBoundingBox.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\threshold\global\GlobalThresholder.java

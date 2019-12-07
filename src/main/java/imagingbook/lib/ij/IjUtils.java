@@ -203,5 +203,47 @@ public abstract class IjUtils {
 			((ColorProcessor) ip).setRGBWeights(wr, wg, wb);
 		}
 	}
+	
+	
+	// -------------------------------------------------------------------
+	
+	/**
+	 * 
+	 * @param fp
+	 * @return
+	 */
+	public static double[][] toDoubleArray(FloatProcessor fp) {
+		final int width = fp.getWidth();
+		final int height = fp.getHeight();
+		float[] fPixels = (float[]) fp.getPixels();
+		double[][] dPixels = new double[width][height];
+		int i = 0;
+		for (int v = 0; v < height; v++) {
+			for (int u = 0; u < width; u++) {
+				dPixels[u][v] = fPixels[i];
+				i++;
+			}
+		}
+		return dPixels;
+	}
+	
+	/**
+	 * 
+	 * @param dPixels
+	 * @return
+	 */
+	public static FloatProcessor toFloatProcessor(double[][] dPixels) {
+		final int width = dPixels.length;
+		final int height = dPixels[0].length;
+		float[] fPixels = new float[width * height];
+		int i = 0;
+		for (int v = 0; v < height; v++) {
+			for (int u = 0; u < width; u++) {
+				fPixels[i] = (float) dPixels[u][v];
+				i++;
+			}
+		}
+		return new FloatProcessor(width, height, fPixels);
+	}
 
 }
