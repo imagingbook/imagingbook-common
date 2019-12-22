@@ -39,7 +39,7 @@ public class Dct2d {
 	}
 	
 	public void iDCT(float[][] data) {
-		applyTo(data, true);
+		applyTo(data, false);
 	}
 	
 	// in-place 2D DCT

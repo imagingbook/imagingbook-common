@@ -25,7 +25,7 @@ public class Dct1d {
 	final private double s; 		// common scale factor
 	final private double[] tmp;		// array to hold temporary data
 	final private int M;			// size of the input vector
-	final private int N;			// = 4M
+	final private int M4;			// = 4*M
 	
 	/**
 	 * This table holds the cosine values cos(PI * (m(2u + 1)) / (2M)) = cos(j * PI / (2M))
@@ -37,16 +37,17 @@ public class Dct1d {
 	
 	public Dct1d(int M) {
 		this.M = M;
-		this.N = 4 * M;
+		this.M4 = 4 * M;
 		this.s = Math.sqrt(2.0 / M); 
 		this.tmp = new double[M];
-		this.cosTable = makeCosineTable(M);
+		this.cosTable = makeCosineTable();
 	}
 	
-	private double[] makeCosineTable(int M) {
-		double[] table = new double[N]; 	// we need a table of size 4*M
-		for (int j = 0; j < N; j++) {		// j is equivalent to (m * (2 * u + 1)) % 4M
-			double phi = j * Math.PI / (2 * M);
+	private double[] makeCosineTable() {
+		double[] table = new double[M4]; 	// we need a table of size 4*M
+		for (int j = 0; j < M4; j++) {		// j is equivalent to (m * (2 * u + 1)) % 4M
+			//double phi = j * Math.PI / (2 * M);
+			double phi = 2 * j * Math.PI / M4;
 			table[j] = Math.cos(phi);
 		}
 		return table;
@@ -66,7 +67,7 @@ public class Dct1d {
 			double cm = (m == 0) ? CM0 : 1.0;
 			double sum = 0;
 			for (int u = 0; u < M; u++) {
-				sum += g[u] * cm * cosTable[(m * (2 * u + 1)) % N];
+				sum += g[u] * cm * cosTable[(m * (2 * u + 1)) % M4];
 			}
 			G[m] = s * sum;
 		}
@@ -87,7 +88,7 @@ public class Dct1d {
 			double sum = 0;
 			for (int m = 0; m < M; m++) {
 				double cm = (m == 0) ? CM0 : 1.0;
-				sum += cm * G[m] * cosTable[(m * (2 * u + 1)) % N];
+				sum += cm * G[m] * cosTable[(m * (2 * u + 1)) % M4];
 			}
 			g[u] = s * sum;
 		}

@@ -28,17 +28,35 @@ public class DctMatrixTest {
 		System.out.println("At = " + Matrix.toString(At));
 		System.out.println();
 		
-		Dct2d dct = new Dct2d();
+		
+		
+		
 		float[][] g = {
 				{1,2,3,4},
 				{7,2,0,9},
 				{6,5,2,5},
 				{0,9,8,1}};
 		
-		float[][] g1 = Matrix.duplicate(g);
-		dct.DCT(g1);
-		System.out.println("G1 = " + Matrix.toString(g1));
+		System.out.println("---------- original 2D signal -----------");
+		System.out.println("g = " + Matrix.toString(g));
 		System.out.println();
+		
+		
+		System.out.println("---------- DCT with transformation methods -----------");
+		
+		float[][] G1 = Matrix.duplicate(g);
+		Dct2d dct = new Dct2d();
+		dct.DCT(G1);
+		System.out.println("G1 = " + Matrix.toString(G1));
+		System.out.println();
+		
+		// inverse  DFT with transformation methods
+		float[][] g1r = Matrix.duplicate(G1);
+		dct.iDCT(g1r);
+		System.out.println("g1r = " + Matrix.toString(g1r));
+		
+		System.out.println();
+		System.out.println("---------- DCT by matrix multiplication -----------");
 		
 		float[][] g2 = Matrix.duplicate(g);
 		float[][] G2 = Matrix.multiply(A, Matrix.multiply(g2, At));
@@ -48,11 +66,11 @@ public class DctMatrixTest {
 		float[][] g2r = Matrix.multiply(At, Matrix.multiply(G2, A));
 		System.out.println("g2r = " + Matrix.toString(g2r));
 		
-		float[][] I1 = Matrix.multiply(At, A);
-		System.out.println("I1 = " + Matrix.toString(I1));
-		
-		float[][] I2 = Matrix.multiply(A, At);
-		System.out.println("I2 = " + Matrix.toString(I2));
+//		float[][] I1 = Matrix.multiply(At, A);
+//		System.out.println("I1 = " + Matrix.toString(I1));
+//		
+//		float[][] I2 = Matrix.multiply(A, At);
+//		System.out.println("I2 = " + Matrix.toString(I2));
 	}
 	
 	static float[][] makeDctMatrix(int M, int N) {
