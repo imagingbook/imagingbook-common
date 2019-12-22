@@ -42,13 +42,6 @@ public class Dct2d {
 		applyTo(data, true);
 	}
 	
-//	@Deprecated
-//	public FloatProcessor applyTo(FloatProcessor fp, boolean forward) {
-//		float[][] data = fp.getFloatArray();	// this is always a duplicate array!
-//		applyTo(data, forward);
-//		return new FloatProcessor(data);
-//	}
-	
 	// in-place 2D DCT
 	private void applyTo(final float[][] data, final boolean forward) {
 		final int width = data.length;

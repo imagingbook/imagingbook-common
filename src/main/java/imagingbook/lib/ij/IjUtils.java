@@ -207,10 +207,11 @@ public abstract class IjUtils {
 	
 	// -------------------------------------------------------------------
 	
-	/**
-	 * 
-	 * @param fp
-	 * @return
+	/** 
+	 * Returns a copy of the pixel data as a 2D double
+	 * array with dimensions [x = 0..width-1][y = 0..height-1].
+	 * @param fp the image
+	 * @return the resulting array
 	 */
 	public static double[][] toDoubleArray(FloatProcessor fp) {
 		final int width = fp.getWidth();
@@ -228,9 +229,11 @@ public abstract class IjUtils {
 	}
 	
 	/**
+	 * Creates a new {@link FloatProcessor} instance of size width x height
+	 * from the given 2D array with dimensions [x = 0..width-1][y = 0..height-1].
 	 * 
-	 * @param dPixels
-	 * @return
+	 * @param dPixels a 2D {@code double} array
+	 * @return a new {@link FloatProcessor} instance
 	 */
 	public static FloatProcessor toFloatProcessor(double[][] dPixels) {
 		final int width = dPixels.length;
