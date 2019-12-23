@@ -16,7 +16,7 @@ import imagingbook.lib.math.Matrix;
  * tabulated sine and cosines values).
  * 
  * @version 2019/12/07
- *
+ * @deprecated
  */
 public abstract class DFT1 {
 
@@ -69,7 +69,7 @@ public abstract class DFT1 {
 		 * 
 		 * @param gRe	real part of the signal	(must be of length M)
 		 * @param gIm	imaginary part of the signal (must be of length M)
-		 * @param forward set true for forward transform, false for inverse trafnsform
+		 * @param forward set true for forward transform, false for inverse transform
 		 */
 		public void applyTo(double[] gRe, double[] gIm, boolean forward) {
 			if (M != gRe.length || M != gIm.length) {	// TODO: add more checks!
@@ -112,13 +112,13 @@ public abstract class DFT1 {
 
 		/**
 		 * Forward DFT applied to a complex-valued input signal (forward = true)
-		 * or inverse DFT applied to a complex-values spectrum (forward = false).
+		 * or inverse DFT applied to a complex-valued spectrum (forward = false).
 		 * The transformation operates "in place", i.e., the two input arrays
 		 * are modified.
 		 * 
 		 * @param gRe	real part of the signal	(must be of length M)
 		 * @param gIm	imaginary part of the signal (must be of length M)
-		 * @param forward set true for forward transform, false for inverse trafnsform
+		 * @param forward set true for forward transform, false for inverse transform
 		 */
 		public void applyTo(float[] gRe, float[] gIm, boolean forward) {
 			if (M != gRe.length || M != gIm.length) {	// TODO: add more checks!

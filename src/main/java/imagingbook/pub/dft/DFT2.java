@@ -19,7 +19,7 @@ import ij.process.ImageProcessor;
  * TODO: needs a complete rewrite!
  * 
  * @version 2019/12/07
- *
+ * @deprecated
  */
 public abstract class DFT2 {
 
@@ -125,11 +125,7 @@ public abstract class DFT2 {
 
 	public static class Float {
 
-		/**
-		 * 
-		 * @param g	2D complex-valued input signal: g[u][v][0] = re, g[u][v][1] = im
-		 * @return
-		 */
+		
 		public void applyTo(float[][] gRe, float[][] gIm, boolean forward) {
 			final int width = gRe.length;
 			final int height = gRe[0].length;
