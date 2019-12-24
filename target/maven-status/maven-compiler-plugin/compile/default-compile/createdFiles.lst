@@ -1,0 +1,15 @@
+imagingbook\pub\dft\Dft1dFast$1.class
+imagingbook\pub\regions\RegionLabeling$1.class
+imagingbook\lib\interpolation\PixelInterpolator$1.class
+imagingbook\pub\morphology\old\BinMorpher$1.class
+imagingbook\pub\edgepreservingfilters\PeronaMalikFilter$3.class
+imagingbook\lib\image\ImageAccessor$1.class
+imagingbook\pub\dft\Dft1dNaive$1.class
+imagingbook\pub\morphology\BinaryMorphologyFilter$1.class
+imagingbook\pub\threshold\adaptive\NiblackThresholder$1.class
+imagingbook\pub\color\quantize\KMeansClusteringQuantizer$1.class
+imagingbook\pub\matching\DistanceTransform$1.class
+imagingbook\lib\image\PixelIndexer$1.class
+imagingbook\lib\math\VectorNorm$1.class
+imagingbook\pub\color\image\ColorStack$1.class
+imagingbook\pub\dft\Dft2d$1.class
