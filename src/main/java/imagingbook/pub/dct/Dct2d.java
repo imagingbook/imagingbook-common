@@ -15,6 +15,12 @@ package imagingbook.pub.dct;
  * @version 2019-12-26
  */
 public abstract class Dct2d {
+	
+	boolean useFastMode = true;
+	
+	public void useFastMode(boolean yesOrNo) {
+		this.useFastMode = yesOrNo;
+	}
 
 	private Dct2d() {
 	}
@@ -25,20 +31,6 @@ public abstract class Dct2d {
 		
 		public Float() {
 		}
-
-//		@Deprecated		// to be removed
-//		public FloatProcessor DCT(FloatProcessor g) {
-//			float[][] data = g.getFloatArray();	// this is always a duplicate array!
-//			forward(data);
-//			return new FloatProcessor(data);
-//		}
-//		
-//		@Deprecated		// to be removed
-//		public FloatProcessor iDCT(FloatProcessor G) {
-//			float[][] data = G.getFloatArray();	
-//			inverse(data);
-//			return new FloatProcessor(data);
-//		}
 
 		/**
 		 * Performs an "in-place" 2D DCT forward transformation on the supplied data.
@@ -65,7 +57,8 @@ public abstract class Dct2d {
 
 			// do the rows:
 			float[] row = new float[width];
-			Dct1d.Float dct1R = new Dct1dDirect.Float(width);
+			Dct1d.Float dct1R = 
+					useFastMode ? new Dct1dFast.Float(width) : new Dct1dDirect.Float(width);
 			for (int v = 0; v < height; v++) {
 				//IJ.showProgress(v, height);
 				extractRow(data, v, row);
@@ -78,7 +71,8 @@ public abstract class Dct2d {
 
 			// do the columns:
 			float[] col = new float[height];
-			Dct1d.Float dct1C = new Dct1dDirect.Float(height);
+			Dct1d.Float dct1C = 
+					useFastMode ? new Dct1dFast.Float(height) : new Dct1dDirect.Float(height);
 			for (int u = 0; u < width; u++) {
 				//IJ.showProgress(u, width);
 				extractCol(data, u, col);

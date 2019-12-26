@@ -2,6 +2,10 @@ package imagingbook.pub.dct;
 
 /**
  * Interface specifying all one-dimensional DCT implementations.
+ * The definition used is the one adopted by MATLAB
+ * (see https://www.mathworks.com/help/signal/ref/dct.html), called 
+ * "DCT-II" on Wikipedia  (https://en.wikipedia.org/wiki/Discrete_cosine_transform).
+ * 
  */
 public interface Dct1d {
 	

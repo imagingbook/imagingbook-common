@@ -84,6 +84,7 @@ D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingb
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\lib\color\RandomColorGenerator.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\dft\Dft1d.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\dft\Dft1dFast.java
+D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\dct\Dct1dFast.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\threshold\global\MinErrorThresholder.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\lib\interpolation\SplineInterpolator.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\edgepreservingfilters\KuwaharaFilter.java

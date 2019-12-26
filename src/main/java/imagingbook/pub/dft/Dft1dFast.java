@@ -6,7 +6,9 @@ import org.jtransforms.fft.DoubleFFT_1D;
 import org.jtransforms.fft.FloatFFT_1D;
 
 /**
- * FFT (fast) implementation of the DFT.
+ * FFT (fast) implementation of the DFT, based on the JTransforms package
+ * by Piotr Wendykier (see <a href="https://github.com/wendykierp/JTransforms">
+ * https://github.com/wendykierp/JTransforms</a>).
  */
 public abstract class Dft1dFast {
 	

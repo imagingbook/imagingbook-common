@@ -13,7 +13,11 @@ import imagingbook.lib.math.Matrix;
 public abstract class Dft2d {
 	
 	final ScalingMode sm;
-	boolean useFFT = false;
+	boolean useFastMode = true;
+	
+	public void useFastMode(boolean yesOrNo) {
+		this.useFastMode = yesOrNo;
+	}
 	
 	private Dft2d() {
 		this(ScalingMode.DEFAULT);
@@ -21,10 +25,6 @@ public abstract class Dft2d {
 	
 	private Dft2d(ScalingMode sm) {
 		this.sm = sm;
-	}
-	
-	public void useFFT(boolean yesOrNo) {
-		this.useFFT = yesOrNo;
 	}
 	
 	// -----------------------------------------------------------------------
@@ -70,7 +70,7 @@ public abstract class Dft2d {
 			final float[] rowRe = new float[width];
 			final float[] rowIm = new float[width];
 			Dft1d.Float dftRow = 
-					useFFT ? new Dft1dFast.Float(width, sm) : new Dft1dDirect.Float(width, sm);
+					useFastMode ? new Dft1dFast.Float(width, sm) : new Dft1dDirect.Float(width, sm);
 			for (int v = 0; v < height; v++) {
 				extractRow(inRe, v, rowRe);
 				extractRow(inIm, v, rowIm);
@@ -83,7 +83,7 @@ public abstract class Dft2d {
 			final float[] colRe = new float[height];
 			final float[] colIm = new float[height];
 			Dft1d.Float dftCol = 
-					useFFT ? new Dft1dFast.Float(height, sm) : new Dft1dDirect.Float(height, sm);
+					useFastMode ? new Dft1dFast.Float(height, sm) : new Dft1dDirect.Float(height, sm);
 			for (int u = 0; u < width; u++) {
 				extractCol(inRe, u, colRe);
 				extractCol(inIm, u, colIm);
@@ -190,7 +190,7 @@ public abstract class Dft2d {
 			final double[] rowRe = new double[width];
 			final double[] rowIm = new double[width];
 			Dft1d.Double dftRow = 
-					useFFT ? new Dft1dFast.Double(width, sm) : new Dft1dDirect.Double(width, sm);
+					useFastMode ? new Dft1dFast.Double(width, sm) : new Dft1dDirect.Double(width, sm);
 			for (int v = 0; v < height; v++) {
 				extractRow(gRe, v, rowRe);
 				extractRow(gIm, v, rowIm);
@@ -203,7 +203,7 @@ public abstract class Dft2d {
 			final double[] colRe = new double[height];
 			final double[] colIm = new double[height];
 			Dft1d.Double dftCol = 
-					useFFT ? new Dft1dFast.Double(height, sm) : new Dft1dDirect.Double(height, sm);
+					useFastMode ? new Dft1dFast.Double(height, sm) : new Dft1dDirect.Double(height, sm);
 			for (int u = 0; u < width; u++) {
 				extractCol(gRe, u, colRe);
 				extractCol(gIm, u, colIm);

@@ -34,7 +34,7 @@ public class Dct1dSlow implements Dct1d.Double {
 	public void forward(double[] g) {
 		if (g.length != M)
 			throw new IllegalArgumentException();
-		final double s = Math.sqrt(2.0 / M); 
+		final double s = Math.sqrt(2.0 / M);
 		double[] G = tmp;
 		for (int m = 0; m < M; m++) {
 			double cm = (m == 0) ? CM0 : 1.0;
