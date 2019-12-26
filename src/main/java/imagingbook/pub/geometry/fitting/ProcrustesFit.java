@@ -57,12 +57,13 @@ public class ProcrustesFit extends LinearFit {
 	
 	/**
 	 * Full constructor. 
-	 * @param allowTranslation If {@code true}, translation (t) between point sets is considered, 
-	 * 		otherwise zero translation is assumed.
-	 * @param allowScaling If {@code true}, scaling (c) between point sets is considered, 
-	 * 		otherwise unit scale assumed.
-	 * @param forceRotation If {@code true}, the orthogonal part of the transformation (Q)
-	 * 		is forced to a true rotation and no reflection is allowed.
+	 * @param n dimensions
+	 * @param allowTranslation if {@code true}, translation (t) between point sets is considered, 
+	 * 		otherwise zero translation is assumed
+	 * @param allowScaling if {@code true}, scaling (c) between point sets is considered, 
+	 * 		otherwise unit scale assumed
+	 * @param forceRotation if {@code true}, the orthogonal part of the transformation (Q)
+	 * 		is forced to a true rotation and no reflection is allowed
 	 */
 	public ProcrustesFit(int n, boolean allowTranslation, boolean allowScaling, boolean forceRotation) {
 		super(n);

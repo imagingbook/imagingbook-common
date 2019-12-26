@@ -214,10 +214,6 @@ public abstract class RegionLabeling {
 	/**
 	 * Find the region associated to the given label.
 	 * @param label the label number.
-	 * @return the associated region object or {@code null} if
-	 * is does not exist.
-	 * 
-	 * @param label the label number.
 	 * @return the region object associated with the given label
 	 * 		or {@code null} if it does not exist.
 	 */

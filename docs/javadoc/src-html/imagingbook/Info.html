@@ -40,12 +40,12 @@
 <span class="sourceLineNo">032</span>                //IJ.log("listing attributes");<a name="line.32"></a>
 <span class="sourceLineNo">033</span>                Attributes attr = mf.getMainAttributes();<a name="line.33"></a>
 <span class="sourceLineNo">034</span>                String version = null;<a name="line.34"></a>
-<span class="sourceLineNo">035</span>                String buildDate = null;<a name="line.35"></a>
+<span class="sourceLineNo">035</span>                String buildTime = null;<a name="line.35"></a>
 <span class="sourceLineNo">036</span>                try {<a name="line.36"></a>
 <span class="sourceLineNo">037</span>                        version = attr.getValue("Implementation-Version");<a name="line.37"></a>
-<span class="sourceLineNo">038</span>                        buildDate = attr.getValue("Build-Date");<a name="line.38"></a>
+<span class="sourceLineNo">038</span>                        buildTime = attr.getValue("Build-Time");<a name="line.38"></a>
 <span class="sourceLineNo">039</span>                } catch (IllegalArgumentException e) { }<a name="line.39"></a>
-<span class="sourceLineNo">040</span>                return version + " (" + buildDate + ")";<a name="line.40"></a>
+<span class="sourceLineNo">040</span>                return version + " (" + buildTime + ")";<a name="line.40"></a>
 <span class="sourceLineNo">041</span>        }<a name="line.41"></a>
 <span class="sourceLineNo">042</span>        <a name="line.42"></a>
 <span class="sourceLineNo">043</span>        <a name="line.43"></a>

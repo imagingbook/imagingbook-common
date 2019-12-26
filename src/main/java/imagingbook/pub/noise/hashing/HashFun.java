@@ -14,7 +14,7 @@ import java.util.Random;
 /**
  * This class is the abstract superclass of various hash functions. 
  * It cannot be instantiated directly, but its subclasses can. Two static 
- * methods <tt>create()</tt> and <tt>create(seed)</tt> are provided for convenience.
+ * methods {@code create()} and {@code create(seed)} are provided for convenience.
  * Typical use: <br><pre>
  *   HashFun hf = new HashFun.create(); // or, alternatively,
  *   HashFun hf = new Hash32Ward(seed);

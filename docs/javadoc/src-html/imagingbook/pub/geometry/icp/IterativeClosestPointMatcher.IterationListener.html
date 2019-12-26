@@ -90,7 +90,7 @@
 <span class="sourceLineNo">082</span>                } while(!converged &amp;&amp; k &lt; kMax);<a name="line.82"></a>
 <span class="sourceLineNo">083</span>        }<a name="line.83"></a>
 <span class="sourceLineNo">084</span><a name="line.84"></a>
-<span class="sourceLineNo">085</span>        private RealMatrix initialTransformation() {<a name="line.85"></a>
+<span class="sourceLineNo">085</span>        private RealMatrix initialTransformation() {                                    // TODO: align centroids of point clouds!<a name="line.85"></a>
 <span class="sourceLineNo">086</span>                RealMatrix iT = MatrixUtils.createRealMatrix(n, n + 1);<a name="line.86"></a>
 <span class="sourceLineNo">087</span>                iT.setSubMatrix(MatrixUtils.createRealIdentityMatrix(n).getData(), 0, 0);<a name="line.87"></a>
 <span class="sourceLineNo">088</span>                return iT;<a name="line.88"></a>
@@ -105,7 +105,7 @@
 <span class="sourceLineNo">097</span>                        int jMin = 0;<a name="line.97"></a>
 <span class="sourceLineNo">098</span>                        int j = 0;<a name="line.98"></a>
 <span class="sourceLineNo">099</span>                        for (double[] yi : Y) {<a name="line.99"></a>
-<span class="sourceLineNo">100</span>                                double d = Matrix.normL2squared(Matrix.subtract(xiT,yi));<a name="line.100"></a>
+<span class="sourceLineNo">100</span>                                double d = Matrix.normL2squared(Matrix.subtract(xiT, yi));<a name="line.100"></a>
 <span class="sourceLineNo">101</span>                                if (d &lt; dMin) {<a name="line.101"></a>
 <span class="sourceLineNo">102</span>                                        dMin = d;<a name="line.102"></a>
 <span class="sourceLineNo">103</span>                                        jMin = j;<a name="line.103"></a>
@@ -126,7 +126,7 @@
 <span class="sourceLineNo">118</span>                        YY.add(Y.get(A[i]));<a name="line.118"></a>
 <span class="sourceLineNo">119</span>                }<a name="line.119"></a>
 <span class="sourceLineNo">120</span>                <a name="line.120"></a>
-<span class="sourceLineNo">121</span>                ProcrustesFit pf = new ProcrustesFit(true, false, true);<a name="line.121"></a>
+<span class="sourceLineNo">121</span>                ProcrustesFit pf = new ProcrustesFit(2, true, false, true);<a name="line.121"></a>
 <span class="sourceLineNo">122</span>                pf.fit(X, YY);<a name="line.122"></a>
 <span class="sourceLineNo">123</span>                <a name="line.123"></a>
 <span class="sourceLineNo">124</span>                T = pf.getTransformationMatrix();<a name="line.124"></a>

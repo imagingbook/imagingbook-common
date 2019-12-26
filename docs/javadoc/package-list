@@ -1,5 +1,4 @@
 imagingbook
-imagingbook.lib
 imagingbook.lib.color
 imagingbook.lib.filters
 imagingbook.lib.ij
@@ -8,7 +7,6 @@ imagingbook.lib.interpolation
 imagingbook.lib.math
 imagingbook.lib.settings
 imagingbook.lib.util
-imagingbook.pub
 imagingbook.pub.color.edge
 imagingbook.pub.color.filters
 imagingbook.pub.color.image
@@ -17,10 +15,10 @@ imagingbook.pub.color.statistics
 imagingbook.pub.corners
 imagingbook.pub.dct
 imagingbook.pub.dft
+imagingbook.pub.dft.obsolete
 imagingbook.pub.edgepreservingfilters
 imagingbook.pub.fd
 imagingbook.pub.geometry.fitting
-imagingbook.pub.geometry.fitting.tests
 imagingbook.pub.geometry.icp
 imagingbook.pub.geometry.icp.tests
 imagingbook.pub.geometry.mappings
