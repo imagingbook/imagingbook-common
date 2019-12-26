@@ -28,9 +28,6 @@ public class DctMatrixTest {
 		System.out.println("At = " + Matrix.toString(At));
 		System.out.println();
 		
-		
-		
-		
 		float[][] g = {
 				{1,2,3,4},
 				{7,2,0,9},
@@ -45,14 +42,14 @@ public class DctMatrixTest {
 		System.out.println("---------- DCT with transformation methods -----------");
 		
 		float[][] G1 = Matrix.duplicate(g);
-		Dct2d dct = new Dct2d();
-		dct.DCT(G1);
+		Dct2d.Float dct = new Dct2d.Float();
+		dct.forward(G1);
 		System.out.println("G1 = " + Matrix.toString(G1));
 		System.out.println();
 		
 		// inverse  DFT with transformation methods
 		float[][] g1r = Matrix.duplicate(G1);
-		dct.iDCT(g1r);
+		dct.inverse(g1r);
 		System.out.println("g1r = " + Matrix.toString(g1r));
 		
 		System.out.println();

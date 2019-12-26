@@ -8,98 +8,114 @@
  *******************************************************************************/
 
 package imagingbook.pub.dct;
-import ij.IJ;
-import ij.process.FloatProcessor;
 
 /**
  * This class provides the functionality for calculating the DCT in 2D.
  * @author W. Burger
- * @version 2014-04-13 (changed massively)
+ * @version 2019-12-26
  */
+public abstract class Dct2d {
 
-public class Dct2d {
-	
-	public Dct2d() {
+	private Dct2d() {
 	}
 	
-	public FloatProcessor DCT(FloatProcessor g) {
-		float[][] data = g.getFloatArray();	// this is always a duplicate array!
-		DCT(data);
-		return new FloatProcessor(data);
-	}
-	
-	public void DCT(float[][] data) {
-		applyTo(data, true);
-	}
-	
-	public FloatProcessor iDCT(FloatProcessor G) {
-		float[][] data = G.getFloatArray();	
-		iDCT(data);
-		return new FloatProcessor(data);
-	}
-	
-	public void iDCT(float[][] data) {
-		applyTo(data, false);
-	}
-	
-	// in-place 2D DCT
-	private void applyTo(final float[][] data, final boolean forward) {
-		final int width = data.length;
-		final int height = data[0].length;
+	// ---------------------------------------------------------------------------------------
+
+	public static class Float extends Dct2d {
 		
-		// do the rows:
-		double[] row = new double[width];
-		Dct1d dct1R = new Dct1d(width);
-		for (int v = 0; v < height; v++) {
-			IJ.showProgress(v, height);
-			getRow(data, v, row);
-			if (forward)
-				dct1R.DCT(row);
-			else
-				dct1R.iDCT(row);
-			setRow(data, v, row);
+		public Float() {
 		}
 
-		// do the columns:
-		double[] col = new double[height];
-		Dct1d dct1C = new Dct1d(height);
-		for (int u = 0; u < width; u++) {
-			IJ.showProgress(u, width);
-			getCol(data, u, col);
-			if (forward)
-				dct1C.DCT(col);
-			else
-				dct1C.iDCT(col);
-			setCol(data, u, col);
-		}
-	}
+//		@Deprecated		// to be removed
+//		public FloatProcessor DCT(FloatProcessor g) {
+//			float[][] data = g.getFloatArray();	// this is always a duplicate array!
+//			forward(data);
+//			return new FloatProcessor(data);
+//		}
+//		
+//		@Deprecated		// to be removed
+//		public FloatProcessor iDCT(FloatProcessor G) {
+//			float[][] data = G.getFloatArray();	
+//			inverse(data);
+//			return new FloatProcessor(data);
+//		}
 
-	
-	private void getRow(float[][] data, int v, double[] row) {
-		final int width = data.length;
-		for (int u = 0; u < width; u++) {
-			row[u] = data[u][v];
+		/**
+		 * Performs an "in-place" 2D DCT forward transformation on the supplied data.
+		 * The input signal is replaced by the associated DCT spectrum.
+		 * @param g the signal to be transformed (modified)
+		 */
+		public void forward(float[][] g) {
+			transform(g, true);
 		}
-	}
-	
-	private void setRow(float[][] data, int v, double[] row) {
-		final int width = data.length;
-		for (int u = 0; u < width; u++) {
-			data[u][v] = (float) row[u];
+
+		/**
+		 * Performs an "in-place" 2D DCT inverse transformation on the supplied spectrum.
+		 * The input spectrum is replaced by the associated signal.
+		 * @param G the spectrum to be transformed (modified)
+		 */
+		public void inverse(float[][] G) {
+			transform(G, false);
 		}
-	}
-	
-	private void getCol(float[][] data, int u, double[] column) {
-		final int height = data[0].length;
-		for (int v = 0; v < height; v++) {
-			column[v] = data[u][v];
+
+		// in-place 2D DCT
+		private void transform(final float[][] data, boolean forward) {
+			final int width = data.length;
+			final int height = data[0].length;
+
+			// do the rows:
+			float[] row = new float[width];
+			Dct1d.Float dct1R = new Dct1dDirect.Float(width);
+			for (int v = 0; v < height; v++) {
+				//IJ.showProgress(v, height);
+				extractRow(data, v, row);
+				if (forward)
+					dct1R.forward(row);
+				else
+					dct1R.inverse(row);
+				insertRow(data, v, row);
+			}
+
+			// do the columns:
+			float[] col = new float[height];
+			Dct1d.Float dct1C = new Dct1dDirect.Float(height);
+			for (int u = 0; u < width; u++) {
+				//IJ.showProgress(u, width);
+				extractCol(data, u, col);
+				if (forward)
+					dct1C.forward(col);
+				else
+					dct1C.inverse(col);
+				insertCol(data, u, col);
+			}
 		}
-	}
-	
-	private void setCol(float[][] data, int u, double[] column) {
-		final int height = data[0].length;
-		for (int v = 0; v < height; v++) {
-			data[u][v] = (float) column[v];
+
+		private void extractRow(float[][] data, int v, float[] row) {
+			final int width = data.length;
+			for (int u = 0; u < width; u++) {
+				row[u] = data[u][v];
+			}
+		}
+
+		private void insertRow(float[][] data, int v, float[] row) {
+			final int width = data.length;
+			for (int u = 0; u < width; u++) {
+				data[u][v] = (float) row[u];
+			}
+		}
+
+		private void extractCol(float[][] data, int u, float[] column) {
+			final int height = data[0].length;
+			for (int v = 0; v < height; v++) {
+				column[v] = data[u][v];
+			}
+		}
+
+		private void insertCol(float[][] data, int u, float[] column) {
+			final int height = data[0].length;
+			for (int v = 0; v < height; v++) {
+				data[u][v] = (float) column[v];
+			}
 		}
 	}
 

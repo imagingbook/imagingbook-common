@@ -61,18 +61,18 @@ public abstract class Dft1dDirect {
 		
 		@Override
 		public void forward(float[] gRe, float[] gIm) {
-			checkSize(gRe, gIm);
+			checkSize(gRe, gIm, M);
 			transform(gRe, gIm, true);
 		}
 		
 		@Override
 		public void inverse(float[] GRe, float[] GIm) {
-			checkSize(GRe, GIm);
+			checkSize(GRe, GIm, M);
 			transform(GRe, GIm, false);
 		}
 		
 		public void transform(float[] inRe, float[] inIm, boolean forward) {
-			checkSize(inRe, inIm);
+			checkSize(inRe, inIm, M);
 			final double scale = sm.getScale(M, forward);
 			for (int u = 0; u < M; u++) {
 				double sumRe = 0;
@@ -117,18 +117,18 @@ public abstract class Dft1dDirect {
 		
 		@Override
 		public void forward(double[] gRe, double[] gIm) {
-			checkSize(gRe, gIm);
+			checkSize(gRe, gIm, M);
 			transform(gRe, gIm, true);
 		}
 		
 		@Override
 		public void inverse(double[] GRe, double[] GIm) {
-			checkSize(GRe, GIm);
+			checkSize(GRe, GIm, M);
 			transform(GRe, GIm, false);
 		}
 		
 		public void transform(double[] inRe, double[] inIm, boolean forward) {
-			checkSize(inRe, inIm);
+			checkSize(inRe, inIm, M);
 			final double scale = sm.getScale(M, forward);
 			for (int u = 0; u < M; u++) {
 				double sumRe = 0;

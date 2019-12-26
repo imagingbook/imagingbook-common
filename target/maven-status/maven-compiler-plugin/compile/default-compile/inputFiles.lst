@@ -68,11 +68,11 @@ D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingb
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\lib\util\ResourceUtils.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\lib\math\Complex.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\threshold\adaptive\BernsenThresholder.java
-D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\dft\Dft1dNaive.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\sift\SiftMatch3.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\geometry\fitting\AffineFit.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\geometry\mappings\Mapping.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\geometry\icp\tests\IcpTest1.java
+D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\dct\Dct1dSlow.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\matching\DistanceTransform.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\lib\util\SerializationHelper.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\fd\PolygonSampler.java
@@ -97,7 +97,6 @@ D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingb
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\test\TestMe.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\lucaskanade\LucasKanadeForwardMatcher.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\lib\util\Clipboard.java
-D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\dct\Dct1d_Slow.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\histogram\HistogramPlot.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\lib\ij\GuiTools.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\Info.java
@@ -121,6 +120,7 @@ D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingb
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\sift\SiftDetector.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\regions\ContourOverlay.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\lib\package-info.java
+D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\dft\Dft1dDirect.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\threshold\Thresholder.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\lib\image\ImageAccessor.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\color\filters\ScalarMedianFilter.java
@@ -164,6 +164,7 @@ D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingb
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\noise\hashing\Hash32.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\lucaskanade\RoiUtils.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\geometry\icp\IterativeClosestPointMatcher.java
+D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\dct\Dct1dDirect.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\threshold\adaptive\InterpolatingThresholder.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\threshold\BackgroundMode.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\lib\image\ImageMath.java

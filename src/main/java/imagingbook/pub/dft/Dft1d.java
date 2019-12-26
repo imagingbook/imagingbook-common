@@ -1,7 +1,5 @@
 package imagingbook.pub.dft;
 
-import imagingbook.lib.math.Matrix;
-
 /**
  * Interface specifying all one-dimensional DFT/FFT implementations.
  */
@@ -25,7 +23,7 @@ public interface Dft1d {
 		void inverse(float[] GRe, float[] GIm);
 		
 		/**
-		 * Transforms the given 2D arrays 'in-place'. Separate arrays of identical size
+		 * Transforms the given 1D arrays 'in-place'. Separate arrays of identical size
 		 * must be supplied for the real and imaginary parts of the signal (forward) 
 		 * or spectrum (inverse), neither of which may be {@code null}.
 		 * 
@@ -35,9 +33,9 @@ public interface Dft1d {
 		 */
 		void transform(float[] inRe, float[] inIm, boolean forward);
 		
-		default void checkSize(float[] re, float[] im) {
-			if (!Matrix.sameSize(re, im))
-				throw new IllegalArgumentException("arrays for real/imagingary parts must be of same size");
+		default void checkSize(float[] re, float[] im, int n) {
+			if (re.length != n || im.length != n)
+				throw new IllegalArgumentException("arrays for real/imagingary parts must be of size " + n);
 		}
 		
 	}
@@ -61,7 +59,7 @@ public interface Dft1d {
 		void inverse(double[] GRe, double[] GIm);
 		
 		/**
-		 * Transforms the given 2D arrays 'in-place'. Separate arrays of identical size
+		 * Transforms the given 1D arrays 'in-place'. Separate arrays of identical size
 		 * must be supplied for the real and imaginary parts of the signal (forward) 
 		 * or spectrum (inverse), neither of which may be {@code null}.
 		 * 
@@ -71,9 +69,9 @@ public interface Dft1d {
 		 */
 		void transform(double[] inRe, double[] inIm, boolean forward);
 		
-		default void checkSize(double[] re, double[] im) {
-			if (!Matrix.sameSize(re, im))
-				throw new IllegalArgumentException("arrays for real/imagingary parts must be of same size");
+		default void checkSize(double[] re, double[] im, int n) {
+			if (re.length != n || im.length != n)
+				throw new IllegalArgumentException("arrays for real/imagingary parts must be of size " + n);
 		}
 	}
 	

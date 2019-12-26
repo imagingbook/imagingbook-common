@@ -40,7 +40,7 @@ public abstract class Dft1dFast {
 		
 		@Override
 		public void forward(float[] gRe, float[] gIm) {
-			checkSize(gRe, gIm);
+			checkSize(gRe, gIm, M);
 //			float scale = (float) sm.getScale(M, true);
 //			setupA(gRe, gIm, A);	
 //			fft.complexForward(A);
@@ -50,7 +50,7 @@ public abstract class Dft1dFast {
 		
 		@Override
 		public void inverse(float[] GRe, float[] GIm) {
-			checkSize(GRe, GIm);
+			checkSize(GRe, GIm, M);
 //			float scale = (float) sm.getScale(M, false);
 //			setupA(GRe, GIm, A);	
 //			fft.complexInverse(A, false);
@@ -59,7 +59,7 @@ public abstract class Dft1dFast {
 		}
 		
 		public void transform(float[] inRe, float[] inIm, boolean forward) {
-			checkSize(inRe, inIm);
+			checkSize(inRe, inIm, M);
 			final float scale = (float) sm.getScale(M, forward);
 			setupA(inRe, inIm, A);	
 			if (forward)
@@ -108,7 +108,7 @@ public abstract class Dft1dFast {
 		
 		@Override
 		public void forward(double[] gRe, double[] gIm) {
-			checkSize(gRe, gIm);
+			checkSize(gRe, gIm, M);
 //			double scale = sm.getScale(M, true);
 //			setupA(gRe, gIm, A);	
 //			fft.complexForward(A);
@@ -118,7 +118,7 @@ public abstract class Dft1dFast {
 		
 		@Override
 		public void inverse(double[] GRe, double[] GIm) {
-			checkSize(GRe, GIm);
+			checkSize(GRe, GIm, M);
 //			double scale = sm.getScale(M, false);
 //			setupA(GRe, GIm, A);	
 //			fft.complexInverse(A, false);
@@ -128,7 +128,7 @@ public abstract class Dft1dFast {
 		
 		@Override
 		public void transform(double[] inRe, double[] inIm, boolean forward) {
-			checkSize(inRe, inIm);
+			checkSize(inRe, inIm, M);
 			final double scale = (double) sm.getScale(M, forward);
 			setupA(inRe, inIm, A);	
 			if (forward)
