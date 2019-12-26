@@ -21,18 +21,18 @@
 <span class="sourceLineNo">013</span>public abstract class Dft2d {<a name="line.13"></a>
 <span class="sourceLineNo">014</span>        <a name="line.14"></a>
 <span class="sourceLineNo">015</span>        final ScalingMode sm;<a name="line.15"></a>
-<span class="sourceLineNo">016</span>        boolean useFFT = false;<a name="line.16"></a>
+<span class="sourceLineNo">016</span>        boolean useFastMode = true;<a name="line.16"></a>
 <span class="sourceLineNo">017</span>        <a name="line.17"></a>
-<span class="sourceLineNo">018</span>        private Dft2d() {<a name="line.18"></a>
-<span class="sourceLineNo">019</span>                this(ScalingMode.DEFAULT);<a name="line.19"></a>
+<span class="sourceLineNo">018</span>        public void useFastMode(boolean yesOrNo) {<a name="line.18"></a>
+<span class="sourceLineNo">019</span>                this.useFastMode = yesOrNo;<a name="line.19"></a>
 <span class="sourceLineNo">020</span>        }<a name="line.20"></a>
 <span class="sourceLineNo">021</span>        <a name="line.21"></a>
-<span class="sourceLineNo">022</span>        private Dft2d(ScalingMode sm) {<a name="line.22"></a>
-<span class="sourceLineNo">023</span>                this.sm = sm;<a name="line.23"></a>
+<span class="sourceLineNo">022</span>        private Dft2d() {<a name="line.22"></a>
+<span class="sourceLineNo">023</span>                this(ScalingMode.DEFAULT);<a name="line.23"></a>
 <span class="sourceLineNo">024</span>        }<a name="line.24"></a>
 <span class="sourceLineNo">025</span>        <a name="line.25"></a>
-<span class="sourceLineNo">026</span>        public void useFFT(boolean yesOrNo) {<a name="line.26"></a>
-<span class="sourceLineNo">027</span>                this.useFFT = yesOrNo;<a name="line.27"></a>
+<span class="sourceLineNo">026</span>        private Dft2d(ScalingMode sm) {<a name="line.26"></a>
+<span class="sourceLineNo">027</span>                this.sm = sm;<a name="line.27"></a>
 <span class="sourceLineNo">028</span>        }<a name="line.28"></a>
 <span class="sourceLineNo">029</span>        <a name="line.29"></a>
 <span class="sourceLineNo">030</span>        // -----------------------------------------------------------------------<a name="line.30"></a>
@@ -78,7 +78,7 @@
 <span class="sourceLineNo">070</span>                        final float[] rowRe = new float[width];<a name="line.70"></a>
 <span class="sourceLineNo">071</span>                        final float[] rowIm = new float[width];<a name="line.71"></a>
 <span class="sourceLineNo">072</span>                        Dft1d.Float dftRow = <a name="line.72"></a>
-<span class="sourceLineNo">073</span>                                        useFFT ? new Dft1dFast.Float(width, sm) : new Dft1dDirect.Float(width, sm);<a name="line.73"></a>
+<span class="sourceLineNo">073</span>                                        useFastMode ? new Dft1dFast.Float(width, sm) : new Dft1dDirect.Float(width, sm);<a name="line.73"></a>
 <span class="sourceLineNo">074</span>                        for (int v = 0; v &lt; height; v++) {<a name="line.74"></a>
 <span class="sourceLineNo">075</span>                                extractRow(inRe, v, rowRe);<a name="line.75"></a>
 <span class="sourceLineNo">076</span>                                extractRow(inIm, v, rowIm);<a name="line.76"></a>
@@ -91,7 +91,7 @@
 <span class="sourceLineNo">083</span>                        final float[] colRe = new float[height];<a name="line.83"></a>
 <span class="sourceLineNo">084</span>                        final float[] colIm = new float[height];<a name="line.84"></a>
 <span class="sourceLineNo">085</span>                        Dft1d.Float dftCol = <a name="line.85"></a>
-<span class="sourceLineNo">086</span>                                        useFFT ? new Dft1dFast.Float(height, sm) : new Dft1dDirect.Float(height, sm);<a name="line.86"></a>
+<span class="sourceLineNo">086</span>                                        useFastMode ? new Dft1dFast.Float(height, sm) : new Dft1dDirect.Float(height, sm);<a name="line.86"></a>
 <span class="sourceLineNo">087</span>                        for (int u = 0; u &lt; width; u++) {<a name="line.87"></a>
 <span class="sourceLineNo">088</span>                                extractCol(inRe, u, colRe);<a name="line.88"></a>
 <span class="sourceLineNo">089</span>                                extractCol(inIm, u, colIm);<a name="line.89"></a>
@@ -198,7 +198,7 @@
 <span class="sourceLineNo">190</span>                        final double[] rowRe = new double[width];<a name="line.190"></a>
 <span class="sourceLineNo">191</span>                        final double[] rowIm = new double[width];<a name="line.191"></a>
 <span class="sourceLineNo">192</span>                        Dft1d.Double dftRow = <a name="line.192"></a>
-<span class="sourceLineNo">193</span>                                        useFFT ? new Dft1dFast.Double(width, sm) : new Dft1dDirect.Double(width, sm);<a name="line.193"></a>
+<span class="sourceLineNo">193</span>                                        useFastMode ? new Dft1dFast.Double(width, sm) : new Dft1dDirect.Double(width, sm);<a name="line.193"></a>
 <span class="sourceLineNo">194</span>                        for (int v = 0; v &lt; height; v++) {<a name="line.194"></a>
 <span class="sourceLineNo">195</span>                                extractRow(gRe, v, rowRe);<a name="line.195"></a>
 <span class="sourceLineNo">196</span>                                extractRow(gIm, v, rowIm);<a name="line.196"></a>
@@ -211,7 +211,7 @@
 <span class="sourceLineNo">203</span>                        final double[] colRe = new double[height];<a name="line.203"></a>
 <span class="sourceLineNo">204</span>                        final double[] colIm = new double[height];<a name="line.204"></a>
 <span class="sourceLineNo">205</span>                        Dft1d.Double dftCol = <a name="line.205"></a>
-<span class="sourceLineNo">206</span>                                        useFFT ? new Dft1dFast.Double(height, sm) : new Dft1dDirect.Double(height, sm);<a name="line.206"></a>
+<span class="sourceLineNo">206</span>                                        useFastMode ? new Dft1dFast.Double(height, sm) : new Dft1dDirect.Double(height, sm);<a name="line.206"></a>
 <span class="sourceLineNo">207</span>                        for (int u = 0; u &lt; width; u++) {<a name="line.207"></a>
 <span class="sourceLineNo">208</span>                                extractCol(gRe, u, colRe);<a name="line.208"></a>
 <span class="sourceLineNo">209</span>                                extractCol(gIm, u, colIm);<a name="line.209"></a>
