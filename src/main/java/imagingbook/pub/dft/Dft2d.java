@@ -2,7 +2,10 @@ package imagingbook.pub.dft;
 
 import java.util.Arrays;
 
+import imagingbook.lib.math.Matrix;
+
 /**
+ * Two-dimensional DFT implementation.
  * TODO: size checking throughout!
  * @author WB
  *
@@ -28,54 +31,68 @@ public abstract class Dft2d {
 	
 	public static class Float extends Dft2d {
 		
+		/**
+		 * Performs an "in-place" 2D DFT forward transformation on the supplied data.
+		 * The input signal is replaced by the associated DFT spectrum.
+		 * @param gRe real part of the signal (modified)
+		 * @param gIm imaginary part of the signal (modified)
+		 */
 		public void forward(float[][] gRe, float[][] gIm) {
+			checkSize(gRe, gIm);
 			transform(gRe, gIm, true);
 		}
 		
+		/**
+		 * Performs an "in-place" 2D DFT inverse transformation on the supplied spectrum.
+		 * The input spectrum is replaced by the associated signal.
+		 * @param GRe real part of the spectrum (modified)
+		 * @param GIm imaginary part of the spectrum (modified)
+		 */
 		public void inverse(float[][] GRe, float[][] GIm) {
+			checkSize(GRe, GIm);
 			transform(GRe, GIm, false);
 		}
 		
 		/**
-		 * Transforms the given 2D arrays 'in-place', i.e., real and imaginary
-		 * arrays of identical size must be supplied, neither may be null.
+		 * Transforms the given 2D arrays 'in-place'. Separate arrays of identical size
+		 * must be supplied for the real and imaginary parts of the signal (forward) 
+		 * or spectrum (inverse), neither of which may be null.
 		 * 
-		 * @param gRe
-		 * @param gIm
-		 * @param forward
+		 * @param inRe real part of the input signal or spectrum (modified)
+		 * @param inIm imaginary part of the input signal or spectrum (modified)
+		 * @param forward forward transformation if {@code true}, inverse transformation if {@code false}
 		 */
-		void transform(float[][] gRe, float[][] gIm, boolean forward) {
-			final int width = gRe.length;
-			final int height = gRe[0].length;
+		void transform(float[][] inRe, float[][] inIm, boolean forward) {
+			final int width = inRe.length;
+			final int height = inRe[0].length;
 
 			// transform each row (in place):
 			final float[] rowRe = new float[width];
 			final float[] rowIm = new float[width];
 			Dft1d.Float dftRow = 
-					useFFT ? new Dft1dFast.Float(width, sm) : new Dft1dNaive.Float(width, sm);
+					useFFT ? new Dft1dFast.Float(width, sm) : new Dft1dDirect.Float(width, sm);
 			for (int v = 0; v < height; v++) {
-				extractRow(gRe, v, rowRe);
-				extractRow(gIm, v, rowIm);
+				extractRow(inRe, v, rowRe);
+				extractRow(inIm, v, rowIm);
 				dftRow.transform(rowRe, rowIm, forward);
-				insertRow(gRe, v, rowRe);
-				insertRow(gIm, v, rowIm);
+				insertRow(inRe, v, rowRe);
+				insertRow(inIm, v, rowIm);
 			}
 
 			// transform each column (in place):
 			final float[] colRe = new float[height];
 			final float[] colIm = new float[height];
 			Dft1d.Float dftCol = 
-					useFFT ? new Dft1dFast.Float(height, sm) : new Dft1dNaive.Float(height, sm);
+					useFFT ? new Dft1dFast.Float(height, sm) : new Dft1dDirect.Float(height, sm);
 			for (int u = 0; u < width; u++) {
-				extractCol(gRe, u, colRe);
-				extractCol(gIm, u, colIm);
+				extractCol(inRe, u, colRe);
+				extractCol(inIm, u, colIm);
 				dftCol.transform(colRe, colIm, forward);
-				insertCol(gRe, u, colRe);
-				insertCol(gIm, u, colIm);
+				insertCol(inRe, u, colRe);
+				insertCol(inIm, u, colIm);
 			}
 		}
 		
-
 		// extract the values of row 'v' of 'g' into 'row'
 		private void extractRow(float[][] g, int v, float[] row) {
 			if (g == null) {			// TODO: check if needed
@@ -114,7 +131,14 @@ public abstract class Dft2d {
 			}
 		}
 		
+		/**
+		 * Calculates and returns the magnitude of the supplied complex-valued 2D data.
+		 * @param re the real part of the data
+		 * @param im the imaginary part of the data
+		 * @return a 2D array of magnitude values
+		 */
 		public float[][] getMagnitude(float[][] re, float[][] im) {
+			checkSize(re, im);
 			final int width = re.length;
 			final int height = re[0].length;
 			float[][] mag = new float[width][height];
@@ -128,6 +152,11 @@ public abstract class Dft2d {
 			return mag;
 		}
 		
+		private void checkSize(float[][] re, float[][] im) {
+			if (!Matrix.sameSize(re, im))
+				throw new IllegalArgumentException("arrays for real/imagingary parts must be of same size");
+		}
+		
 	}
 	
 	// -----------------------------------------------------------------------
@@ -136,10 +165,12 @@ public abstract class Dft2d {
 		
 
 		public void forward(double[][] gRe, double[][] gIm) {
+			checkSize(gRe, gIm);
 			transform(gRe, gIm, true);
 		}
 		
 		public void inverse(double[][] GRe, double[][] GIm) {
+			checkSize(GRe, GIm);
 			transform(GRe, GIm, false);
 		}
 		
@@ -159,7 +190,7 @@ public abstract class Dft2d {
 			final double[] rowRe = new double[width];
 			final double[] rowIm = new double[width];
 			Dft1d.Double dftRow = 
-					useFFT ? new Dft1dFast.Double(width, sm) : new Dft1dNaive.Double(width, sm);
+					useFFT ? new Dft1dFast.Double(width, sm) : new Dft1dDirect.Double(width, sm);
 			for (int v = 0; v < height; v++) {
 				extractRow(gRe, v, rowRe);
 				extractRow(gIm, v, rowIm);
@@ -172,7 +203,7 @@ public abstract class Dft2d {
 			final double[] colRe = new double[height];
 			final double[] colIm = new double[height];
 			Dft1d.Double dftCol = 
-					useFFT ? new Dft1dFast.Double(height, sm) : new Dft1dNaive.Double(height, sm);
+					useFFT ? new Dft1dFast.Double(height, sm) : new Dft1dDirect.Double(height, sm);
 			for (int u = 0; u < width; u++) {
 				extractCol(gRe, u, colRe);
 				extractCol(gIm, u, colIm);
@@ -220,7 +251,14 @@ public abstract class Dft2d {
 			}
 		}
 		
+		/**
+		 * Calculates and returns the magnitude of the supplied complex-valued 2D data.
+		 * @param re the real part of the data
+		 * @param im the imaginary part of the data
+		 * @return a 2D array of magnitude values
+		 */
 		public double[][] getMagnitude(double[][] re, double[][] im) {
+			checkSize(re, im);
 			final int width = re.length;
 			final int height = re[0].length;
 			double[][] mag = new double[width][height];
@@ -232,6 +270,11 @@ public abstract class Dft2d {
 				}
 			}
 			return mag;
+		}
+		
+		private void checkSize(double[][] re, double[][] im) {
+			if (!Matrix.sameSize(re, im))
+				throw new IllegalArgumentException("arrays for real/imagingary parts must be of same size");
 		}
 		
 	}

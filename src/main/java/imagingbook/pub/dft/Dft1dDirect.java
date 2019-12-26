@@ -2,20 +2,19 @@ package imagingbook.pub.dft;
 
 import imagingbook.lib.math.Matrix;
 
-
 /**
- * Naive (slow) implementation of the 1-dimensional DFT
+ * Direct (slow) implementation of the 1-dimensional DFT
  * using tabulated sine and cosine values.
  * @author WB
  */
-public abstract class Dft1dNaive {
+public abstract class Dft1dDirect {
 	
 	final int M;			// size (length) of the signal or spectrum
 	final ScalingMode sm;	
 	final double[] cosTable;
 	final double[] sinTable;
 	
-	private Dft1dNaive(int M, ScalingMode sm) {
+	private Dft1dDirect(int M, ScalingMode sm) {
 		this.M = M;
 		this.sm = sm;
 		this.cosTable = makeCosTable();
@@ -45,7 +44,7 @@ public abstract class Dft1dNaive {
 	/**
 	 * One-dimensional DFT implementation using single precision (float) data. 
 	 */
-	public static class Float extends Dft1dNaive implements Dft1d.Float {
+	public static class Float extends Dft1dDirect implements Dft1d.Float {
 		
 		private final float[] outRe;
 		private final float[] outIm;
@@ -62,27 +61,18 @@ public abstract class Dft1dNaive {
 		
 		@Override
 		public void forward(float[] gRe, float[] gIm) {
+			checkSize(gRe, gIm);
 			transform(gRe, gIm, true);
 		}
 		
 		@Override
 		public void inverse(float[] GRe, float[] GIm) {
+			checkSize(GRe, GIm);
 			transform(GRe, GIm, false);
 		}
 		
-		/**
-		 * Forward DFT applied to a complex-valued input signal (forward = true)
-		 * or inverse DFT applied to a complex-valued spectrum (forward = false).
-		 * Works in-place, the input arrays contain the transformed data.
-		 * 
-		 * @param inRe	real part of the signal	or spectrum (must be of length M)
-		 * @param inIm	imaginary part of the signal or spectrum (must be of length M or null)
-		 * @param forward set true for forward transform, false for inverse transform
-		 */
 		public void transform(float[] inRe, float[] inIm, boolean forward) {
-			if (M != inRe.length || M != inIm.length) {
-				throw new IllegalArgumentException(String.format("Dft1d: length of input signal g (%d) must be %d", inRe.length, M));
-			}
+			checkSize(inRe, inIm);
 			final double scale = sm.getScale(M, forward);
 			for (int u = 0; u < M; u++) {
 				double sumRe = 0;
@@ -110,7 +100,7 @@ public abstract class Dft1dNaive {
 	/**
 	 * One-dimensional DFT implementation using double precision data. 
 	 */
-	public static class Double extends Dft1dNaive implements Dft1d.Double {
+	public static class Double extends Dft1dDirect implements Dft1d.Double {
 		
 		private final double[] outRe;
 		private final double[] outIm;
@@ -127,28 +117,18 @@ public abstract class Dft1dNaive {
 		
 		@Override
 		public void forward(double[] gRe, double[] gIm) {
+			checkSize(gRe, gIm);
 			transform(gRe, gIm, true);
 		}
 		
 		@Override
 		public void inverse(double[] GRe, double[] GIm) {
+			checkSize(GRe, GIm);
 			transform(GRe, GIm, false);
 		}
 		
-		/**
-		 * Forward DFT applied to a complex-valued input signal (forward = true)
-		 * or inverse DFT applied to a complex-valued spectrum (forward = false).
-		 * Works in-place, the input arrays contain the transformed data.
-		 * 
-		 * @param inRe	real part of the signal	or spectrum (must be of length M)
-		 * @param inIm	imaginary part of the signal or spectrum (must be of length M or null)
-		 * @param forward set true for forward transform, false for inverse transform
-		 * @param scale a custom factor for scaling the transform values
-		 */
 		public void transform(double[] inRe, double[] inIm, boolean forward) {
-			if (M != inRe.length || M != inIm.length) {
-				throw new IllegalArgumentException(String.format("Dft1d: length of input signal g (%d) must be %d", inRe.length, M));
-			}
+			checkSize(inRe, inIm);
 			final double scale = sm.getScale(M, forward);
 			for (int u = 0; u < M; u++) {
 				double sumRe = 0;
@@ -200,7 +180,7 @@ public abstract class Dft1dNaive {
 			System.out.println("gRe = " + Matrix.toString(re));
 			System.out.println("gIm = " + Matrix.toString(im));
 
-			Dft1d.Float dft = new Dft1dNaive.Float(re.length);
+			Dft1d.Float dft = new Dft1dDirect.Float(re.length);
 			dft.forward(re, im);
 //			float[] GRe = dft.getRe();
 //			float[] GIm = dft.getIm();
@@ -227,7 +207,7 @@ public abstract class Dft1dNaive {
 			System.out.println("gRe = " + Matrix.toString(re));
 			System.out.println("gIm = " + Matrix.toString(im));
 
-			Dft1d.Double dft = new Dft1dNaive.Double(re.length);
+			Dft1d.Double dft = new Dft1dDirect.Double(re.length);
 			dft.forward(re, im);
 
 			System.out.println("DFT spectrum:");

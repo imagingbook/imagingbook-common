@@ -40,6 +40,7 @@ public abstract class Dft1dFast {
 		
 		@Override
 		public void forward(float[] gRe, float[] gIm) {
+			checkSize(gRe, gIm);
 //			float scale = (float) sm.getScale(M, true);
 //			setupA(gRe, gIm, A);	
 //			fft.complexForward(A);
@@ -49,6 +50,7 @@ public abstract class Dft1dFast {
 		
 		@Override
 		public void inverse(float[] GRe, float[] GIm) {
+			checkSize(GRe, GIm);
 //			float scale = (float) sm.getScale(M, false);
 //			setupA(GRe, GIm, A);	
 //			fft.complexInverse(A, false);
@@ -57,9 +59,7 @@ public abstract class Dft1dFast {
 		}
 		
 		public void transform(float[] inRe, float[] inIm, boolean forward) {
-			if (M != inRe.length || M != inIm.length) {
-				throw new IllegalArgumentException(String.format("Dft1d: length of input signal g (%d) must be %d", inRe.length, M));
-			}
+			checkSize(inRe, inIm);
 			final float scale = (float) sm.getScale(M, forward);
 			setupA(inRe, inIm, A);	
 			if (forward)
@@ -108,6 +108,7 @@ public abstract class Dft1dFast {
 		
 		@Override
 		public void forward(double[] gRe, double[] gIm) {
+			checkSize(gRe, gIm);
 //			double scale = sm.getScale(M, true);
 //			setupA(gRe, gIm, A);	
 //			fft.complexForward(A);
@@ -117,6 +118,7 @@ public abstract class Dft1dFast {
 		
 		@Override
 		public void inverse(double[] GRe, double[] GIm) {
+			checkSize(GRe, GIm);
 //			double scale = sm.getScale(M, false);
 //			setupA(GRe, GIm, A);	
 //			fft.complexInverse(A, false);
@@ -124,10 +126,9 @@ public abstract class Dft1dFast {
 			transform(GRe, GIm, false);
 		}
 		
+		@Override
 		public void transform(double[] inRe, double[] inIm, boolean forward) {
-			if (M != inRe.length || M != inIm.length) {
-				throw new IllegalArgumentException(String.format("Dft1d: length of input signal g (%d) must be %d", inRe.length, M));
-			}
+			checkSize(inRe, inIm);
 			final double scale = (double) sm.getScale(M, forward);
 			setupA(inRe, inIm, A);	
 			if (forward)
