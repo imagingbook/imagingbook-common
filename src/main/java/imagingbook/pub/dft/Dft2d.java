@@ -6,7 +6,6 @@ import imagingbook.lib.math.Matrix;
 
 /**
  * Two-dimensional DFT implementation.
- * TODO: size checking throughout!
  * @author WB
  *
  */
