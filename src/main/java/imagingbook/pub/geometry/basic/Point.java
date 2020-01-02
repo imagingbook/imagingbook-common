@@ -1,7 +1,10 @@
-package imagingbook.pub.geometry.delaunay.common;
+package imagingbook.pub.geometry.basic;
 
-import imagingbook.pub.geometry.delaunay.common.Point;
+import imagingbook.pub.geometry.basic.Point;
 
+/** 
+ * Interface specifying the behavior of a simple 2D point.
+ */
 public interface Point {
 	double getX();
 	double getY();

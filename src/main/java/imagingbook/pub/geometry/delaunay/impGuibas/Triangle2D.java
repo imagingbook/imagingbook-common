@@ -2,8 +2,8 @@ package imagingbook.pub.geometry.delaunay.impGuibas;
 
 import java.util.Arrays;
 
-import imagingbook.pub.geometry.delaunay.common.Point;
-import imagingbook.pub.geometry.delaunay.common.Triangle;
+import imagingbook.pub.geometry.basic.Point;
+import imagingbook.pub.geometry.basic.Triangle;
 
 
 /**

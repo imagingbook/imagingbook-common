@@ -1,6 +1,6 @@
 package imagingbook.pub.geometry.delaunay.impChew;
 
-import imagingbook.pub.geometry.delaunay.common.Point;
+import imagingbook.pub.geometry.basic.Point;
 
 /*
  * Copyright (c) 2005, 2007 by L. Paul Chew.

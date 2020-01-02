@@ -15,9 +15,9 @@ import ij.gui.ShapeRoi;
 import ij.plugin.filter.PlugInFilter;
 import ij.process.ImageProcessor;
 import imagingbook.lib.ij.IjLogStream;
-import imagingbook.pub.geometry.delaunay.common.DelaunayTriangulation;
-import imagingbook.pub.geometry.delaunay.common.Point;
-import imagingbook.pub.geometry.delaunay.common.Triangle;
+import imagingbook.pub.geometry.basic.Point;
+import imagingbook.pub.geometry.basic.Triangle;
+import imagingbook.pub.geometry.delaunay.DelaunayTriangulation;
 import imagingbook.pub.geometry.delaunay.impChew.TriangulationChew;
 import imagingbook.pub.geometry.delaunay.impGuibas.TriangulationGuibas;
 

@@ -9,11 +9,6 @@
 
 package imagingbook.pub.geometry.mappings;
 
-import ij.process.ImageProcessor;
-import imagingbook.lib.image.ImageAccessor;
-import imagingbook.lib.interpolation.InterpolationMethod;
-
-import java.awt.Point;
 import java.awt.geom.Point2D;
 
 /**
@@ -22,7 +17,6 @@ import java.awt.geom.Point2D;
  */
 public abstract class Mapping implements Cloneable {
 	
-
 	/** 
 	 * Duplicates this mapping by using {@link Object}'s shallow clone method.
 	 * Sub-classes are supposed to override this method.

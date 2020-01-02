@@ -1,6 +1,6 @@
 package imagingbook.pub.geometry.delaunay.impGuibas;
 
-import imagingbook.pub.geometry.delaunay.common.Point;
+import imagingbook.pub.geometry.basic.Point;
 
 /**
  * Implements a 2D point or vector with {@code double} coordinates.

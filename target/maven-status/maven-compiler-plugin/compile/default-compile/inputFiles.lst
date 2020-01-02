@@ -4,6 +4,7 @@ D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingb
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\lib\image\ImageMapper.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\lucaskanade\Mappings.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\threshold\global\QuantileThresholder.java
+D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\geometry\basic\Point.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\lib\color\sRgbUtil.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\color\image\LabColorSpace.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\color\image\XYZscalingAdaptation.java
@@ -16,7 +17,6 @@ D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingb
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\corners\Corner.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\color\edge\CannyEdgeDetector.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\sift\FeatureDistanceNorm.java
-D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\geometry\delaunay\common\package-info.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\geometry\mappings\nonlinear\RippleMapping.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\lucaskanade\LucasKanadeMatcher1D.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\dft\obsolete\Dft2d.java
@@ -38,6 +38,7 @@ D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingb
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\noise\hashing\Hash32Ward.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\color\image\BradfordAdaptation.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\lib\interpolation\LanczosInterpolator.java
+D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\geometry\delaunay\DelaunayTriangulation.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\dft\Dft2d.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\moments\BinaryMoments.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\sift\KeyPoint.java
@@ -63,6 +64,7 @@ D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingb
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\hough\lines\HessianLine.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\package-info.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\threshold\global\IsodataThresholderSlow.java
+D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\geometry\delaunay\package-info.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\lucaskanade\LucasKanadeInverseMatcher.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\color\image\ColorStack.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\lib\math\Eigensolver2x2.java
@@ -115,7 +117,6 @@ D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingb
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\color\image\CieUtil.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\matching\CorrCoeffMatcher.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\lib\interpolation\BicubicInterpolator.java
-D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\geometry\delaunay\common\DelaunayTriangulation.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\color\filters\VectorMedianFilterSharpen.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\sift\scalespace\DogScaleSpace.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\fd\FourierDescriptorFromPolygon.java
@@ -124,6 +125,7 @@ D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingb
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\sift\scalespace\DogOctave.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\threshold\adaptive\NiblackThresholder.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\edgepreservingfilters\TschumperleDericheFilter.java
+D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\geometry\delaunay\Utils.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\lib\filters\GaussianFilter.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\color\edge\DiZenzoCumaniEdgeDetector.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\sift\SiftDetector.java
@@ -155,6 +157,7 @@ D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingb
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\dct\Dct1d.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\sift\scalespace\ScaleOctave.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\dft\ScalingMode.java
+D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\geometry\basic\package-info.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\lib\image\Statistics.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\regions\ContourTracer.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\geometry\delaunay\plugin\Delaunay_Demo_Plugin.java
@@ -171,6 +174,7 @@ D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingb
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\noise\hashing\Hash32ShiftMult.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\edgepreservingfilters\BilateralFilter.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\regions\SequentialLabeling.java
+D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\geometry\basic\Triangle.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\sift\util\SiftKeyfileReaderVLFEAT.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\noise\hashing\Hash32.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\lucaskanade\RoiUtils.java
@@ -183,7 +187,6 @@ D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingb
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\geometry\delaunay\impChew\ArraySet.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\geometry\mappings\linear\ProjectiveMapping.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\sift\util\Colors.java
-D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\geometry\delaunay\common\Utils.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\threshold\global\MaxEntropyThresholder.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\sift\util\SiftKeypoint.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\morphology\BinaryMorphologyFilter.java
@@ -207,11 +210,9 @@ D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingb
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\lib\image\PixelIndexer.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\color\image\LuvColorSpace.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\color\statistics\ColorHistogram.java
-D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\geometry\delaunay\common\Point.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\regions\RecursiveLabeling.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\regions\DepthFirstLabeling.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\threshold\global\MeanThresholder.java
-D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\geometry\delaunay\common\Triangle.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\regions\BreadthFirstLabeling.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\sift\scalespace\ScaleLevel.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\lib\image\Filter.java

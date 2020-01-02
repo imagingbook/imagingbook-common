@@ -25,8 +25,8 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-import imagingbook.pub.geometry.delaunay.common.Point;
-import imagingbook.pub.geometry.delaunay.common.Triangle;
+import imagingbook.pub.geometry.basic.Point;
+import imagingbook.pub.geometry.basic.Triangle;
 
 
 /**
