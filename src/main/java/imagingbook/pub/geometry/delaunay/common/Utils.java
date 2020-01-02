@@ -2,8 +2,6 @@ package imagingbook.pub.geometry.delaunay.common;
 
 import java.util.Collection;
 
-import imagingbook.pub.geometry.delaunay.common.Point.Pnt;
-
 public abstract class Utils {
 	
 	public static Point[] makeOuterTriangle(Collection<Point> points) {
@@ -31,9 +29,9 @@ public abstract class Utils {
 		double yc = ymin + height / 2;
 		double s = 50;
 		return new Point[] {
-				new Pnt(xc, yc + s * diam),
-				new Pnt(xc + s * diam, yc),
-				new Pnt(xc - s * diam, yc - s * diam)
+				Point.create(xc, yc + s * diam),
+				Point.create(xc + s * diam, yc),
+				Point.create(xc - s * diam, yc - s * diam)
 		};
 	}
 	

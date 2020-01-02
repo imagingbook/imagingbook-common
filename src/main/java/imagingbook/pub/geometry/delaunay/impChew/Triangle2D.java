@@ -43,11 +43,13 @@ import imagingbook.pub.geometry.delaunay.common.Triangle;
  *
  * Created December 2007. Replaced general simplices with geometric triangle.
  *
+ * Adapted by W. Burger (2019)
+ * @version 2020-01-01
  */
-public class Triangle2D extends ArraySet<Vector2D> implements Triangle {
+public class Triangle2D extends ArraySet<Pnt> implements Triangle {
 
     private int idNumber;                   // The id number
-    private Vector2D circumcenter = null;        // The triangle's circumcenter
+    private Pnt circumcenter = null;        // The triangle's circumcenter
 
     private static int idGenerator = 0;     // Used to create id numbers
     public static boolean moreInfo = true; // True iff more info in toString
@@ -56,7 +58,7 @@ public class Triangle2D extends ArraySet<Vector2D> implements Triangle {
      * @param vertices the vertices of the Triangle.
      * @throws IllegalArgumentException if there are not three distinct vertices
      */
-    public Triangle2D (Vector2D... vertices) {
+    public Triangle2D (Pnt... vertices) {
         this(Arrays.asList(vertices));
     }
 
@@ -64,7 +66,7 @@ public class Triangle2D extends ArraySet<Vector2D> implements Triangle {
      * @param collection a Collection holding the Simplex vertices
      * @throws IllegalArgumentException if there are not three distinct vertices
      */
-    public Triangle2D (Collection<? extends Vector2D> collection) {
+    public Triangle2D (Collection<? extends Pnt> collection) {
         super(collection);
         idNumber = idGenerator++;
         if (this.size() != 3)
@@ -72,7 +74,7 @@ public class Triangle2D extends ArraySet<Vector2D> implements Triangle {
     }
     
 	public Triangle2D(Point[] points) {
-		this(new Vector2D(points[0]), new Vector2D(points[1]), new Vector2D(points[2]));
+		this(new Pnt(points[0]), new Pnt(points[1]), new Pnt(points[2]));
 	}
     
     // ----------------------------------------------------------------------------
@@ -89,9 +91,9 @@ public class Triangle2D extends ArraySet<Vector2D> implements Triangle {
      * @return a vertex of this triangle, but not one of the bad vertices
      * @throws NoSuchElementException if no vertex found
      */
-    public Vector2D getVertexButNot (Vector2D... badVertices) {
-        Collection<Vector2D> bad = Arrays.asList(badVertices);
-        for (Vector2D v: this) if (!bad.contains(v)) return v;
+    public Pnt getVertexButNot (Pnt... badVertices) {
+        Collection<Pnt> bad = Arrays.asList(badVertices);
+        for (Pnt v: this) if (!bad.contains(v)) return v;
         throw new NoSuchElementException("No vertex found");
     }
 
@@ -103,7 +105,7 @@ public class Triangle2D extends ArraySet<Vector2D> implements Triangle {
      */
     public boolean isNeighbor (Triangle2D triangle) {
         int count = 0;
-        for (Vector2D vertex: this)
+        for (Pnt vertex: this)
             if (!triangle.contains(vertex)) count++;
         return count == 1;
     }
@@ -114,8 +116,8 @@ public class Triangle2D extends ArraySet<Vector2D> implements Triangle {
      * @return the facet opposite vertex
      * @throws IllegalArgumentException if the vertex is not in triangle
      */
-    public ArraySet<Vector2D> facetOpposite (Vector2D vertex) {
-        ArraySet<Vector2D> facet = new ArraySet<Vector2D>(this);
+    public ArraySet<Pnt> facetOpposite (Pnt vertex) {
+        ArraySet<Pnt> facet = new ArraySet<Pnt>(this);
         if (!facet.remove(vertex))
             throw new IllegalArgumentException("Vertex not in triangle");
         return facet;
@@ -124,25 +126,25 @@ public class Triangle2D extends ArraySet<Vector2D> implements Triangle {
     /**
      * @return the triangle's circumcenter
      */
-    public Vector2D getCircumcenter () {
+    public Pnt getCircumcenter () {
         if (circumcenter == null)
-            circumcenter = Vector2D.circumcenter(this.toArray(new Vector2D[0]));
+            circumcenter = Pnt.circumcenter(this.toArray(new Pnt[0]));
         return circumcenter;
     }
 
     /* The following two methods ensure that a Triangle is immutable */
 
     @Override
-    public boolean add (Vector2D vertex) {
+    public boolean add (Pnt vertex) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public Iterator<Vector2D> iterator () {
-        return new Iterator<Vector2D>() {
-            private Iterator<Vector2D> it = Triangle2D.super.iterator();
+    public Iterator<Pnt> iterator () {
+        return new Iterator<Pnt>() {
+            private Iterator<Pnt> it = Triangle2D.super.iterator();
             public boolean hasNext() {return it.hasNext();}
-            public Vector2D next() {return it.next();}
+            public Pnt next() {return it.next();}
             public void remove() {throw new UnsupportedOperationException();}
         };
     }

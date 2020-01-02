@@ -55,9 +55,11 @@ import imagingbook.pub.geometry.delaunay.common.Utils;
  * Modified November 2007. Rewrote to use AbstractSet as parent class and to use
  * the Graph class internally. Tried to make the DT algorithm clearer by
  * explicitly creating a cavity.  Added code needed to find a Voronoi cell.
- *
+ * 
+ * Adapted by W. Burger (2019)
+ * @version 2020-01-01
  */
-public class DelaunayTriangulationChew extends AbstractSet<Triangle2D> implements DelaunayTriangulation {
+public class TriangulationChew extends AbstractSet<Triangle2D> implements DelaunayTriangulation {
 
     private Triangle2D mostRecent = null;      // Most recently "active" triangle
     private final Triangle2D superTriangle;
@@ -71,7 +73,7 @@ public class DelaunayTriangulationChew extends AbstractSet<Triangle2D> implement
      * @param width the width of the insertion rectangle
      * @param height the height of the insertion rectangle
      */
-    public DelaunayTriangulationChew(double width, double height) {
+    public TriangulationChew(double width, double height) {
     	this(Utils.makeOuterTriangle(width, height));
     }
    
@@ -79,7 +81,7 @@ public class DelaunayTriangulationChew extends AbstractSet<Triangle2D> implement
      * Constructor that takes an initial outer (super) triangle.
      * @param outerTriangle the outer (super) triangle
      */
-    public DelaunayTriangulationChew(Point[] outerTriangle) {
+    public TriangulationChew(Point[] outerTriangle) {
     	this(new Triangle2D(outerTriangle));
     }
     
@@ -89,7 +91,7 @@ public class DelaunayTriangulationChew extends AbstractSet<Triangle2D> implement
      * The points are inserted into the resulting triangulation.
      * @param pointSet a sequence of 2D points
      */
-    public DelaunayTriangulationChew(Collection<Point> pointSet) {
+    public TriangulationChew(Collection<Point> pointSet) {
     	this(new Triangle2D(Utils.makeOuterTriangle(pointSet)));
     	insertAll(pointSet);
     }
@@ -98,7 +100,7 @@ public class DelaunayTriangulationChew extends AbstractSet<Triangle2D> implement
      * All sites must fall within the initial triangle.
      * @param superTriangle the initial triangle
      */
-    private DelaunayTriangulationChew (Triangle2D superTriangle) {
+    private TriangulationChew (Triangle2D superTriangle) {
     	this.superTriangle = superTriangle;
     	this.triGraph = new Graph<Triangle2D>();
     	this.triGraph.add(superTriangle);
@@ -141,7 +143,7 @@ public class DelaunayTriangulationChew extends AbstractSet<Triangle2D> implement
      * @return the neighbor opposite site in triangle; null if none
      * @throws IllegalArgumentException if site is not in this triangle
      */
-    public Triangle2D neighborOpposite (Vector2D site, Triangle2D triangle) {
+    public Triangle2D neighborOpposite (Pnt site, Triangle2D triangle) {
         if (!triangle.contains(site))
             throw new IllegalArgumentException("Bad vertex; not in triangle");
         for (Triangle2D neighbor: triGraph.neighbors(triangle)) {
@@ -166,12 +168,12 @@ public class DelaunayTriangulationChew extends AbstractSet<Triangle2D> implement
      * @return all triangles surrounding site in order (cw or ccw)
      * @throws IllegalArgumentException if site is not in triangle
      */
-    public List<Triangle2D> surroundingTriangles (Vector2D site, Triangle2D triangle) {
+    public List<Triangle2D> surroundingTriangles (Pnt site, Triangle2D triangle) {
         if (!triangle.contains(site))
             throw new IllegalArgumentException("Site not in triangle");
         List<Triangle2D> list = new ArrayList<Triangle2D>();
         Triangle2D start = triangle;
-        Vector2D guide = triangle.getVertexButNot(site);        // Affects cw or ccw
+        Pnt guide = triangle.getVertexButNot(site);        // Affects cw or ccw
         while (true) {
             list.add(triangle);
             Triangle2D previous = triangle;
@@ -187,7 +189,7 @@ public class DelaunayTriangulationChew extends AbstractSet<Triangle2D> implement
      * @param point the point to locate
      * @return the triangle that holds point; null if no such triangle
      */
-    public Triangle2D locate (Vector2D point) {
+    public Triangle2D locate (Pnt point) {
         Triangle2D triangle = mostRecent;
         if (!this.contains(triangle)) {
         	triangle = null;
@@ -201,14 +203,14 @@ public class DelaunayTriangulationChew extends AbstractSet<Triangle2D> implement
             }
             visited.add(triangle);
             // Corner opposite point
-            Vector2D corner = point.isOutside(triangle.toArray(new Vector2D[0]));
+            Pnt corner = point.isOutside(triangle.toArray(new Pnt[0]));
             if (corner == null) return triangle;
             triangle = this.neighborOpposite(corner, triangle);
         }
         // No luck; try brute force
         System.out.println("Warning: Checking all triangles for " + point);
         for (Triangle2D tri: this) {
-            if (point.isOutside(tri.toArray(new Vector2D[0])) == null) {
+            if (point.isOutside(tri.toArray(new Pnt[0])) == null) {
             	return tri;
             }
         }
@@ -227,11 +229,11 @@ public class DelaunayTriangulationChew extends AbstractSet<Triangle2D> implement
      * Place a new site into the DT.
      * Nothing happens if the site matches an existing DT vertex.
      * Uses straightforward scheme rather than best asymptotic time.
+     * Throws an {@link IllegalArgumentException} if p does not lie in any triangle.
      * @param p the point to be inserted
-     * @throws {@link IllegalArgumentException} if p does not lie in any triangle
      */
     public void insert(Point p) {
-    	Vector2D vec = new Vector2D(p);
+    	Pnt vec = new Pnt(p);
         // Locate containing triangle
         Triangle2D triangle = locate(vec);
         // Give up if no containing triangle or if site is already in DT
@@ -253,7 +255,7 @@ public class DelaunayTriangulationChew extends AbstractSet<Triangle2D> implement
      * @param triangle the triangle containing site
      * @return set of all triangles that have site in their circumcircle
      */
-    private Set<Triangle2D> getCavity (Vector2D site, Triangle2D triangle) {
+    private Set<Triangle2D> getCavity (Pnt site, Triangle2D triangle) {
         Set<Triangle2D> encroached = new HashSet<Triangle2D>();
         Queue<Triangle2D> toBeChecked = new LinkedList<Triangle2D>();
         Set<Triangle2D> marked = new HashSet<Triangle2D>();
@@ -261,7 +263,7 @@ public class DelaunayTriangulationChew extends AbstractSet<Triangle2D> implement
         marked.add(triangle);
         while (!toBeChecked.isEmpty()) {
             triangle = toBeChecked.remove();
-            if (site.vsCircumcircle(triangle.toArray(new Vector2D[0])) == 1)
+            if (site.vsCircumcircle(triangle.toArray(new Pnt[0])) == 1)
                 continue; // Site outside triangle => triangle not in cavity
             encroached.add(triangle);
             // Check the neighbors
@@ -281,15 +283,15 @@ public class DelaunayTriangulationChew extends AbstractSet<Triangle2D> implement
      * @param cavity the triangles with site in their circumcircle
      * @return one of the new triangles
      */
-    private Triangle2D update (Vector2D site, Set<Triangle2D> cavity) {
-        Set<Set<Vector2D>> boundary = new HashSet<Set<Vector2D>>();
+    private Triangle2D update (Pnt site, Set<Triangle2D> cavity) {
+        Set<Set<Pnt>> boundary = new HashSet<Set<Pnt>>();
         Set<Triangle2D> theTriangles = new HashSet<Triangle2D>();
 
         // Find boundary facets and adjacent triangles
         for (Triangle2D triangle: cavity) {
             theTriangles.addAll(neighbors(triangle));
-            for (Vector2D vertex: triangle) {
-                Set<Vector2D> facet = triangle.facetOpposite(vertex);
+            for (Pnt vertex: triangle) {
+                Set<Pnt> facet = triangle.facetOpposite(vertex);
                 if (boundary.contains(facet)) boundary.remove(facet);
                 else boundary.add(facet);
             }
@@ -301,7 +303,7 @@ public class DelaunayTriangulationChew extends AbstractSet<Triangle2D> implement
 
         // Build each new triangle and add it to the triangulation
         Set<Triangle2D> newTriangles = new HashSet<Triangle2D>();
-        for (Set<Vector2D> vertices: boundary) {
+        for (Set<Pnt> vertices: boundary) {
             vertices.add(site);
             Triangle2D tri = new Triangle2D(vertices);
             triGraph.add(tri);
@@ -327,7 +329,7 @@ public class DelaunayTriangulationChew extends AbstractSet<Triangle2D> implement
      */
     private boolean connectsToSuperTriangle(Triangle2D otherTriangle) {
         boolean connects = false;
-        for (Vector2D vertex : superTriangle) {
+        for (Pnt vertex : superTriangle) {
             if (otherTriangle.contains(vertex)) {
             	connects = true;
             	break;
@@ -346,22 +348,22 @@ public class DelaunayTriangulationChew extends AbstractSet<Triangle2D> implement
 		return Collections.unmodifiableList(points);
 	}
 
-    /**
-     * Main program; used for testing. ------------------------------------
-     */
-    public static void main (String[] args) {
-        Triangle2D tri =
-            new Triangle2D(new Vector2D(-10,10), new Vector2D(10,10), new Vector2D(0,-10));
-        System.out.println("Triangle created: " + tri);
-        DelaunayTriangulationChew dt = new DelaunayTriangulationChew(tri);
-        System.out.println("DelaunayTriangulation created: " + dt);
-        dt.insert(new Vector2D(0,0));
-        dt.insert(new Vector2D(1,0));
-        dt.insert(new Vector2D(0,1));
-        System.out.println("After adding 3 points, we have a " + dt);
-        Triangle2D.moreInfo = true;
-        System.out.println("Triangles: " + dt.triGraph.nodeSet());
-    }
+//    /**
+//     * Main program; used for testing. ------------------------------------
+//     */
+//    public static void main (String[] args) {
+//        Triangle2D tri =
+//            new Triangle2D(new Vector2D(-10,10), new Vector2D(10,10), new Vector2D(0,-10));
+//        System.out.println("Triangle created: " + tri);
+//        TriangulationChew dt = new TriangulationChew(tri);
+//        System.out.println("DelaunayTriangulation created: " + dt);
+//        dt.insert(new Vector2D(0,0));
+//        dt.insert(new Vector2D(1,0));
+//        dt.insert(new Vector2D(0,1));
+//        System.out.println("After adding 3 points, we have a " + dt);
+//        Triangle2D.moreInfo = true;
+//        System.out.println("Triangles: " + dt.triGraph.nodeSet());
+//    }
 
 
 }

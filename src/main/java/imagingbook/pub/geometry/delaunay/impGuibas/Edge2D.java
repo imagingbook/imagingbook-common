@@ -1,9 +1,8 @@
 package imagingbook.pub.geometry.delaunay.impGuibas;
 
 /**
- * 2D edge class implementation.
- * 
- * @author Johannes Diemke
+ * This class represents a 2D edge (line segment), specified
+ * by its two end-points. Instances of this class are immutable.
  */
 public class Edge2D {
 
@@ -22,10 +21,16 @@ public class Edge2D {
 		this.b = b;
 	}
 
-	protected double minDistance(Vector2D point) {
+	private double getMinDistance(Vector2D point) {
 		return getClosestPoint(point).sub(point).mag();
 	}
 
+	/**
+	 * Calculates the point ON this edge that is closest to the
+	 * specified point.
+	 * @param point the point whose distance is to me calculated
+	 * @return the closest point on this edge
+	 */
 	private Vector2D getClosestPoint(Vector2D point) {
 		Vector2D ab = b.sub(a);
 		double t = point.sub(a).dot(ab) / ab.dot(ab); // TODO: check for zero denominator?
@@ -37,43 +42,44 @@ public class Edge2D {
 		return a.add(ab.mult(t));
 	}
 
-	protected Distance getEdgeDistance(Vector2D point) {
+	/**
+	 * Creates and returns a new {@link Edge2D.Distance} object, representing
+	 * the minimum distance between this edge and the specified point.
+	 * @param point the point to calculate the distance for
+	 * @return a new {@link Edge2D.Distance} instance
+	 */
+	protected Distance distanceFromPoint(Vector2D point) {
 		return new Distance(point);
 	}
 
 	/**
-	 * Edge distance pack class implementation used to describe the distance to a
-	 * given edge.
-	 * 
-	 * @author Johannes Diemke
+	 * Non-static inner class representing the distance of a particular point to the
+	 * associated (enclosing) {@link Edge2D} instance.
 	 */
 	protected class Distance implements Comparable<Distance> {
 
 		private final double distance;
 
-		protected Distance(double dist) {
-			this.distance = dist;
-		}
-
 		protected Distance(Vector2D point) {
-			this(Edge2D.this.minDistance(point));
+			this(Edge2D.this.getMinDistance(point));
 		}
 
-		// ---------------------------------------------------
-
-		protected double getDistance() {
-			return distance;
+		protected Distance(double distance) {
+			this.distance = distance;
 		}
 
 		protected Edge2D getEdge() {
 			return Edge2D.this;
 		}
 
+		protected double getDistance() {
+			return this.distance;
+		}
+
 		@Override
 		public int compareTo(Distance o) {
 			return Double.compare(this.distance, o.distance);
 		}
-
 	}
 
 }

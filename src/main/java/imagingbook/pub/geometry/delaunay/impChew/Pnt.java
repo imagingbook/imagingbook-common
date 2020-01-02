@@ -34,8 +34,12 @@ import imagingbook.pub.geometry.delaunay.common.Point;
  * Created July 2005.  Derived from an earlier, messier version.
  *
  * Modified Novemeber 2007.  Minor clean up.
+ * 
+ * Adapted by W. Burger (2019)
+ * @version 2020-01-01
+ * 
  */
-public class Vector2D implements Point {
+public class Pnt implements Point {
 
     private double[] coordinates;          // The point's coordinates
 
@@ -43,7 +47,7 @@ public class Vector2D implements Point {
      * Constructor.
      * @param coords the coordinates
      */
-    public Vector2D (double... coords) {
+    public Pnt (double... coords) {
         // Copying is done here to ensure that Pnt's coords cannot be altered.
         // This is necessary because the double... notation actually creates a
         // constructor with double[] as its argument.
@@ -52,7 +56,7 @@ public class Vector2D implements Point {
         coordinates = coords.clone();
     }
     
-    public Vector2D (Point p) {
+    public Pnt (Point p) {
     	this(p.getX(), p.getY());
     }
     
@@ -70,8 +74,8 @@ public class Vector2D implements Point {
 
     @Override
     public boolean equals (Object other) {
-        if (!(other instanceof Vector2D)) return false;
-        Vector2D p = (Vector2D) other;
+        if (!(other instanceof Pnt)) return false;
+        Pnt p = (Pnt) other;
         if (this.coordinates.length != p.coordinates.length) return false;
         for (int i = 0; i < this.coordinates.length; i++)
             if (this.coordinates[i] != p.coordinates[i]) return false;
@@ -91,8 +95,9 @@ public class Vector2D implements Point {
     /* Pnts as vectors */
 
     /**
-     * @return the specified coordinate of this Pnt
-     * @throws ArrayIndexOutOfBoundsException for bad coordinate
+     * Returns the specified coordinate of this point/vector.
+     * @param i the coordinate index (0, 1, ...)
+     * @return as described
      */
     public double coord (int i) {
         return this.coordinates[i];
@@ -111,7 +116,7 @@ public class Vector2D implements Point {
      * @return the dimension of the Pnts
      * @throws IllegalArgumentException if dimension fail to match
      */
-    public int dimCheck (Vector2D p) {
+    public int dimCheck (Pnt p) {
         int len = this.coordinates.length;
         if (len != p.coordinates.length)
             throw new IllegalArgumentException("Dimension mismatch");
@@ -123,11 +128,11 @@ public class Vector2D implements Point {
      * @param coords the new coordinates (added on the right end)
      * @return a new Pnt with the additional coordinates
      */
-    public Vector2D extend (double... coords) {
+    public Pnt extend (double... coords) {
         double[] result = new double[coordinates.length + coords.length];
         System.arraycopy(coordinates, 0, result, 0, coordinates.length);
         System.arraycopy(coords, 0, result, coordinates.length, coords.length);
-        return new Vector2D(result);
+        return new Pnt(result);
     }
 
     /**
@@ -135,7 +140,7 @@ public class Vector2D implements Point {
      * @param p the other Pnt
      * @return dot product of this Pnt and p
      */
-    public double dot (Vector2D p) {
+    public double dot (Pnt p) {
         int len = dimCheck(p);
         double sum = 0;
         for (int i = 0; i < len; i++)
@@ -156,12 +161,12 @@ public class Vector2D implements Point {
      * @param p the other Pnt
      * @return a new Pnt = this - p
      */
-    public Vector2D subtract (Vector2D p) {
+    public Pnt subtract (Pnt p) {
         int len = dimCheck(p);
         double[] coords = new double[len];
         for (int i = 0; i < len; i++)
             coords[i] = this.coordinates[i] - p.coordinates[i];
-        return new Vector2D(coords);
+        return new Pnt(coords);
     }
 
     /**
@@ -169,12 +174,12 @@ public class Vector2D implements Point {
      * @param p the other Pnt
      * @return a new Pnt = this + p
      */
-    public Vector2D add (Vector2D p) {
+    public Pnt add (Pnt p) {
         int len = dimCheck(p);
         double[] coords = new double[len];
         for (int i = 0; i < len; i++)
             coords[i] = this.coordinates[i] + p.coordinates[i];
-        return new Vector2D(coords);
+        return new Pnt(coords);
     }
 
     /**
@@ -182,7 +187,7 @@ public class Vector2D implements Point {
      * @param p the other Pnt
      * @return the angle (in radians) between the two Pnts
      */
-    public double angle (Vector2D p) {
+    public double angle (Pnt p) {
         return Math.acos(this.dot(p) / (this.magnitude() * p.magnitude()));
     }
 
@@ -194,10 +199,10 @@ public class Vector2D implements Point {
      * @param point the other point
      * @return the coefficients of the perpendicular bisector
      */
-    public Vector2D bisector (Vector2D point) {
+    public Pnt bisector (Pnt point) {
         dimCheck(point);
-        Vector2D diff = this.subtract(point);
-        Vector2D sum = this.add(point);
+        Pnt diff = this.subtract(point);
+        Pnt sum = this.add(point);
         double dot = diff.dot(sum);
         return diff.extend(-dot / 2);
     }
@@ -209,9 +214,9 @@ public class Vector2D implements Point {
      * @param matrix the matrix (an array of Pnts)
      * @return a String represenation of the matrix
      */
-    public static String toString (Vector2D[] matrix) {
+    public static String toString (Pnt[] matrix) {
         StringBuilder buf = new StringBuilder("{");
-        for (Vector2D row: matrix) buf.append(" " + row);
+        for (Pnt row: matrix) buf.append(" " + row);
         buf.append(" }");
         return buf.toString();
     }
@@ -224,7 +229,7 @@ public class Vector2D implements Point {
      * @return the determinnant of the input matrix
      * @throws IllegalArgumentException if dimensions are wrong
      */
-    public static double determinant (Vector2D[] matrix) {
+    public static double determinant (Pnt[] matrix) {
         if (matrix.length != matrix[0].dimension())
             throw new IllegalArgumentException("Matrix is not square");
         boolean[] columns = new boolean[matrix.length];
@@ -244,7 +249,7 @@ public class Vector2D implements Point {
      * @return the determinant of the specified submatrix
      * @throws ArrayIndexOutOfBoundsException if dimensions are wrong
      */
-    private static double determinant(Vector2D[] matrix, int row, boolean[] columns){
+    private static double determinant(Pnt[] matrix, int row, boolean[] columns){
         if (row == matrix.length) return 1;
         double sum = 0;
         int sign = 1;
@@ -268,7 +273,7 @@ public class Vector2D implements Point {
      * @return a Pnt perpendicular to each row Pnt
      * @throws IllegalArgumentException if matrix is wrong shape
      */
-    public static Vector2D cross (Vector2D[] matrix) {
+    public static Pnt cross (Pnt[] matrix) {
         int len = matrix.length + 1;
         if (len != matrix[0].dimension())
             throw new IllegalArgumentException("Dimension mismatch");
@@ -286,7 +291,7 @@ public class Vector2D implements Point {
         } catch (ArrayIndexOutOfBoundsException e) {
             throw new IllegalArgumentException("Matrix is wrong shape");
         }
-        return new Vector2D(result);
+        return new Pnt(result);
     }
 
     /* Pnts as simplices */
@@ -296,8 +301,8 @@ public class Vector2D implements Point {
      * @param simplex the simplex (as an array of Pnts)
      * @return the signed content of the simplex
      */
-    public static double content (Vector2D[] simplex) {
-        Vector2D[] matrix = new Vector2D[simplex.length];
+    public static double content (Pnt[] simplex) {
+        Pnt[] matrix = new Pnt[simplex.length];
         for (int i = 0; i < matrix.length; i++)
             matrix[i] = simplex[i].extend(1);
         int fact = 1;
@@ -310,6 +315,7 @@ public class Vector2D implements Point {
      * Pnts). Result is an array of signs, one for each vertex of the simplex,
      * indicating the relation between the vertex, the vertex's opposite facet,
      * and this Pnt.
+     * Throws a {@link IllegalArgumentException} if the simplex is degenerate.
      *
      * <pre>
      *   -1 means Pnt is on same side of facet
@@ -319,9 +325,8 @@ public class Vector2D implements Point {
      *
      * @param simplex an array of Pnts representing a simplex
      * @return an array of signs showing relation between this Pnt and simplex
-     * @throws IllegalArgumentExcpetion if the simplex is degenerate
      */
-    public int[] relation (Vector2D[] simplex) {
+    public int[] relation (Pnt[] simplex) {
         /* In 2D, we compute the cross of this matrix:
          *    1   1   1   1
          *    p0  a0  b0  c0
@@ -338,21 +343,21 @@ public class Vector2D implements Point {
             throw new IllegalArgumentException("Dimension mismatch");
 
         /* Create and load the matrix */
-        Vector2D[] matrix = new Vector2D[dim+1];
+        Pnt[] matrix = new Pnt[dim+1];
         /* First row */
         double[] coords = new double[dim+2];
         for (int j = 0; j < coords.length; j++) coords[j] = 1;
-        matrix[0] = new Vector2D(coords);
+        matrix[0] = new Pnt(coords);
         /* Other rows */
         for (int i = 0; i < dim; i++) {
             coords[0] = this.coordinates[i];
             for (int j = 0; j < simplex.length; j++)
                 coords[j+1] = simplex[j].coordinates[i];
-            matrix[i+1] = new Vector2D(coords);
+            matrix[i+1] = new Pnt(coords);
         }
 
         /* Compute and analyze the vector of areas/volumes/contents */
-        Vector2D vector = cross(matrix);
+        Pnt vector = cross(matrix);
         double content = vector.coordinates[0];
         int[] result = new int[dim+1];
         for (int i = 0; i < result.length; i++) {
@@ -377,7 +382,7 @@ public class Vector2D implements Point {
      * @param simplex the simplex (an array of Pnts)
      * @return simplex Pnt that "witnesses" outsideness (or null if not outside)
      */
-    public Vector2D isOutside (Vector2D[] simplex) {
+    public Pnt isOutside (Pnt[] simplex) {
         int[] result = this.relation(simplex);
         for (int i = 0; i < result.length; i++) {
             if (result[i] > 0) return simplex[i];
@@ -390,9 +395,9 @@ public class Vector2D implements Point {
      * @param simplex the simplex (an array of Pnts)
      * @return the simplex Pnt that "witnesses" on-ness (or null if not on)
      */
-    public Vector2D isOn (Vector2D[] simplex) {
+    public Pnt isOn (Pnt[] simplex) {
         int[] result = this.relation(simplex);
-        Vector2D witness = null;
+        Pnt witness = null;
         for (int i = 0; i < result.length; i++) {
             if (result[i] == 0) witness = simplex[i];
             else if (result[i] > 0) return null;
@@ -405,7 +410,7 @@ public class Vector2D implements Point {
      * @param simplex the simplex (an arary of Pnts)
      * @return true iff this Pnt is inside simplex.
      */
-    public boolean isInside (Vector2D[] simplex) {
+    public boolean isInside (Pnt[] simplex) {
         int[] result = this.relation(simplex);
         for (int r: result) if (r >= 0) return false;
         return true;
@@ -416,8 +421,8 @@ public class Vector2D implements Point {
      * @param simplex the simplex (as an array of Pnts)
      * @return -1, 0, or +1 for inside, on, or outside of circumcircle
      */
-    public int vsCircumcircle (Vector2D[] simplex) {
-        Vector2D[] matrix = new Vector2D[simplex.length + 1];
+    public int vsCircumcircle (Pnt[] simplex) {
+        Pnt[] matrix = new Pnt[simplex.length + 1];
         for (int i = 0; i < simplex.length; i++)
             matrix[i] = simplex[i].extend(1, simplex[i].dot(simplex[i]));
         matrix[simplex.length] = this.extend(1, this.dot(this));
@@ -432,49 +437,18 @@ public class Vector2D implements Point {
      * @param simplex the simplex (as an array of Pnts)
      * @return the circumcenter (a Pnt) of simplex
      */
-    public static Vector2D circumcenter (Vector2D[] simplex) {
+    public static Pnt circumcenter (Pnt[] simplex) {
         int dim = simplex[0].dimension();
         if (simplex.length - 1 != dim)
             throw new IllegalArgumentException("Dimension mismatch");
-        Vector2D[] matrix = new Vector2D[dim];
+        Pnt[] matrix = new Pnt[dim];
         for (int i = 0; i < dim; i++)
             matrix[i] = simplex[i].bisector(simplex[i+1]);
-        Vector2D hCenter = cross(matrix);      // Center in homogeneous coordinates
+        Pnt hCenter = cross(matrix);      // Center in homogeneous coordinates
         double last = hCenter.coordinates[dim];
         double[] result = new double[dim];
         for (int i = 0; i < dim; i++) result[i] = hCenter.coordinates[i] / last;
-        return new Vector2D(result);
-    }
-
-    /**
-     * Main program (used for testing).
-     */
-    public static void main (String[] args) {
-        Vector2D p = new Vector2D(1, 2, 3);
-        System.out.println("Pnt created: " + p);
-        Vector2D[] matrix1 = {new Vector2D(1,2), new Vector2D(3,4)};
-        Vector2D[] matrix2 = {new Vector2D(7,0,5), new Vector2D(2,4,6), new Vector2D(3,8,1)};
-        System.out.print("Results should be -2 and -288: ");
-        System.out.println(determinant(matrix1) + " " + determinant(matrix2));
-        Vector2D p1 = new Vector2D(1,1); Vector2D p2 = new Vector2D(-1,1);
-        System.out.println("Angle between " + p1 + " and " +
-                p2 + ": " + p1.angle(p2));
-        System.out.println(p1 + " subtract " + p2 + ": " + p1.subtract(p2));
-        Vector2D v0 = new Vector2D(0,0), v1 = new Vector2D(1,1), v2 = new Vector2D(2,2);
-        Vector2D[] vs = {v0, new Vector2D(0,1), new Vector2D(1,0)};
-        Vector2D vp = new Vector2D(.1, .1);
-        System.out.println(vp + " isInside " + toString(vs) +
-                ": " + vp.isInside(vs));
-        System.out.println(v1 + " isInside " + toString(vs) +
-                ": " + v1.isInside(vs));
-        System.out.println(vp + " vsCircumcircle " + toString(vs) + ": " +
-                           vp.vsCircumcircle(vs));
-        System.out.println(v1 + " vsCircumcircle " + toString(vs) + ": " +
-                           v1.vsCircumcircle(vs));
-        System.out.println(v2 + " vsCircumcircle " + toString(vs) + ": " +
-                           v2.vsCircumcircle(vs));
-        System.out.println("Circumcenter of " + toString(vs) + " is " +
-                circumcenter(vs));
+        return new Pnt(result);
     }
     
     // methods required by {@link Point}:
@@ -488,4 +462,35 @@ public class Vector2D implements Point {
 	public double getY() {
 		return this.coordinates[1];
 	}
+	
+//  /**
+//  * Main program (used for testing).
+//  */
+// public static void main (String[] args) {
+//     Pnt p = new Pnt(1, 2, 3);
+//     System.out.println("Pnt created: " + p);
+//     Pnt[] matrix1 = {new Pnt(1,2), new Pnt(3,4)};
+//     Pnt[] matrix2 = {new Pnt(7,0,5), new Pnt(2,4,6), new Pnt(3,8,1)};
+//     System.out.print("Results should be -2 and -288: ");
+//     System.out.println(determinant(matrix1) + " " + determinant(matrix2));
+//     Pnt p1 = new Pnt(1,1); Pnt p2 = new Pnt(-1,1);
+//     System.out.println("Angle between " + p1 + " and " +
+//             p2 + ": " + p1.angle(p2));
+//     System.out.println(p1 + " subtract " + p2 + ": " + p1.subtract(p2));
+//     Pnt v0 = new Pnt(0,0), v1 = new Pnt(1,1), v2 = new Pnt(2,2);
+//     Pnt[] vs = {v0, new Pnt(0,1), new Pnt(1,0)};
+//     Pnt vp = new Pnt(.1, .1);
+//     System.out.println(vp + " isInside " + toString(vs) +
+//             ": " + vp.isInside(vs));
+//     System.out.println(v1 + " isInside " + toString(vs) +
+//             ": " + v1.isInside(vs));
+//     System.out.println(vp + " vsCircumcircle " + toString(vs) + ": " +
+//                        vp.vsCircumcircle(vs));
+//     System.out.println(v1 + " vsCircumcircle " + toString(vs) + ": " +
+//                        v1.vsCircumcircle(vs));
+//     System.out.println(v2 + " vsCircumcircle " + toString(vs) + ": " +
+//                        v2.vsCircumcircle(vs));
+//     System.out.println("Circumcenter of " + toString(vs) + " is " +
+//             circumcenter(vs));
+// }
 }

@@ -1,13 +1,16 @@
 /**
+ * <p>
  * Implementation of the randomized incremental algorithm described in
  * Guibas, Knuth, Sharir, "Randomized incremental construction of Delaunay and Voronoi diagrams", 
  * Algorithmica, no. 7, p. 381-413 (1992).
  * See also Berg et al., <em>Computational Geometry - Algorithms and Applications</em>, 
  * 3rd ed., Springer (2008), Sec. 9.3-9.6.
- * 
+ * </p>
+ * <p>
  * This code is partly based on an earlier implementation by Johannes Diemke
  * (https://github.com/jdiemke/delaunay-triangulator) published under the 
  * following license:
+ * </p>
  * <pre>
  * The MIT License (MIT)
  * 

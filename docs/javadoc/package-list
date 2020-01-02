@@ -18,6 +18,10 @@ imagingbook.pub.dft
 imagingbook.pub.dft.obsolete
 imagingbook.pub.edgepreservingfilters
 imagingbook.pub.fd
+imagingbook.pub.geometry.delaunay.common
+imagingbook.pub.geometry.delaunay.impChew
+imagingbook.pub.geometry.delaunay.impGuibas
+imagingbook.pub.geometry.delaunay.plugin
 imagingbook.pub.geometry.fitting
 imagingbook.pub.geometry.icp
 imagingbook.pub.geometry.icp.tests

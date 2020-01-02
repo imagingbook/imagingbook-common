@@ -1,4 +1,4 @@
-package imagingbook.pub.geometry.delaunay;
+package imagingbook.pub.geometry.delaunay.plugin;
 
 import java.awt.Color;
 import java.awt.geom.Path2D;
@@ -18,8 +18,8 @@ import imagingbook.lib.ij.IjLogStream;
 import imagingbook.pub.geometry.delaunay.common.DelaunayTriangulation;
 import imagingbook.pub.geometry.delaunay.common.Point;
 import imagingbook.pub.geometry.delaunay.common.Triangle;
-import imagingbook.pub.geometry.delaunay.impChew.DelaunayTriangulationChew;
-import imagingbook.pub.geometry.delaunay.impGuibas.DelaunayTriangulationGuibas;
+import imagingbook.pub.geometry.delaunay.impChew.TriangulationChew;
+import imagingbook.pub.geometry.delaunay.impGuibas.TriangulationGuibas;
 
 
 /**
@@ -27,18 +27,18 @@ import imagingbook.pub.geometry.delaunay.impGuibas.DelaunayTriangulationGuibas;
  * the given set of points.
  * </p>
  * <p>
- * How to use: Create or open a binary image containing a point set. Any pixel with value > 0 
+ * How to use: Create or open a binary image containing a point set. Any pixel with value &gt; 0 
  * is considered a foreground point, zero-value pixels are considered background). The plugin 
  * triangulates the foreground point set and displays the triangulation as a vector overlay
  * in a new image.
  * </p>
  * <p>
  * The following triangulation methods can be selected (both should yield similar results):
+ * </p>
  * <ol>
  * <li><strong>Chew:</strong> Incremental triangulation algorithm proposed by Paul Chew.</li>
- * <li><strong>Guibas:</strong> Randomized incremental algorithm proposed by Guibas et al.</li>
+ * <li><strong>Guibas:</strong> Randomized incremental algorithm proposed by Guibas et al. (faster).</li>
  * </ol>
- * </p>
  * <p>
  * Note that the actual implementations reside in separate sub-packages and do not depend on ImageJ.
  * </p>
@@ -46,12 +46,12 @@ import imagingbook.pub.geometry.delaunay.impGuibas.DelaunayTriangulationGuibas;
  * @author W. Burger
  * @version 2020-01-01
  */
-public class Delaunay_Demo implements PlugInFilter {
+public class Delaunay_Demo_Plugin implements PlugInFilter {
 
-	private static final String title = Delaunay_Demo.class.getSimpleName();
+	private static final String title = Delaunay_Demo_Plugin.class.getSimpleName();
 	private static final String[] TriangulationMethods = {"Chew", "Guibas"};
 	
-	private static int theMethod = 0;
+	private static int theMethod = 1;	// Guibas is 10 x faster
 	
 	private static Color DelaunayColor = Color.green;
 	private static Color PointColor = Color.magenta;
@@ -74,8 +74,8 @@ public class Delaunay_Demo implements PlugInFilter {
 		
 		DelaunayTriangulation dt = null;
 		switch (theMethod) {
-		case 0: dt = new DelaunayTriangulationChew(points); break;		// Chew
-		case 1: dt = new DelaunayTriangulationGuibas(points); break;	// Guibas
+		case 0: dt = new TriangulationChew(points); break;		// Chew
+		case 1: dt = new TriangulationGuibas(points); break;	// Guibas
 		}
 
 		ImageProcessor cp = ip.convertToByteProcessor();
@@ -109,7 +109,7 @@ public class Delaunay_Demo implements PlugInFilter {
 			for (int u = 0; u < M; u++) {
 				float val = ip.getPixelValue(u, v);
 				if (val > 0) {
-					vertices.add(new Point.Pnt(u, v));
+					vertices.add(new Point.Imp(u, v));
 				}
 			}
 		}

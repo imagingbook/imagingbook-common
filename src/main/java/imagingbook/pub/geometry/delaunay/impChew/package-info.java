@@ -39,5 +39,7 @@
  * The site-insertion part of this technique is commonly called the Bowyer-Watson Algorithm. The expected time to
  * insert a new site is roughly O(n1/2) where n is the current number of sites.
  * </p>
+ * 
+ * Adapted by W. Burger (2019)
  */
 package imagingbook.pub.geometry.delaunay.impChew;
