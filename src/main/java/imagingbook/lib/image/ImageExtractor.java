@@ -9,12 +9,10 @@
 package imagingbook.lib.image;
 
 import ij.process.ImageProcessor;
-import imagingbook.pub.geometry.mappings.linear.AffineMapping;
-import imagingbook.pub.geometry.mappings.linear.LinearMapping;
-import imagingbook.pub.geometry.mappings.linear.ProjectiveMapping;
-
-import java.awt.Point;
-import java.awt.geom.Point2D;
+import imagingbook.pub.geometry.basic.Point;
+import imagingbook.pub.geometry.mappings2.linear.AffineMapping2D;
+import imagingbook.pub.geometry.mappings2.linear.LinearMapping2D;
+import imagingbook.pub.geometry.mappings2.linear.ProjectiveMapping2D;
 
 /**
  * Use to exctract warped images for testing the Lucas-Kanade matcher.
@@ -56,15 +54,15 @@ public class ImageExtractor {
 	 * @return the extracted image {@code R}, which is of the same type as the source image.
 	 */	
 
-	public ImageProcessor extractImage(int width, int height, LinearMapping T) {
+	public ImageProcessor extractImage(int width, int height, LinearMapping2D T) {
 		ImageProcessor R = I.createProcessor(width, height);
 		extractImage(R, T);
 		return R;
 	}
 	
-	public ImageProcessor extractImage(int width, int height, Point2D[] sourcePnts) {
+	public ImageProcessor extractImage(int width, int height, Point[] sourcePnts) {
 		ImageProcessor R = I.createProcessor(width, height);
-		ProjectiveMapping T = getMapping(width, height, sourcePnts);
+		ProjectiveMapping2D T = getMapping(width, height, sourcePnts);
 		extractImage(R, T);
 		return R;
 	}
@@ -78,7 +76,7 @@ public class ImageExtractor {
 	 * @param R the image to be filled.
 	 * @param T a {@link LinearMapping} object.
 	 */	
-	public void extractImage(ImageProcessor R, LinearMapping T) {
+	public void extractImage(ImageProcessor R, LinearMapping2D T) {
 		int prevInterpolationMethod = I.getInterpolationMethod();
 		// save current interpolation method
 		I.setInterpolationMethod(interpolationMethod);
@@ -90,8 +88,8 @@ public class ImageExtractor {
 		int hT = R.getHeight();
 		for (int u = 0; u < wT; u++) {
 			for (int v = 0; v < hT; v++) {
-				Point2D uv = new Point(u, v);
-				Point2D xy = T.applyTo(uv);
+				Point uv = Point.create(u, v);
+				Point xy = T.applyTo(uv);
 				float[] val = iaI.getPix(xy.getX(), xy.getY());
 				iaR.setPix(u, v, val);
 			}
@@ -109,20 +107,20 @@ public class ImageExtractor {
 	 * @param R the target image;
 	 * @param sourcePnts an array of 3 or 4 {@link Point2D} objects.
 	 */
-	public void extractImage(ImageProcessor R, Point2D[] sourcePnts) {
-		ProjectiveMapping T = getMapping(R.getWidth(), R.getHeight(), sourcePnts);
+	public void extractImage(ImageProcessor R, Point[] sourcePnts) {
+		ProjectiveMapping2D T = getMapping(R.getWidth(), R.getHeight(), sourcePnts);
 		extractImage(R, T);
 	}
 	
-	private ProjectiveMapping getMapping(int w, int h, Point2D[] sourcePnts) {
-		Point2D[] targetPnts = {
-				new Point(0, 0), new Point(w - 1, 0),
-				new Point(w - 1, h - 1), new Point(0, h - 1)
+	private ProjectiveMapping2D getMapping(int w, int h, Point[] sourcePnts) {
+		Point[] targetPnts = {
+				Point.create(0, 0), Point.create(w - 1, 0),
+				Point.create(w - 1, h - 1), Point.create(0, h - 1)
 			};
-		ProjectiveMapping T = null;
+		ProjectiveMapping2D T = null;
 		switch (sourcePnts.length) {
-		case (3) : T = AffineMapping.fromNPoints(targetPnts, sourcePnts); break;
-		case (4) : T = ProjectiveMapping.from4Points(targetPnts, sourcePnts); break;
+		case (3) : T = AffineMapping2D.fromNPoints(targetPnts, sourcePnts); break;
+		case (4) : T = ProjectiveMapping2D.from4Points(targetPnts, sourcePnts); break;
 		default : throw new IllegalArgumentException("wrong number of source points");
 		}
 		return T;

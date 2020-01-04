@@ -1,11 +1,9 @@
 package imagingbook.lib.image;
 
-import java.awt.Point;
-import java.awt.geom.Point2D;
-
 import ij.process.ImageProcessor;
 import imagingbook.lib.interpolation.InterpolationMethod;
-import imagingbook.pub.geometry.mappings.Mapping;
+import imagingbook.pub.geometry.basic.Point;
+import imagingbook.pub.geometry.mappings2.Mapping2D;
 
 /**
  * This class defines methods to perform arbitrary geometric transformations
@@ -21,7 +19,7 @@ public class ImageMapper {
 	public static InterpolationMethod DefaultInterpolationMethod = InterpolationMethod.Bicubic;	
 	
 	private final InterpolationMethod im;
-	private final Mapping mp;
+	private final Mapping2D mp;
 	
 	/**
 	 * Creates a new instance with the specified geometric mapping.
@@ -29,7 +27,7 @@ public class ImageMapper {
 	 * (see {@link DefaultInterpolationMethod}).
 	 * @param mp the geometric mapping
 	 */
-	public ImageMapper(Mapping mp) {
+	public ImageMapper(Mapping2D mp) {
 		this(mp, DefaultInterpolationMethod);
 	}
 
@@ -39,7 +37,7 @@ public class ImageMapper {
 	 * @param mp the geometric mapping
 	 * @param im the pixel interpolation method
 	 */
-	public ImageMapper(Mapping mp, InterpolationMethod im) {
+	public ImageMapper(Mapping2D mp, InterpolationMethod im) {
 		this.mp = mp;
 		this.im = im;
 	}
@@ -101,13 +99,13 @@ public class ImageMapper {
 		if (targetAcc.getProcessor() == sourceAcc.getProcessor()) {
 			throw new IllegalArgumentException("Source and target image must not be the same!");
 		}
-		Mapping invMap = mp; 		// this always IS an inverse mapping!!
+		Mapping2D invMap = mp; 		// this always IS an inverse mapping!!
 		ImageProcessor target = targetAcc.getProcessor();
 		final int w = target.getWidth();
 		final int h = target.getHeight();
 		for (int v = 0; v < h; v++) {
 			for (int u = 0; u < w; u++) {
-				Point2D sourcePt = invMap.applyTo(new Point(u, v));
+				Point sourcePt = invMap.applyTo(Point.create(u, v));
 				float[] val = sourceAcc.getPix(sourcePt.getX(), sourcePt.getY());
 				targetAcc.setPix(u, v, val);
 			}
