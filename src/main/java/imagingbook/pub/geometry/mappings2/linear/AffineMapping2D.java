@@ -9,11 +9,10 @@
 
 package imagingbook.pub.geometry.mappings2.linear;
 
-import java.awt.geom.Point2D;
-
 import imagingbook.lib.math.Arithmetic;
 import imagingbook.lib.math.Matrix;
 import imagingbook.lib.settings.PrintPrecision;
+import imagingbook.pub.geometry.basic.Point;
 
 /**
  * This class represents an affine transformation in 2D, which can be defined 
@@ -32,7 +31,7 @@ public class AffineMapping2D extends ProjectiveMapping2D {
 	 * @param B3 point 3 of source triangle B
 	 * @return a new affine mapping
 	 */
-	public static AffineMapping2D from3Points(Point2D A1, Point2D A2, Point2D A3, Point2D B1, Point2D B2, Point2D B3) {
+	public static AffineMapping2D from3Points(Point A1, Point A2, Point A3, Point B1, Point B2, Point B3) {
 		double ax1 = A1.getX(), ax2 = A2.getX(), ax3 = A3.getX();
 		double ay1 = A1.getY(), ay2 = A2.getY(), ay3 = A3.getY();
 		double bx1 = B1.getX(), bx2 = B2.getX(), bx3 = B3.getX();
@@ -57,7 +56,7 @@ public class AffineMapping2D extends ProjectiveMapping2D {
 	 * @param B the second triangle
 	 * @return a new affine mapping
 	 */
-	public static AffineMapping2D from3Points(Point2D[] A, Point2D[] B) {
+	public static AffineMapping2D from3Points(Point[] A, Point[] B) {
 		return AffineMapping2D.from3Points(A[0], A[1], A[2], B[0], B[1], B[2]);
 	}
 	// ---------------------------------------------------------------------------

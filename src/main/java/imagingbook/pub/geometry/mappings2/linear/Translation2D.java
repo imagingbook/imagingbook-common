@@ -9,7 +9,7 @@
 
 package imagingbook.pub.geometry.mappings2.linear;
 
-import java.awt.geom.Point2D;
+import imagingbook.pub.geometry.basic.Point;
 
 /**
  * This class represents a pure 2D translation (as a special case of 
@@ -47,7 +47,7 @@ public class Translation2D extends AffineMapping2D {
 	 * @param p first point
 	 * @param q second point
 	 */
-	public Translation2D(Point2D p, Point2D q) {
+	public Translation2D(Point p, Point q) {
 		this(q.getX() - p.getX(), q.getY() - p.getY());
 	}
 	

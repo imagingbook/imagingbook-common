@@ -9,8 +9,6 @@
 
 package imagingbook.pub.geometry.mappings2.linear;
 
-import java.awt.geom.Point2D;
-
 import org.apache.commons.math3.linear.DecompositionSolver;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
@@ -20,8 +18,6 @@ import org.apache.commons.math3.linear.SingularValueDecomposition;
 import imagingbook.lib.math.Arithmetic;
 import imagingbook.lib.settings.PrintPrecision;
 import imagingbook.pub.geometry.basic.Point;
-import imagingbook.pub.geometry.mappings.JacobianSupport;
-import imagingbook.pub.geometry.mappings.Mapping;
 import imagingbook.pub.geometry.mappings2.JacobianSupport2D;
 
 
@@ -35,34 +31,34 @@ public class ProjectiveMapping2D extends LinearMapping2D implements JacobianSupp
 	
 	//  static methods -----------------------------------------------------
 	
-//	/**
-//	 * Creates the most specific linear mapping from two sequences of corresponding
-//	 * 2D points.
-//	 * @param P first point sequence
-//	 * @param Q second point sequence
-//	 * @return a linear mapping derived from point correspondences
-//	 */
-//	public static ProjectiveMapping makeMapping(Point2D[] P, Point2D[] Q) {
-//		int n = Math.min(P.length, Q.length);
-//		if (n < 1) {
-//			throw new IllegalArgumentException("cannot create a mapping from zero points");
-//		}
-//		else if (n == 1) {
-//			return new Translation(P[0], Q[0]);
-//		}
-//		else if (n == 2) {	// TODO: similarity transformation?
-//			throw new UnsupportedOperationException("makeMapping: don't know yet how to handle 2 points");
-//		}
-//		else if (n == 3) {
-//			return AffineMapping.from3Points(P, Q);
-//		}
-//		else if (n == 4) {
-//			return ProjectiveMapping.from4Points(P, Q);
-//		}
-//		else {	// n > 4 (over-determined)
-//			return ProjectiveMapping.fromNPoints(P, Q);
-//		}
-//	}
+	/**
+	 * Creates the most specific linear mapping from two sequences of corresponding
+	 * 2D points.
+	 * @param P first point sequence
+	 * @param Q second point sequence
+	 * @return a linear mapping derived from point correspondences
+	 */
+	public static ProjectiveMapping2D makeMapping(Point[] P, Point[] Q) {
+		int n = Math.min(P.length, Q.length);
+		if (n < 1) {
+			throw new IllegalArgumentException("cannot create a mapping from zero points");
+		}
+		else if (n == 1) {
+			return new Translation2D(P[0], Q[0]);
+		}
+		else if (n == 2) {	// TODO: similarity transformation?
+			throw new UnsupportedOperationException("makeMapping: don't know yet how to handle 2 points");
+		}
+		else if (n == 3) {
+			return AffineMapping2D.from3Points(P, Q);
+		}
+		else if (n == 4) {
+			return ProjectiveMapping2D.from4Points(P, Q);
+		}
+		else {	// n > 4 (over-determined)
+			return ProjectiveMapping2D.fromNPoints(P, Q);
+		}
+	}
 	
 	/**
 	 * Creates the projective mapping from the unit square S to
@@ -73,7 +69,7 @@ public class ProjectiveMapping2D extends LinearMapping2D implements JacobianSupp
 	 * @param p3 point 3
 	 * @return a new projective mapping
 	 */
-	public static ProjectiveMapping2D fromUnitSquareTo4Points(Point2D p0, Point2D p1, Point2D p2, Point2D p3) {
+	public static ProjectiveMapping2D fromUnitSquareTo4Points(Point p0, Point p1, Point p2, Point p3) {
 		double x0 = p0.getX(), x1 = p1.getX(), x2 = p2.getX(), x3 = p3.getX();
 		double y0 = p0.getY(), y1 = p1.getY(), y2 = p2.getY(), y3 = p3.getY();
 		double S = (x1 - x2) * (y3 - y2) - (x3 - x2) * (y1 - y2);
@@ -104,8 +100,8 @@ public class ProjectiveMapping2D extends LinearMapping2D implements JacobianSupp
 	 * @return a new projective mapping
 	 */
 	public static ProjectiveMapping2D from4Points(
-			Point2D p0, Point2D p1, Point2D p2, Point2D p3, 
-			Point2D q0, Point2D q1, Point2D q2, Point2D q3)	{
+			Point p0, Point p1, Point p2, Point p3, 
+			Point q0, Point q1, Point q2, Point q3)	{
 		ProjectiveMapping2D T1 = ProjectiveMapping2D.fromUnitSquareTo4Points(p0, p1, p2, p3);
 		ProjectiveMapping2D T2 = ProjectiveMapping2D.fromUnitSquareTo4Points(q0, q1, q2, q3);
 		ProjectiveMapping2D T1i = T1.getInverse();
@@ -118,7 +114,7 @@ public class ProjectiveMapping2D extends LinearMapping2D implements JacobianSupp
 	 * @param Q target quad
 	 * @return a new projective mapping
 	 */
-	public static final ProjectiveMapping2D from4Points(Point2D[] P, Point2D[] Q) {
+	public static final ProjectiveMapping2D from4Points(Point[] P, Point[] Q) {
 		return ProjectiveMapping2D.from4Points(P[0], P[1], P[2], P[3], Q[0], Q[1], Q[2], Q[3]);
 	}
 	

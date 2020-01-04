@@ -57,7 +57,6 @@ public class LinearMapping2D implements Mapping2D {
 	 * @param a20 matrix element A_20
 	 * @param a21 matrix element A_21
 	 * @param a22 matrix element A_22
-	 * @deprecated
 	 */
 	public LinearMapping2D (
 			double a00, double a01, double a02, 
