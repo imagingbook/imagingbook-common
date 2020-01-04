@@ -11,9 +11,9 @@ package imagingbook.pub.lucaskanade;
 import ij.ImagePlus;
 import ij.process.FloatProcessor;
 import imagingbook.lib.math.Matrix;
-import imagingbook.pub.geometry.mappings.linear.ProjectiveMapping;
+import imagingbook.pub.geometry.basic.Point;
+import imagingbook.pub.geometry.mappings2.linear.ProjectiveMapping2D;
 
-import java.awt.geom.Point2D;
 
 /**
  * This is the common super-class for different variants of the Lucas-Kanade
@@ -72,24 +72,24 @@ public abstract class LucasKanadeMatcher {
 	 * @param Q an arbitrary quad (should be inside the search image I);
 	 * @return the transformation from {@code R}'s bounding rectangle to {@code Q}.
 	 */
-	public ProjectiveMapping getReferenceMappingTo(Point2D[] Q) {
-		Point2D[] Rpts = getReferencePoints();
-		return ProjectiveMapping.from4Points(Rpts, Q);
+	public ProjectiveMapping2D getReferenceMappingTo(Point[] Q) {
+		Point[] Rpts = getReferencePoints();
+		return ProjectiveMapping2D.from4Points(Rpts, Q);
 	}
 	
 	/**
 	 * @return the corner points of the bounding rectangle of R, centered at the origin.
 	 */
-	public Point2D[] getReferencePoints() {
+	public Point[] getReferencePoints() {
 		double xmin = -xc;
 		double xmax = -xc + wR - 1;
 		double ymin = -yc;
 		double ymax = -yc + hR - 1;
-		Point2D[] pts = new Point2D[4];
-		pts[0] = new Point2D.Double(xmin, ymin);
-		pts[1] = new Point2D.Double(xmax, ymin);
-		pts[2] = new Point2D.Double(xmax, ymax);
-		pts[3] = new Point2D.Double(xmin, ymax);
+		Point[] pts = new Point[4];
+		pts[0] = Point.create(xmin, ymin);
+		pts[1] = Point.create(xmax, ymin);
+		pts[2] = Point.create(xmax, ymax);
+		pts[3] = Point.create(xmin, ymax);
 		return pts;
 	}
 	
@@ -103,10 +103,10 @@ public abstract class LucasKanadeMatcher {
 	 * (again assuming that R is centered at the coordinate origin) or null if
 	 * no match was found.
 	 */
-	public ProjectiveMapping getMatch(ProjectiveMapping Tinit) {
+	public ProjectiveMapping2D getMatch(ProjectiveMapping2D Tinit) {
 //		initializeMatch(Tinit);			// to be implemented by sub-classes
 		// ProjectiveMappingP Tp = Tinit.duplicate();
-		ProjectiveMapping Tp = Tinit;
+		ProjectiveMapping2D Tp = Tinit;
 		do {
 			Tp = iterateOnce(Tp);		// to be implemented by sub-classes
 		} while (Tp != null && !hasConverged() && getIteration() < params.maxIterations);
@@ -123,7 +123,7 @@ public abstract class LucasKanadeMatcher {
 	 * @return a new warp transformation (again assuming that R is centered at 
 	 * the coordinate origin) or null if the iteration was unsuccessful.
 	 */
-	public abstract ProjectiveMapping iterateOnce(ProjectiveMapping Tp);
+	public abstract ProjectiveMapping2D iterateOnce(ProjectiveMapping2D Tp);
 	
 	
 	/**
@@ -180,17 +180,17 @@ public abstract class LucasKanadeMatcher {
 	 */
 	
 //	@Deprecated
-//	private Point2D[] getPoints(Rectangle2D r) {	// does -1 matter? YES!!! CORRECT!
+//	private Point[] getPoints(Rectangle2D r) {	// does -1 matter? YES!!! CORRECT!
 //		IJ.log("getpoints1:  r = " + r.toString());
 //		double x = r.getX();
 //		double y = r.getY();
 //		double w = r.getWidth();
 //		double h = r.getHeight();
-//		Point2D[] pts = new Point2D[4];
-//		pts[0] = new Point2D.Double(x, y);
-//		pts[1] = new Point2D.Double(x + w - 1, y);
-//		pts[2] = new Point2D.Double(x + w - 1, y + h - 1);
-//		pts[3] = new Point2D.Double(x, y + h - 1);
+//		Point[] pts = new Point[4];
+//		pts[0] = new Point.Double(x, y);
+//		pts[1] = new Point.Double(x + w - 1, y);
+//		pts[2] = new Point.Double(x + w - 1, y + h - 1);
+//		pts[3] = new Point.Double(x, y + h - 1);
 //		//IJ.log("getpoints1:  p1-4 = " + pts[0] + ", " + pts[1] + ", " + pts[2] + ", " + pts[3]);
 //		return pts;
 //	}

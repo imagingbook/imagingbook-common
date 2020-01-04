@@ -11,7 +11,8 @@ package imagingbook.pub.lucaskanade;
 import ij.process.FloatProcessor;
 import imagingbook.lib.ij.IjUtils;
 import imagingbook.lib.math.Matrix;
-import imagingbook.pub.geometry.mappings.linear.ProjectiveMapping;
+import imagingbook.pub.geometry.basic.Point;
+import imagingbook.pub.geometry.mappings2.linear.ProjectiveMapping2D;
 
 /**
  * Lucas-Kanade (forward-additive) matcher, as described in Simon Baker and Iain Matthews, 
@@ -53,7 +54,7 @@ public class LucasKanadeForwardMatcher extends LucasKanadeMatcher {
 		return Math.sqrt(sqrError);
 	}
 
-	private void initializeMatch(ProjectiveMapping Tinit) {
+	private void initializeMatch(ProjectiveMapping2D Tinit) {
 		n = Tinit.getParameters().length;
 		Ix = gradientX(I);
 		Iy = gradientY(I);
@@ -61,7 +62,7 @@ public class LucasKanadeForwardMatcher extends LucasKanadeMatcher {
 	}
 
 	@Override
-	public ProjectiveMapping iterateOnce(ProjectiveMapping Tp) {
+	public ProjectiveMapping2D iterateOnce(ProjectiveMapping2D Tp) {
 		if (iteration < 0) {
 			initializeMatch(Tp);
 		}
@@ -77,11 +78,16 @@ public class LucasKanadeForwardMatcher extends LucasKanadeMatcher {
 		// for all positions (u,v) in R do
 		for (int u = 0; u < wR; u++) {
 			for (int v = 0; v < hR; v++) {
-				double[] x = {u - xc, v - yc};	// position w.r.t. the center of R
-				double[] xT = Tp.applyTo(x);		// warp x -> x'
+				//double[] x = {u - xc, v - yc};	// position w.r.t. the center of R
+				Point x = Point.create(u - xc, v - yc);		// position w.r.t. the center of R
+				//double[] xT = Tp.applyTo(x);		// warp x -> x'
+				Point xT = Tp.applyTo(x);		// warp x -> x'
 
-				double gx = Ix.getInterpolatedValue(xT[0], xT[1]);	// interpolate the gradient at pos. xw
-				double gy = Iy.getInterpolatedValue(xT[0], xT[1]);
+//				double gx = Ix.getInterpolatedValue(xT[0], xT[1]);	// interpolate the gradient at pos. xw
+//				double gy = Iy.getInterpolatedValue(xT[0], xT[1]);
+				double gx = Ix.getInterpolatedValue(xT.getX(), xT.getY());	// interpolate the gradient at pos. xw
+				double gy = Iy.getInterpolatedValue(xT.getX(), xT.getY());
+				
 				double[] G = new double[] {gx, gy};				// interpolated gradient vector
 
 				// Step 4: Evaluate the Jacobian of the warp W at position x
@@ -99,7 +105,7 @@ public class LucasKanadeForwardMatcher extends LucasKanadeMatcher {
 				H = Matrix.add(H, Hx);
 
 				// Step 7: Compute sum_x [gradI*dW/dp]^T (R(x)-I(W(x;p))] = Isteepest^T * Exy]
-				double d = R.getf(u, v) - I.getInterpolatedValue(xT[0], xT[1]);
+				double d = R.getf(u, v) - I.getInterpolatedValue(xT.getX(), xT.getY());
 				sqrError = sqrError + d * d;
 
 				dp = Matrix.add(dp, Matrix.multiply(d, sx));

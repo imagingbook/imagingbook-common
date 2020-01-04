@@ -252,10 +252,10 @@ public class ProjectiveMapping2D extends LinearMapping2D implements JacobianSupp
 	}
 	
 	@Override
-	public double[][] getJacobian(double[] xy) {
+	public double[][] getJacobian(Point xy) {
 		// see Baker 2003 "20 Years" Part 1, Eq. 99 (p. 46)
-		final double x = xy[0];
-		final double y = xy[1];
+		final double x = xy.getX();
+		final double y = xy.getY();
 		final double a = a00 * x + a01 * y + a02;	// = alpha
 		final double b = a10 * x + a11 * y + a12;	// = beta
 		final double c = a20 * x + a21 * y + 1;		// = gamma

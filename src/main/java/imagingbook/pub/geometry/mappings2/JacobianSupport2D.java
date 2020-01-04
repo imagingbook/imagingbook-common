@@ -9,6 +9,8 @@
 
 package imagingbook.pub.geometry.mappings2;
 
+import imagingbook.pub.geometry.basic.Point;
+
 /**
  * This interfaces defines methods for the parameterization of mappings
  * with 1D double vectors (used in Lucas-Kanade matcher etc.).
@@ -42,6 +44,6 @@ public interface JacobianSupport2D {
 	 * @param xy 2D position
 	 * @return the Jacobian matrix
 	 */
-	public double[][] getJacobian(double[] xy);
+	public double[][] getJacobian(Point xy);
 	
 }

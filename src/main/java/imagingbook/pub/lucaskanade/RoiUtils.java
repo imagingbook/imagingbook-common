@@ -12,12 +12,12 @@ import ij.gui.Roi;
 import ij.gui.ShapeRoi;
 import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
-import imagingbook.pub.geometry.mappings.linear.LinearMapping;
+import imagingbook.pub.geometry.basic.Point;
+import imagingbook.pub.geometry.mappings2.linear.LinearMapping2D;
 
 import java.awt.Color;
 import java.awt.Rectangle;
 import java.awt.geom.Path2D;
-import java.awt.geom.Point2D;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -25,17 +25,17 @@ import java.util.List;
 public class RoiUtils {
 	
 	@Deprecated
-	public static List<Point2D> getWarpedPointsCentered(Roi roi, LinearMapping W) {
+	public static List<Point> getWarpedPointsCentered(Roi roi, LinearMapping2D W) {
 		Rectangle bounds = roi.getBounds();
-		List<Point2D> oPts = new LinkedList<Point2D>();
+		List<Point> oPts = new LinkedList<>();
 		float xC = bounds.width/2;
 		float yC = bounds.height/2;
-		oPts.add(new Point2D.Float(0 - xC, 0 - yC));
-		oPts.add(new Point2D.Float(bounds.width - xC, 0 - yC));
-		oPts.add(new Point2D.Float(bounds.width - xC, bounds.height - yC));
-		oPts.add(new Point2D.Float(0 - xC, bounds.height - yC));
-		List<Point2D> wPts = new LinkedList<Point2D>();
-		for (Point2D op : oPts) {
+		oPts.add(Point.create(0 - xC, 0 - yC));
+		oPts.add(Point.create(bounds.width - xC, 0 - yC));
+		oPts.add(Point.create(bounds.width - xC, bounds.height - yC));
+		oPts.add(Point.create(0 - xC, bounds.height - yC));
+		List<Point> wPts = new LinkedList<>();
+		for (Point op : oPts) {
 			wPts.add(W.applyTo(op));
 			//pts.add(ipm);
 		}
@@ -43,7 +43,7 @@ public class RoiUtils {
 	}
 	
 	@Deprecated
-	public static Roi makePolygon(Point2D[] points, double strokeWidth, Color color) {
+	public static Roi makePolygon(Point[] points, double strokeWidth, Color color) {
 		Path2D poly = new Path2D.Double();
 		if (points.length > 0) {
 			poly.moveTo(points[0].getX(), points[0].getY());
@@ -72,15 +72,15 @@ public class RoiUtils {
 	// ---------------------------------------------------------------------------
 	
 	@Deprecated
-	public static FloatProcessor getUnwarpedImage(ImageProcessor I, LinearMapping W, int w, int h) {
+	public static FloatProcessor getUnwarpedImage(ImageProcessor I, LinearMapping2D W, int w, int h) {
 		FloatProcessor J = new FloatProcessor(w, h);
 		int uc = w/2;				// center (origin) of R
 		int vc = h/2;
 		for (int u = 0; u < w; u++) {
 			for (int v = 0; v < h; v++) {
-				double[] x = {u - uc, v - vc};	// position w.r.t. the center of R
-				double[] xw = W.applyTo(x);		// warp from x -> xw
-				float val = (float) I.getInterpolatedValue(xw[0], xw[1]);
+				Point x = Point.create(u - uc, v - vc);	// position w.r.t. the center of R
+				Point xw = W.applyTo(x);		// warp from x -> xw
+				float val = (float) I.getInterpolatedValue(xw.getX(), xw.getY());
 				J.setf(u, v, val);
 			}
 		}
