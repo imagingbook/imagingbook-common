@@ -173,9 +173,9 @@ public class AffineMapping2D extends ProjectiveMapping2D {
 	}
 
 	@Override
-	public double[][] getJacobian(double[] xy) {
-		final double x = xy[0];
-		final double y = xy[1];
+	public double[][] getJacobian(Point xy) {
+		final double x = xy.getX();
+		final double y = xy.getY();
 		return new double[][]
 			{{x, y, 0, 0, 1, 0},
 			 {0, 0, x, y, 0, 1}};

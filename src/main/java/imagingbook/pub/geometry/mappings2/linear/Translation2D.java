@@ -88,7 +88,7 @@ public class Translation2D extends AffineMapping2D {
 	}
 	
 	@Override
-	public double[][] getJacobian(double[] xy) {
+	public double[][] getJacobian(Point xy) {
 		return JT; // this transformation has a constant Jacobian (indep. of xy)
 	}
 	
