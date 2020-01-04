@@ -1,5 +1,5 @@
 /**
- * This package contains implementation of the Delaonay triangulation
+ * This package contains implementation of the Delaunay triangulation
  * in 2D.
  */
 package imagingbook.pub.geometry.delaunay;

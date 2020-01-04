@@ -18,8 +18,8 @@ import imagingbook.lib.ij.IjLogStream;
 import imagingbook.pub.geometry.basic.Point;
 import imagingbook.pub.geometry.basic.Triangle;
 import imagingbook.pub.geometry.delaunay.DelaunayTriangulation;
-import imagingbook.pub.geometry.delaunay.impChew.TriangulationChew;
-import imagingbook.pub.geometry.delaunay.impGuibas.TriangulationGuibas;
+import imagingbook.pub.geometry.delaunay.chew.TriangulationChew;
+import imagingbook.pub.geometry.delaunay.guibas.TriangulationGuibas;
 
 
 /**

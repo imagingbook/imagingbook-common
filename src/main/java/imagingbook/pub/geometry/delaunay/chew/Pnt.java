@@ -1,4 +1,4 @@
-package imagingbook.pub.geometry.delaunay.impChew;
+package imagingbook.pub.geometry.delaunay.chew;
 
 import imagingbook.pub.geometry.basic.Point;
 

@@ -1,4 +1,4 @@
-package imagingbook.pub.geometry.delaunay.impGuibas;
+package imagingbook.pub.geometry.delaunay.guibas;
 
 /**
  * This class represents a 2D edge (line segment), specified

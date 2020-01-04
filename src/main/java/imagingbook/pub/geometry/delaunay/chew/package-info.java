@@ -42,4 +42,4 @@
  * 
  * Adapted by W. Burger (2019)
  */
-package imagingbook.pub.geometry.delaunay.impChew;
+package imagingbook.pub.geometry.delaunay.chew;

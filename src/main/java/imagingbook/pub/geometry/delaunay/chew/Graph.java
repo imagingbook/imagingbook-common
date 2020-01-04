@@ -1,4 +1,4 @@
-package imagingbook.pub.geometry.delaunay.impChew;
+package imagingbook.pub.geometry.delaunay.chew;
 
 /*
  * Copyright (c) 2007 by L. Paul Chew.

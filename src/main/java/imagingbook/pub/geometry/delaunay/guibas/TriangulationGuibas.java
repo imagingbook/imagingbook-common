@@ -1,4 +1,4 @@
-package imagingbook.pub.geometry.delaunay.impGuibas;
+package imagingbook.pub.geometry.delaunay.guibas;
 
 import java.util.ArrayList;
 import java.util.Arrays;
