@@ -1,4 +1,4 @@
-package imagingbook.pub.geometry.fitting;
+package imagingbook.pub.geometry.fitting_OLD;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,13 +40,13 @@ import imagingbook.pub.geometry.mappings.linear.AffineMapping;
  * @author W. Burger
  * @version 2017/03/21
  */
-public class ProcrustesFit extends LinearFit {
+public class ProcrustesFit extends AffineFit {
 	
 	private final boolean allowTranslation;
 	private final boolean allowScaling;
 	private final boolean forceRotation;
 	
-	private int m;		// number of samples
+//	private int m;		// number of samples
 	
 	private RealMatrix R = null;					// orthogonal (rotation) matrix
 	private RealVector t = null;					// translation vector
@@ -84,7 +84,7 @@ public class ProcrustesFit extends LinearFit {
 	public void fit(List<double[]> X, List<double[]> Y) {
 		if (X.size() != Y.size())
 			throw new IllegalArgumentException("point sequences X, Y must have same length");
-		this.m = X.size();
+//		this.m = X.size();
 		if (X.get(0).length < n)
 			throw new IllegalArgumentException("dimensionality of samples must be >= " + n);
 		

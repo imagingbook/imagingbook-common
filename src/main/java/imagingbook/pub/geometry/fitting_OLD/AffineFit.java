@@ -1,4 +1,4 @@
-package imagingbook.pub.geometry.fitting;
+package imagingbook.pub.geometry.fitting_OLD;
 
 import java.util.List;
 
@@ -9,11 +9,16 @@ import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.RealVector;
 import org.apache.commons.math3.linear.SingularValueDecomposition;
 
-import ij.IJ;
+import imagingbook.lib.math.Matrix;
 
+/**
+ * TODO: Need a complete rewrite!
+ *
+ */
 public class AffineFit extends LinearFit {
 	
 	private int m;			// number of samples
+	private double err;		// TODO: this should be changed!
 	
 	private RealMatrix A = null;
 	
@@ -36,7 +41,7 @@ public class AffineFit extends LinearFit {
 		RealMatrix M = MatrixUtils.createRealMatrix(2 * m, 2 * (n + 1));
 		RealVector b = new ArrayRealVector(2 * m);
 		
-		IJ.log("M = " + M.getRowDimension() + " / " + M.getColumnDimension());
+//		IJ.log("M = " + M.getRowDimension() + " x " + M.getColumnDimension());
 		
 		// mount matrix M:	TODO: needs to be checked for n > 2!
 		int row = 0;
@@ -69,6 +74,7 @@ public class AffineFit extends LinearFit {
 		DecompositionSolver solver = svd.getSolver();
 		RealVector a = solver.solve(b);
 		A = makeTransformationMatrix(a);
+		err = makeError(X, Y, A);
 	}
 
 	// creates a n x (n+1) transformation matrix from the elements of a
@@ -85,6 +91,28 @@ public class AffineFit extends LinearFit {
 		//A.setEntry(n - 1, n, 1);
 		return A;
 	}
+	
+	private double makeError(List<double[]> X, List<double[]> Y, RealMatrix A) {
+		double[][] Xa = X.toArray(new double[0][]);
+		double[][] Ya = Y.toArray(new double[0][]);
+		if (Xa.length != Ya.length)
+			throw new IllegalArgumentException("X,Y must have the same length!");
+		double errSum = 0;
+		for (int i = 0; i < Xa.length; i++) {
+			double[] p = Xa[i];
+			double[] q = Ya[i];
+			double[] p2 = A.operate(Matrix.toHomogeneous(p));	// TODO:
+			errSum = errSum + 
+					Math.sqrt(sq(q[0] - p2[0]) + sq(q[1] - p2[1]));
+		}
+		return errSum;
+	}
+	
+	// --------------------------------------------------------
+	
+	private double sq(double x) {
+		return x * x;
+	}
 
 	@Override
 	public RealMatrix getTransformationMatrix() {
@@ -93,8 +121,7 @@ public class AffineFit extends LinearFit {
 
 	@Override
 	public double getError() {
-		// TODO Auto-generated method stub
-		return 0;
+		return err;
 	}
 
 }

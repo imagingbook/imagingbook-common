@@ -7,7 +7,7 @@ import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
 
 import imagingbook.lib.math.Matrix;
-import imagingbook.pub.geometry.fitting.ProcrustesFit;
+import imagingbook.pub.geometry.fitting_OLD.ProcrustesFit;
 
 
 /**
