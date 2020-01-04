@@ -12,6 +12,13 @@ public interface Mapping2D extends Cloneable {
 	 */
 	Point applyTo (Point pnt);
 	
+	default Point[] applyTo(Point[] pnts) {
+		Point[] outPnts = new Point[pnts.length];
+		for (int i = 0; i < pnts.length; i++) {
+			outPnts[i] = applyTo(pnts[i]);
+		}
+		return outPnts;
+	}
 	
 	/**
 	 * The inverse of this mapping is calculated (if possible)

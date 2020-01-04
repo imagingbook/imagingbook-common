@@ -13,6 +13,14 @@ public interface Point {
 		return new Imp(x, y);
 	}
 	
+	public static Point create(double[] xy) {
+		return new Imp(xy[0], xy[1]);
+	}
+	
+	default double[] toArray() {
+		return new double[] {this.getX(), this.getY()};
+	}
+	
 	/**
 	 * Simple fallback implementation of the {@link Point} interface.
 	 * If no dependency on AWT is desired, just implement your own.
