@@ -1,0 +1,464 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span>package imagingbook.pub.geometry.delaunay.chew;<a name="line.1"></a>
+<span class="sourceLineNo">002</span><a name="line.2"></a>
+<span class="sourceLineNo">003</span>/*<a name="line.3"></a>
+<span class="sourceLineNo">004</span> * Copyright (c) 2005, 2007 by L. Paul Chew.<a name="line.4"></a>
+<span class="sourceLineNo">005</span> *<a name="line.5"></a>
+<span class="sourceLineNo">006</span> * Permission is hereby granted, without written agreement and without<a name="line.6"></a>
+<span class="sourceLineNo">007</span> * license or royalty fees, to use, copy, modify, and distribute this<a name="line.7"></a>
+<span class="sourceLineNo">008</span> * software and its documentation for any purpose, subject to the following<a name="line.8"></a>
+<span class="sourceLineNo">009</span> * conditions:<a name="line.9"></a>
+<span class="sourceLineNo">010</span> *<a name="line.10"></a>
+<span class="sourceLineNo">011</span> * The above copyright notice and this permission notice shall be included<a name="line.11"></a>
+<span class="sourceLineNo">012</span> * in all copies or substantial portions of the Software.<a name="line.12"></a>
+<span class="sourceLineNo">013</span> *<a name="line.13"></a>
+<span class="sourceLineNo">014</span> * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS<a name="line.14"></a>
+<span class="sourceLineNo">015</span> * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,<a name="line.15"></a>
+<span class="sourceLineNo">016</span> * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE<a name="line.16"></a>
+<span class="sourceLineNo">017</span> * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER<a name="line.17"></a>
+<span class="sourceLineNo">018</span> * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING<a name="line.18"></a>
+<span class="sourceLineNo">019</span> * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER<a name="line.19"></a>
+<span class="sourceLineNo">020</span> * DEALINGS IN THE SOFTWARE.<a name="line.20"></a>
+<span class="sourceLineNo">021</span> */<a name="line.21"></a>
+<span class="sourceLineNo">022</span><a name="line.22"></a>
+<span class="sourceLineNo">023</span>import java.util.AbstractSet;<a name="line.23"></a>
+<span class="sourceLineNo">024</span>import java.util.ArrayList;<a name="line.24"></a>
+<span class="sourceLineNo">025</span>import java.util.Collection;<a name="line.25"></a>
+<span class="sourceLineNo">026</span>import java.util.Collections;<a name="line.26"></a>
+<span class="sourceLineNo">027</span>import java.util.HashSet;<a name="line.27"></a>
+<span class="sourceLineNo">028</span>import java.util.Iterator;<a name="line.28"></a>
+<span class="sourceLineNo">029</span>import java.util.LinkedList;<a name="line.29"></a>
+<span class="sourceLineNo">030</span>import java.util.List;<a name="line.30"></a>
+<span class="sourceLineNo">031</span>import java.util.Queue;<a name="line.31"></a>
+<span class="sourceLineNo">032</span>import java.util.Set;<a name="line.32"></a>
+<span class="sourceLineNo">033</span>import java.util.stream.Collectors;<a name="line.33"></a>
+<span class="sourceLineNo">034</span><a name="line.34"></a>
+<span class="sourceLineNo">035</span>import imagingbook.pub.geometry.basic.Point;<a name="line.35"></a>
+<span class="sourceLineNo">036</span>import imagingbook.pub.geometry.basic.Triangle;<a name="line.36"></a>
+<span class="sourceLineNo">037</span>import imagingbook.pub.geometry.delaunay.DelaunayTriangulation;<a name="line.37"></a>
+<span class="sourceLineNo">038</span>import imagingbook.pub.geometry.delaunay.Utils;<a name="line.38"></a>
+<span class="sourceLineNo">039</span><a name="line.39"></a>
+<span class="sourceLineNo">040</span><a name="line.40"></a>
+<span class="sourceLineNo">041</span>/**<a name="line.41"></a>
+<span class="sourceLineNo">042</span> * &lt;p&gt;<a name="line.42"></a>
+<span class="sourceLineNo">043</span> * Implementation of the incremental triangulation algorithm proposed by Paul Chew.<a name="line.43"></a>
+<span class="sourceLineNo">044</span> * This code is partly based on Paul Chew's original (applet) implementation, downloaded from <a name="line.44"></a>
+<span class="sourceLineNo">045</span> * http://www.cs.cornell.edu/Info/People/chew/Delaunay.html (DelaunaySourceCodeJava60.zip)<a name="line.45"></a>
+<span class="sourceLineNo">046</span> * under the following license:<a name="line.46"></a>
+<span class="sourceLineNo">047</span> * &lt;/p&gt;<a name="line.47"></a>
+<span class="sourceLineNo">048</span> * &lt;pre&gt;<a name="line.48"></a>
+<span class="sourceLineNo">049</span> * Copyright (c) 2005, 2007 by L. Paul Chew.<a name="line.49"></a>
+<span class="sourceLineNo">050</span> * <a name="line.50"></a>
+<span class="sourceLineNo">051</span> * Permission is hereby granted, without written agreement and without<a name="line.51"></a>
+<span class="sourceLineNo">052</span> * license or royalty fees, to use, copy, modify, and distribute this<a name="line.52"></a>
+<span class="sourceLineNo">053</span> * software and its documentation for any purpose, subject to the following<a name="line.53"></a>
+<span class="sourceLineNo">054</span> * conditions:<a name="line.54"></a>
+<span class="sourceLineNo">055</span> * <a name="line.55"></a>
+<span class="sourceLineNo">056</span> * The above copyright notice and this permission notice shall be included<a name="line.56"></a>
+<span class="sourceLineNo">057</span> * in all copies or substantial portions of the Software.<a name="line.57"></a>
+<span class="sourceLineNo">058</span> * <a name="line.58"></a>
+<span class="sourceLineNo">059</span> * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS<a name="line.59"></a>
+<span class="sourceLineNo">060</span> * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,<a name="line.60"></a>
+<span class="sourceLineNo">061</span> * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE<a name="line.61"></a>
+<span class="sourceLineNo">062</span> * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER<a name="line.62"></a>
+<span class="sourceLineNo">063</span> * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING<a name="line.63"></a>
+<span class="sourceLineNo">064</span> * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER<a name="line.64"></a>
+<span class="sourceLineNo">065</span> * DEALINGS IN THE SOFTWARE.<a name="line.65"></a>
+<span class="sourceLineNo">066</span> * &lt;/pre&gt;<a name="line.66"></a>
+<span class="sourceLineNo">067</span> * &lt;p&gt;<a name="line.67"></a>
+<span class="sourceLineNo">068</span> * &lt;strong&gt;Original description:&lt;/strong&gt; The actual data structure here is a Delaunay Triangulation. The Voronoi Diagram is built on-the-fly<a name="line.68"></a>
+<span class="sourceLineNo">069</span> * from the Delaunay Triangulation. The Delaunay Triangulation is built within a large triangle whose vertices<a name="line.69"></a>
+<span class="sourceLineNo">070</span> * are well off-screen. That's why in the Delaunay Triangulation there are lines heading off-screen. <a name="line.70"></a>
+<span class="sourceLineNo">071</span> * This technique makes the code simpler since otherwise additional code would be needed to handle new sites<a name="line.71"></a>
+<span class="sourceLineNo">072</span> * that are outside the convex hull of the previous sites.<a name="line.72"></a>
+<span class="sourceLineNo">073</span> * &lt;/p&gt;<a name="line.73"></a>
+<span class="sourceLineNo">074</span> * &lt;p&gt;<a name="line.74"></a>
+<span class="sourceLineNo">075</span> * The algorithm: To insert a new site, we walk across the triangulation, starting from the most recently created<a name="line.75"></a>
+<span class="sourceLineNo">076</span> * triangle, until we find the triangle that contains the new site. This triangle and any adjacent triangles that<a name="line.76"></a>
+<span class="sourceLineNo">077</span> * contain this new site in their circumcircle are eliminated and the resulting empty spot is re-triangulated.<a name="line.77"></a>
+<span class="sourceLineNo">078</span> * The site-insertion part of this technique is commonly called the Bowyer-Watson Algorithm. The expected time to<a name="line.78"></a>
+<span class="sourceLineNo">079</span> * insert a new site is roughly O(n1/2) where n is the current number of sites.<a name="line.79"></a>
+<span class="sourceLineNo">080</span> * &lt;/p&gt;<a name="line.80"></a>
+<span class="sourceLineNo">081</span> * <a name="line.81"></a>
+<span class="sourceLineNo">082</span> * Adapted by W. Burger<a name="line.82"></a>
+<span class="sourceLineNo">083</span> * @version 2020-01-02<a name="line.83"></a>
+<span class="sourceLineNo">084</span> */<a name="line.84"></a>
+<span class="sourceLineNo">085</span>public class TriangulationChew extends AbstractSet&lt;Triangle2D&gt; implements DelaunayTriangulation {<a name="line.85"></a>
+<span class="sourceLineNo">086</span><a name="line.86"></a>
+<span class="sourceLineNo">087</span>    private Triangle2D mostRecent = null;      // Most recently "active" triangle<a name="line.87"></a>
+<span class="sourceLineNo">088</span>    private final Triangle2D superTriangle;<a name="line.88"></a>
+<span class="sourceLineNo">089</span>    private final Graph&lt;Triangle2D&gt; triGraph;        // Holds triangles for navigation<a name="line.89"></a>
+<span class="sourceLineNo">090</span>    private final List&lt;Point&gt; points;<a name="line.90"></a>
+<span class="sourceLineNo">091</span>    <a name="line.91"></a>
+<span class="sourceLineNo">092</span>    /** <a name="line.92"></a>
+<span class="sourceLineNo">093</span>     * Convenience constructor for insertion into a bounding rectangle<a name="line.93"></a>
+<span class="sourceLineNo">094</span>     * of the specified size (with the origin assumed at 0/0).<a name="line.94"></a>
+<span class="sourceLineNo">095</span>     * Typical used for images.<a name="line.95"></a>
+<span class="sourceLineNo">096</span>     * @param width the width of the insertion rectangle<a name="line.96"></a>
+<span class="sourceLineNo">097</span>     * @param height the height of the insertion rectangle<a name="line.97"></a>
+<span class="sourceLineNo">098</span>     */<a name="line.98"></a>
+<span class="sourceLineNo">099</span>    public TriangulationChew(double width, double height) {<a name="line.99"></a>
+<span class="sourceLineNo">100</span>        this(Utils.makeOuterTriangle(width, height));<a name="line.100"></a>
+<span class="sourceLineNo">101</span>    }<a name="line.101"></a>
+<span class="sourceLineNo">102</span>   <a name="line.102"></a>
+<span class="sourceLineNo">103</span>    /**<a name="line.103"></a>
+<span class="sourceLineNo">104</span>     * Constructor that takes an initial outer (super) triangle.<a name="line.104"></a>
+<span class="sourceLineNo">105</span>     * @param outerTriangle the outer (super) triangle<a name="line.105"></a>
+<span class="sourceLineNo">106</span>     */<a name="line.106"></a>
+<span class="sourceLineNo">107</span>    public TriangulationChew(Point[] outerTriangle) {<a name="line.107"></a>
+<span class="sourceLineNo">108</span>        this(new Triangle2D(outerTriangle));<a name="line.108"></a>
+<span class="sourceLineNo">109</span>    }<a name="line.109"></a>
+<span class="sourceLineNo">110</span>    <a name="line.110"></a>
+<span class="sourceLineNo">111</span>    /**<a name="line.111"></a>
+<span class="sourceLineNo">112</span>     * Constructor that accepts a set of 2D points to triangulate.<a name="line.112"></a>
+<span class="sourceLineNo">113</span>     * The outer (super) triangle is calculated from the point coordinates.<a name="line.113"></a>
+<span class="sourceLineNo">114</span>     * The points are inserted into the resulting triangulation.<a name="line.114"></a>
+<span class="sourceLineNo">115</span>     * @param pointSet a sequence of 2D points<a name="line.115"></a>
+<span class="sourceLineNo">116</span>     */<a name="line.116"></a>
+<span class="sourceLineNo">117</span>    public TriangulationChew(Collection&lt;Point&gt; pointSet) {<a name="line.117"></a>
+<span class="sourceLineNo">118</span>        this(new Triangle2D(Utils.makeOuterTriangle(pointSet)));<a name="line.118"></a>
+<span class="sourceLineNo">119</span>        insertAll(pointSet);<a name="line.119"></a>
+<span class="sourceLineNo">120</span>    }<a name="line.120"></a>
+<span class="sourceLineNo">121</span>    <a name="line.121"></a>
+<span class="sourceLineNo">122</span>    /**<a name="line.122"></a>
+<span class="sourceLineNo">123</span>     * All sites must fall within the initial triangle.<a name="line.123"></a>
+<span class="sourceLineNo">124</span>     * @param superTriangle the initial triangle<a name="line.124"></a>
+<span class="sourceLineNo">125</span>     */<a name="line.125"></a>
+<span class="sourceLineNo">126</span>    private TriangulationChew (Triangle2D superTriangle) {<a name="line.126"></a>
+<span class="sourceLineNo">127</span>        this.superTriangle = superTriangle;<a name="line.127"></a>
+<span class="sourceLineNo">128</span>        this.triGraph = new Graph&lt;Triangle2D&gt;();<a name="line.128"></a>
+<span class="sourceLineNo">129</span>        this.triGraph.add(superTriangle);<a name="line.129"></a>
+<span class="sourceLineNo">130</span>        this.mostRecent = superTriangle;<a name="line.130"></a>
+<span class="sourceLineNo">131</span>        this.points = new ArrayList&lt;&gt;();<a name="line.131"></a>
+<span class="sourceLineNo">132</span>    }<a name="line.132"></a>
+<span class="sourceLineNo">133</span>    <a name="line.133"></a>
+<span class="sourceLineNo">134</span>    // ----------------------------------------------------------<a name="line.134"></a>
+<span class="sourceLineNo">135</span><a name="line.135"></a>
+<span class="sourceLineNo">136</span>    /* The following two methods are required by AbstractSet */<a name="line.136"></a>
+<span class="sourceLineNo">137</span><a name="line.137"></a>
+<span class="sourceLineNo">138</span>    @Override<a name="line.138"></a>
+<span class="sourceLineNo">139</span>    public Iterator&lt;Triangle2D&gt; iterator () {<a name="line.139"></a>
+<span class="sourceLineNo">140</span>        return triGraph.nodeSet().iterator();<a name="line.140"></a>
+<span class="sourceLineNo">141</span>    }<a name="line.141"></a>
+<span class="sourceLineNo">142</span><a name="line.142"></a>
+<span class="sourceLineNo">143</span>    @Override<a name="line.143"></a>
+<span class="sourceLineNo">144</span>    public int size () {<a name="line.144"></a>
+<span class="sourceLineNo">145</span>        return triGraph.nodeSet().size();<a name="line.145"></a>
+<span class="sourceLineNo">146</span>    }<a name="line.146"></a>
+<span class="sourceLineNo">147</span><a name="line.147"></a>
+<span class="sourceLineNo">148</span>    @Override<a name="line.148"></a>
+<span class="sourceLineNo">149</span>    public String toString () {<a name="line.149"></a>
+<span class="sourceLineNo">150</span>        return "Triangulation with " + size() + " triangles";<a name="line.150"></a>
+<span class="sourceLineNo">151</span>    }<a name="line.151"></a>
+<span class="sourceLineNo">152</span><a name="line.152"></a>
+<span class="sourceLineNo">153</span>    /**<a name="line.153"></a>
+<span class="sourceLineNo">154</span>     * True iff triangle is a member of this triangulation.<a name="line.154"></a>
+<span class="sourceLineNo">155</span>     * This method isn't required by AbstractSet, but it improves efficiency.<a name="line.155"></a>
+<span class="sourceLineNo">156</span>     * @param triangle the object to check for membership<a name="line.156"></a>
+<span class="sourceLineNo">157</span>     */<a name="line.157"></a>
+<span class="sourceLineNo">158</span>    public boolean contains (Object triangle) {<a name="line.158"></a>
+<span class="sourceLineNo">159</span>        return triGraph.nodeSet().contains(triangle);<a name="line.159"></a>
+<span class="sourceLineNo">160</span>    }<a name="line.160"></a>
+<span class="sourceLineNo">161</span><a name="line.161"></a>
+<span class="sourceLineNo">162</span>    /**<a name="line.162"></a>
+<span class="sourceLineNo">163</span>     * Report neighbor opposite the given vertex of triangle.<a name="line.163"></a>
+<span class="sourceLineNo">164</span>     * @param site a vertex of triangle<a name="line.164"></a>
+<span class="sourceLineNo">165</span>     * @param triangle we want the neighbor of this triangle<a name="line.165"></a>
+<span class="sourceLineNo">166</span>     * @return the neighbor opposite site in triangle; null if none<a name="line.166"></a>
+<span class="sourceLineNo">167</span>     * @throws IllegalArgumentException if site is not in this triangle<a name="line.167"></a>
+<span class="sourceLineNo">168</span>     */<a name="line.168"></a>
+<span class="sourceLineNo">169</span>    public Triangle2D neighborOpposite (Pnt site, Triangle2D triangle) {<a name="line.169"></a>
+<span class="sourceLineNo">170</span>        if (!triangle.contains(site))<a name="line.170"></a>
+<span class="sourceLineNo">171</span>            throw new IllegalArgumentException("Bad vertex; not in triangle");<a name="line.171"></a>
+<span class="sourceLineNo">172</span>        for (Triangle2D neighbor: triGraph.neighbors(triangle)) {<a name="line.172"></a>
+<span class="sourceLineNo">173</span>            if (!neighbor.contains(site)) return neighbor;<a name="line.173"></a>
+<span class="sourceLineNo">174</span>        }<a name="line.174"></a>
+<span class="sourceLineNo">175</span>        return null;<a name="line.175"></a>
+<span class="sourceLineNo">176</span>    }<a name="line.176"></a>
+<span class="sourceLineNo">177</span><a name="line.177"></a>
+<span class="sourceLineNo">178</span>    /**<a name="line.178"></a>
+<span class="sourceLineNo">179</span>     * Return the set of triangles adjacent to triangle.<a name="line.179"></a>
+<span class="sourceLineNo">180</span>     * @param triangle the triangle to check<a name="line.180"></a>
+<span class="sourceLineNo">181</span>     * @return the neighbors of triangle<a name="line.181"></a>
+<span class="sourceLineNo">182</span>     */<a name="line.182"></a>
+<span class="sourceLineNo">183</span>    public Set&lt;Triangle2D&gt; neighbors(Triangle2D triangle) {<a name="line.183"></a>
+<span class="sourceLineNo">184</span>        return triGraph.neighbors(triangle);<a name="line.184"></a>
+<span class="sourceLineNo">185</span>    }<a name="line.185"></a>
+<span class="sourceLineNo">186</span><a name="line.186"></a>
+<span class="sourceLineNo">187</span>    /**<a name="line.187"></a>
+<span class="sourceLineNo">188</span>     * Report triangles surrounding site in order (cw or ccw).<a name="line.188"></a>
+<span class="sourceLineNo">189</span>     * @param site we want the surrounding triangles for this site<a name="line.189"></a>
+<span class="sourceLineNo">190</span>     * @param triangle a "starting" triangle that has site as a vertex<a name="line.190"></a>
+<span class="sourceLineNo">191</span>     * @return all triangles surrounding site in order (cw or ccw)<a name="line.191"></a>
+<span class="sourceLineNo">192</span>     * @throws IllegalArgumentException if site is not in triangle<a name="line.192"></a>
+<span class="sourceLineNo">193</span>     */<a name="line.193"></a>
+<span class="sourceLineNo">194</span>    public List&lt;Triangle2D&gt; surroundingTriangles (Pnt site, Triangle2D triangle) {<a name="line.194"></a>
+<span class="sourceLineNo">195</span>        if (!triangle.contains(site))<a name="line.195"></a>
+<span class="sourceLineNo">196</span>            throw new IllegalArgumentException("Site not in triangle");<a name="line.196"></a>
+<span class="sourceLineNo">197</span>        List&lt;Triangle2D&gt; list = new ArrayList&lt;Triangle2D&gt;();<a name="line.197"></a>
+<span class="sourceLineNo">198</span>        Triangle2D start = triangle;<a name="line.198"></a>
+<span class="sourceLineNo">199</span>        Pnt guide = triangle.getVertexButNot(site);        // Affects cw or ccw<a name="line.199"></a>
+<span class="sourceLineNo">200</span>        while (true) {<a name="line.200"></a>
+<span class="sourceLineNo">201</span>            list.add(triangle);<a name="line.201"></a>
+<span class="sourceLineNo">202</span>            Triangle2D previous = triangle;<a name="line.202"></a>
+<span class="sourceLineNo">203</span>            triangle = this.neighborOpposite(guide, triangle); // Next triangle<a name="line.203"></a>
+<span class="sourceLineNo">204</span>            guide = previous.getVertexButNot(site, guide);     // Update guide<a name="line.204"></a>
+<span class="sourceLineNo">205</span>            if (triangle == start) break;<a name="line.205"></a>
+<span class="sourceLineNo">206</span>        }<a name="line.206"></a>
+<span class="sourceLineNo">207</span>        return list;<a name="line.207"></a>
+<span class="sourceLineNo">208</span>    }<a name="line.208"></a>
+<span class="sourceLineNo">209</span><a name="line.209"></a>
+<span class="sourceLineNo">210</span>    /**<a name="line.210"></a>
+<span class="sourceLineNo">211</span>     * Locate the triangle with point inside it or on its boundary.<a name="line.211"></a>
+<span class="sourceLineNo">212</span>     * @param point the point to locate<a name="line.212"></a>
+<span class="sourceLineNo">213</span>     * @return the triangle that holds point; null if no such triangle<a name="line.213"></a>
+<span class="sourceLineNo">214</span>     */<a name="line.214"></a>
+<span class="sourceLineNo">215</span>    public Triangle2D locate (Pnt point) {<a name="line.215"></a>
+<span class="sourceLineNo">216</span>        Triangle2D triangle = mostRecent;<a name="line.216"></a>
+<span class="sourceLineNo">217</span>        if (!this.contains(triangle)) {<a name="line.217"></a>
+<span class="sourceLineNo">218</span>                triangle = null;<a name="line.218"></a>
+<span class="sourceLineNo">219</span>        }<a name="line.219"></a>
+<span class="sourceLineNo">220</span>        // Try a directed walk (this works fine in 2D, but can fail in 3D)<a name="line.220"></a>
+<span class="sourceLineNo">221</span>        Set&lt;Triangle2D&gt; visited = new HashSet&lt;Triangle2D&gt;();<a name="line.221"></a>
+<span class="sourceLineNo">222</span>        while (triangle != null) {<a name="line.222"></a>
+<span class="sourceLineNo">223</span>            if (visited.contains(triangle)) { // This should never happen<a name="line.223"></a>
+<span class="sourceLineNo">224</span>                System.out.println("Warning: Caught in a locate loop");<a name="line.224"></a>
+<span class="sourceLineNo">225</span>                break;<a name="line.225"></a>
+<span class="sourceLineNo">226</span>            }<a name="line.226"></a>
+<span class="sourceLineNo">227</span>            visited.add(triangle);<a name="line.227"></a>
+<span class="sourceLineNo">228</span>            // Corner opposite point<a name="line.228"></a>
+<span class="sourceLineNo">229</span>            Pnt corner = point.isOutside(triangle.toArray(new Pnt[0]));<a name="line.229"></a>
+<span class="sourceLineNo">230</span>            if (corner == null) return triangle;<a name="line.230"></a>
+<span class="sourceLineNo">231</span>            triangle = this.neighborOpposite(corner, triangle);<a name="line.231"></a>
+<span class="sourceLineNo">232</span>        }<a name="line.232"></a>
+<span class="sourceLineNo">233</span>        // No luck; try brute force<a name="line.233"></a>
+<span class="sourceLineNo">234</span>        System.out.println("Warning: Checking all triangles for " + point);<a name="line.234"></a>
+<span class="sourceLineNo">235</span>        for (Triangle2D tri: this) {<a name="line.235"></a>
+<span class="sourceLineNo">236</span>            if (point.isOutside(tri.toArray(new Pnt[0])) == null) {<a name="line.236"></a>
+<span class="sourceLineNo">237</span>                return tri;<a name="line.237"></a>
+<span class="sourceLineNo">238</span>            }<a name="line.238"></a>
+<span class="sourceLineNo">239</span>        }<a name="line.239"></a>
+<span class="sourceLineNo">240</span>        // No such triangle<a name="line.240"></a>
+<span class="sourceLineNo">241</span>        System.out.println("Warning: No triangle holds " + point);<a name="line.241"></a>
+<span class="sourceLineNo">242</span>        return null;<a name="line.242"></a>
+<span class="sourceLineNo">243</span>    }<a name="line.243"></a>
+<span class="sourceLineNo">244</span>    <a name="line.244"></a>
+<span class="sourceLineNo">245</span>    public void insertAll(Collection&lt;Point&gt; pointSet) {<a name="line.245"></a>
+<span class="sourceLineNo">246</span>        for (Point p : pointSet) {<a name="line.246"></a>
+<span class="sourceLineNo">247</span>                insert(p);<a name="line.247"></a>
+<span class="sourceLineNo">248</span>        }<a name="line.248"></a>
+<span class="sourceLineNo">249</span>    }<a name="line.249"></a>
+<span class="sourceLineNo">250</span><a name="line.250"></a>
+<span class="sourceLineNo">251</span>    /**<a name="line.251"></a>
+<span class="sourceLineNo">252</span>     * Place a new site into the DT.<a name="line.252"></a>
+<span class="sourceLineNo">253</span>     * Nothing happens if the site matches an existing DT vertex.<a name="line.253"></a>
+<span class="sourceLineNo">254</span>     * Uses straightforward scheme rather than best asymptotic time.<a name="line.254"></a>
+<span class="sourceLineNo">255</span>     * Throws an {@link IllegalArgumentException} if p does not lie in any triangle.<a name="line.255"></a>
+<span class="sourceLineNo">256</span>     * @param p the point to be inserted<a name="line.256"></a>
+<span class="sourceLineNo">257</span>     */<a name="line.257"></a>
+<span class="sourceLineNo">258</span>    public void insert(Point p) {<a name="line.258"></a>
+<span class="sourceLineNo">259</span>        Pnt vec = new Pnt(p);<a name="line.259"></a>
+<span class="sourceLineNo">260</span>        // Locate containing triangle<a name="line.260"></a>
+<span class="sourceLineNo">261</span>        Triangle2D triangle = locate(vec);<a name="line.261"></a>
+<span class="sourceLineNo">262</span>        // Give up if no containing triangle or if site is already in DT<a name="line.262"></a>
+<span class="sourceLineNo">263</span>        if (triangle == null)<a name="line.263"></a>
+<span class="sourceLineNo">264</span>            throw new IllegalArgumentException("No containing triangle");<a name="line.264"></a>
+<span class="sourceLineNo">265</span>//        if (triangle.contains(vec)) <a name="line.265"></a>
+<span class="sourceLineNo">266</span>//              return;<a name="line.266"></a>
+<span class="sourceLineNo">267</span>        if (!triangle.contains(vec)) {<a name="line.267"></a>
+<span class="sourceLineNo">268</span>                // Determine the cavity and update the triangulation<a name="line.268"></a>
+<span class="sourceLineNo">269</span>                Set&lt;Triangle2D&gt; cavity = getCavity(vec, triangle);<a name="line.269"></a>
+<span class="sourceLineNo">270</span>                mostRecent = update(vec, cavity);<a name="line.270"></a>
+<span class="sourceLineNo">271</span>        }<a name="line.271"></a>
+<span class="sourceLineNo">272</span>        points.add(p);<a name="line.272"></a>
+<span class="sourceLineNo">273</span>    }<a name="line.273"></a>
+<span class="sourceLineNo">274</span><a name="line.274"></a>
+<span class="sourceLineNo">275</span>    /**<a name="line.275"></a>
+<span class="sourceLineNo">276</span>     * Determine the cavity caused by site.<a name="line.276"></a>
+<span class="sourceLineNo">277</span>     * @param site the site causing the cavity<a name="line.277"></a>
+<span class="sourceLineNo">278</span>     * @param triangle the triangle containing site<a name="line.278"></a>
+<span class="sourceLineNo">279</span>     * @return set of all triangles that have site in their circumcircle<a name="line.279"></a>
+<span class="sourceLineNo">280</span>     */<a name="line.280"></a>
+<span class="sourceLineNo">281</span>    private Set&lt;Triangle2D&gt; getCavity (Pnt site, Triangle2D triangle) {<a name="line.281"></a>
+<span class="sourceLineNo">282</span>        Set&lt;Triangle2D&gt; encroached = new HashSet&lt;Triangle2D&gt;();<a name="line.282"></a>
+<span class="sourceLineNo">283</span>        Queue&lt;Triangle2D&gt; toBeChecked = new LinkedList&lt;Triangle2D&gt;();<a name="line.283"></a>
+<span class="sourceLineNo">284</span>        Set&lt;Triangle2D&gt; marked = new HashSet&lt;Triangle2D&gt;();<a name="line.284"></a>
+<span class="sourceLineNo">285</span>        toBeChecked.add(triangle);<a name="line.285"></a>
+<span class="sourceLineNo">286</span>        marked.add(triangle);<a name="line.286"></a>
+<span class="sourceLineNo">287</span>        while (!toBeChecked.isEmpty()) {<a name="line.287"></a>
+<span class="sourceLineNo">288</span>            triangle = toBeChecked.remove();<a name="line.288"></a>
+<span class="sourceLineNo">289</span>            if (site.vsCircumcircle(triangle.toArray(new Pnt[0])) == 1)<a name="line.289"></a>
+<span class="sourceLineNo">290</span>                continue; // Site outside triangle =&gt; triangle not in cavity<a name="line.290"></a>
+<span class="sourceLineNo">291</span>            encroached.add(triangle);<a name="line.291"></a>
+<span class="sourceLineNo">292</span>            // Check the neighbors<a name="line.292"></a>
+<span class="sourceLineNo">293</span>            for (Triangle2D neighbor: triGraph.neighbors(triangle)){<a name="line.293"></a>
+<span class="sourceLineNo">294</span>                if (marked.contains(neighbor)) continue;<a name="line.294"></a>
+<span class="sourceLineNo">295</span>                marked.add(neighbor);<a name="line.295"></a>
+<span class="sourceLineNo">296</span>                toBeChecked.add(neighbor);<a name="line.296"></a>
+<span class="sourceLineNo">297</span>            }<a name="line.297"></a>
+<span class="sourceLineNo">298</span>        }<a name="line.298"></a>
+<span class="sourceLineNo">299</span>        return encroached;<a name="line.299"></a>
+<span class="sourceLineNo">300</span>    }<a name="line.300"></a>
+<span class="sourceLineNo">301</span><a name="line.301"></a>
+<span class="sourceLineNo">302</span>    /**<a name="line.302"></a>
+<span class="sourceLineNo">303</span>     * Update the triangulation by removing the cavity triangles and then<a name="line.303"></a>
+<span class="sourceLineNo">304</span>     * filling the cavity with new triangles.<a name="line.304"></a>
+<span class="sourceLineNo">305</span>     * @param site the site that created the cavity<a name="line.305"></a>
+<span class="sourceLineNo">306</span>     * @param cavity the triangles with site in their circumcircle<a name="line.306"></a>
+<span class="sourceLineNo">307</span>     * @return one of the new triangles<a name="line.307"></a>
+<span class="sourceLineNo">308</span>     */<a name="line.308"></a>
+<span class="sourceLineNo">309</span>    private Triangle2D update (Pnt site, Set&lt;Triangle2D&gt; cavity) {<a name="line.309"></a>
+<span class="sourceLineNo">310</span>        Set&lt;Set&lt;Pnt&gt;&gt; boundary = new HashSet&lt;Set&lt;Pnt&gt;&gt;();<a name="line.310"></a>
+<span class="sourceLineNo">311</span>        Set&lt;Triangle2D&gt; theTriangles = new HashSet&lt;Triangle2D&gt;();<a name="line.311"></a>
+<span class="sourceLineNo">312</span><a name="line.312"></a>
+<span class="sourceLineNo">313</span>        // Find boundary facets and adjacent triangles<a name="line.313"></a>
+<span class="sourceLineNo">314</span>        for (Triangle2D triangle: cavity) {<a name="line.314"></a>
+<span class="sourceLineNo">315</span>            theTriangles.addAll(neighbors(triangle));<a name="line.315"></a>
+<span class="sourceLineNo">316</span>            for (Pnt vertex: triangle) {<a name="line.316"></a>
+<span class="sourceLineNo">317</span>                Set&lt;Pnt&gt; facet = triangle.facetOpposite(vertex);<a name="line.317"></a>
+<span class="sourceLineNo">318</span>                if (boundary.contains(facet)) boundary.remove(facet);<a name="line.318"></a>
+<span class="sourceLineNo">319</span>                else boundary.add(facet);<a name="line.319"></a>
+<span class="sourceLineNo">320</span>            }<a name="line.320"></a>
+<span class="sourceLineNo">321</span>        }<a name="line.321"></a>
+<span class="sourceLineNo">322</span>        theTriangles.removeAll(cavity);        // Adj triangles only<a name="line.322"></a>
+<span class="sourceLineNo">323</span><a name="line.323"></a>
+<span class="sourceLineNo">324</span>        // Remove the cavity triangles from the triangulation<a name="line.324"></a>
+<span class="sourceLineNo">325</span>        for (Triangle2D triangle: cavity) triGraph.remove(triangle);<a name="line.325"></a>
+<span class="sourceLineNo">326</span><a name="line.326"></a>
+<span class="sourceLineNo">327</span>        // Build each new triangle and add it to the triangulation<a name="line.327"></a>
+<span class="sourceLineNo">328</span>        Set&lt;Triangle2D&gt; newTriangles = new HashSet&lt;Triangle2D&gt;();<a name="line.328"></a>
+<span class="sourceLineNo">329</span>        for (Set&lt;Pnt&gt; vertices: boundary) {<a name="line.329"></a>
+<span class="sourceLineNo">330</span>            vertices.add(site);<a name="line.330"></a>
+<span class="sourceLineNo">331</span>            Triangle2D tri = new Triangle2D(vertices);<a name="line.331"></a>
+<span class="sourceLineNo">332</span>            triGraph.add(tri);<a name="line.332"></a>
+<span class="sourceLineNo">333</span>            newTriangles.add(tri);<a name="line.333"></a>
+<span class="sourceLineNo">334</span>        }<a name="line.334"></a>
+<span class="sourceLineNo">335</span><a name="line.335"></a>
+<span class="sourceLineNo">336</span>        // Update the graph links for each new triangle<a name="line.336"></a>
+<span class="sourceLineNo">337</span>        theTriangles.addAll(newTriangles);    // Adj triangle + new triangles<a name="line.337"></a>
+<span class="sourceLineNo">338</span>        for (Triangle2D triangle: newTriangles)<a name="line.338"></a>
+<span class="sourceLineNo">339</span>            for (Triangle2D other: theTriangles)<a name="line.339"></a>
+<span class="sourceLineNo">340</span>                if (triangle.isNeighbor(other))<a name="line.340"></a>
+<span class="sourceLineNo">341</span>                    triGraph.add(triangle, other);<a name="line.341"></a>
+<span class="sourceLineNo">342</span><a name="line.342"></a>
+<span class="sourceLineNo">343</span>        // Return one of the new triangles<a name="line.343"></a>
+<span class="sourceLineNo">344</span>        return newTriangles.iterator().next();<a name="line.344"></a>
+<span class="sourceLineNo">345</span>    }<a name="line.345"></a>
+<span class="sourceLineNo">346</span>    <a name="line.346"></a>
+<span class="sourceLineNo">347</span>    /**<a name="line.347"></a>
+<span class="sourceLineNo">348</span>     * Checks if the given triangle shares a vertex with the triangulation's<a name="line.348"></a>
+<span class="sourceLineNo">349</span>     * initial ('super') triangle.<a name="line.349"></a>
+<span class="sourceLineNo">350</span>     * @param otherTriangle the other triangle<a name="line.350"></a>
+<span class="sourceLineNo">351</span>     * @return {@code true} iff there is a common vertex<a name="line.351"></a>
+<span class="sourceLineNo">352</span>     */<a name="line.352"></a>
+<span class="sourceLineNo">353</span>    private boolean connectsToSuperTriangle(Triangle2D otherTriangle) {<a name="line.353"></a>
+<span class="sourceLineNo">354</span>        boolean connects = false;<a name="line.354"></a>
+<span class="sourceLineNo">355</span>        for (Pnt vertex : superTriangle) {<a name="line.355"></a>
+<span class="sourceLineNo">356</span>            if (otherTriangle.contains(vertex)) {<a name="line.356"></a>
+<span class="sourceLineNo">357</span>                connects = true;<a name="line.357"></a>
+<span class="sourceLineNo">358</span>                break;<a name="line.358"></a>
+<span class="sourceLineNo">359</span>            }<a name="line.359"></a>
+<span class="sourceLineNo">360</span>        }<a name="line.360"></a>
+<span class="sourceLineNo">361</span>        return connects;<a name="line.361"></a>
+<span class="sourceLineNo">362</span>    }<a name="line.362"></a>
+<span class="sourceLineNo">363</span>    <a name="line.363"></a>
+<span class="sourceLineNo">364</span>        @Override<a name="line.364"></a>
+<span class="sourceLineNo">365</span>        public List&lt;Triangle&gt; getTriangles() {<a name="line.365"></a>
+<span class="sourceLineNo">366</span>                return this.stream().filter(t -&gt; !connectsToSuperTriangle(t)).collect(Collectors.toList());<a name="line.366"></a>
+<span class="sourceLineNo">367</span>        }<a name="line.367"></a>
+<span class="sourceLineNo">368</span>        <a name="line.368"></a>
+<span class="sourceLineNo">369</span>        @Override<a name="line.369"></a>
+<span class="sourceLineNo">370</span>        public List&lt;Point&gt; getPoints() {<a name="line.370"></a>
+<span class="sourceLineNo">371</span>                return Collections.unmodifiableList(points);<a name="line.371"></a>
+<span class="sourceLineNo">372</span>        }<a name="line.372"></a>
+<span class="sourceLineNo">373</span><a name="line.373"></a>
+<span class="sourceLineNo">374</span>//    /**<a name="line.374"></a>
+<span class="sourceLineNo">375</span>//     * Main program; used for testing. ------------------------------------<a name="line.375"></a>
+<span class="sourceLineNo">376</span>//     */<a name="line.376"></a>
+<span class="sourceLineNo">377</span>//    public static void main (String[] args) {<a name="line.377"></a>
+<span class="sourceLineNo">378</span>//        Triangle2D tri =<a name="line.378"></a>
+<span class="sourceLineNo">379</span>//            new Triangle2D(new Vector2D(-10,10), new Vector2D(10,10), new Vector2D(0,-10));<a name="line.379"></a>
+<span class="sourceLineNo">380</span>//        System.out.println("Triangle created: " + tri);<a name="line.380"></a>
+<span class="sourceLineNo">381</span>//        TriangulationChew dt = new TriangulationChew(tri);<a name="line.381"></a>
+<span class="sourceLineNo">382</span>//        System.out.println("DelaunayTriangulation created: " + dt);<a name="line.382"></a>
+<span class="sourceLineNo">383</span>//        dt.insert(new Vector2D(0,0));<a name="line.383"></a>
+<span class="sourceLineNo">384</span>//        dt.insert(new Vector2D(1,0));<a name="line.384"></a>
+<span class="sourceLineNo">385</span>//        dt.insert(new Vector2D(0,1));<a name="line.385"></a>
+<span class="sourceLineNo">386</span>//        System.out.println("After adding 3 points, we have a " + dt);<a name="line.386"></a>
+<span class="sourceLineNo">387</span>//        Triangle2D.moreInfo = true;<a name="line.387"></a>
+<span class="sourceLineNo">388</span>//        System.out.println("Triangles: " + dt.triGraph.nodeSet());<a name="line.388"></a>
+<span class="sourceLineNo">389</span>//    }<a name="line.389"></a>
+<span class="sourceLineNo">390</span><a name="line.390"></a>
+<span class="sourceLineNo">391</span><a name="line.391"></a>
+<span class="sourceLineNo">392</span>}<a name="line.392"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+</body>
+</html>

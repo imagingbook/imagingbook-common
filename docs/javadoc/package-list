@@ -20,8 +20,8 @@ imagingbook.pub.edgepreservingfilters
 imagingbook.pub.fd
 imagingbook.pub.geometry.basic
 imagingbook.pub.geometry.delaunay
-imagingbook.pub.geometry.delaunay.impChew
-imagingbook.pub.geometry.delaunay.impGuibas
+imagingbook.pub.geometry.delaunay.chew
+imagingbook.pub.geometry.delaunay.guibas
 imagingbook.pub.geometry.delaunay.plugin
 imagingbook.pub.geometry.fitting
 imagingbook.pub.geometry.icp
