@@ -13,8 +13,6 @@ import imagingbook.lib.math.Matrix;
 import imagingbook.pub.geometry.basic.Point;
 import imagingbook.pub.geometry.mappings2.Mapping2D;
 
-import java.awt.geom.Point2D;
-
 /**
  * This class represents a bilinear transformation in 2D with 8
  * parameters a0, ..., a3, b0, ..., b3 of the form
