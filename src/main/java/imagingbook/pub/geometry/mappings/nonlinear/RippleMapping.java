@@ -31,11 +31,6 @@ public class RippleMapping extends Mapping {
 		this.xAmpl = xAmpl;
 		this.yAmpl = yAmpl;
 	}
-	
-	@Deprecated
-	public static RippleMapping create(double xW, double xAmpl, double yW, double yAmpl){
-		return new RippleMapping(xW, xAmpl, yW, yAmpl);
-	}
 
 	@Override
 	public double[] applyTo (double x, double y){
