@@ -23,6 +23,11 @@ public interface Point {
 		public Imp(double x, double y) {
 			super(x, y);
 		}
+		
+		@Override
+		public String toString() {
+			return String.format("Point[%.3f, %.3f]", this.getX(), this.getY());
+		}
 	}
 
 }

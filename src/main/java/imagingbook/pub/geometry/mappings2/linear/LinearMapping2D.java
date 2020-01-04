@@ -11,9 +11,7 @@ package imagingbook.pub.geometry.mappings2.linear;
 
 import imagingbook.lib.math.Arithmetic;
 import imagingbook.lib.math.Matrix;
-import imagingbook.lib.settings.PrintPrecision;
 import imagingbook.pub.geometry.basic.Point;
-import imagingbook.pub.geometry.mappings.Mapping;
 import imagingbook.pub.geometry.mappings2.Mapping2D;
 
 /**
@@ -26,7 +24,6 @@ public class LinearMapping2D implements Mapping2D {
 		a00, a01, a02,
 		a10, a11, a12,
 		a20, a21, a22;
-
 
 	//  constructors -----------------------------------------------------
 	
