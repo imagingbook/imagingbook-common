@@ -8,6 +8,7 @@ import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.RealVector;
 import org.apache.commons.math3.linear.SingularValueDecomposition;
+import static imagingbook.lib.math.Arithmetic.sqr;
 
 import imagingbook.lib.math.Matrix;
 import imagingbook.pub.geometry.basic.Point;
@@ -105,16 +106,12 @@ public class AffineFit2D extends LinearFit2D {
 			double[] p2a = A.operate(Matrix.toHomogeneous(new double[] {p.getX(), p.getY()}));	// TODO:
 			Point p2 = Point.create(p2a[0], p2a[1]); // TODO: fix!
 			errSum = errSum + 
-					Math.sqrt(sq(q.getX() - p2.getX()) + sq(q.getY() - p2.getY()));
+					Math.sqrt(sqr(q.getX() - p2.getX()) + sqr(q.getY() - p2.getY()));
 		}
 		return errSum;
 	}
 	
 	// --------------------------------------------------------
-	
-	private double sq(double x) {
-		return x * x;
-	}
 
 	@Override
 	public RealMatrix getTransformationMatrix() { // TODO: should return a mapping!?

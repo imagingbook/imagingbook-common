@@ -128,8 +128,8 @@ public class ProjectiveMapping2D extends LinearMapping2D implements JacobianSupp
 	 */
 	public static ProjectiveMapping2D fromNPoints(Point[] P, Point[] Q) {
 		final int n = P.length;
-		if (n <= 4) {
-			throw new IllegalArgumentException(ProjectiveMapping2D.class.getName() + ": fromNPoints() needs > 4 points!");
+		if (n < 4) {
+			throw new IllegalArgumentException(ProjectiveMapping2D.class.getName() + ": fromNPoints() needs at least 4 points!");
 		}
 		double[] ba = new double[2 * n];
 		double[][] Ma = new double[2 * n][];
@@ -279,19 +279,19 @@ public class ProjectiveMapping2D extends LinearMapping2D implements JacobianSupp
 
 		// book example:
 		Point[] A = {
-				Point.create(2,5),
-				Point.create(4,6),
-				Point.create(7,9),
-				Point.create(5,9),
-				//Point.create(5.2,9.1)	// 5 points, overdetermined!
+				Point.create(2, 5),
+				Point.create(4, 6),
+				Point.create(7, 9),
+				Point.create(5, 9),
+				Point.create(5.2, 9.1)	// 5 points, overdetermined!
 				};
 		
 		Point[] B = {
-				Point.create(4,3),
-				Point.create(5,2),
-				Point.create(9,3),
-				Point.create(7,5),
-				//Point.create(7,4.9)	// 5 points, overdetermined!
+				Point.create(4, 3),
+				Point.create(5, 2),
+				Point.create(9, 3),
+				Point.create(7, 5),
+				Point.create(7, 4.9)	// 5 points, overdetermined!
 				};
 		
 		ProjectiveMapping2D pm = ProjectiveMapping2D.fromNPoints(A, B);
@@ -315,11 +315,5 @@ public class ProjectiveMapping2D extends LinearMapping2D implements JacobianSupp
 		
 		ProjectiveMapping2D testId = pm.concat(pmi);
 		System.out.println("\ntest: should be a scaled identity matrix: = \n" + testId.toString());
-		
-		
 	}
-
-
-	
-	
 }

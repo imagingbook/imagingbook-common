@@ -11,6 +11,7 @@ package imagingbook.pub.sift;
 
 import ij.IJ;
 import ij.process.FloatProcessor;
+import imagingbook.lib.math.Arithmetic;
 import imagingbook.lib.math.Matrix;
 import imagingbook.pub.sift.scalespace.DogScaleSpace;
 import imagingbook.pub.sift.scalespace.GaussianScaleSpace;
@@ -84,8 +85,7 @@ public class SiftDetector {
 		}
 	}
 	
-	static final float EPSILON_F = 1e-35f;
-	static final double PI2 = 2 * Math.PI;
+	static private final double PI2 = 2 * Math.PI;
 
 	/* non-static fields */
 
@@ -282,7 +282,7 @@ public class SiftDetector {
 			gradient(nh, grad);					// result stored in grad
 			hessian(nh, hess);					// result stored in hess
 			final double detH = Matrix.determinant3x3(hess);
-			if (Math.abs(detH) < EPSILON_F) {	// Hessian matrix has zero determinant?
+			if (Arithmetic.isZero(detH)) {	// Hessian matrix has zero determinant?
 				done = true;	// ignore this point and finish
 			}
 			else {
@@ -697,7 +697,7 @@ public class SiftDetector {
 
 	private void normalize(float[] x) {
 		final double norm = normL2(x);
-		if (norm > EPSILON_F) {
+		if (norm > Arithmetic.EPSILON_FLOAT) {
 			final float s = (float) (1.0 / norm);
 			for (int i = 0; i < x.length; i++) {
 				x[i] = s * x[i];

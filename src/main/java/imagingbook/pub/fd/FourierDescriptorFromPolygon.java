@@ -8,21 +8,21 @@
  *******************************************************************************/
 package imagingbook.pub.fd;
 
-import static imagingbook.lib.math.Arithmetic.EPSILON_DOUBLE;
 import static imagingbook.lib.math.Arithmetic.sqr;
 import static java.lang.Math.PI;
-import static java.lang.Math.abs;
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 import static java.lang.Math.sqrt;
-import ij.gui.Roi;
-import imagingbook.lib.math.Complex;
 
 import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
+
+import ij.gui.Roi;
+import imagingbook.lib.math.Arithmetic;
+import imagingbook.lib.math.Complex;
 
 
 /**
@@ -68,7 +68,7 @@ public class FourierDescriptorFromPolygon extends FourierDescriptor {
             dx[i] = g[(i + 1) % N].re - g[i].re;
             dy[i] = g[(i + 1) % N].im - g[i].im;
             lambda[i] = sqrt(sqr(dx[i]) + sqr(dy[i])); 
-            if (abs(lambda[i]) < EPSILON_DOUBLE) {
+            if (Arithmetic.isZero(lambda[i])) {
         		throw new Error("Zero-length polygon segment!");
         	}
             L[i+1] = L[i] + lambda[i];

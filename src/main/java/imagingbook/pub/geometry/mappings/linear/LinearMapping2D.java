@@ -84,7 +84,7 @@ public class LinearMapping2D implements Mapping2D {
 	 * @return the normalized linear mapping (i.e., a projective mapping)
 	 */
 	public ProjectiveMapping2D normalize() {
-		if (Math.abs(a22) < Arithmetic.EPSILON_DOUBLE) {
+		if (Arithmetic.isZero(Math.abs(a22))) {
 			throw new ArithmeticException("Zero value in a22, cannot normalize linear mapping!");
 		}
 		double b00 = a00/a22;	double b01 = a01/a22;	double b02 = a02/a22;
