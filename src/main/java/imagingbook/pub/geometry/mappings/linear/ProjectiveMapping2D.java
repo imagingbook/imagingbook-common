@@ -129,7 +129,7 @@ public class ProjectiveMapping2D extends LinearMapping2D implements JacobianSupp
 	public static ProjectiveMapping2D fromNPoints(Point[] P, Point[] Q) {
 		final int n = P.length;
 		if (n < 4) {
-			throw new IllegalArgumentException(ProjectiveMapping2D.class.getName() + ": fromNPoints() needs at least 4 points!");
+			throw new IllegalArgumentException(ProjectiveMapping2D.class.getName() + ": fromNPoints() needs at least 4 points pairs");
 		}
 		double[] ba = new double[2 * n];
 		double[][] Ma = new double[2 * n][];

@@ -1,6 +1,6 @@
 package imagingbook.pub.geometry.fitting;
 
-import java.util.List;
+import static imagingbook.lib.math.Arithmetic.sqr;
 
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.DecompositionSolver;
@@ -8,76 +8,61 @@ import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.RealVector;
 import org.apache.commons.math3.linear.SingularValueDecomposition;
-import static imagingbook.lib.math.Arithmetic.sqr;
 
 import imagingbook.lib.math.Matrix;
 import imagingbook.pub.geometry.basic.Point;
 
 /**
- * TODO: Need a complete rewrite!
+ * TODO: see ProjectiveMapping2D.fromNPoints(Point[] P, Point[] Q) -- remove 1 version (either fit or mapping)!
  *
  */
-public class AffineFit2D extends LinearFit2D {
+public class AffineFit2D implements LinearFit2D {
 	
-	private int m;			// number of samples
-	private double err;		// TODO: this should be changed!
+	private final RealMatrix A;		// the calculated transformation matrix
+	private final double err;		// the calculated error
 	
-	private RealMatrix A = null;
-	
-	public AffineFit2D() {
-	}
-
-	@Override
-	public void fit(List<Point> X, List<Point> Y) {	// fits n-dimensional data sets with affine model
-		if (X.size() != Y.size())
-			throw new IllegalArgumentException("point sequences X, Y must have same length");
-		this.m = X.size();
+	/**
+	 * Constructor.
+	 * Fits two sequences of 2D points using an affine transformation model.
+	 * At least 3 point pairs are required. For 3 point pairs, the solution
+	 * is an exact fit, otherwise a least-squares fit is found.
+	 * @param P
+	 * @param Q
+	 */
+	public AffineFit2D(Point[] P, Point[] Q) {	// 
+		checkSize(P, Q);
+		int m = P.length;
 		
 		RealMatrix M = MatrixUtils.createRealMatrix(2 * m, 6);
 		RealVector b = new ArrayRealVector(2 * m);
 		
-		// mount matrix M:	TODO: needs to be checked for n > 2!
+		// mount the matrix M
 		int row = 0;
-		for (Point x : X) {
-			M.setEntry(row, 0, x.getX());
-			M.setEntry(row, 1, x.getY());
+		for (Point p : P) {
+			M.setEntry(row, 0, p.getX());
+			M.setEntry(row, 1, p.getY());
 			M.setEntry(row, 2, 1);
-//			for (int j = 0; j < n; j++) {
-//				M.setEntry(row, j, x[j]);
-//				M.setEntry(row, n, 1);
-//			}
 			row++;
-			M.setEntry(row, 3, x.getX());
-			M.setEntry(row, 4, x.getY());
+			M.setEntry(row, 3, p.getX());
+			M.setEntry(row, 4, p.getY());
 			M.setEntry(row, 5, 1);
-//			for (int j = 0; j < n; j++) {
-//				M.setEntry(row, j + n + 1, x[j]);
-//				M.setEntry(row, 2 * n + 1, 1);
-//			}
 			row++;
 		}
-		//IJ.log("M = \n" + Matrix.toString(M.getData()));
 		
 		// mount vector b
 		row = 0;
-		for (Point y : Y) {
-			b.setEntry(row, y.getX());
+		for (Point q : Q) {
+			b.setEntry(row, q.getX());
 			row++;
-			b.setEntry(row, y.getY());
+			b.setEntry(row, q.getY());
 			row++;
-//			for (int j = 0; j < n; j++) {
-//				b.setEntry(row, y[j]);
-//				row++;
-//			}
 		}
 		
-		//IJ.log("b = \n" + Matrix.toString(b.toArray()));
-		
-		SingularValueDecomposition svd = new SingularValueDecomposition(M);
-		DecompositionSolver solver = svd.getSolver();
+		// solve M * a = b (for the unknown parameter vector a):
+		DecompositionSolver solver = new SingularValueDecomposition(M).getSolver();
 		RealVector a = solver.solve(b);
 		A = makeTransformationMatrix(a);
-		err = makeError(X, Y, A);
+		err = getError(P, Q, A);
 	}
 
 	// creates a n x (n+1) transformation matrix from the elements of a
@@ -94,17 +79,30 @@ public class AffineFit2D extends LinearFit2D {
 		return A;
 	}
 	
-	private double makeError(List<Point> X, List<Point> Y, RealMatrix A) {
-		Point[] Xa = X.toArray(new Point[0]);
-		Point[] Ya = Y.toArray(new Point[0]);
-		if (Xa.length != Ya.length)
-			throw new IllegalArgumentException("X,Y must have the same length!");
+	// --------------------------------------------------------
+	
+	protected static void checkSize(Point[] P, Point[] Q) {
+		if (P.length < 3 || Q.length < 3) {
+			throw new IllegalArgumentException("At least 3 point pairs are required to calculate this fit");
+		}
+	}
+	
+	/**
+	 * Calculates and returns the cumulative distance error
+	 * between the two point sequences under the transformation A,
+	 * i.e., {@code e = sum_i (||p_i * A - q_i||)}.
+	 * @param P	the first point sequence
+	 * @param Q the second point sequence
+	 * @param A	a (2 x 3) affine transformation matrix
+	 * @return the error {@code e}
+	 */
+	protected static double getError(Point[] P, Point[] Q, RealMatrix A) {
+		int m = Math.min(P.length,  Q.length);
 		double errSum = 0;
-		for (int i = 0; i < Xa.length; i++) {
-			Point p = Xa[i];
-			Point q = Ya[i];
-			double[] p2a = A.operate(Matrix.toHomogeneous(new double[] {p.getX(), p.getY()}));	// TODO:
-			Point p2 = Point.create(p2a[0], p2a[1]); // TODO: fix!
+		for (int i = 0; i < m; i++) {
+			Point p = P[i];
+			Point q = Q[i];
+			Point p2 = Point.create(A.operate(Matrix.toHomogeneous(p.toArray())));
 			errSum = errSum + 
 					Math.sqrt(sqr(q.getX() - p2.getX()) + sqr(q.getY() - p2.getY()));
 		}

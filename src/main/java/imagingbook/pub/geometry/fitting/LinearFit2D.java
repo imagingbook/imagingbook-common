@@ -1,26 +1,22 @@
 package imagingbook.pub.geometry.fitting;
 
-import java.util.List;
-
 import org.apache.commons.math3.linear.RealMatrix;
-
-import imagingbook.pub.geometry.basic.Point;
 
 /**
  * Describes a fitter based on a linear transformation model.
  * @author WB
  *
  */
-public abstract class LinearFit2D {
+public interface LinearFit2D {
 	
-	/**
-	 * Calculates the least-squares fit for the supplied point sequences,
-	 * which must have the same length and order (i.e., points must be in 
-	 * correspondence).
-	 * @param P Sequence of n-dimensional points
-	 * @param Q Sequence of n-dimensional points (reference)
-	 */
-	public abstract void fit(List<Point> P, List<Point> Q);
+//	/**
+//	 * Calculates the least-squares fit for the supplied point sequences,
+//	 * which must have the same length and order (i.e., points must be in 
+//	 * correspondence).
+//	 * @param P Sequence of n-dimensional points
+//	 * @param Q Sequence of n-dimensional points (reference)
+//	 */
+//	public abstract void fit(List<Point> P, List<Point> Q);
 
 	/**
 	 * Retrieves the (n) x (n+1) transformation matrix A, such that
@@ -28,32 +24,16 @@ public abstract class LinearFit2D {
 	 * 
 	 * @return the transformation matrix
 	 */
-	public abstract RealMatrix getTransformationMatrix();
+	RealMatrix getTransformationMatrix();
 	
 	/**
 	 * Retrieves the total (squared) error for the estimated fit.
 	 * @return The total error for the estimated fit.
 	 */
-	public abstract double getError();
+	double getError();
 	
+	// -----------------------------------------------
 	
-//	/**
-//	 * Calculates the least-squares fit for the supplied point sequences,
-//	 * which must have the same length and order (i.e., points must be in 
-//	 * correspondence). Convenience method for fitting 2D points.
-//	 * @param Xpts Sequence of 2-dimensional points
-//	 * @param Ypts Sequence of 2-dimensional points (reference)
-//	 */
-//	public void fitPoints(List<Point> Xpts, List<Point> Ypts) {
-//		fit(toDoubleArrays(Xpts), toDoubleArrays(Ypts));
-//	}
-//	
-//	private List<double[]> toDoubleArrays(List<Point> Xpts) {
-//		List<double[]> X = new ArrayList<>(Xpts.size());
-//		for (Point pt : Xpts) {
-//			X.add(new double[] {pt.getX(), pt.getY()});
-//		}
-//		return X;
-//	}
+
 
 }

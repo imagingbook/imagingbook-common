@@ -1,5 +1,7 @@
 package imagingbook.pub.geometry.basic;
 
+import java.util.Collection;
+
 import imagingbook.pub.geometry.basic.Point;
 
 /** 
@@ -19,6 +21,10 @@ public interface Point {
 	
 	default double[] toArray() {
 		return new double[] {this.getX(), this.getY()};
+	}
+	
+	public static Point[] toArray(Collection<Point> points) {
+		return points.toArray(new Point[0]);
 	}
 	
 	/**

@@ -1,5 +1,7 @@
 package imagingbook.pub.geometry.fitting;
 
+import static imagingbook.lib.math.Arithmetic.sqr;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,6 +13,7 @@ import org.apache.commons.math3.linear.RealVector;
 import org.apache.commons.math3.linear.SingularValueDecomposition;
 
 import imagingbook.lib.math.Matrix;
+import imagingbook.lib.settings.PrintPrecision;
 import imagingbook.pub.geometry.basic.Point;
 import imagingbook.pub.geometry.mappings.linear.AffineMapping2D;
 
@@ -39,65 +42,53 @@ import imagingbook.pub.geometry.mappings.linear.AffineMapping2D;
  * @author W. Burger
  * @version 2020-01-05
  */
-public class ProcrustesFit extends AffineFit2D {
-	
-	private final boolean allowTranslation;
-	private final boolean allowScaling;
-	private final boolean forceRotation;
+public class ProcrustesFit implements LinearFit2D {
 	
 	private RealMatrix R = null;					// orthogonal (rotation) matrix
 	private RealVector t = null;					// translation vector
-	private double c = 1;							// scale
+	private double s = 1;							// scale
 	private double err = Double.POSITIVE_INFINITY;	// total (squared) error
 	
 	// --------------------------------------------------------------
 	
 	/**
-	 * Full constructor. 
-	 * @param n dimensions
+	 * Convenience constructor, with
+	 * parameters {@code allowTranslation}, {@code allowScaling} and {@code forceRotation}
+	 * set to {@code true}.
+	 * @param P the first point sequence
+	 * @param Q the second point sequence
+	 */
+	public ProcrustesFit(Point[] P, Point[] Q) {
+		this(P, Q, true, true, true);
+	}
+	
+	/**
+	 * Full constructor.
+	 * @param P the first point sequence
+	 * @param Q the second point sequence
 	 * @param allowTranslation if {@code true}, translation (t) between point sets is considered, 
 	 * 		otherwise zero translation is assumed
-	 * @param allowScaling if {@code true}, scaling (c) between point sets is considered, 
+	 * @param allowScaling if {@code true}, scaling (s) between point sets is considered, 
 	 * 		otherwise unit scale assumed
 	 * @param forceRotation if {@code true}, the orthogonal part of the transformation (Q)
 	 * 		is forced to a true rotation and no reflection is allowed
 	 */
-	public ProcrustesFit(int n, boolean allowTranslation, boolean allowScaling, boolean forceRotation) {
-		//super(n);
-		this.allowTranslation = allowTranslation;
-		this.allowScaling = allowScaling;
-		this.forceRotation = forceRotation;
-	}
-	
-	/**
-	 * Convenience constructor. 
-	 */
-	public ProcrustesFit() {
-		this(2, true, true, true);
-	}
-	
-
-	@Override
-	public void fit(List<Point> X, List<Point> Y) {
-		if (X.size() != Y.size())
-			throw new IllegalArgumentException("point sequences X, Y must have same length");
-//		this.m = X.size();
-//		if (X.get(0).length < n)
-//			throw new IllegalArgumentException("dimensionality of samples must be >= " + n);
+	public ProcrustesFit(Point[] P, Point[] Q, boolean allowTranslation, boolean allowScaling, boolean forceRotation) {
+		AffineFit2D.checkSize(P, Q);
 		
-		double[] meanX = null;
+		double[] meanP = null;
 		double[] meanY = null;
 		
-		if (this.allowTranslation) {
-			meanX = getMeanVec(X);
-			meanY = getMeanVec(Y);
+		if (allowTranslation) {
+			meanP = getMeanVec(P);
+			meanY = getMeanVec(Q);
 		}
 		
-		RealMatrix P = makeDataMatrix(X, meanX);
-		RealMatrix Q = makeDataMatrix(Y, meanY);
-		MatrixUtils.checkAdditionCompatible(P, Q);	// P, Q of same dimensions?
+		RealMatrix vP = makeDataMatrix(P, meanP);
+		RealMatrix vQ = makeDataMatrix(Q, meanY);
+		MatrixUtils.checkAdditionCompatible(vP, vQ);	// P, Q of same dimensions?
 		
-		RealMatrix QPt = Q.multiply(P.transpose());
+		RealMatrix QPt = vQ.multiply(vP.transpose());
 		SingularValueDecomposition svd = new SingularValueDecomposition(QPt);
 		
 		RealMatrix U = svd.getU();
@@ -112,22 +103,22 @@ public class ProcrustesFit extends AffineFit2D {
 		
 		R = U.multiply(D).multiply(V.transpose());
 		
-		double normP = P.getFrobeniusNorm();
-		double normQ = Q.getFrobeniusNorm();
+		double normP = vP.getFrobeniusNorm();
+		double normQ = vQ.getFrobeniusNorm();
 		
-		c = (this.allowScaling) ? 
+		s = (allowScaling) ? 
 				S.multiply(D).getTrace() / sqr(normP) : 1.0;
 		
 		if (allowTranslation) {
-			RealVector ma = MatrixUtils.createRealVector(meanX);
+			RealVector ma = MatrixUtils.createRealVector(meanP);
 			RealVector mb = MatrixUtils.createRealVector(meanY);
-			t = mb.subtract(R.scalarMultiply(c).operate(ma));
+			t = mb.subtract(R.scalarMultiply(s).operate(ma));
 		}
 		else {
 			t = new ArrayRealVector(2);	// zero vector
 		}
 		
-		err = sqr(normQ) - sqr(S.multiply(D).getTrace() / normP);
+		err = Math.sqrt(sqr(normQ) - sqr(S.multiply(D).getTrace() / normP));	// TODO: not sure if sqrt() is OK
 	}
 	
 	// -----------------------------------------------------------------
@@ -137,7 +128,7 @@ public class ProcrustesFit extends AffineFit2D {
 	 * @return The estimated scale (or 1 if {@code allowscaling = false}).
 	 */
 	public double getScale() {
-		return c;
+		return s;
 	}
 	
 	/**
@@ -156,10 +147,18 @@ public class ProcrustesFit extends AffineFit2D {
 		return t;
 	}
 	
-	/**
-	 * Retrieves the total (squared) error for the estimated fit.
-	 * @return The total error for the estimated fit.
-	 */
+	// --------------------------------------------------------
+	
+	@Override
+	public RealMatrix getTransformationMatrix() {
+		RealMatrix cR = R.scalarMultiply(s);
+		RealMatrix M = MatrixUtils.createRealMatrix(2, 3);
+		M.setSubMatrix(cR.getData(), 0, 0);
+		M.setColumnVector(2, t);
+		return M;
+	}
+	
+	@Override
 	public double getError() {
 		return err;
 	}
@@ -170,31 +169,28 @@ public class ProcrustesFit extends AffineFit2D {
 	 * transformed point set X and the reference set Y.
 	 * This method is provided for testing as an alternative to
 	 * the quicker {@link getError} method.
-	 * @param X Sequence of n-dimensional points.
-	 * @param Y Sequence of n-dimensional points (reference).
+	 * @param P Sequence of n-dimensional points.
+	 * @param Q Sequence of n-dimensional points (reference).
 	 * @return The total error for the estimated fit.
 	 */
-	public double getEuclideanError(List<double[]> X, List<double[]> Y) {
-		RealMatrix cR = R.scalarMultiply(c);
-		double ee = 0;
-		for (int i = 0; i < X.size(); i++) {
-			RealVector ai = new ArrayRealVector(X.get(i));
-			RealVector bi = new ArrayRealVector(Y.get(i));
+	private double getEuclideanError(Point[] P, Point[] Q) {
+		int m = Math.min(P.length,  Q.length);
+		RealMatrix cR = R.scalarMultiply(s);
+		double errSum = 0;
+		for (int i = 0; i < m; i++) {
+			RealVector ai = new ArrayRealVector(P[i].toArray());
+			RealVector bi = new ArrayRealVector(Q[i].toArray());
 			RealVector aiT = cR.operate(ai).add(t);
 			double ei = aiT.subtract(bi).getNorm();
-			ee = ee + sqr(ei);
+			errSum = errSum + ei;
 		}
-		return ee;
+		return errSum;
 	}
 	
-	@Override
-	public RealMatrix getTransformationMatrix() {
-		RealMatrix cR = R.scalarMultiply(c);
-		RealMatrix M = MatrixUtils.createRealMatrix(2, 3);
-		M.setSubMatrix(cR.getData(), 0, 0);
-		M.setColumnVector(2, t);
-		return M;
+	private double getEuclideanError2(Point[] P, Point[] Q) {	
+		return AffineFit2D.getError(P, Q, getTransformationMatrix());
 	}
+	
 	
 	/**
 	 * Returns a 2D {@link AffineMapping} object, as defined in
@@ -207,8 +203,8 @@ public class ProcrustesFit extends AffineFit2D {
 //		if (n != 2)
 //			throw new UnsupportedOperationException("fit is not 2D");
 		AffineMapping2D map = new AffineMapping2D(
-				c * R.getEntry(0, 0), c * R.getEntry(0, 1), t.getEntry(0),
-				c * R.getEntry(1, 0), c * R.getEntry(1, 1), t.getEntry(1));
+				s * R.getEntry(0, 0), s * R.getEntry(0, 1), t.getEntry(0),
+				s * R.getEntry(1, 0), s * R.getEntry(1, 1), t.getEntry(1));
 		return map;	
 	}
 	
@@ -218,50 +214,27 @@ public class ProcrustesFit extends AffineFit2D {
 		return new LUDecomposition(M).getDeterminant();
 	}
 	
-	private double sqr(final double x) {
-		return x * x;
-	}
-	
-	private double[] getMeanVec(List<Point> X) {
+	private double[] getMeanVec(Point[] points) {
 		//double[] sum = new double[X.get(0).length];
-		final int m = X.size();
 		double sumX = 0;
 		double sumY = 0;
-		for (Point x : X) {
-			sumX = sumX + x.getX();
-			sumY = sumY + x.getY();
-//			for (int j = 0; j < x.length; j++) {
-//				sum[j] = sum[j] + x[j];
-//			}
+		for (Point p : points) {
+			sumX = sumX + p.getX();
+			sumY = sumY + p.getY();
 		}
-//		Matrix.multiplyD(1.0 / X.size(), sum);
-		return new double[] {sumX / m, sumY / m};
+		return new double[] {sumX / points.length, sumY / points.length};
 	}
 	
-	private RealMatrix makeDataMatrix(List<Point> X) {
-		final int m = X.size();
-//		final int n = X.get(0).length;
-		RealMatrix M = MatrixUtils.createRealMatrix(2, m);
-		int i = 0;
-		for (Point x : X) {
-			RealVector xi = MatrixUtils.createRealVector(x.toArray());
-			M.setColumnVector(i, xi);
-			i++;
-		}
-		return M;
-	}
-	
-	private RealMatrix makeDataMatrix(List<Point> X, double[] meanX) { // TODO: change double[]
-		if (meanX == null) {
-			return makeDataMatrix(X);
-		}
-		final int m = X.size();
-		RealMatrix M = MatrixUtils.createRealMatrix(2, m);
+	private RealMatrix makeDataMatrix(Point[] points, double[] meanX) {
+		RealMatrix M = MatrixUtils.createRealMatrix(2, points.length);
 		RealVector mean = MatrixUtils.createRealVector(meanX);
 		int i = 0;
-		for (Point x : X) {
-			RealVector xi = MatrixUtils.createRealVector(x.toArray()).subtract(mean);
-			M.setColumnVector(i, xi);
+		for (Point p : points) {
+			RealVector cv = MatrixUtils.createRealVector(p.toArray());
+			if (meanX != null) {
+				cv = cv.subtract(mean);
+			}
+			M.setColumnVector(i, cv);
 			i++;
 		}
 		return M;
@@ -286,51 +259,63 @@ public class ProcrustesFit extends AffineFit2D {
 	// --------------------------------------------------------------------------------
 
 	public static void main(String[] args) {
+		PrintPrecision.set(6);
 		int NDIGITS = 1;
 		
-		double scale = 3.5;
-		System.out.println("original scale = " + scale);
-		
-		double alpha = 0.6;
-		double[][] R0data =
-			{{ Math.cos(alpha), -Math.sin(alpha) },
-			 { Math.sin(alpha),  Math.cos(alpha) }};
-		
-		RealMatrix R0 = MatrixUtils.createRealMatrix(R0data);
-		System.out.println("original R = \n" + Matrix.toString(R0.getData()));
-		
-		double[] t0 = {4, -3};
-		System.out.println("original t = " + Matrix.toString(t0));
-		
-		List<Point> X = new ArrayList<>();
-		List<Point> Y = new ArrayList<>();
-		
-		X.add(Point.create(2, 5));
-		X.add(Point.create(7, 3));
-		X.add(Point.create(0, 9));
-		X.add(Point.create(5, 4));
-		
-		for (Point a : X) {
-			Point b = Point.create(R0.operate(a.toArray()));
-			double bx = roundToDigits(scale * b.getX() + t0[0], NDIGITS);
-			double by = roundToDigits(scale * b.getY() + t0[1], NDIGITS);
-			Y.add(Point.create(bx, by));
-		}
-
 		boolean allowTranslation = true;
 		boolean allowScaling = true;
 		boolean forceRotation = true;
-		ProcrustesFit pf = new ProcrustesFit(2, allowTranslation, allowScaling, forceRotation);
-		pf.fit(X, Y);
+		
+		double a = 0.6;
+		double[][] R0data =
+			{{ Math.cos(a), -Math.sin(a) },
+			 { Math.sin(a),  Math.cos(a) }};
+		
+		RealMatrix R0 = MatrixUtils.createRealMatrix(R0data);
+		double[] t0 = {4, -3};
+		double s = 3.5;
+		
+		System.out.format("original alpha: a = %.6f\n", a);
+		System.out.println("original rotation: R = \n" + Matrix.toString(R0.getData()));
+		System.out.println("original translation: t = " + Matrix.toString(t0));
+		System.out.format("original scale: s = %.6f\n", s);
+		
+		Point[] P = {
+				Point.create(2, 5),
+				Point.create(7, 3),
+				Point.create(0, 9),
+				Point.create(5, 4)
+		};
+		
+		Point[] Q = new Point[P.length];
+		
+		for (int i = 0; i < P.length; i++) {
+			Point q = Point.create(R0.operate(P[i].toArray()));
+			// noise!
+			double qx = roundToDigits(s * q.getX() + t0[0], NDIGITS);
+			double qy = roundToDigits(s * q.getY() + t0[1], NDIGITS);
+			Q[i] = Point.create(qx, qy);
+		}
+		
+		System.out.println();
 
-		System.out.println("R = \n" + Matrix.toString(pf.getR().getData()));
-		System.out.println("t = " + Matrix.toString(pf.getT().toArray()));
-		System.out.format("c = %.3f\n", pf.getScale());
-		System.out.format("err1 = %.3f\n", pf.getError());
+		ProcrustesFit pf = new ProcrustesFit(P, Q, allowTranslation, allowScaling, forceRotation);
+
+		System.out.format("estimated alpha: a = %.6f\n", Math.acos(pf.getR().getEntry(0, 0)));
+		System.out.println("estimated rotation: R = \n" + Matrix.toString(pf.getR().getData()));
+		System.out.println("estimated translation: t = " + Matrix.toString(pf.getT().toArray()));
+		System.out.format("estimated scale: s = %.6f\n", pf.getScale());
+		
+		System.out.println();
+		System.out.format("fitting error = %.6f\n", pf.getError());
+		System.out.format("euclidean error1 = %.6f\n", pf.getEuclideanError(P, Q));
+		System.out.format("euclidean error2 = %.6f\n", pf.getEuclideanError2(P, Q));
 		
 		RealMatrix M = pf.getTransformationMatrix();
-		System.out.println("M = \n" + Matrix.toString(M.getData()));
+		System.out.println("transformation matrix: A = \n" + Matrix.toString(M.getData()));
 	}
+
+
 
 }
 

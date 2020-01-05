@@ -23,6 +23,8 @@ public class AffineMapping2D extends ProjectiveMapping2D {
 
 	/**
 	 * Creates an affine mapping from an arbitrary 2D triangle A to another triangle B.
+	 * In this case the solution is found in closed form 
+	 * (see Burger/Burge 2016, Sec. 21.1.3, eq. 21.26).
 	 * @param A1 point 1 of source triangle A
 	 * @param A2 point 2 of source triangle A
 	 * @param A3 point 3 of source triangle A
