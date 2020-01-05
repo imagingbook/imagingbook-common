@@ -24,11 +24,6 @@ public class AffineFit2D extends LinearFit2D {
 	private RealMatrix A = null;
 	
 	public AffineFit2D() {
-		this(2);	// 2D by default
-	}
-	
-	public AffineFit2D(int n) {
-		super(n);
 	}
 
 	@Override
@@ -37,10 +32,8 @@ public class AffineFit2D extends LinearFit2D {
 			throw new IllegalArgumentException("point sequences X, Y must have same length");
 		this.m = X.size();
 		
-		RealMatrix M = MatrixUtils.createRealMatrix(2 * m, 2 * (n + 1));
+		RealMatrix M = MatrixUtils.createRealMatrix(2 * m, 6);
 		RealVector b = new ArrayRealVector(2 * m);
-		
-//		IJ.log("M = " + M.getRowDimension() + " x " + M.getColumnDimension());
 		
 		// mount matrix M:	TODO: needs to be checked for n > 2!
 		int row = 0;
@@ -88,16 +81,15 @@ public class AffineFit2D extends LinearFit2D {
 
 	// creates a n x (n+1) transformation matrix from the elements of a
 	private RealMatrix makeTransformationMatrix(RealVector a) {
-		RealMatrix A = MatrixUtils.createRealMatrix(n, n + 1);
+		RealMatrix A = MatrixUtils.createRealMatrix(2, 3);
 		int i = 0;
-		for (int row = 0; row < n; row++) {
+		for (int row = 0; row < 2; row++) {
 			// get (n+1) elements from a and place in row
-			for (int j = 0; j <= n; j++) {
+			for (int j = 0; j < 3; j++) {
 				A.setEntry(row, j, a.getEntry(i));
 				i++;
 			}
 		}
-		//A.setEntry(n - 1, n, 1);
 		return A;
 	}
 	

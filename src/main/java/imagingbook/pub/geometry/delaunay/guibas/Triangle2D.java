@@ -3,7 +3,7 @@ package imagingbook.pub.geometry.delaunay.guibas;
 import java.util.Arrays;
 
 import imagingbook.pub.geometry.basic.Point;
-import imagingbook.pub.geometry.basic.Triangle;
+import imagingbook.pub.geometry.delaunay.Triangle;
 
 
 /**

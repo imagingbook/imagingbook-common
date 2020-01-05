@@ -3,7 +3,6 @@ package imagingbook.pub.geometry.delaunay;
 import java.util.List;
 
 import imagingbook.pub.geometry.basic.Point;
-import imagingbook.pub.geometry.basic.Triangle;
 
 /**
  * Interface specification for various implementations of the

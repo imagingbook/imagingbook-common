@@ -35,19 +35,15 @@ import imagingbook.pub.geometry.mappings2.linear.AffineMapping2D;
  * RealMatrix M = pf.getTransformationMatrix();
  * }
  * </pre>
- * This is a preliminary version!
- * TODO: Implement common interface with other fitters; polish parameter handling.
  * 
  * @author W. Burger
- * @version 2017/03/21
+ * @version 2020-01-05
  */
 public class ProcrustesFit extends AffineFit2D {
 	
 	private final boolean allowTranslation;
 	private final boolean allowScaling;
 	private final boolean forceRotation;
-	
-//	private int m;		// number of samples
 	
 	private RealMatrix R = null;					// orthogonal (rotation) matrix
 	private RealVector t = null;					// translation vector
@@ -108,11 +104,11 @@ public class ProcrustesFit extends AffineFit2D {
 		RealMatrix S = svd.getS();
 		RealMatrix V = svd.getV();
 			
-		double d = (svd.getRank() >= n) ? det(QPt) : det(U) * det(V);
+		double d = (svd.getRank() >= 2) ? det(QPt) : det(U) * det(V);
 		
-		RealMatrix D = MatrixUtils.createRealIdentityMatrix(n);
+		RealMatrix D = MatrixUtils.createRealIdentityMatrix(2);
 		if (d < 0 && forceRotation)
-			D.setEntry(n - 1, n - 1, -1);
+			D.setEntry(1, 1, -1);
 		
 		R = U.multiply(D).multiply(V.transpose());
 		
@@ -128,7 +124,7 @@ public class ProcrustesFit extends AffineFit2D {
 			t = mb.subtract(R.scalarMultiply(c).operate(ma));
 		}
 		else {
-			t = new ArrayRealVector(n);	// zero vector
+			t = new ArrayRealVector(2);	// zero vector
 		}
 		
 		err = sqr(normQ) - sqr(S.multiply(D).getTrace() / normP);
@@ -194,9 +190,9 @@ public class ProcrustesFit extends AffineFit2D {
 	@Override
 	public RealMatrix getTransformationMatrix() {
 		RealMatrix cR = R.scalarMultiply(c);
-		RealMatrix M = MatrixUtils.createRealMatrix(n, n + 1);
+		RealMatrix M = MatrixUtils.createRealMatrix(2, 3);
 		M.setSubMatrix(cR.getData(), 0, 0);
-		M.setColumnVector(n, t);
+		M.setColumnVector(2, t);
 		return M;
 	}
 	
@@ -208,8 +204,8 @@ public class ProcrustesFit extends AffineFit2D {
 	 * @return An affine mapping object.
 	 */
 	public AffineMapping2D getAffineMapping2D() {
-		if (n != 2)
-			throw new UnsupportedOperationException("fit is not 2D");
+//		if (n != 2)
+//			throw new UnsupportedOperationException("fit is not 2D");
 		AffineMapping2D map = new AffineMapping2D(
 				c * R.getEntry(0, 0), c * R.getEntry(0, 1), t.getEntry(0),
 				c * R.getEntry(1, 0), c * R.getEntry(1, 1), t.getEntry(1));
@@ -260,8 +256,7 @@ public class ProcrustesFit extends AffineFit2D {
 			return makeDataMatrix(X);
 		}
 		final int m = X.size();
-//		final int n = X.get(0).length;
-		RealMatrix M = MatrixUtils.createRealMatrix(n, m);
+		RealMatrix M = MatrixUtils.createRealMatrix(2, m);
 		RealVector mean = MatrixUtils.createRealVector(meanX);
 		int i = 0;
 		for (Point x : X) {

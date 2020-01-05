@@ -8,8 +8,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import imagingbook.pub.geometry.basic.Point;
-import imagingbook.pub.geometry.basic.Triangle;
 import imagingbook.pub.geometry.delaunay.DelaunayTriangulation;
+import imagingbook.pub.geometry.delaunay.Triangle;
 import imagingbook.pub.geometry.delaunay.Utils;
 
 

@@ -13,14 +13,6 @@ import imagingbook.pub.geometry.basic.Point;
  */
 public abstract class LinearFit2D {
 	
-	protected final int n;	// dimensionality of samples
-	
-	@Deprecated
-	protected LinearFit2D(int n) {
-//		this.n= n;
-		this.n= 2;
-	}
-	
 	/**
 	 * Calculates the least-squares fit for the supplied point sequences,
 	 * which must have the same length and order (i.e., points must be in 
