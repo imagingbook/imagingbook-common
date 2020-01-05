@@ -26,8 +26,8 @@ public class AffineFit2D implements LinearFit2D {
 	 * Fits two sequences of 2D points using an affine transformation model.
 	 * At least 3 point pairs are required. For 3 point pairs, the solution
 	 * is an exact fit, otherwise a least-squares fit is found.
-	 * @param P
-	 * @param Q
+	 * @param P the source points
+	 * @param Q the target points
 	 */
 	public AffineFit2D(Point[] P, Point[] Q) {	// 
 		checkSize(P, Q);

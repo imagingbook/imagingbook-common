@@ -50,7 +50,7 @@ public class ImageExtractor {
 	 * defined by the transformation of the boundary of {@code R} by {@code T(x)}.
 	 * @param width the width of the target image {@code R}.
 	 * @param height the height of the target image {@code R}.
-	 * @param T a {@link LinearMapping} object.
+	 * @param T a {@link LinearMapping2D} object.
 	 * @return the extracted image {@code R}, which is of the same type as the source image.
 	 */	
 
@@ -74,7 +74,7 @@ public class ImageExtractor {
 	 * defined by the transformation of the boundary of {@code R} by {@code T(x)}.
 	 * Grayscale and color images my not be mixed (i.e., {@code R} must be of the same type as {@code I}).
 	 * @param R the image to be filled.
-	 * @param T a {@link LinearMapping} object.
+	 * @param T a {@link LinearMapping2D} object.
 	 */	
 	public void extractImage(ImageProcessor R, LinearMapping2D T) {
 		int prevInterpolationMethod = I.getInterpolationMethod();
@@ -101,11 +101,11 @@ public class ImageExtractor {
 	/**
 	 * Extracts a warped sub-image of the associated target image I,
 	 * defined by a sequence of 3 or 4 points. In the case of 3 
-	 * points in sourcePnts, an {@link AffineMapping} is used; with 4 points,
-	 * a {@link ProjectiveMapping} is used. The 3 or 4 points map clockwise to
+	 * points in sourcePnts, an {@link AffineMapping2D} is used; with 4 points,
+	 * a {@link ProjectiveMapping2D} is used. The 3 or 4 points map clockwise to
 	 * the corner points of the target image R, starting with the top-left corner.
 	 * @param R the target image;
-	 * @param sourcePnts an array of 3 or 4 {@link Point2D} objects.
+	 * @param sourcePnts an array of 3 or 4 {@link Point} objects.
 	 */
 	public void extractImage(ImageProcessor R, Point[] sourcePnts) {
 		ProjectiveMapping2D T = getMapping(R.getWidth(), R.getHeight(), sourcePnts);

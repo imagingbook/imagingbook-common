@@ -2,9 +2,6 @@ package imagingbook.pub.geometry.fitting;
 
 import static imagingbook.lib.math.Arithmetic.sqr;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.LUDecomposition;
 import org.apache.commons.math3.linear.MatrixUtils;
@@ -15,28 +12,24 @@ import org.apache.commons.math3.linear.SingularValueDecomposition;
 import imagingbook.lib.math.Matrix;
 import imagingbook.lib.settings.PrintPrecision;
 import imagingbook.pub.geometry.basic.Point;
-import imagingbook.pub.geometry.mappings.linear.AffineMapping2D;
 
 
 /**
- * This class implements the n-dimensional Procrustes fit algorithm described in 
+ * Implements a 2-dimensional Procrustes fit, using the algorithm described in 
  * Shinji Umeyama, "Least-squares estimation of transformation parameters 
  * between two point patterns", IEEE Transactions on Pattern Analysis and 
  * Machine Intelligence 13.4 (Apr. 1991), pp. 376–380.
- * Usage example (also see the main() method of this class):
+ * Usage example (also see the {@code main()} method of this class):
  * <pre>
- * {@code
- * List<double> X = ... // create list of m points (n-dimensional)
- * List<double> Y = ... // create list of m points (n-dimensional)
- * ProcrustesFit pf = new ProcrustesFit();
- * pf.fit(X, Y);
+ * Point[] P = ... // create sequence of 2D source points
+ * Point[] Q = ... // create sequence of 2D target points
+ * ProcrustesFit pf = new ProcrustesFit(P, Q);
  * double err = pf.getError();
  * RealMatrix R = pf.getR();
  * RealVector t = pf.getT();
- * double c = pf.getScale();
+ * double s = pf.getScale();
  * double err = pf.getError();
- * RealMatrix M = pf.getTransformationMatrix();
- * }
+ * RealMatrix A = pf.getTransformationMatrix();
  * </pre>
  * 
  * @author W. Burger
@@ -55,8 +48,8 @@ public class ProcrustesFit implements LinearFit2D {
 	 * Convenience constructor, with
 	 * parameters {@code allowTranslation}, {@code allowScaling} and {@code forceRotation}
 	 * set to {@code true}.
-	 * @param P the first point sequence
-	 * @param Q the second point sequence
+	 * @param P the source points
+	 * @param Q the target points
 	 */
 	public ProcrustesFit(Point[] P, Point[] Q) {
 		this(P, Q, true, true, true);
@@ -118,7 +111,8 @@ public class ProcrustesFit implements LinearFit2D {
 			t = new ArrayRealVector(2);	// zero vector
 		}
 		
-		err = Math.sqrt(sqr(normQ) - sqr(S.multiply(D).getTrace() / normP));	// TODO: not sure if sqrt() is OK
+		// TODO: sqrt() seems to be OK! result is same order of magnitude but ca. 50 % of euclidean error
+		err = Math.sqrt(sqr(normQ) - sqr(S.multiply(D).getTrace() / normP));	
 	}
 	
 	// -----------------------------------------------------------------
@@ -192,21 +186,19 @@ public class ProcrustesFit implements LinearFit2D {
 	}
 	
 	
-	/**
-	 * Returns a 2D {@link AffineMapping} object, as defined in
-	 * {@code imagingbook.pub.geometry.mappings.linear}.
-	 * Throws an exception if the dimensionality of the data
-	 * is not 2.
-	 * @return An affine mapping object.
-	 */
-	public AffineMapping2D getAffineMapping2D() {
-//		if (n != 2)
-//			throw new UnsupportedOperationException("fit is not 2D");
-		AffineMapping2D map = new AffineMapping2D(
-				s * R.getEntry(0, 0), s * R.getEntry(0, 1), t.getEntry(0),
-				s * R.getEntry(1, 0), s * R.getEntry(1, 1), t.getEntry(1));
-		return map;	
-	}
+//	/**
+//	 * Returns a 2D {@link AffineMapping} object, as defined in
+//	 * {@code imagingbook.pub.geometry.mappings.linear}.
+//	 * Throws an exception if the dimensionality of the data
+//	 * is not 2.
+//	 * @return An affine mapping object.
+//	 */
+//	public AffineMapping2D getAffineMapping2D() {
+//		AffineMapping2D map = new AffineMapping2D(
+//				s * R.getEntry(0, 0), s * R.getEntry(0, 1), t.getEntry(0),
+//				s * R.getEntry(1, 0), s * R.getEntry(1, 1), t.getEntry(1));
+//		return map;	
+//	}
 	
 	// -----------------------------------------------------------------
 	
@@ -279,6 +271,7 @@ public class ProcrustesFit implements LinearFit2D {
 		System.out.println("original rotation: R = \n" + Matrix.toString(R0.getData()));
 		System.out.println("original translation: t = " + Matrix.toString(t0));
 		System.out.format("original scale: s = %.6f\n", s);
+		System.out.println();
 		
 		Point[] P = {
 				Point.create(2, 5),
@@ -297,8 +290,8 @@ public class ProcrustesFit implements LinearFit2D {
 			Q[i] = Point.create(qx, qy);
 		}
 		
-		System.out.println();
-
+		//P[0] = Point.create(2, 0);	// to provoke a large error
+		
 		ProcrustesFit pf = new ProcrustesFit(P, Q, allowTranslation, allowScaling, forceRotation);
 
 		System.out.format("estimated alpha: a = %.6f\n", Math.acos(pf.getR().getEntry(0, 0)));

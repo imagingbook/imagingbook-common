@@ -19,9 +19,9 @@
 <span class="sourceLineNo">011</span>import ij.ImagePlus;<a name="line.11"></a>
 <span class="sourceLineNo">012</span>import ij.process.FloatProcessor;<a name="line.12"></a>
 <span class="sourceLineNo">013</span>import imagingbook.lib.math.Matrix;<a name="line.13"></a>
-<span class="sourceLineNo">014</span>import imagingbook.pub.geometry.mappings.linear.ProjectiveMapping;<a name="line.14"></a>
-<span class="sourceLineNo">015</span><a name="line.15"></a>
-<span class="sourceLineNo">016</span>import java.awt.geom.Point2D;<a name="line.16"></a>
+<span class="sourceLineNo">014</span>import imagingbook.pub.geometry.basic.Point;<a name="line.14"></a>
+<span class="sourceLineNo">015</span>import imagingbook.pub.geometry.mappings.linear.ProjectiveMapping2D;<a name="line.15"></a>
+<span class="sourceLineNo">016</span><a name="line.16"></a>
 <span class="sourceLineNo">017</span><a name="line.17"></a>
 <span class="sourceLineNo">018</span>/**<a name="line.18"></a>
 <span class="sourceLineNo">019</span> * This is the common super-class for different variants of the Lucas-Kanade<a name="line.19"></a>
@@ -80,24 +80,24 @@
 <span class="sourceLineNo">072</span>         * @param Q an arbitrary quad (should be inside the search image I);<a name="line.72"></a>
 <span class="sourceLineNo">073</span>         * @return the transformation from {@code R}'s bounding rectangle to {@code Q}.<a name="line.73"></a>
 <span class="sourceLineNo">074</span>         */<a name="line.74"></a>
-<span class="sourceLineNo">075</span>        public ProjectiveMapping getReferenceMappingTo(Point2D[] Q) {<a name="line.75"></a>
-<span class="sourceLineNo">076</span>                Point2D[] Rpts = getReferencePoints();<a name="line.76"></a>
-<span class="sourceLineNo">077</span>                return ProjectiveMapping.from4Points(Rpts, Q);<a name="line.77"></a>
+<span class="sourceLineNo">075</span>        public ProjectiveMapping2D getReferenceMappingTo(Point[] Q) {<a name="line.75"></a>
+<span class="sourceLineNo">076</span>                Point[] Rpts = getReferencePoints();<a name="line.76"></a>
+<span class="sourceLineNo">077</span>                return ProjectiveMapping2D.from4Points(Rpts, Q);<a name="line.77"></a>
 <span class="sourceLineNo">078</span>        }<a name="line.78"></a>
 <span class="sourceLineNo">079</span>        <a name="line.79"></a>
 <span class="sourceLineNo">080</span>        /**<a name="line.80"></a>
 <span class="sourceLineNo">081</span>         * @return the corner points of the bounding rectangle of R, centered at the origin.<a name="line.81"></a>
 <span class="sourceLineNo">082</span>         */<a name="line.82"></a>
-<span class="sourceLineNo">083</span>        public Point2D[] getReferencePoints() {<a name="line.83"></a>
+<span class="sourceLineNo">083</span>        public Point[] getReferencePoints() {<a name="line.83"></a>
 <span class="sourceLineNo">084</span>                double xmin = -xc;<a name="line.84"></a>
 <span class="sourceLineNo">085</span>                double xmax = -xc + wR - 1;<a name="line.85"></a>
 <span class="sourceLineNo">086</span>                double ymin = -yc;<a name="line.86"></a>
 <span class="sourceLineNo">087</span>                double ymax = -yc + hR - 1;<a name="line.87"></a>
-<span class="sourceLineNo">088</span>                Point2D[] pts = new Point2D[4];<a name="line.88"></a>
-<span class="sourceLineNo">089</span>                pts[0] = new Point2D.Double(xmin, ymin);<a name="line.89"></a>
-<span class="sourceLineNo">090</span>                pts[1] = new Point2D.Double(xmax, ymin);<a name="line.90"></a>
-<span class="sourceLineNo">091</span>                pts[2] = new Point2D.Double(xmax, ymax);<a name="line.91"></a>
-<span class="sourceLineNo">092</span>                pts[3] = new Point2D.Double(xmin, ymax);<a name="line.92"></a>
+<span class="sourceLineNo">088</span>                Point[] pts = new Point[4];<a name="line.88"></a>
+<span class="sourceLineNo">089</span>                pts[0] = Point.create(xmin, ymin);<a name="line.89"></a>
+<span class="sourceLineNo">090</span>                pts[1] = Point.create(xmax, ymin);<a name="line.90"></a>
+<span class="sourceLineNo">091</span>                pts[2] = Point.create(xmax, ymax);<a name="line.91"></a>
+<span class="sourceLineNo">092</span>                pts[3] = Point.create(xmin, ymax);<a name="line.92"></a>
 <span class="sourceLineNo">093</span>                return pts;<a name="line.93"></a>
 <span class="sourceLineNo">094</span>        }<a name="line.94"></a>
 <span class="sourceLineNo">095</span>        <a name="line.95"></a>
@@ -111,10 +111,10 @@
 <span class="sourceLineNo">103</span>         * (again assuming that R is centered at the coordinate origin) or null if<a name="line.103"></a>
 <span class="sourceLineNo">104</span>         * no match was found.<a name="line.104"></a>
 <span class="sourceLineNo">105</span>         */<a name="line.105"></a>
-<span class="sourceLineNo">106</span>        public ProjectiveMapping getMatch(ProjectiveMapping Tinit) {<a name="line.106"></a>
+<span class="sourceLineNo">106</span>        public ProjectiveMapping2D getMatch(ProjectiveMapping2D Tinit) {<a name="line.106"></a>
 <span class="sourceLineNo">107</span>//              initializeMatch(Tinit);                 // to be implemented by sub-classes<a name="line.107"></a>
 <span class="sourceLineNo">108</span>                // ProjectiveMappingP Tp = Tinit.duplicate();<a name="line.108"></a>
-<span class="sourceLineNo">109</span>                ProjectiveMapping Tp = Tinit;<a name="line.109"></a>
+<span class="sourceLineNo">109</span>                ProjectiveMapping2D Tp = Tinit;<a name="line.109"></a>
 <span class="sourceLineNo">110</span>                do {<a name="line.110"></a>
 <span class="sourceLineNo">111</span>                        Tp = iterateOnce(Tp);           // to be implemented by sub-classes<a name="line.111"></a>
 <span class="sourceLineNo">112</span>                } while (Tp != null &amp;&amp; !hasConverged() &amp;&amp; getIteration() &lt; params.maxIterations);<a name="line.112"></a>
@@ -131,7 +131,7 @@
 <span class="sourceLineNo">123</span>         * @return a new warp transformation (again assuming that R is centered at <a name="line.123"></a>
 <span class="sourceLineNo">124</span>         * the coordinate origin) or null if the iteration was unsuccessful.<a name="line.124"></a>
 <span class="sourceLineNo">125</span>         */<a name="line.125"></a>
-<span class="sourceLineNo">126</span>        public abstract ProjectiveMapping iterateOnce(ProjectiveMapping Tp);<a name="line.126"></a>
+<span class="sourceLineNo">126</span>        public abstract ProjectiveMapping2D iterateOnce(ProjectiveMapping2D Tp);<a name="line.126"></a>
 <span class="sourceLineNo">127</span>        <a name="line.127"></a>
 <span class="sourceLineNo">128</span>        <a name="line.128"></a>
 <span class="sourceLineNo">129</span>        /**<a name="line.129"></a>
@@ -188,17 +188,17 @@
 <span class="sourceLineNo">180</span>         */<a name="line.180"></a>
 <span class="sourceLineNo">181</span>        <a name="line.181"></a>
 <span class="sourceLineNo">182</span>//      @Deprecated<a name="line.182"></a>
-<span class="sourceLineNo">183</span>//      private Point2D[] getPoints(Rectangle2D r) {    // does -1 matter? YES!!! CORRECT!<a name="line.183"></a>
+<span class="sourceLineNo">183</span>//      private Point[] getPoints(Rectangle2D r) {      // does -1 matter? YES!!! CORRECT!<a name="line.183"></a>
 <span class="sourceLineNo">184</span>//              IJ.log("getpoints1:  r = " + r.toString());<a name="line.184"></a>
 <span class="sourceLineNo">185</span>//              double x = r.getX();<a name="line.185"></a>
 <span class="sourceLineNo">186</span>//              double y = r.getY();<a name="line.186"></a>
 <span class="sourceLineNo">187</span>//              double w = r.getWidth();<a name="line.187"></a>
 <span class="sourceLineNo">188</span>//              double h = r.getHeight();<a name="line.188"></a>
-<span class="sourceLineNo">189</span>//              Point2D[] pts = new Point2D[4];<a name="line.189"></a>
-<span class="sourceLineNo">190</span>//              pts[0] = new Point2D.Double(x, y);<a name="line.190"></a>
-<span class="sourceLineNo">191</span>//              pts[1] = new Point2D.Double(x + w - 1, y);<a name="line.191"></a>
-<span class="sourceLineNo">192</span>//              pts[2] = new Point2D.Double(x + w - 1, y + h - 1);<a name="line.192"></a>
-<span class="sourceLineNo">193</span>//              pts[3] = new Point2D.Double(x, y + h - 1);<a name="line.193"></a>
+<span class="sourceLineNo">189</span>//              Point[] pts = new Point[4];<a name="line.189"></a>
+<span class="sourceLineNo">190</span>//              pts[0] = new Point.Double(x, y);<a name="line.190"></a>
+<span class="sourceLineNo">191</span>//              pts[1] = new Point.Double(x + w - 1, y);<a name="line.191"></a>
+<span class="sourceLineNo">192</span>//              pts[2] = new Point.Double(x + w - 1, y + h - 1);<a name="line.192"></a>
+<span class="sourceLineNo">193</span>//              pts[3] = new Point.Double(x, y + h - 1);<a name="line.193"></a>
 <span class="sourceLineNo">194</span>//              //IJ.log("getpoints1:  p1-4 = " + pts[0] + ", " + pts[1] + ", " + pts[2] + ", " + pts[3]);<a name="line.194"></a>
 <span class="sourceLineNo">195</span>//              return pts;<a name="line.195"></a>
 <span class="sourceLineNo">196</span>//      }<a name="line.196"></a>

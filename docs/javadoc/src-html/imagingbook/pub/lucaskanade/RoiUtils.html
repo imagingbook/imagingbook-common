@@ -20,12 +20,12 @@
 <span class="sourceLineNo">012</span>import ij.gui.ShapeRoi;<a name="line.12"></a>
 <span class="sourceLineNo">013</span>import ij.process.FloatProcessor;<a name="line.13"></a>
 <span class="sourceLineNo">014</span>import ij.process.ImageProcessor;<a name="line.14"></a>
-<span class="sourceLineNo">015</span>import imagingbook.pub.geometry.mappings.linear.LinearMapping;<a name="line.15"></a>
-<span class="sourceLineNo">016</span><a name="line.16"></a>
-<span class="sourceLineNo">017</span>import java.awt.Color;<a name="line.17"></a>
-<span class="sourceLineNo">018</span>import java.awt.Rectangle;<a name="line.18"></a>
-<span class="sourceLineNo">019</span>import java.awt.geom.Path2D;<a name="line.19"></a>
-<span class="sourceLineNo">020</span>import java.awt.geom.Point2D;<a name="line.20"></a>
+<span class="sourceLineNo">015</span>import imagingbook.pub.geometry.basic.Point;<a name="line.15"></a>
+<span class="sourceLineNo">016</span>import imagingbook.pub.geometry.mappings.linear.LinearMapping2D;<a name="line.16"></a>
+<span class="sourceLineNo">017</span><a name="line.17"></a>
+<span class="sourceLineNo">018</span>import java.awt.Color;<a name="line.18"></a>
+<span class="sourceLineNo">019</span>import java.awt.Rectangle;<a name="line.19"></a>
+<span class="sourceLineNo">020</span>import java.awt.geom.Path2D;<a name="line.20"></a>
 <span class="sourceLineNo">021</span>import java.util.LinkedList;<a name="line.21"></a>
 <span class="sourceLineNo">022</span>import java.util.List;<a name="line.22"></a>
 <span class="sourceLineNo">023</span><a name="line.23"></a>
@@ -33,17 +33,17 @@
 <span class="sourceLineNo">025</span>public class RoiUtils {<a name="line.25"></a>
 <span class="sourceLineNo">026</span>        <a name="line.26"></a>
 <span class="sourceLineNo">027</span>        @Deprecated<a name="line.27"></a>
-<span class="sourceLineNo">028</span>        public static List&lt;Point2D&gt; getWarpedPointsCentered(Roi roi, LinearMapping W) {<a name="line.28"></a>
+<span class="sourceLineNo">028</span>        public static List&lt;Point&gt; getWarpedPointsCentered(Roi roi, LinearMapping2D W) {<a name="line.28"></a>
 <span class="sourceLineNo">029</span>                Rectangle bounds = roi.getBounds();<a name="line.29"></a>
-<span class="sourceLineNo">030</span>                List&lt;Point2D&gt; oPts = new LinkedList&lt;Point2D&gt;();<a name="line.30"></a>
+<span class="sourceLineNo">030</span>                List&lt;Point&gt; oPts = new LinkedList&lt;&gt;();<a name="line.30"></a>
 <span class="sourceLineNo">031</span>                float xC = bounds.width/2;<a name="line.31"></a>
 <span class="sourceLineNo">032</span>                float yC = bounds.height/2;<a name="line.32"></a>
-<span class="sourceLineNo">033</span>                oPts.add(new Point2D.Float(0 - xC, 0 - yC));<a name="line.33"></a>
-<span class="sourceLineNo">034</span>                oPts.add(new Point2D.Float(bounds.width - xC, 0 - yC));<a name="line.34"></a>
-<span class="sourceLineNo">035</span>                oPts.add(new Point2D.Float(bounds.width - xC, bounds.height - yC));<a name="line.35"></a>
-<span class="sourceLineNo">036</span>                oPts.add(new Point2D.Float(0 - xC, bounds.height - yC));<a name="line.36"></a>
-<span class="sourceLineNo">037</span>                List&lt;Point2D&gt; wPts = new LinkedList&lt;Point2D&gt;();<a name="line.37"></a>
-<span class="sourceLineNo">038</span>                for (Point2D op : oPts) {<a name="line.38"></a>
+<span class="sourceLineNo">033</span>                oPts.add(Point.create(0 - xC, 0 - yC));<a name="line.33"></a>
+<span class="sourceLineNo">034</span>                oPts.add(Point.create(bounds.width - xC, 0 - yC));<a name="line.34"></a>
+<span class="sourceLineNo">035</span>                oPts.add(Point.create(bounds.width - xC, bounds.height - yC));<a name="line.35"></a>
+<span class="sourceLineNo">036</span>                oPts.add(Point.create(0 - xC, bounds.height - yC));<a name="line.36"></a>
+<span class="sourceLineNo">037</span>                List&lt;Point&gt; wPts = new LinkedList&lt;&gt;();<a name="line.37"></a>
+<span class="sourceLineNo">038</span>                for (Point op : oPts) {<a name="line.38"></a>
 <span class="sourceLineNo">039</span>                        wPts.add(W.applyTo(op));<a name="line.39"></a>
 <span class="sourceLineNo">040</span>                        //pts.add(ipm);<a name="line.40"></a>
 <span class="sourceLineNo">041</span>                }<a name="line.41"></a>
@@ -51,7 +51,7 @@
 <span class="sourceLineNo">043</span>        }<a name="line.43"></a>
 <span class="sourceLineNo">044</span>        <a name="line.44"></a>
 <span class="sourceLineNo">045</span>        @Deprecated<a name="line.45"></a>
-<span class="sourceLineNo">046</span>        public static Roi makePolygon(Point2D[] points, double strokeWidth, Color color) {<a name="line.46"></a>
+<span class="sourceLineNo">046</span>        public static Roi makePolygon(Point[] points, double strokeWidth, Color color) {<a name="line.46"></a>
 <span class="sourceLineNo">047</span>                Path2D poly = new Path2D.Double();<a name="line.47"></a>
 <span class="sourceLineNo">048</span>                if (points.length &gt; 0) {<a name="line.48"></a>
 <span class="sourceLineNo">049</span>                        poly.moveTo(points[0].getX(), points[0].getY());<a name="line.49"></a>
@@ -80,15 +80,15 @@
 <span class="sourceLineNo">072</span>        // ---------------------------------------------------------------------------<a name="line.72"></a>
 <span class="sourceLineNo">073</span>        <a name="line.73"></a>
 <span class="sourceLineNo">074</span>        @Deprecated<a name="line.74"></a>
-<span class="sourceLineNo">075</span>        public static FloatProcessor getUnwarpedImage(ImageProcessor I, LinearMapping W, int w, int h) {<a name="line.75"></a>
+<span class="sourceLineNo">075</span>        public static FloatProcessor getUnwarpedImage(ImageProcessor I, LinearMapping2D W, int w, int h) {<a name="line.75"></a>
 <span class="sourceLineNo">076</span>                FloatProcessor J = new FloatProcessor(w, h);<a name="line.76"></a>
 <span class="sourceLineNo">077</span>                int uc = w/2;                           // center (origin) of R<a name="line.77"></a>
 <span class="sourceLineNo">078</span>                int vc = h/2;<a name="line.78"></a>
 <span class="sourceLineNo">079</span>                for (int u = 0; u &lt; w; u++) {<a name="line.79"></a>
 <span class="sourceLineNo">080</span>                        for (int v = 0; v &lt; h; v++) {<a name="line.80"></a>
-<span class="sourceLineNo">081</span>                                double[] x = {u - uc, v - vc};  // position w.r.t. the center of R<a name="line.81"></a>
-<span class="sourceLineNo">082</span>                                double[] xw = W.applyTo(x);             // warp from x -&gt; xw<a name="line.82"></a>
-<span class="sourceLineNo">083</span>                                float val = (float) I.getInterpolatedValue(xw[0], xw[1]);<a name="line.83"></a>
+<span class="sourceLineNo">081</span>                                Point x = Point.create(u - uc, v - vc); // position w.r.t. the center of R<a name="line.81"></a>
+<span class="sourceLineNo">082</span>                                Point xw = W.applyTo(x);                // warp from x -&gt; xw<a name="line.82"></a>
+<span class="sourceLineNo">083</span>                                float val = (float) I.getInterpolatedValue(xw.getX(), xw.getY());<a name="line.83"></a>
 <span class="sourceLineNo">084</span>                                J.setf(u, v, val);<a name="line.84"></a>
 <span class="sourceLineNo">085</span>                        }<a name="line.85"></a>
 <span class="sourceLineNo">086</span>                }<a name="line.86"></a>

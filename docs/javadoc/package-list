@@ -24,8 +24,6 @@ imagingbook.pub.geometry.delaunay.chew
 imagingbook.pub.geometry.delaunay.guibas
 imagingbook.pub.geometry.delaunay.plugin
 imagingbook.pub.geometry.fitting
-imagingbook.pub.geometry.icp
-imagingbook.pub.geometry.icp.tests
 imagingbook.pub.geometry.mappings
 imagingbook.pub.geometry.mappings.linear
 imagingbook.pub.geometry.mappings.nonlinear

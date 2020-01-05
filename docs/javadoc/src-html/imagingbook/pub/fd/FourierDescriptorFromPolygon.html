@@ -16,21 +16,21 @@
 <span class="sourceLineNo">008</span> *******************************************************************************/<a name="line.8"></a>
 <span class="sourceLineNo">009</span>package imagingbook.pub.fd;<a name="line.9"></a>
 <span class="sourceLineNo">010</span><a name="line.10"></a>
-<span class="sourceLineNo">011</span>import static imagingbook.lib.math.Arithmetic.EPSILON_DOUBLE;<a name="line.11"></a>
-<span class="sourceLineNo">012</span>import static imagingbook.lib.math.Arithmetic.sqr;<a name="line.12"></a>
-<span class="sourceLineNo">013</span>import static java.lang.Math.PI;<a name="line.13"></a>
-<span class="sourceLineNo">014</span>import static java.lang.Math.abs;<a name="line.14"></a>
-<span class="sourceLineNo">015</span>import static java.lang.Math.cos;<a name="line.15"></a>
-<span class="sourceLineNo">016</span>import static java.lang.Math.sin;<a name="line.16"></a>
-<span class="sourceLineNo">017</span>import static java.lang.Math.sqrt;<a name="line.17"></a>
-<span class="sourceLineNo">018</span>import ij.gui.Roi;<a name="line.18"></a>
-<span class="sourceLineNo">019</span>import imagingbook.lib.math.Complex;<a name="line.19"></a>
-<span class="sourceLineNo">020</span><a name="line.20"></a>
-<span class="sourceLineNo">021</span>import java.awt.Point;<a name="line.21"></a>
-<span class="sourceLineNo">022</span>import java.awt.Polygon;<a name="line.22"></a>
-<span class="sourceLineNo">023</span>import java.awt.geom.Point2D;<a name="line.23"></a>
-<span class="sourceLineNo">024</span>import java.util.ArrayList;<a name="line.24"></a>
-<span class="sourceLineNo">025</span>import java.util.List;<a name="line.25"></a>
+<span class="sourceLineNo">011</span>import static imagingbook.lib.math.Arithmetic.sqr;<a name="line.11"></a>
+<span class="sourceLineNo">012</span>import static java.lang.Math.PI;<a name="line.12"></a>
+<span class="sourceLineNo">013</span>import static java.lang.Math.cos;<a name="line.13"></a>
+<span class="sourceLineNo">014</span>import static java.lang.Math.sin;<a name="line.14"></a>
+<span class="sourceLineNo">015</span>import static java.lang.Math.sqrt;<a name="line.15"></a>
+<span class="sourceLineNo">016</span><a name="line.16"></a>
+<span class="sourceLineNo">017</span>import java.awt.Point;<a name="line.17"></a>
+<span class="sourceLineNo">018</span>import java.awt.Polygon;<a name="line.18"></a>
+<span class="sourceLineNo">019</span>import java.awt.geom.Point2D;<a name="line.19"></a>
+<span class="sourceLineNo">020</span>import java.util.ArrayList;<a name="line.20"></a>
+<span class="sourceLineNo">021</span>import java.util.List;<a name="line.21"></a>
+<span class="sourceLineNo">022</span><a name="line.22"></a>
+<span class="sourceLineNo">023</span>import ij.gui.Roi;<a name="line.23"></a>
+<span class="sourceLineNo">024</span>import imagingbook.lib.math.Arithmetic;<a name="line.24"></a>
+<span class="sourceLineNo">025</span>import imagingbook.lib.math.Complex;<a name="line.25"></a>
 <span class="sourceLineNo">026</span><a name="line.26"></a>
 <span class="sourceLineNo">027</span><a name="line.27"></a>
 <span class="sourceLineNo">028</span>/**<a name="line.28"></a>
@@ -76,7 +76,7 @@
 <span class="sourceLineNo">068</span>            dx[i] = g[(i + 1) % N].re - g[i].re;<a name="line.68"></a>
 <span class="sourceLineNo">069</span>            dy[i] = g[(i + 1) % N].im - g[i].im;<a name="line.69"></a>
 <span class="sourceLineNo">070</span>            lambda[i] = sqrt(sqr(dx[i]) + sqr(dy[i])); <a name="line.70"></a>
-<span class="sourceLineNo">071</span>            if (abs(lambda[i]) &lt; EPSILON_DOUBLE) {<a name="line.71"></a>
+<span class="sourceLineNo">071</span>            if (Arithmetic.isZero(lambda[i])) {<a name="line.71"></a>
 <span class="sourceLineNo">072</span>                        throw new Error("Zero-length polygon segment!");<a name="line.72"></a>
 <span class="sourceLineNo">073</span>                }<a name="line.73"></a>
 <span class="sourceLineNo">074</span>            L[i+1] = L[i] + lambda[i];<a name="line.74"></a>
