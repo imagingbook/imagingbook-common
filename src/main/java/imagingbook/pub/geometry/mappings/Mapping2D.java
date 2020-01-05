@@ -1,4 +1,4 @@
-package imagingbook.pub.geometry.mappings2;
+package imagingbook.pub.geometry.mappings;
 
 import imagingbook.pub.geometry.basic.Point;
 

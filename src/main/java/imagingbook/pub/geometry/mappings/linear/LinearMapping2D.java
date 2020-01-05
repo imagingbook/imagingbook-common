@@ -7,12 +7,12 @@
  * Visit http://imagingbook.com for additional details.
  *******************************************************************************/
 
-package imagingbook.pub.geometry.mappings2.linear;
+package imagingbook.pub.geometry.mappings.linear;
 
 import imagingbook.lib.math.Arithmetic;
 import imagingbook.lib.math.Matrix;
 import imagingbook.pub.geometry.basic.Point;
-import imagingbook.pub.geometry.mappings2.Mapping2D;
+import imagingbook.pub.geometry.mappings.Mapping2D;
 
 /**
  * This class represents an arbitrary linear transformation in 2D.

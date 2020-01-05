@@ -12,7 +12,7 @@ import org.apache.commons.math3.linear.SingularValueDecomposition;
 
 import imagingbook.lib.math.Matrix;
 import imagingbook.pub.geometry.basic.Point;
-import imagingbook.pub.geometry.mappings2.linear.AffineMapping2D;
+import imagingbook.pub.geometry.mappings.linear.AffineMapping2D;
 
 
 /**

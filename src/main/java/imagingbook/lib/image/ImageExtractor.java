@@ -10,9 +10,9 @@ package imagingbook.lib.image;
 
 import ij.process.ImageProcessor;
 import imagingbook.pub.geometry.basic.Point;
-import imagingbook.pub.geometry.mappings2.linear.AffineMapping2D;
-import imagingbook.pub.geometry.mappings2.linear.LinearMapping2D;
-import imagingbook.pub.geometry.mappings2.linear.ProjectiveMapping2D;
+import imagingbook.pub.geometry.mappings.linear.AffineMapping2D;
+import imagingbook.pub.geometry.mappings.linear.LinearMapping2D;
+import imagingbook.pub.geometry.mappings.linear.ProjectiveMapping2D;
 
 /**
  * Use to exctract warped images for testing the Lucas-Kanade matcher.

@@ -7,10 +7,10 @@
  * Visit http://imagingbook.com for additional details.
  *******************************************************************************/
 
-package imagingbook.pub.geometry.mappings2.nonlinear;
+package imagingbook.pub.geometry.mappings.nonlinear;
 
 import imagingbook.pub.geometry.basic.Point;
-import imagingbook.pub.geometry.mappings2.Mapping2D;
+import imagingbook.pub.geometry.mappings.Mapping2D;
 
 /**
  * A non-linear mapping that produces a ripple effect.

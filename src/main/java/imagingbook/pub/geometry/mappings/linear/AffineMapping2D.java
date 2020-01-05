@@ -7,7 +7,7 @@
  * Visit http://imagingbook.com for additional details.
  *******************************************************************************/
 
-package imagingbook.pub.geometry.mappings2.linear;
+package imagingbook.pub.geometry.mappings.linear;
 
 import imagingbook.lib.math.Arithmetic;
 import imagingbook.lib.math.Matrix;

@@ -7,7 +7,7 @@
  * Visit http://imagingbook.com for additional details.
  *******************************************************************************/
 
-package imagingbook.pub.geometry.mappings2.linear;
+package imagingbook.pub.geometry.mappings.linear;
 
 import org.apache.commons.math3.linear.DecompositionSolver;
 import org.apache.commons.math3.linear.MatrixUtils;
@@ -18,7 +18,7 @@ import org.apache.commons.math3.linear.SingularValueDecomposition;
 import imagingbook.lib.math.Arithmetic;
 import imagingbook.lib.settings.PrintPrecision;
 import imagingbook.pub.geometry.basic.Point;
-import imagingbook.pub.geometry.mappings2.JacobianSupport2D;
+import imagingbook.pub.geometry.mappings.JacobianSupport2D;
 
 
 /**

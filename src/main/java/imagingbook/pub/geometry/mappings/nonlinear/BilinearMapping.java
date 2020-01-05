@@ -7,11 +7,11 @@
  * Visit http://imagingbook.com for additional details.
  *******************************************************************************/
 
-package imagingbook.pub.geometry.mappings2.nonlinear;
+package imagingbook.pub.geometry.mappings.nonlinear;
 
 import imagingbook.lib.math.Matrix;
 import imagingbook.pub.geometry.basic.Point;
-import imagingbook.pub.geometry.mappings2.Mapping2D;
+import imagingbook.pub.geometry.mappings.Mapping2D;
 
 /**
  * This class represents a bilinear transformation in 2D with 8

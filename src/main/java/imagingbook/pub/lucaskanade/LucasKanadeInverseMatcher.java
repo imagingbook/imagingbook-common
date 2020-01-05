@@ -13,7 +13,7 @@ import ij.process.FloatProcessor;
 import imagingbook.lib.ij.IjUtils;
 import imagingbook.lib.math.Matrix;
 import imagingbook.pub.geometry.basic.Point;
-import imagingbook.pub.geometry.mappings2.linear.ProjectiveMapping2D;
+import imagingbook.pub.geometry.mappings.linear.ProjectiveMapping2D;
 
 
 /**

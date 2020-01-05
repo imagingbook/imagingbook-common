@@ -13,7 +13,7 @@ import ij.gui.ShapeRoi;
 import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
 import imagingbook.pub.geometry.basic.Point;
-import imagingbook.pub.geometry.mappings2.linear.LinearMapping2D;
+import imagingbook.pub.geometry.mappings.linear.LinearMapping2D;
 
 import java.awt.Color;
 import java.awt.Rectangle;

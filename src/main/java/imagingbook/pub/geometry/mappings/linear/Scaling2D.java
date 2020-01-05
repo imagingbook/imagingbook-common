@@ -7,7 +7,7 @@
  * Visit http://imagingbook.com for additional details.
  *******************************************************************************/
 
-package imagingbook.pub.geometry.mappings2.linear;
+package imagingbook.pub.geometry.mappings.linear;
 
 /**
  * This class represents a 2D scaling transformation (as a special case of 
