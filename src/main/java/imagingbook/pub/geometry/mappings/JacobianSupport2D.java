@@ -20,6 +20,7 @@ import imagingbook.pub.geometry.basic.Point;
  * 
  * <p> Use of an interface allows implementation by other (non-linear) mappings
  * that ore not sub-classes of {@code ProjectiveMapping}.</p>
+ * TODO: move to LucasKanade!
  */
 public interface JacobianSupport2D {
 	
@@ -30,14 +31,14 @@ public interface JacobianSupport2D {
 	 */
 	public double[] getParameters();
 	
-	/**
-	 * Creates a new instance of this mapping from a parameter vector.
-	 * Note that this is a non-static method, i.e., must be called
-	 * on an instance of this mapping (which is usually available).
-	 * @param p parameter vector
-	 * @return a new instance of this mapping
-	 */
-	public Mapping2D fromParameters(double[] p);
+//	/**
+//	 * Creates a new instance of this mapping from a parameter vector.
+//	 * Note that this is a non-static method, i.e., must be called
+//	 * on an instance of this mapping (which is usually available).
+//	 * @param p parameter vector
+//	 * @return a new instance of this mapping
+//	 */
+//	public Mapping2D fromParameters(double[] p);
 	
 	/** Returns the Jacobian matrix of this geometric transformation,
 	 * evaluated for the given 2D position.

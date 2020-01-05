@@ -140,6 +140,7 @@ public class LucasKanadeForwardMatcher extends LucasKanadeMatcher {
 			showSteepestDescentImages(S);
 		}
 
-		return Tp.fromParameters(p);
+//		return Tp.fromParameters(p);
+		return ProjectiveMapping2D.fromParameters(p);
 	}
 }

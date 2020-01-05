@@ -128,7 +128,8 @@ public class LucasKanadeInverseMatcher extends LucasKanadeMatcher {
 		qmag = Matrix.normL2squared(qopt);
 		
 		// Calculate the warp parameters p', such that T_p'(x) = T_p (T^-1_q (x), for any point x.
-		ProjectiveMapping2D Tqopt = Tp.fromParameters(qopt);
+//		ProjectiveMapping2D Tqopt = Tp.fromParameters(qopt);
+		ProjectiveMapping2D Tqopt = ProjectiveMapping2D.fromParameters(qopt);
 		ProjectiveMapping2D Tqopti = Tqopt.getInverse();
 		return Tqopti.concat(Tp);
 	}

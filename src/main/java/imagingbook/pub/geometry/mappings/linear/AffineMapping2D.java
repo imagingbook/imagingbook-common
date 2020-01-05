@@ -69,6 +69,16 @@ public class AffineMapping2D extends ProjectiveMapping2D {
 	public AffineMapping2D() {
 		super();
 	}
+	
+	/**
+	 * Creates a linear mapping from a transformation matrix A,
+	 * which must be at least of size 2 x 3.
+	 * If A is larger than 2 x 3, the remaining elements are ignored.
+	 * @param A a 2 x 3(or larger) matrix
+	 */
+	public AffineMapping2D(double[][] A) {
+		super(A[0][0], A[0][1], A[0][2], A[1][0], A[1][1], A[1][2], 0, 0);
+	}
 
 	/**
 	 * Creates an affine mapping from the specified matrix elements.
@@ -169,8 +179,10 @@ public class AffineMapping2D extends ProjectiveMapping2D {
 		return new double[] { a00 - 1, a01, a10, a11 - 1, a02, a12 };
 	}
 	
-	@Override
-	public AffineMapping2D fromParameters(double[] p) {
+	public static AffineMapping2D fromParameters(double[] p) {
+		if (p.length < 6) {
+			throw new IllegalArgumentException("Affine mapping requires 6 parameters");
+		}
 		return new AffineMapping2D(p[0] + 1, p[1], p[2], p[3] + 1, p[4], p[5]);
 	}
 
@@ -205,7 +217,6 @@ public class AffineMapping2D extends ProjectiveMapping2D {
 		
 		double[][] I = Matrix.multiply(a, ai);
 		System.out.println("\ntest: should be the  identity matrix: = \n" + Matrix.toString(I));
-	
 	}
 
 }

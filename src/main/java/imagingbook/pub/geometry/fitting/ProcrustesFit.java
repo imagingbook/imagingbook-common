@@ -40,7 +40,9 @@ public class ProcrustesFit implements LinearFit2D {
 	private RealMatrix R = null;					// orthogonal (rotation) matrix
 	private RealVector t = null;					// translation vector
 	private double s = 1;							// scale
-	private double err = Double.POSITIVE_INFINITY;	// total (squared) error
+	
+	private final RealMatrix A;						// the calculated transformation matrix
+	private final double err;						// total error
 	
 	// --------------------------------------------------------------
 	
@@ -111,7 +113,13 @@ public class ProcrustesFit implements LinearFit2D {
 			t = new ArrayRealVector(2);	// zero vector
 		}
 		
-		// TODO: sqrt() seems to be OK! result is same order of magnitude but ca. 50 % of euclidean error
+		// make the transformation matrix A
+		RealMatrix cR = R.scalarMultiply(s);
+		A = MatrixUtils.createRealMatrix(2, 3);
+		A.setSubMatrix(cR.getData(), 0, 0);
+		A.setColumnVector(2, t);
+		
+		// calculate the fitting error:
 		err = Math.sqrt(sqr(normQ) - sqr(S.multiply(D).getTrace() / normP));	
 	}
 	
@@ -144,12 +152,13 @@ public class ProcrustesFit implements LinearFit2D {
 	// --------------------------------------------------------
 	
 	@Override
-	public RealMatrix getTransformationMatrix() {
-		RealMatrix cR = R.scalarMultiply(s);
-		RealMatrix M = MatrixUtils.createRealMatrix(2, 3);
-		M.setSubMatrix(cR.getData(), 0, 0);
-		M.setColumnVector(2, t);
-		return M;
+	public double[][] getTransformationMatrix() {
+//		RealMatrix cR = R.scalarMultiply(s);
+//		RealMatrix A = MatrixUtils.createRealMatrix(2, 3);
+//		A.setSubMatrix(cR.getData(), 0, 0);
+//		A.setColumnVector(2, t);
+//		return A;
+		return A.getData();
 	}
 	
 	@Override
@@ -182,7 +191,7 @@ public class ProcrustesFit implements LinearFit2D {
 	}
 	
 	private double getEuclideanError2(Point[] P, Point[] Q) {	
-		return AffineFit2D.getError(P, Q, getTransformationMatrix());
+		return AffineFit2D.calculateError(P, Q, MatrixUtils.createRealMatrix(this.getTransformationMatrix()));
 	}
 	
 	
@@ -304,11 +313,31 @@ public class ProcrustesFit implements LinearFit2D {
 		System.out.format("euclidean error1 = %.6f\n", pf.getEuclideanError(P, Q));
 		System.out.format("euclidean error2 = %.6f\n", pf.getEuclideanError2(P, Q));
 		
-		RealMatrix M = pf.getTransformationMatrix();
-		System.out.println("transformation matrix: A = \n" + Matrix.toString(M.getData()));
+		double[][] A = pf.getTransformationMatrix();
+		System.out.println("transformation matrix: A = \n" + Matrix.toString(A));
 	}
 
+	/*
+	original alpha: a = 0.600000
+	original rotation: R = 
+	{{0.825336, -0.564642}, 
+	{0.564642, 0.825336}}
+	original translation: t = {4.000000, -3.000000}
+	original scale: s = 3.500000
 
+	estimated alpha: a = 0.599589
+	estimated rotation: R = 
+	{{0.825568, -0.564303}, 
+	{0.564303, 0.825568}}
+	estimated translation: t = {3.980905, -3.011055}
+	estimated scale: s = 3.500560
 
+	fitting error = 0.048079
+	euclidean error1 = 0.081633
+	euclidean error2 = 0.081633
+	transformation matrix: A = 
+	{{2.889950, -1.975377, 3.980905}, 
+	{1.975377, 2.889950, -3.011055}}
+	 */
 }
 

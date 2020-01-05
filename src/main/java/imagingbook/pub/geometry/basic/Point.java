@@ -1,8 +1,8 @@
 package imagingbook.pub.geometry.basic;
 
-import java.util.Collection;
+import static imagingbook.lib.math.Arithmetic.sqr;
 
-import imagingbook.pub.geometry.basic.Point;
+import java.util.Collection;
 
 /** 
  * Interface specifying the behavior of a simple 2D point.
@@ -11,11 +11,11 @@ public interface Point {
 	double getX();
 	double getY();
 	
-	public static Point create(double x, double y) {
+	static Point create(double x, double y) {
 		return new Imp(x, y);
 	}
 	
-	public static Point create(double[] xy) {
+	static Point create(double[] xy) {
 		return new Imp(xy[0], xy[1]);
 	}
 	
@@ -23,9 +23,14 @@ public interface Point {
 		return new double[] {this.getX(), this.getY()};
 	}
 	
-	public static Point[] toArray(Collection<Point> points) {
+	static Point[] toArray(Collection<Point> points) {
 		return points.toArray(new Point[0]);
 	}
+	
+	static double distance(Point p, Point q) {
+		return Math.sqrt(sqr(q.getX() - p.getX()) + sqr(q.getY() - p.getY()));
+	}
+	
 	
 	/**
 	 * Simple fallback implementation of the {@link Point} interface.

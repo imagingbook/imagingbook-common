@@ -82,8 +82,10 @@ public class Translation2D extends AffineMapping2D {
 		return p;
 	}
 	
-	@Override
-	public Translation2D fromParameters(double[] p) {
+	public static Translation2D fromParameters(double[] p) {
+		if (p.length < 2) {
+			throw new IllegalArgumentException("Translation requires 2 parameters");
+		}
 		return new Translation2D(p[0], p[1]);
 	}
 	

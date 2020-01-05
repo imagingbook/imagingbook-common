@@ -169,6 +169,17 @@ public class ProjectiveMapping2D extends LinearMapping2D implements JacobianSupp
 	}
 	
 	/**
+	 * Creates a projective mapping from a transformation matrix A,
+	 * which must be at least of size 3 x 3.
+	 * If A is larger than 3 x 3, the remaining elements are ignored.
+	 * @param A a 2 x 3(or larger) matrix
+	 */
+	public ProjectiveMapping2D(double[][] A) {
+		this(new LinearMapping2D(A));
+	}
+
+	
+	/**
 	 * Creates a projective mapping from the specified matrix elements.
 	 * @param a00 matrix element A_00
 	 * @param a01 matrix element A_01
@@ -243,8 +254,11 @@ public class ProjectiveMapping2D extends LinearMapping2D implements JacobianSupp
 		return new double[] { a00 - 1, a01, a10, a11 - 1, a20, a21, a02, a12 };
 	}
 	
-	@Override
-	public ProjectiveMapping2D fromParameters(double[] p) {
+	// TODO: move this to LukasKanade
+	public static ProjectiveMapping2D fromParameters(double[] p) {
+		if (p.length < 8) {
+			throw new IllegalArgumentException("Affine mapping requires 8 parameters");
+		}
 		return new ProjectiveMapping2D(
 				p[0] + 1,   p[1],        p[6],
 				p[2],       p[3] + 1,    p[7],
@@ -278,7 +292,7 @@ public class ProjectiveMapping2D extends LinearMapping2D implements JacobianSupp
 		PrintPrecision.set(6);
 
 		// book example:
-		Point[] A = {
+		Point[] P = {
 				Point.create(2, 5),
 				Point.create(4, 6),
 				Point.create(7, 9),
@@ -286,7 +300,7 @@ public class ProjectiveMapping2D extends LinearMapping2D implements JacobianSupp
 				Point.create(5.2, 9.1)	// 5 points, overdetermined!
 				};
 		
-		Point[] B = {
+		Point[] Q = {
 				Point.create(4, 3),
 				Point.create(5, 2),
 				Point.create(9, 3),
@@ -294,13 +308,13 @@ public class ProjectiveMapping2D extends LinearMapping2D implements JacobianSupp
 				Point.create(7, 4.9)	// 5 points, overdetermined!
 				};
 		
-		ProjectiveMapping2D pm = ProjectiveMapping2D.fromNPoints(A, B);
+		ProjectiveMapping2D pm = ProjectiveMapping2D.fromNPoints(P, Q);
 		
 		System.out.println("\nprojective mapping = \n" + pm.toString());
 		
-		for (int i = 0; i < A.length; i++) {
-			Point Bi = pm.applyTo(A[i]);
-			System.out.println(A[i].toString() + " -> " + Bi.toString());
+		for (int i = 0; i < P.length; i++) {
+			Point Bi = pm.applyTo(P[i]);
+			System.out.println(P[i].toString() + " -> " + Bi.toString());
 		}
 		
 		System.out.println("pm is of class " + pm.getClass().getName());
@@ -308,12 +322,39 @@ public class ProjectiveMapping2D extends LinearMapping2D implements JacobianSupp
 		pmi = pmi.normalize();
 		System.out.println("\ninverse projective mapping (normalized) = \n" + pmi.toString());
 		
-		for (int i = 0; i < B.length; i++) {
-			Point Ai = pmi.applyTo(B[i]);
-			System.out.println(B[i].toString() + " -> " + Ai.toString());
+		for (int i = 0; i < Q.length; i++) {
+			Point Ai = pmi.applyTo(Q[i]);
+			System.out.println(Q[i].toString() + " -> " + Ai.toString());
 		}
 		
 		ProjectiveMapping2D testId = pm.concat(pmi);
 		System.out.println("\ntest: should be a scaled identity matrix: = \n" + testId.toString());
 	}
+	/*
+	 projective mapping = 
+	{{-0.732424, 1.208712, 0.244379}, 
+	{-1.702388, 1.725545, -1.654658}, 
+	{-0.206047, 0.123181, 1.000000}}
+	Point[2,000, 5,000] -> Point[4,007, 2,964]
+	Point[4,000, 6,000] -> Point[4,992, 2,065]
+	Point[7,000, 9,000] -> Point[8,999, 2,939]
+	Point[5,000, 9,000] -> Point[6,918, 4,973]
+	Point[5,200, 9,100] -> Point[7,084, 4,950]
+	pm is of class imagingbook.pub.geometry.mappings.linear.ProjectiveMapping2D
+	
+	inverse projective mapping (normalized) = 
+	{{2.430345, -1.484645, -3.050507}, 
+	{2.573894, -0.859176, -2.050649}, 
+	{0.183712, -0.200073, 1.000000}}
+	Point[4,000, 3,000] -> Point[1,954, 4,995]
+	Point[5,000, 2,000] -> Point[4,038, 5,993]
+	Point[9,000, 3,000] -> Point[6,998, 9,028]
+	Point[7,000, 5,000] -> Point[5,086, 9,078]
+	Point[7,000, 4,900] -> Point[5,122, 9,005]
+	
+	test: should be a scaled identity matrix: = 
+	{{1.000000, -0.000000, -0.000000}, 
+	{0.000000, 1.000000, -0.000000}, 
+	{0.000000, 0.000000, 1.000000}}
+	 */
 }

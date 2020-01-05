@@ -11,6 +11,7 @@ import org.apache.commons.math3.linear.SingularValueDecomposition;
 
 import imagingbook.lib.math.Matrix;
 import imagingbook.pub.geometry.basic.Point;
+import imagingbook.pub.geometry.mappings.linear.AffineMapping2D;
 
 /**
  * TODO: see ProjectiveMapping2D.fromNPoints(Point[] P, Point[] Q) -- remove 1 version (either fit or mapping)!
@@ -62,10 +63,10 @@ public class AffineFit2D implements LinearFit2D {
 		DecompositionSolver solver = new SingularValueDecomposition(M).getSolver();
 		RealVector a = solver.solve(b);
 		A = makeTransformationMatrix(a);
-		err = getError(P, Q, A);
+		err = calculateError(P, Q, A);
 	}
 
-	// creates a n x (n+1) transformation matrix from the elements of a
+	// creates a (2 x 3) transformation matrix from the elements of a
 	private RealMatrix makeTransformationMatrix(RealVector a) {
 		RealMatrix A = MatrixUtils.createRealMatrix(2, 3);
 		int i = 0;
@@ -93,18 +94,18 @@ public class AffineFit2D implements LinearFit2D {
 	 * i.e., {@code e = sum_i (||p_i * A - q_i||)}.
 	 * @param P	the first point sequence
 	 * @param Q the second point sequence
-	 * @param A	a (2 x 3) affine transformation matrix
+	 * @param A	a 2 x 3 (affine) transformation matrix
 	 * @return the error {@code e}
 	 */
-	protected static double getError(Point[] P, Point[] Q, RealMatrix A) {
+	protected static double calculateError(Point[] P, Point[] Q, RealMatrix A) {
 		int m = Math.min(P.length,  Q.length);
+		AffineMapping2D map = new AffineMapping2D(A.getData());
 		double errSum = 0;
 		for (int i = 0; i < m; i++) {
 			Point p = P[i];
 			Point q = Q[i];
-			Point p2 = Point.create(A.operate(Matrix.toHomogeneous(p.toArray())));
-			errSum = errSum + 
-					Math.sqrt(sqr(q.getX() - p2.getX()) + sqr(q.getY() - p2.getY()));
+			Point pp = map.applyTo(p);
+			errSum = errSum + Point.distance(q, pp);
 		}
 		return errSum;
 	}
@@ -112,8 +113,8 @@ public class AffineFit2D implements LinearFit2D {
 	// --------------------------------------------------------
 
 	@Override
-	public RealMatrix getTransformationMatrix() { // TODO: should return a mapping!?
-		return A;
+	public double[][] getTransformationMatrix() {
+		return A.getData();
 	}
 
 	@Override
