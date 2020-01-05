@@ -15,9 +15,12 @@ public class ProjectiveFit2D implements LinearFit2D {
 	private final double err;		// the calculated error
 	
 	/**
-	 * 
-	 * @param P
-	 * @param Q
+	 * Constructor.
+	 * Fits two sequences of 2D points using a projective transformation model.
+	 * At least 4 point pairs are required. For 4 point pairs, the solution
+	 * is an exact fit, otherwise a least-squares fit is found.
+	 * @param P the source points
+	 * @param Q the target points
 	 */
 	public ProjectiveFit2D(Point[] P, Point[] Q) {
 		checkSize(P, Q);

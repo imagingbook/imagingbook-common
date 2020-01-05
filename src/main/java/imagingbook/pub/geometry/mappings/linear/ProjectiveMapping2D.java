@@ -9,15 +9,10 @@
 
 package imagingbook.pub.geometry.mappings.linear;
 
-import org.apache.commons.math3.linear.DecompositionSolver;
-import org.apache.commons.math3.linear.MatrixUtils;
-import org.apache.commons.math3.linear.RealMatrix;
-import org.apache.commons.math3.linear.RealVector;
-import org.apache.commons.math3.linear.SingularValueDecomposition;
-
 import imagingbook.lib.math.Arithmetic;
 import imagingbook.lib.settings.PrintPrecision;
 import imagingbook.pub.geometry.basic.Point;
+import imagingbook.pub.geometry.fitting.ProjectiveFit2D;
 import imagingbook.pub.geometry.mappings.JacobianSupport2D;
 
 
@@ -32,132 +27,145 @@ public class ProjectiveMapping2D extends LinearMapping2D implements JacobianSupp
 	//  static methods -----------------------------------------------------
 	
 	/**
-	 * Creates the most specific linear mapping from two sequences of corresponding
-	 * 2D points.
-	 * @param P first point sequence
-	 * @param Q second point sequence
-	 * @return a linear mapping derived from point correspondences
+	 * Creates a projective 2D mapping from two sequences of corresponding points.
+	 * If 4 point pairs are specified, the mapping is exact, otherwise a
+	 * minimum least-squares fit is calculated.
+	 * @param P the source points
+	 * @param Q the target points
+	 * @return
 	 */
-	public static ProjectiveMapping2D makeMapping(Point[] P, Point[] Q) {
-		int n = Math.min(P.length, Q.length);
-		if (n < 1) {
-			throw new IllegalArgumentException("cannot create a mapping from zero points");
-		}
-		else if (n == 1) {
-			return new Translation2D(P[0], Q[0]);
-		}
-		else if (n == 2) {	// TODO: similarity transformation?
-			throw new UnsupportedOperationException("makeMapping: don't know yet how to handle 2 points");
-		}
-		else if (n == 3) {
-			return AffineMapping2D.from3Points(P, Q);
-		}
-		else if (n == 4) {
-			return ProjectiveMapping2D.from4Points(P, Q);
-		}
-		else {	// n > 4 (over-determined)
-			return ProjectiveMapping2D.fromNPoints(P, Q);
-		}
+	public static ProjectiveMapping2D fromPoints(Point[] P, Point[] Q) {
+		ProjectiveFit2D fit = new ProjectiveFit2D(P, Q);
+		return new ProjectiveMapping2D(fit.getTransformationMatrix());
 	}
 	
-	/**
-	 * Creates the projective mapping from the unit square S to
-	 * the arbitrary quadrilateral P, specified by four points.
-	 * @param p0 point 0
-	 * @param p1 point 1
-	 * @param p2 point 2
-	 * @param p3 point 3
-	 * @return a new projective mapping
-	 */
-	public static ProjectiveMapping2D fromUnitSquareTo4Points(Point p0, Point p1, Point p2, Point p3) {
-		double x0 = p0.getX(), x1 = p1.getX(), x2 = p2.getX(), x3 = p3.getX();
-		double y0 = p0.getY(), y1 = p1.getY(), y2 = p2.getY(), y3 = p3.getY();
-		double S = (x1 - x2) * (y3 - y2) - (x3 - x2) * (y1 - y2);
-		if (Arithmetic.isZero(S)) {
-			throw new ArithmeticException("fromUnitSquareTo4Points(): division by zero!");
-		}
-		double a20 = ((x0 - x1 + x2 - x3) * (y3 - y2) - (y0 - y1 + y2 - y3) * (x3 - x2)) / S;
-		double a21 = ((y0 - y1 + y2 - y3) * (x1 - x2) - (x0 - x1 + x2 - x3) * (y1 - y2)) / S;
-		double a00 = x1 - x0 + a20 * x1;
-		double a01 = x3 - x0 + a21 * x3;
-		double a02 = x0;
-		double a10 = y1 - y0 + a20 * y1;
-		double a11 = y3 - y0 + a21 * y3;
-		double a12 = y0;
-		return new ProjectiveMapping2D(a00, a01, a02, a10, a11, a12, a20, a21);
-	}
+//	/**
+//	 * Creates the most specific linear mapping from two sequences of corresponding
+//	 * 2D points.
+//	 * @param P first point sequence
+//	 * @param Q second point sequence
+//	 * @return a linear mapping derived from point correspondences
+//	 */
+//	public static ProjectiveMapping2D makeMapping(Point[] P, Point[] Q) {
+//		int n = Math.min(P.length, Q.length);
+//		if (n < 1) {
+//			throw new IllegalArgumentException("cannot create a mapping from zero points");
+//		}
+//		else if (n == 1) {
+//			return new Translation2D(P[0], Q[0]);
+//		}
+//		else if (n == 2) {	// TODO: similarity transformation?
+//			throw new UnsupportedOperationException("makeMapping: don't know yet how to handle 2 points");
+//		}
+//		else if (n == 3) {
+//			return AffineMapping2D.fromPoints(P, Q);
+//		}
+//		else if (n == 4) {
+//			return ProjectiveMapping2D.from4Points(P, Q);
+//		}
+//		else {	// n > 4 (over-determined)
+//			return ProjectiveMapping2D.fromNPoints(P, Q);
+//		}
+//	}
 	
-	/**
-	 * Creates a new projective mapping between arbitrary two quadrilaterals P, Q.
-	 * @param p0 point 0 of source quad P
-	 * @param p1 point 1 of source quad P
-	 * @param p2 point 2 of source quad P
-	 * @param p3 point 3 of source quad P
-	 * @param q0 point 0 of target quad Q
-	 * @param q1 point 1 of target quad Q
-	 * @param q2 point 2 of target quad Q
-	 * @param q3 point 3 of target quad Q
-	 * @return a new projective mapping
-	 */
-	public static ProjectiveMapping2D from4Points(
-			Point p0, Point p1, Point p2, Point p3, 
-			Point q0, Point q1, Point q2, Point q3)	{
-		ProjectiveMapping2D T1 = ProjectiveMapping2D.fromUnitSquareTo4Points(p0, p1, p2, p3);
-		ProjectiveMapping2D T2 = ProjectiveMapping2D.fromUnitSquareTo4Points(q0, q1, q2, q3);
-		ProjectiveMapping2D T1i = T1.getInverse();
-		return T1i.concat(T2);		
-	}
+//	/**
+//	 * Creates the projective mapping from the unit square S to
+//	 * the arbitrary quadrilateral P, specified by four points.
+//	 * @param p0 point 0
+//	 * @param p1 point 1
+//	 * @param p2 point 2
+//	 * @param p3 point 3
+//	 * @return a new projective mapping
+//	 */
+//	public static ProjectiveMapping2D fromUnitSquareTo4Points(Point p0, Point p1, Point p2, Point p3) {
+//		double x0 = p0.getX(), x1 = p1.getX(), x2 = p2.getX(), x3 = p3.getX();
+//		double y0 = p0.getY(), y1 = p1.getY(), y2 = p2.getY(), y3 = p3.getY();
+//		double S = (x1 - x2) * (y3 - y2) - (x3 - x2) * (y1 - y2);
+//		if (Arithmetic.isZero(S)) {
+//			throw new ArithmeticException("fromUnitSquareTo4Points(): division by zero!");
+//		}
+//		double a20 = ((x0 - x1 + x2 - x3) * (y3 - y2) - (y0 - y1 + y2 - y3) * (x3 - x2)) / S;
+//		double a21 = ((y0 - y1 + y2 - y3) * (x1 - x2) - (x0 - x1 + x2 - x3) * (y1 - y2)) / S;
+//		double a00 = x1 - x0 + a20 * x1;
+//		double a01 = x3 - x0 + a21 * x3;
+//		double a02 = x0;
+//		double a10 = y1 - y0 + a20 * y1;
+//		double a11 = y3 - y0 + a21 * y3;
+//		double a12 = y0;
+//		return new ProjectiveMapping2D(a00, a01, a02, a10, a11, a12, a20, a21);
+//	}
 	
-	/**
-	 * Creates a new projective mapping between arbitrary two quadrilaterals P, Q.
-	 * @param P source quad
-	 * @param Q target quad
-	 * @return a new projective mapping
-	 */
-	public static final ProjectiveMapping2D from4Points(Point[] P, Point[] Q) {
-		return ProjectiveMapping2D.from4Points(P[0], P[1], P[2], P[3], Q[0], Q[1], Q[2], Q[3]);
-	}
+//	/**
+//	 * Creates a new projective mapping between arbitrary two quadrilaterals P, Q.
+//	 * @param p0 point 0 of source quad P
+//	 * @param p1 point 1 of source quad P
+//	 * @param p2 point 2 of source quad P
+//	 * @param p3 point 3 of source quad P
+//	 * @param q0 point 0 of target quad Q
+//	 * @param q1 point 1 of target quad Q
+//	 * @param q2 point 2 of target quad Q
+//	 * @param q3 point 3 of target quad Q
+//	 * @return a new projective mapping
+//	 */
+//	public static ProjectiveMapping2D from4Points(
+//			Point p0, Point p1, Point p2, Point p3, 
+//			Point q0, Point q1, Point q2, Point q3)	{
+//		ProjectiveMapping2D T1 = ProjectiveMapping2D.fromUnitSquareTo4Points(p0, p1, p2, p3);
+//		ProjectiveMapping2D T2 = ProjectiveMapping2D.fromUnitSquareTo4Points(q0, q1, q2, q3);
+//		ProjectiveMapping2D T1i = T1.getInverse();
+//		return T1i.concat(T2);		
+//	}
 	
-	/**
-	 * Maps between n &gt; 4 point pairs, finds a least-squares solution
-	 * for the homography parameters.
-	 * TODO: this is UNFINISHED code! check against DLT estimation of homography
-	 * @param P sequence of points (source)
-	 * @param Q sequence of points (target)
-	 * @return a new projective mapping
-	 */
-	public static ProjectiveMapping2D fromNPoints(Point[] P, Point[] Q) {
-		final int n = P.length;
-		if (n < 4) {
-			throw new IllegalArgumentException(ProjectiveMapping2D.class.getName() + ": fromNPoints() needs at least 4 points pairs");
-		}
-		double[] ba = new double[2 * n];
-		double[][] Ma = new double[2 * n][];
-		for (int i = 0; i < n; i++) {
-			double x = P[i].getX();
-			double y = P[i].getY();
-			double u = Q[i].getX();
-			double v = Q[i].getY();
-			ba[2 * i + 0] = u;
-			ba[2 * i + 1] = v;
-			Ma[2 * i + 0] = new double[] { x, y, 1, 0, 0, 0, -u * x, -u * y };
-			Ma[2 * i + 1] = new double[] { 0, 0, 0, x, y, 1, -v * x, -v * y };
-		}
-		
-		RealMatrix M = MatrixUtils.createRealMatrix(Ma);
-		RealVector b = MatrixUtils.createRealVector(ba);
-		DecompositionSolver solver = new SingularValueDecomposition(M).getSolver();
-		RealVector h = solver.solve(b);
-		double a00 = h.getEntry(0);
-		double a01 = h.getEntry(1);
-		double a02 = h.getEntry(2);
-		double a10 = h.getEntry(3);
-		double a11 = h.getEntry(4);
-		double a12 = h.getEntry(5);
-		double a20 = h.getEntry(6);
-		double a21 = h.getEntry(7);
-		return new ProjectiveMapping2D(a00, a01, a02, a10, a11, a12, a20, a21);
-	}
+//	/**
+//	 * Creates a new projective mapping between arbitrary two quadrilaterals P, Q.
+//	 * @param P source quad
+//	 * @param Q target quad
+//	 * @return a new projective mapping
+//	 */
+//	public static final ProjectiveMapping2D from4Points(Point[] P, Point[] Q) {
+//		return ProjectiveMapping2D.from4Points(P[0], P[1], P[2], P[3], Q[0], Q[1], Q[2], Q[3]);
+//	}
+	
+//	/**
+//	 * Maps between n &gt; 4 point pairs, finds a least-squares solution
+//	 * for the homography parameters.
+//	 * TODO: this is UNFINISHED code! check against DLT estimation of homography
+//	 * @param P sequence of points (source)
+//	 * @param Q sequence of points (target)
+//	 * @return a new projective mapping
+//	 */
+//	public static ProjectiveMapping2D fromNPoints(Point[] P, Point[] Q) {
+//		final int n = P.length;
+//		if (n < 4) {
+//			throw new IllegalArgumentException(ProjectiveMapping2D.class.getName() + ": fromNPoints() needs at least 4 points pairs");
+//		}
+//		double[] ba = new double[2 * n];
+//		double[][] Ma = new double[2 * n][];
+//		for (int i = 0; i < n; i++) {
+//			double x = P[i].getX();
+//			double y = P[i].getY();
+//			double u = Q[i].getX();
+//			double v = Q[i].getY();
+//			ba[2 * i + 0] = u;
+//			ba[2 * i + 1] = v;
+//			Ma[2 * i + 0] = new double[] { x, y, 1, 0, 0, 0, -u * x, -u * y };
+//			Ma[2 * i + 1] = new double[] { 0, 0, 0, x, y, 1, -v * x, -v * y };
+//		}
+//		
+//		RealMatrix M = MatrixUtils.createRealMatrix(Ma);
+//		RealVector b = MatrixUtils.createRealVector(ba);
+//		DecompositionSolver solver = new SingularValueDecomposition(M).getSolver();
+//		RealVector h = solver.solve(b);
+//		double a00 = h.getEntry(0);
+//		double a01 = h.getEntry(1);
+//		double a02 = h.getEntry(2);
+//		double a10 = h.getEntry(3);
+//		double a11 = h.getEntry(4);
+//		double a12 = h.getEntry(5);
+//		double a20 = h.getEntry(6);
+//		double a21 = h.getEntry(7);
+//		return new ProjectiveMapping2D(a00, a01, a02, a10, a11, a12, a20, a21);
+//	}
 	
 	//  constructors -----------------------------------------------------
 	
@@ -308,7 +316,7 @@ public class ProjectiveMapping2D extends LinearMapping2D implements JacobianSupp
 				Point.create(7, 4.9)	// 5 points, overdetermined!
 				};
 		
-		ProjectiveMapping2D pm = ProjectiveMapping2D.fromNPoints(P, Q);
+		ProjectiveMapping2D pm = ProjectiveMapping2D.fromPoints(P, Q);
 		
 		System.out.println("\nprojective mapping = \n" + pm.toString());
 		

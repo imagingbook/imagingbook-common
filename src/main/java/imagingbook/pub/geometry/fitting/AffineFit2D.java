@@ -1,7 +1,5 @@
 package imagingbook.pub.geometry.fitting;
 
-import static imagingbook.lib.math.Arithmetic.sqr;
-
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.DecompositionSolver;
 import org.apache.commons.math3.linear.MatrixUtils;
@@ -9,14 +7,9 @@ import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.RealVector;
 import org.apache.commons.math3.linear.SingularValueDecomposition;
 
-import imagingbook.lib.math.Matrix;
 import imagingbook.pub.geometry.basic.Point;
 import imagingbook.pub.geometry.mappings.linear.AffineMapping2D;
 
-/**
- * TODO: see ProjectiveMapping2D.fromNPoints(Point[] P, Point[] Q) -- remove 1 version (either fit or mapping)!
- *
- */
 public class AffineFit2D implements LinearFit2D {
 	
 	private final RealMatrix A;		// the calculated transformation matrix
@@ -82,7 +75,7 @@ public class AffineFit2D implements LinearFit2D {
 	
 	// --------------------------------------------------------
 	
-	protected static void checkSize(Point[] P, Point[] Q) {
+	private void checkSize(Point[] P, Point[] Q) {
 		if (P.length < 3 || Q.length < 3) {
 			throw new IllegalArgumentException("At least 3 point pairs are required to calculate this fit");
 		}

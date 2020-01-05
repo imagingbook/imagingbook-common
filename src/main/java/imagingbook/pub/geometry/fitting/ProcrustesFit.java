@@ -69,7 +69,7 @@ public class ProcrustesFit implements LinearFit2D {
 	 * 		is forced to a true rotation and no reflection is allowed
 	 */
 	public ProcrustesFit(Point[] P, Point[] Q, boolean allowTranslation, boolean allowScaling, boolean forceRotation) {
-		AffineFit2D.checkSize(P, Q);
+		checkSize(P, Q);
 		
 		double[] meanP = null;
 		double[] meanY = null;
@@ -194,21 +194,6 @@ public class ProcrustesFit implements LinearFit2D {
 		return AffineFit2D.calculateError(P, Q, MatrixUtils.createRealMatrix(this.getTransformationMatrix()));
 	}
 	
-	
-//	/**
-//	 * Returns a 2D {@link AffineMapping} object, as defined in
-//	 * {@code imagingbook.pub.geometry.mappings.linear}.
-//	 * Throws an exception if the dimensionality of the data
-//	 * is not 2.
-//	 * @return An affine mapping object.
-//	 */
-//	public AffineMapping2D getAffineMapping2D() {
-//		AffineMapping2D map = new AffineMapping2D(
-//				s * R.getEntry(0, 0), s * R.getEntry(0, 1), t.getEntry(0),
-//				s * R.getEntry(1, 0), s * R.getEntry(1, 1), t.getEntry(1));
-//		return map;	
-//	}
-	
 	// -----------------------------------------------------------------
 	
 	private double det(RealMatrix M) {
@@ -241,20 +226,26 @@ public class ProcrustesFit implements LinearFit2D {
 		return M;
 	}
 	
-	private void printSVD(SingularValueDecomposition svd) {
-		RealMatrix U = svd.getU();
-		RealMatrix S = svd.getS();
-		RealMatrix V = svd.getV();
-		System.out.println("------ SVD ---------------");
-		System.out.println("U = " + Matrix.toString(U.getData()));
-		System.out.println("S = " + Matrix.toString(S.getData()));
-		System.out.println("V = " + Matrix.toString(V.getData()));
-		System.out.println("--------------------------");
-	}
+//	private void printSVD(SingularValueDecomposition svd) {
+//		RealMatrix U = svd.getU();
+//		RealMatrix S = svd.getS();
+//		RealMatrix V = svd.getV();
+//		System.out.println("------ SVD ---------------");
+//		System.out.println("U = " + Matrix.toString(U.getData()));
+//		System.out.println("S = " + Matrix.toString(S.getData()));
+//		System.out.println("V = " + Matrix.toString(V.getData()));
+//		System.out.println("--------------------------");
+//	}
 	
 	private static double roundToDigits(double x, int ndigits) {
 		int d = (int) Math.pow(10, ndigits);
 		return Math.rint(x * d) / d;
+	}
+	
+	private void checkSize(Point[] P, Point[] Q) {
+		if (P.length < 3 || Q.length < 3) {
+			throw new IllegalArgumentException("At least 3 point pairs are required to calculate this fit");
+		}
 	}
 
 	// --------------------------------------------------------------------------------

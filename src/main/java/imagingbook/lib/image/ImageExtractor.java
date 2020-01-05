@@ -119,8 +119,8 @@ public class ImageExtractor {
 			};
 		ProjectiveMapping2D T = null;
 		switch (sourcePnts.length) {
-		case (3) : T = AffineMapping2D.fromNPoints(targetPnts, sourcePnts); break;
-		case (4) : T = ProjectiveMapping2D.from4Points(targetPnts, sourcePnts); break;
+		case (3) : T = AffineMapping2D.fromPoints(targetPnts, sourcePnts); break;
+		case (4) : T = ProjectiveMapping2D.fromPoints(targetPnts, sourcePnts); break;
 		default : throw new IllegalArgumentException("wrong number of source points");
 		}
 		return T;
