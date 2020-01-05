@@ -39,7 +39,17 @@
 <span class="sourceLineNo">031</span>                throw new UnsupportedOperationException("Cannot invert mapping " + this.toString());<a name="line.31"></a>
 <span class="sourceLineNo">032</span>        }<a name="line.32"></a>
 <span class="sourceLineNo">033</span><a name="line.33"></a>
-<span class="sourceLineNo">034</span>}<a name="line.34"></a>
+<span class="sourceLineNo">034</span>        /**<a name="line.34"></a>
+<span class="sourceLineNo">035</span>         * Returns the Jacobian matrix for this mapping, evaluated at<a name="line.35"></a>
+<span class="sourceLineNo">036</span>         * the given 2D point.<a name="line.36"></a>
+<span class="sourceLineNo">037</span>         * This method is only implemented for selected mappings.<a name="line.37"></a>
+<span class="sourceLineNo">038</span>         * @param xy the 2D position to calculate the Jacobian for<a name="line.38"></a>
+<span class="sourceLineNo">039</span>         * @return the Jacobian matrix<a name="line.39"></a>
+<span class="sourceLineNo">040</span>         */<a name="line.40"></a>
+<span class="sourceLineNo">041</span>        default double[][] getJacobian(Point xy) {<a name="line.41"></a>
+<span class="sourceLineNo">042</span>                throw new UnsupportedOperationException("No Jacobian available for this mapping");<a name="line.42"></a>
+<span class="sourceLineNo">043</span>        }<a name="line.43"></a>
+<span class="sourceLineNo">044</span>}<a name="line.44"></a>
 
 
 

@@ -31,4 +31,14 @@ public interface Mapping2D extends Cloneable {
 		throw new UnsupportedOperationException("Cannot invert mapping " + this.toString());
 	}
 
+	/**
+	 * Returns the Jacobian matrix for this mapping, evaluated at
+	 * the given 2D point.
+	 * This method is only implemented for selected mappings.
+	 * @param xy the 2D position to calculate the Jacobian for
+	 * @return the Jacobian matrix
+	 */
+	default double[][] getJacobian(Point xy) {
+		throw new UnsupportedOperationException("No Jacobian available for this mapping");
+	}
 }

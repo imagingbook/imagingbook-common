@@ -127,8 +127,8 @@
 <span class="sourceLineNo">119</span>                        };<a name="line.119"></a>
 <span class="sourceLineNo">120</span>                ProjectiveMapping2D T = null;<a name="line.120"></a>
 <span class="sourceLineNo">121</span>                switch (sourcePnts.length) {<a name="line.121"></a>
-<span class="sourceLineNo">122</span>                case (3) : T = AffineMapping2D.fromNPoints(targetPnts, sourcePnts); break;<a name="line.122"></a>
-<span class="sourceLineNo">123</span>                case (4) : T = ProjectiveMapping2D.from4Points(targetPnts, sourcePnts); break;<a name="line.123"></a>
+<span class="sourceLineNo">122</span>                case (3) : T = AffineMapping2D.fromPoints(targetPnts, sourcePnts); break;<a name="line.122"></a>
+<span class="sourceLineNo">123</span>                case (4) : T = ProjectiveMapping2D.fromPoints(targetPnts, sourcePnts); break;<a name="line.123"></a>
 <span class="sourceLineNo">124</span>                default : throw new IllegalArgumentException("wrong number of source points");<a name="line.124"></a>
 <span class="sourceLineNo">125</span>                }<a name="line.125"></a>
 <span class="sourceLineNo">126</span>                return T;<a name="line.126"></a>

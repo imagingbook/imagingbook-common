@@ -27,7 +27,7 @@ public class AffineMapping2D extends ProjectiveMapping2D {
 	 * minimum least-squares fit is calculated.
 	 * @param P the source points
 	 * @param Q the target points
-	 * @return
+	 * @return a new affine mapping for the two point sets
 	 */
 	public static AffineMapping2D fromPoints(Point[] P, Point[] Q) {
 		AffineFit2D fit = new AffineFit2D(P, Q);
@@ -149,33 +149,19 @@ public class AffineMapping2D extends ProjectiveMapping2D {
 		return new AffineMapping2D(C[0][0], C[0][1], C[0][2], C[1][0], C[1][1], C[1][2]);
 	}
 
-	// Alternative (old) version:
-//	public AffineMapping concat(AffineMapping B) {	// use some super method instead?
-//		double c00 = B.a00 * a00 + B.a01 * a10;
-//		double c01 = B.a00 * a01 + B.a01 * a11;
-//		double c02 = B.a00 * a02 + B.a01 * a12 + B.a02;
-//
-//		double c10 = B.a10 * a00 + B.a11 * a10;
-//		double c11 = B.a10 * a01 + B.a11 * a11;
-//		double c12 = B.a10 * a02 + B.a11 * a12 + B.a12;
-//		
-//		return new AffineMapping(c00, c01, c02, c10, c11, c12);
-//	}
-
 	/**
 	 * {@inheritDoc}
 	 * Note that inverting an affine transformation always yields
 	 * another affine transformation.
 	 */
 	public AffineMapping2D getInverse() {
-		double det = a00*a11 - a01*a10;	
-		double b00 = a11 / det; 
-		double b01 = - a01 / det; 
-		double b02 = (a01*a12 - a02*a11) / det;	
-		double b10 = - a10 / det; 
-		double b11 = a00 / det; 
-		double b12 = (a02*a10 - a00*a12) / det;
-		
+		double det = a00 * a11 - a01 * a10;
+		double b00 = a11 / det;
+		double b01 = -a01 / det;
+		double b02 = (a01 * a12 - a02 * a11) / det;
+		double b10 = -a10 / det;
+		double b11 = a00 / det;
+		double b12 = (a02 * a10 - a00 * a12) / det;
 		return new AffineMapping2D(b00, b01, b02, b10, b11, b12);
 	}
 
@@ -185,20 +171,6 @@ public class AffineMapping2D extends ProjectiveMapping2D {
 	 */
 	public AffineMapping2D duplicate() {
 		return new AffineMapping2D(this);
-	}
-
-	// Jacobian support -------------------------------------
-
-	@Override
-	public double[] getParameters() {
-		return new double[] { a00 - 1, a01, a10, a11 - 1, a02, a12 };
-	}
-	
-	public static AffineMapping2D fromParameters(double[] p) {
-		if (p.length < 6) {
-			throw new IllegalArgumentException("Affine mapping requires 6 parameters");
-		}
-		return new AffineMapping2D(p[0] + 1, p[1], p[2], p[3] + 1, p[4], p[5]);
 	}
 
 	@Override

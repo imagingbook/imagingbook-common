@@ -13,7 +13,6 @@ import imagingbook.lib.math.Arithmetic;
 import imagingbook.lib.settings.PrintPrecision;
 import imagingbook.pub.geometry.basic.Point;
 import imagingbook.pub.geometry.fitting.ProjectiveFit2D;
-import imagingbook.pub.geometry.mappings.JacobianSupport2D;
 
 
 /**
@@ -22,7 +21,7 @@ import imagingbook.pub.geometry.mappings.JacobianSupport2D;
  * points.
  * It can be assumed that every instance of this class is indeed a projective mapping.
  */
-public class ProjectiveMapping2D extends LinearMapping2D implements JacobianSupport2D {
+public class ProjectiveMapping2D extends LinearMapping2D {
 	
 	//  static methods -----------------------------------------------------
 	
@@ -32,7 +31,7 @@ public class ProjectiveMapping2D extends LinearMapping2D implements JacobianSupp
 	 * minimum least-squares fit is calculated.
 	 * @param P the source points
 	 * @param Q the target points
-	 * @return
+	 * @return a new projective mapping for the two point sets
 	 */
 	public static ProjectiveMapping2D fromPoints(Point[] P, Point[] Q) {
 		ProjectiveFit2D fit = new ProjectiveFit2D(P, Q);
@@ -253,24 +252,6 @@ public class ProjectiveMapping2D extends LinearMapping2D implements JacobianSupp
 	 */
 	public ProjectiveMapping2D getInverse() {
 		return new ProjectiveMapping2D(super.getInverse());
-	}
-	
-	// Jacobian support -------------------------------------
-
-	@Override
-	public double[] getParameters() {
-		return new double[] { a00 - 1, a01, a10, a11 - 1, a20, a21, a02, a12 };
-	}
-	
-	// TODO: move this to LukasKanade
-	public static ProjectiveMapping2D fromParameters(double[] p) {
-		if (p.length < 8) {
-			throw new IllegalArgumentException("Affine mapping requires 8 parameters");
-		}
-		return new ProjectiveMapping2D(
-				p[0] + 1,   p[1],        p[6],
-				p[2],       p[3] + 1,    p[7],
-				p[4],       p[5]             );
 	}
 	
 	@Override

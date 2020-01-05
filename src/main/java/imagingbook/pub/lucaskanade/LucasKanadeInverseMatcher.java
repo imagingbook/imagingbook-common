@@ -47,7 +47,8 @@ public class LucasKanadeInverseMatcher extends LucasKanadeMatcher {
 	}
 	
 	private void initializeMatch(ProjectiveMapping2D Tinit) {
-		n = Tinit.getParameters().length;	// number of transformation parameters
+//		n = Tinit.getParameters().length;	// number of transformation parameters
+		n = getParameters(Tinit).length;	// number of transformation parameters
 		S = new double[wR][hR][];			// S[u][v] holds a double vector of length n
 		Rx = gradientX(R).getFloatArray();	// gradient of R
 		Ry = gradientY(R).getFloatArray();
@@ -128,8 +129,8 @@ public class LucasKanadeInverseMatcher extends LucasKanadeMatcher {
 		qmag = Matrix.normL2squared(qopt);
 		
 		// Calculate the warp parameters p', such that T_p'(x) = T_p (T^-1_q (x), for any point x.
-//		ProjectiveMapping2D Tqopt = Tp.fromParameters(qopt);
-		ProjectiveMapping2D Tqopt = ProjectiveMapping2D.fromParameters(qopt);
+//		ProjectiveMapping2D Tqopt = ProjectiveMapping2D.fromParameters(qopt);
+		ProjectiveMapping2D Tqopt = toProjectiveMap(qopt);
 		ProjectiveMapping2D Tqopti = Tqopt.getInverse();
 		return Tqopti.concat(Tp);
 	}

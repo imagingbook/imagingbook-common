@@ -55,7 +55,8 @@ public class LucasKanadeForwardMatcher extends LucasKanadeMatcher {
 	}
 
 	private void initializeMatch(ProjectiveMapping2D Tinit) {
-		n = Tinit.getParameters().length;
+//		n = Tinit.getParameters().length;
+		n = getParameters(Tinit).length;
 		Ix = gradientX(I);
 		Iy = gradientY(I);
 		iteration = 0;
@@ -133,14 +134,15 @@ public class LucasKanadeForwardMatcher extends LucasKanadeMatcher {
 			//return null;
 		}
 		
-		double[] p = Matrix.add(Tp.getParameters(), qopt);
+//		double[] p = Matrix.add(Tp.getParameters(), qopt);
+		double[] p = Matrix.add(getParameters(Tp), qopt);
 		qmag = Matrix.normL2squared(qopt);
 
 		if (params.showSteepestDescentImages && iteration == 1) {
 			showSteepestDescentImages(S);
 		}
 
-//		return Tp.fromParameters(p);
-		return ProjectiveMapping2D.fromParameters(p);
+//		return ProjectiveMapping2D.fromParameters(p);
+		return toProjectiveMap(p);
 	}
 }

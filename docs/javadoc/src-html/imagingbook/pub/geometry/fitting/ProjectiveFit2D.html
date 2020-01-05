@@ -8,23 +8,104 @@
 <div class="sourceContainer">
 <pre><span class="sourceLineNo">001</span>package imagingbook.pub.geometry.fitting;<a name="line.1"></a>
 <span class="sourceLineNo">002</span><a name="line.2"></a>
-<span class="sourceLineNo">003</span>import org.apache.commons.math3.linear.RealMatrix;<a name="line.3"></a>
-<span class="sourceLineNo">004</span><a name="line.4"></a>
-<span class="sourceLineNo">005</span>public class ProjectiveFit2D implements LinearFit2D {<a name="line.5"></a>
-<span class="sourceLineNo">006</span><a name="line.6"></a>
-<span class="sourceLineNo">007</span>        @Override<a name="line.7"></a>
-<span class="sourceLineNo">008</span>        public RealMatrix getTransformationMatrix() {<a name="line.8"></a>
-<span class="sourceLineNo">009</span>                // TODO Auto-generated method stub<a name="line.9"></a>
-<span class="sourceLineNo">010</span>                return null;<a name="line.10"></a>
-<span class="sourceLineNo">011</span>        }<a name="line.11"></a>
-<span class="sourceLineNo">012</span><a name="line.12"></a>
-<span class="sourceLineNo">013</span>        @Override<a name="line.13"></a>
-<span class="sourceLineNo">014</span>        public double getError() {<a name="line.14"></a>
-<span class="sourceLineNo">015</span>                // TODO Auto-generated method stub<a name="line.15"></a>
-<span class="sourceLineNo">016</span>                return 0;<a name="line.16"></a>
-<span class="sourceLineNo">017</span>        }<a name="line.17"></a>
-<span class="sourceLineNo">018</span><a name="line.18"></a>
-<span class="sourceLineNo">019</span>}<a name="line.19"></a>
+<span class="sourceLineNo">003</span>import org.apache.commons.math3.linear.DecompositionSolver;<a name="line.3"></a>
+<span class="sourceLineNo">004</span>import org.apache.commons.math3.linear.MatrixUtils;<a name="line.4"></a>
+<span class="sourceLineNo">005</span>import org.apache.commons.math3.linear.RealMatrix;<a name="line.5"></a>
+<span class="sourceLineNo">006</span>import org.apache.commons.math3.linear.RealVector;<a name="line.6"></a>
+<span class="sourceLineNo">007</span>import org.apache.commons.math3.linear.SingularValueDecomposition;<a name="line.7"></a>
+<span class="sourceLineNo">008</span><a name="line.8"></a>
+<span class="sourceLineNo">009</span>import imagingbook.pub.geometry.basic.Point;<a name="line.9"></a>
+<span class="sourceLineNo">010</span>import imagingbook.pub.geometry.mappings.linear.LinearMapping2D;<a name="line.10"></a>
+<span class="sourceLineNo">011</span><a name="line.11"></a>
+<span class="sourceLineNo">012</span>public class ProjectiveFit2D implements LinearFit2D {<a name="line.12"></a>
+<span class="sourceLineNo">013</span>        <a name="line.13"></a>
+<span class="sourceLineNo">014</span>        private final RealMatrix A;             // the calculated transformation matrix<a name="line.14"></a>
+<span class="sourceLineNo">015</span>        private final double err;               // the calculated error<a name="line.15"></a>
+<span class="sourceLineNo">016</span>        <a name="line.16"></a>
+<span class="sourceLineNo">017</span>        /**<a name="line.17"></a>
+<span class="sourceLineNo">018</span>         * Constructor.<a name="line.18"></a>
+<span class="sourceLineNo">019</span>         * Fits two sequences of 2D points using a projective transformation model.<a name="line.19"></a>
+<span class="sourceLineNo">020</span>         * At least 4 point pairs are required. For 4 point pairs, the solution<a name="line.20"></a>
+<span class="sourceLineNo">021</span>         * is an exact fit, otherwise a least-squares fit is found.<a name="line.21"></a>
+<span class="sourceLineNo">022</span>         * @param P the source points<a name="line.22"></a>
+<span class="sourceLineNo">023</span>         * @param Q the target points<a name="line.23"></a>
+<span class="sourceLineNo">024</span>         */<a name="line.24"></a>
+<span class="sourceLineNo">025</span>        public ProjectiveFit2D(Point[] P, Point[] Q) {<a name="line.25"></a>
+<span class="sourceLineNo">026</span>                checkSize(P, Q);<a name="line.26"></a>
+<span class="sourceLineNo">027</span>                final int n = P.length;<a name="line.27"></a>
+<span class="sourceLineNo">028</span>                <a name="line.28"></a>
+<span class="sourceLineNo">029</span>                double[] ba = new double[2 * n];<a name="line.29"></a>
+<span class="sourceLineNo">030</span>                double[][] Ma = new double[2 * n][];<a name="line.30"></a>
+<span class="sourceLineNo">031</span>                for (int i = 0; i &lt; n; i++) {<a name="line.31"></a>
+<span class="sourceLineNo">032</span>                        double px = P[i].getX();<a name="line.32"></a>
+<span class="sourceLineNo">033</span>                        double py = P[i].getY();<a name="line.33"></a>
+<span class="sourceLineNo">034</span>                        double qx = Q[i].getX();<a name="line.34"></a>
+<span class="sourceLineNo">035</span>                        double qy = Q[i].getY();<a name="line.35"></a>
+<span class="sourceLineNo">036</span>                        ba[2 * i + 0] = qx;<a name="line.36"></a>
+<span class="sourceLineNo">037</span>                        ba[2 * i + 1] = qy;<a name="line.37"></a>
+<span class="sourceLineNo">038</span>                        Ma[2 * i + 0] = new double[] { px, py, 1, 0, 0, 0, -qx * px, -qx * py };<a name="line.38"></a>
+<span class="sourceLineNo">039</span>                        Ma[2 * i + 1] = new double[] { 0, 0, 0, px, py, 1, -qy * px, -qy * py };<a name="line.39"></a>
+<span class="sourceLineNo">040</span>                }<a name="line.40"></a>
+<span class="sourceLineNo">041</span>                <a name="line.41"></a>
+<span class="sourceLineNo">042</span>                RealMatrix M = MatrixUtils.createRealMatrix(Ma);<a name="line.42"></a>
+<span class="sourceLineNo">043</span>                RealVector b = MatrixUtils.createRealVector(ba);<a name="line.43"></a>
+<span class="sourceLineNo">044</span>                DecompositionSolver solver = new SingularValueDecomposition(M).getSolver();<a name="line.44"></a>
+<span class="sourceLineNo">045</span>                RealVector h = solver.solve(b);<a name="line.45"></a>
+<span class="sourceLineNo">046</span>                A = MatrixUtils.createRealMatrix(3, 3);<a name="line.46"></a>
+<span class="sourceLineNo">047</span>                A.setEntry(0, 0, h.getEntry(0));<a name="line.47"></a>
+<span class="sourceLineNo">048</span>                A.setEntry(0, 1, h.getEntry(1));<a name="line.48"></a>
+<span class="sourceLineNo">049</span>                A.setEntry(0, 2, h.getEntry(2));<a name="line.49"></a>
+<span class="sourceLineNo">050</span>                A.setEntry(1, 0, h.getEntry(3));<a name="line.50"></a>
+<span class="sourceLineNo">051</span>                A.setEntry(1, 1, h.getEntry(4));<a name="line.51"></a>
+<span class="sourceLineNo">052</span>                A.setEntry(1, 2, h.getEntry(5));<a name="line.52"></a>
+<span class="sourceLineNo">053</span>                A.setEntry(2, 0, h.getEntry(6));<a name="line.53"></a>
+<span class="sourceLineNo">054</span>                A.setEntry(2, 1, h.getEntry(7));<a name="line.54"></a>
+<span class="sourceLineNo">055</span>                A.setEntry(2, 2, 1.0);<a name="line.55"></a>
+<span class="sourceLineNo">056</span>                <a name="line.56"></a>
+<span class="sourceLineNo">057</span>                err = this.calculateError(P, Q, A);<a name="line.57"></a>
+<span class="sourceLineNo">058</span>        }<a name="line.58"></a>
+<span class="sourceLineNo">059</span><a name="line.59"></a>
+<span class="sourceLineNo">060</span>        @Override<a name="line.60"></a>
+<span class="sourceLineNo">061</span>        public double[][] getTransformationMatrix() {<a name="line.61"></a>
+<span class="sourceLineNo">062</span>                return A.getData();<a name="line.62"></a>
+<span class="sourceLineNo">063</span>        }<a name="line.63"></a>
+<span class="sourceLineNo">064</span><a name="line.64"></a>
+<span class="sourceLineNo">065</span>        @Override<a name="line.65"></a>
+<span class="sourceLineNo">066</span>        public double getError() {<a name="line.66"></a>
+<span class="sourceLineNo">067</span>                return err;<a name="line.67"></a>
+<span class="sourceLineNo">068</span>        }<a name="line.68"></a>
+<span class="sourceLineNo">069</span>        <a name="line.69"></a>
+<span class="sourceLineNo">070</span>        // ------------------------------------------------------------------------------<a name="line.70"></a>
+<span class="sourceLineNo">071</span>        <a name="line.71"></a>
+<span class="sourceLineNo">072</span>        protected static void checkSize(Point[] P, Point[] Q) {<a name="line.72"></a>
+<span class="sourceLineNo">073</span>                if (P.length &lt; 4 || Q.length &lt; 4) {<a name="line.73"></a>
+<span class="sourceLineNo">074</span>                        throw new IllegalArgumentException("At least 4 point pairs are required to calculate this fit");<a name="line.74"></a>
+<span class="sourceLineNo">075</span>                }<a name="line.75"></a>
+<span class="sourceLineNo">076</span>        }<a name="line.76"></a>
+<span class="sourceLineNo">077</span>        <a name="line.77"></a>
+<span class="sourceLineNo">078</span>        /**<a name="line.78"></a>
+<span class="sourceLineNo">079</span>         * Calculates and returns the cumulative distance error<a name="line.79"></a>
+<span class="sourceLineNo">080</span>         * between the two point sequences under the transformation A,<a name="line.80"></a>
+<span class="sourceLineNo">081</span>         * i.e., {@code e = sum_i (||p_i * A - q_i||)}.<a name="line.81"></a>
+<span class="sourceLineNo">082</span>         * @param P     the first point sequence<a name="line.82"></a>
+<span class="sourceLineNo">083</span>         * @param Q the second point sequence<a name="line.83"></a>
+<span class="sourceLineNo">084</span>         * @param A     a (3 x 3) projective transformation matrix<a name="line.84"></a>
+<span class="sourceLineNo">085</span>         * @return the error {@code e}<a name="line.85"></a>
+<span class="sourceLineNo">086</span>         */<a name="line.86"></a>
+<span class="sourceLineNo">087</span>        private double calculateError(Point[] P, Point[] Q, RealMatrix A) {<a name="line.87"></a>
+<span class="sourceLineNo">088</span>                int m = Math.min(P.length,  Q.length);<a name="line.88"></a>
+<span class="sourceLineNo">089</span>                LinearMapping2D map = new LinearMapping2D(A.getData());<a name="line.89"></a>
+<span class="sourceLineNo">090</span>                double errSum = 0;<a name="line.90"></a>
+<span class="sourceLineNo">091</span>                for (int i = 0; i &lt; m; i++) {<a name="line.91"></a>
+<span class="sourceLineNo">092</span>                        Point p = P[i];<a name="line.92"></a>
+<span class="sourceLineNo">093</span>                        Point q = Q[i];<a name="line.93"></a>
+<span class="sourceLineNo">094</span>                        Point pp = map.applyTo(p);<a name="line.94"></a>
+<span class="sourceLineNo">095</span>                        errSum = errSum + Point.distance(q, pp);<a name="line.95"></a>
+<span class="sourceLineNo">096</span>                }<a name="line.96"></a>
+<span class="sourceLineNo">097</span>                return errSum;<a name="line.97"></a>
+<span class="sourceLineNo">098</span>        }<a name="line.98"></a>
+<span class="sourceLineNo">099</span><a name="line.99"></a>
+<span class="sourceLineNo">100</span>}<a name="line.100"></a>
 
 
 

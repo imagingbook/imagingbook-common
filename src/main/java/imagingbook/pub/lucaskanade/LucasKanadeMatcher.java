@@ -12,7 +12,9 @@ import ij.ImagePlus;
 import ij.process.FloatProcessor;
 import imagingbook.lib.math.Matrix;
 import imagingbook.pub.geometry.basic.Point;
+import imagingbook.pub.geometry.mappings.linear.AffineMapping2D;
 import imagingbook.pub.geometry.mappings.linear.ProjectiveMapping2D;
+import imagingbook.pub.geometry.mappings.linear.Translation2D;
 
 
 /**
@@ -211,5 +213,56 @@ public abstract class LucasKanadeMatcher {
 		}
 	}
 	
+	// ported from ProjectiveMapping2D --------------------------------
+	
+	public double[] getParameters(ProjectiveMapping2D map) {
+		double[][] A = map.getTransformationMatrix();
+		return new double[] {
+				A[0][0]-1, A[0][1], A[1][0], A[1][1]-1, A[2][0], A[2][1], A[0][2], A[1][2]};
+		//return new double[] { a00 - 1, a01, a10, a11 - 1, a20, a21, a02, a12 };
+	}
+	
+	public ProjectiveMapping2D toProjectiveMap(double[] param) {
+		if (param.length < 8) {
+			throw new IllegalArgumentException("Affine mapping requires 8 parameters");
+		}
+		return new ProjectiveMapping2D(
+				param[0] + 1,   param[1],        param[6],
+				param[2],       param[3] + 1,    param[7],
+				param[4],       param[5]             );
+	}
+	
+	// ---------------------
+	
+	public double[] getParameters(AffineMapping2D map) {
+		double[][] A = map.getTransformationMatrix();
+		return new double[] { 
+				A[0][0] - 1, A[0][1], A[1][0], A[1][1]-1, A[0][2], A[1][2]};
+		//return new double[] { a00 - 1, a01, a10, a11 - 1, a02, a12 };
+	}
+	
+	public AffineMapping2D toAffineMap(double[] param) {
+		if (param.length < 6) {
+			throw new IllegalArgumentException("Affine mapping requires 6 parameters");
+		}
+		return new AffineMapping2D(
+				param[0] + 1, param[1],     param[4],
+				param[2],     param[3] + 1, param[5]);
+	}
+	
+	// --------------------
+	
+	public double[] getParameters(Translation2D map) {
+		double[][] A = map.getTransformationMatrix();
+//		double[] p = new double[] {a02,	a12};
+		return new double[] {A[0][2], A[1][2]};
+	}
+	
+	public Translation2D toTranslation(double[] p) {
+		if (p.length < 2) {
+			throw new IllegalArgumentException("Translation requires 2 parameters");
+		}
+		return new Translation2D(p[0], p[1]);
+	}
 
 }

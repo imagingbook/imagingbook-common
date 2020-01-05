@@ -73,21 +73,6 @@ public class Translation2D extends AffineMapping2D {
 		return new Translation2D(-this.a02, -this.a12);
 	}
 
-
-	// Jacobian support -------------------------------------
-	
-	@Override
-	public double[] getParameters() {
-		double[] p = new double[] {a02,	a12};
-		return p;
-	}
-	
-	public static Translation2D fromParameters(double[] p) {
-		if (p.length < 2) {
-			throw new IllegalArgumentException("Translation requires 2 parameters");
-		}
-		return new Translation2D(p[0], p[1]);
-	}
 	
 	@Override
 	public double[][] getJacobian(Point xy) {
