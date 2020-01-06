@@ -15,23 +15,17 @@ package imagingbook.pub.geometry.mappings.linear;
  */
 public class Scaling2D extends AffineMapping2D {
 	
-	/**
-	 * Creates a null scaling (identity transformation).
-	 */
-	public Scaling2D() {
-		super();
-	}
-	
 	public Scaling2D(Scaling2D sc) {
 		super(sc);
 	}
 
 	/**
+	 * Constructor.
 	 * Creates a mapping that scales along the x- and y-axis
 	 * by the associated factors.
 	 * 
-	 * @param sx scale factor in x-direction
-	 * @param sy scale factor in y-direction
+	 * @param sx the scale factor in x-direction
+	 * @param sy the scale factor in y-direction
 	 */
 	public Scaling2D(double sx, double sy) {
 		super(
@@ -40,8 +34,8 @@ public class Scaling2D extends AffineMapping2D {
 	}
 	
 	/**
-	 * Creates a scaling that is uniform in x and y.
-	 * @param s scale factor
+	 * Constructor. Creates a uniform scaling in x and y.
+	 * @param s the common scale factor
 	 */
 	public Scaling2D(double s) {
 		this(s, s);

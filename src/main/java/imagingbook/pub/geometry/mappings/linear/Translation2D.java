@@ -9,6 +9,7 @@
 
 package imagingbook.pub.geometry.mappings.linear;
 
+import imagingbook.lib.math.Matrix;
 import imagingbook.pub.geometry.basic.Point;
 
 /**
@@ -19,14 +20,7 @@ import imagingbook.pub.geometry.basic.Point;
 public class Translation2D extends AffineMapping2D {
 
 	/**
-	 * Creates a blank (zero) translation.
-	 */
-	public Translation2D() {
-		super();
-	}
-	
-	/**
-	 * Creates a new translation mapping.
+	 * Constructor. Creates a new translation mapping.
 	 * @param tx translation in x
 	 * @param ty translation in y
 	 */
@@ -35,7 +29,7 @@ public class Translation2D extends AffineMapping2D {
 	}
 
 	/** 
-	 * Creates a new translation instance from a given translation.
+	 * Constructor. Creates a new translation instance from a given translation.
 	 * @param m a translation
 	 */
 	public Translation2D(Translation2D m) {
@@ -43,12 +37,13 @@ public class Translation2D extends AffineMapping2D {
 	}
 	
 	/**
-	 * Creates a new translation from two points.
-	 * @param p first point
-	 * @param q second point
+	 * Creates a new translation that maps between the two given points.
+	 * @param p the first point
+	 * @param q the second point
+	 * @return
 	 */
-	public Translation2D(Point p, Point q) {
-		this(q.getX() - p.getX(), q.getY() - p.getY());
+	public static Translation2D fromPoints(Point p, Point q) {
+		return new Translation2D(q.getX() - p.getX(), q.getY() - p.getY());
 	}
 	
 	// ----------------------------------------------------------
@@ -73,13 +68,11 @@ public class Translation2D extends AffineMapping2D {
 		return new Translation2D(-this.a02, -this.a12);
 	}
 
-	
 	@Override
 	public double[][] getJacobian(Point xy) {
-		return JT; // this transformation has a constant Jacobian (indep. of xy)
+		// this mapping has a constant Jacobian (indep. of xy)
+		return new double[][]
+			{{1, 0},
+			 {0, 1}};
 	}
-	
-	private static final double[][] JT =
-		{{1, 0},
-		 {0, 1}};
 }

@@ -16,14 +16,7 @@ package imagingbook.pub.geometry.mappings.linear;
 public class Shear2D extends AffineMapping2D {
 	
 	/**
-	 * Creates a null shear (identity) transformation.
-	 */
-	public Shear2D() {
-		super();
-	}
-
-	/**
-	 * Creates a shear transform.
+	 * Constructor Creates a shear transform.
 	 * @param bx shear factor in x-direction
 	 * @param by shear factor in y-direction
 	 */

@@ -14,24 +14,24 @@ import imagingbook.lib.settings.PrintPrecision;
 
 /**
  * This class represents a pure 2D rotation about the coordinate origin 
- * (as a special case of affine transformation).
+ * (as a special case of affine mapping).
  * It can be assumed that every instance of this class is indeed a rotation.
  */
 public class Rotation2D extends AffineMapping2D {
 	
 	/**
-	 * Creates a 2D rotation around the origin.
+	 * Constructor. Creates a 2D rotation by a given
+	 * angle about the origin.
 	 * @param alpha rotation angle (in radians)
 	 */
 	public Rotation2D(double alpha) {
-		super(	// AffineTransformation
+		super(
 			 Math.cos(alpha), -Math.sin(alpha), 0,
 			 Math.sin(alpha),  Math.cos(alpha), 0);
 	}
 	
 	/**
-	 * Auxiliary constructor used internally for duplicating 
-	 * existing instances.
+	 * Auxiliary constructor used internally for duplicating instances.
 	 * @param a00 matrix element A_00
 	 * @param a01 matrix element A_01
 	 * @param a10 matrix element A_10
@@ -42,8 +42,9 @@ public class Rotation2D extends AffineMapping2D {
 	}
 	
 	/**
-	 * Creates a new rotation from an existing instance.
-	 * @param m a rotation
+	 * Constructor. 
+	 * Creates a new {@link Rotation2D} object from an existing instance.
+	 * @param m a {@link Rotation2D} instance
 	 */
 	public Rotation2D(Rotation2D m) {
 		this(m.a00, m.a01, m.a10, m.a11);
@@ -90,7 +91,7 @@ public class Rotation2D extends AffineMapping2D {
 		double[][] Ai = Ri.getTransformationMatrix();
 		
 		System.out.println("Ai = \n" + Matrix.toString(Ai));
-//		
+		
 		double[][] I = Matrix.multiply(A, Ai);
 		System.out.println("\ntest: should be the  identity matrix: \n" + Matrix.toString(I));
 	}
