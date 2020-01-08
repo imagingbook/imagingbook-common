@@ -40,7 +40,7 @@ public class Translation2D extends AffineMapping2D {
 	 * Creates a new translation that maps between the two given points.
 	 * @param p the first point
 	 * @param q the second point
-	 * @return
+	 * @return a new translation instance
 	 */
 	public static Translation2D fromPoints(Point p, Point q) {
 		return new Translation2D(q.getX() - p.getX(), q.getY() - p.getY());
