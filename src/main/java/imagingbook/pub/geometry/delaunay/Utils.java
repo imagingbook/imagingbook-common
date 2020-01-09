@@ -16,7 +16,7 @@ public abstract class Utils {
 	 * @param points the 2D point set
 	 * @return a triangle as an array of 3 points
 	 */
-	public static Point[] makeOuterTriangle(Collection<Point> points) {
+	public static Point[] makeOuterTriangle(Collection<? extends Point> points) {
 		double xmin = Double.POSITIVE_INFINITY;
 		double xmax = Double.NEGATIVE_INFINITY;
 		double ymin = xmin;

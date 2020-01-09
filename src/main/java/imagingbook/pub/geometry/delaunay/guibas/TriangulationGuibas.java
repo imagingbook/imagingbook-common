@@ -61,7 +61,7 @@ public class TriangulationGuibas implements DelaunayTriangulation {
 	 * @param pointSet the point set to be triangulated
 	 * @param shuffle set {@code true} to randomly shuffle the input points
 	 */
-	public TriangulationGuibas(List<Point> pointSet, boolean shuffle) {
+	public TriangulationGuibas(List<? extends Point> pointSet, boolean shuffle) {
 		if (pointSet == null || pointSet.size() < 3) {
 			throw new IllegalArgumentException("Point set must contain at least 3 points.");
 		}
@@ -76,7 +76,7 @@ public class TriangulationGuibas implements DelaunayTriangulation {
 	 * in their original order (without shuffling).
 	 * @param pointSet the point set to be triangulated
 	 */
-	public TriangulationGuibas(List<Point> pointSet) {
+	public TriangulationGuibas(List<? extends Point> pointSet) {
 		this(pointSet, false);
 	}
 	
