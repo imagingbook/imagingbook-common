@@ -9,21 +9,27 @@
 
 package imagingbook.pub.corners;
 
+import imagingbook.pub.geometry.basic.Point;
+
 /**
- * 2013/06/09 Changed to 'final float' coordinates (WB).
+ * This class represents a 2D corner.
+ * A corner is essentially a {@link Point} plus a scalar quantity
+ * {@link #q} for the corner strength.
+ * 
+ * @version 2020-01-09
  */
-public class Corner implements Comparable<Corner> {
+public class Corner implements Point, Comparable<Corner> {
 	protected final float x, y, q;
 
-	public float getX() {
+	public double getX() {
 		return x;
 	}
 
-	public float getY() {
+	public double getY() {
 		return y;
 	}
 
-	public float getQ() {
+	public double getQ() {
 		return q;
 	}
 	
@@ -32,13 +38,6 @@ public class Corner implements Comparable<Corner> {
 		this.y = y;
 		this.q = q;
 	}
-    
-	public int compareTo (Corner c2) {
-		//used for sorting corners by corner strength q
-		if (this.q > c2.q) return -1;
-		if (this.q < c2.q) return 1;
-		else return 0;
-	}
 	
 	double dist2 (Corner c2){
 		//returns the squared distance between this corner and corner c2
@@ -46,4 +45,11 @@ public class Corner implements Comparable<Corner> {
 		float dy = this.y - c2.y;
 		return (dx * dx) + (dy * dy);	
 	}
+
+	// used for sorting corners by corner strength q
+	@Override
+	public int compareTo (Corner c2) {
+		return Double.compare(c2.q, this.q);
+	}
 }
+
