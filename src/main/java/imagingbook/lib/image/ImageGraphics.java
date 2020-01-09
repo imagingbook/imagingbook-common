@@ -65,6 +65,9 @@ import ij.process.FloatProcessor;
  * setting colors and stroke parameters.
  * If intermediate updates are needed (e.g., for animations), the {@code update()} method
  * can be invoked any time.
+ * The plugin {@code Geometric_Operations.Draw_Test_Grid} in the
+ * <a href="https://github.com/imagingbook/imagingbook-plugins-all/tree/master">
+ * imagingbook-plugins-all</a> repository shows a complete example.
  * </p>
  * 
  * @author W. Burger

@@ -28,13 +28,17 @@ public interface Point {
 	}
 	
 	static double distance(Point p, Point q) {
-		return Math.sqrt(sqr(q.getX() - p.getX()) + sqr(q.getY() - p.getY()));
+		return Math.sqrt(distance2(p, p));
+	}
+	
+	static double distance2(Point p, Point q) {
+		return sqr(q.getX() - p.getX()) + sqr(q.getY() - p.getY());
 	}
 	
 	
 	/**
 	 * Simple fallback implementation of the {@link Point} interface.
-	 * If no dependency on AWT is desired, just implement your own.
+	 * If dependency on AWT is to be avoided, just implement your own.
 	 */
 	public class Imp extends java.awt.geom.Point2D.Double implements Point {
 		private static final long serialVersionUID = 1L;

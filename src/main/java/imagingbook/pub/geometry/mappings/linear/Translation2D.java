@@ -9,7 +9,6 @@
 
 package imagingbook.pub.geometry.mappings.linear;
 
-import imagingbook.lib.math.Matrix;
 import imagingbook.pub.geometry.basic.Point;
 
 /**

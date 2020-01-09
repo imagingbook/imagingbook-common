@@ -11,7 +11,6 @@ package imagingbook.pub.edgepreservingfilters;
 
 import ij.process.ImageProcessor;
 import imagingbook.lib.image.ImageAccessor;
-import imagingbook.pub.edgepreservingfilters.BilateralFilter.Parameters;
 
 /**
  * XY-Separated version of bilateral filter using Gaussian domain and 
