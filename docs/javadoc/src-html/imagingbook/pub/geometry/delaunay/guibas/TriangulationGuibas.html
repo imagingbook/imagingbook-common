@@ -69,7 +69,7 @@
 <span class="sourceLineNo">061</span>         * @param pointSet the point set to be triangulated<a name="line.61"></a>
 <span class="sourceLineNo">062</span>         * @param shuffle set {@code true} to randomly shuffle the input points<a name="line.62"></a>
 <span class="sourceLineNo">063</span>         */<a name="line.63"></a>
-<span class="sourceLineNo">064</span>        public TriangulationGuibas(List&lt;Point&gt; pointSet, boolean shuffle) {<a name="line.64"></a>
+<span class="sourceLineNo">064</span>        public TriangulationGuibas(List&lt;? extends Point&gt; pointSet, boolean shuffle) {<a name="line.64"></a>
 <span class="sourceLineNo">065</span>                if (pointSet == null || pointSet.size() &lt; 3) {<a name="line.65"></a>
 <span class="sourceLineNo">066</span>                        throw new IllegalArgumentException("Point set must contain at least 3 points.");<a name="line.66"></a>
 <span class="sourceLineNo">067</span>                }<a name="line.67"></a>
@@ -84,7 +84,7 @@
 <span class="sourceLineNo">076</span>         * in their original order (without shuffling).<a name="line.76"></a>
 <span class="sourceLineNo">077</span>         * @param pointSet the point set to be triangulated<a name="line.77"></a>
 <span class="sourceLineNo">078</span>         */<a name="line.78"></a>
-<span class="sourceLineNo">079</span>        public TriangulationGuibas(List&lt;Point&gt; pointSet) {<a name="line.79"></a>
+<span class="sourceLineNo">079</span>        public TriangulationGuibas(List&lt;? extends Point&gt; pointSet) {<a name="line.79"></a>
 <span class="sourceLineNo">080</span>                this(pointSet, false);<a name="line.80"></a>
 <span class="sourceLineNo">081</span>        }<a name="line.81"></a>
 <span class="sourceLineNo">082</span>        <a name="line.82"></a>

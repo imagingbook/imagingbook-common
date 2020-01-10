@@ -24,7 +24,7 @@
 <span class="sourceLineNo">016</span>         * @param points the 2D point set<a name="line.16"></a>
 <span class="sourceLineNo">017</span>         * @return a triangle as an array of 3 points<a name="line.17"></a>
 <span class="sourceLineNo">018</span>         */<a name="line.18"></a>
-<span class="sourceLineNo">019</span>        public static Point[] makeOuterTriangle(Collection&lt;Point&gt; points) {<a name="line.19"></a>
+<span class="sourceLineNo">019</span>        public static Point[] makeOuterTriangle(Collection&lt;? extends Point&gt; points) {<a name="line.19"></a>
 <span class="sourceLineNo">020</span>                double xmin = Double.POSITIVE_INFINITY;<a name="line.20"></a>
 <span class="sourceLineNo">021</span>                double xmax = Double.NEGATIVE_INFINITY;<a name="line.21"></a>
 <span class="sourceLineNo">022</span>                double ymin = xmin;<a name="line.22"></a>

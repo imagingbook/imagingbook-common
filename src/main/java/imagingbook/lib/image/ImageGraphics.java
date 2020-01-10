@@ -39,7 +39,7 @@ import ij.process.FloatProcessor;
  * </p>
  * <p>
  * Since drawing involves copying the image multiple times, graphic operations
- * should be grouped if possible to save resources.
+ * should be grouped for efficiency reasons.
  * Here is an example for the intended form of use:
  * </p>
  * <pre>
@@ -52,13 +52,25 @@ import ij.process.FloatProcessor;
  * 	...
  * }</pre>
  * <p>
- * Note that the original image ({@code ip} in the above example) is automatically updated 
+ * Note the use of <code>double</code> coordinates throughout.
+ * The original image ({@code ip} in the above example) is automatically updated 
  * at the end of the {@code try() ...} clause (by {@link ImageGraphics} implementing the
  * {@link AutoCloseable} interface).
- * The {@code getGraphics()} method exposes the underlying 
- * {@link Graphics2D} object of the {@link ImageGraphics} instance, which can then be used to
+ * The {@link #getGraphics()} method exposes the underlying 
+ * {@link Graphics2D} instance of the {@link ImageGraphics} object, which can then be used to
  * perform arbitrary graphic operations.
- * </p>
+ * Thus, the above example can be <strong>alternatively</strong> implemented
+ * as followings:
+ * <pre>
+ * ImageProcessor ip = ... ;   // some ByteProcessor, ShortProcessor or ColorProcessor
+ * try (ImageGraphics g = new ImageGraphics(ip)) {
+ * 	Graphics2D g2 = g.getGraphics();
+ * 	g2.setColor(Color.white);
+ * 	g2.setStroke(new BasicStroke(1.0f));
+ * 	g2.draw(new Line2D.Double(40, 100.5, 250, 101.5));
+ * 	g2.draw(new Ellipse2D.Double(230.6, 165.2, 150, 150));
+ * 	...
+ * }</pre>
  * <p>
  * This class also defines several convenience methods for drawing
  * shapes with floating-point ({@code double}) coordinates, as well as for
