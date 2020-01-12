@@ -23,6 +23,11 @@ import java.util.LinkedList;
 import java.util.List;
 
 
+/**
+ * TODO: Clarify assumed arrangement of 2D arrays!
+ * @author WB
+ *
+ */
 public abstract class IjUtils {
 	
 	/**
