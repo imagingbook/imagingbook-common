@@ -35,6 +35,14 @@ public interface Point {
 		return sqr(q.getX() - p.getX()) + sqr(q.getY() - p.getY());
 	}
 	
+	default double distance2(Point other) {
+		return distance2(this, other);
+	}
+	
+	default double distance(Point other) {
+		return distance(this, other);
+	}
+	
 	
 	/**
 	 * Simple fallback implementation of the {@link Point} interface.
