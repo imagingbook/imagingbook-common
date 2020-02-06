@@ -24,7 +24,7 @@ import java.util.Stack;
  * This class implements a Canny edge detector for grayscale and RGB images.
  * The edge detector is "lazy" in the sense that it performs local non-
  * maximum suppression and edge tracing only when the results are explicitly 
- * asked for (by the methods {@code getEdgeBinary()} and {@code getEdgeTraces()}).
+ * asked for (by the methods {@link #getEdgeBinary()} and {@link #getEdgeTraces()}).
  * 
  * @author W. Burger
  * @version 2017/04/13
@@ -41,7 +41,7 @@ public class CannyEdgeDetector extends ColorEdgeDetector {
 		/** Low threshold (5% of max. edge magnitude) */
 		public double loThr = 5.0f;
 		
-		/** Set true to normalize gradient magnitude */
+		/** Set {@code true} to normalize gradient magnitude */
 		public boolean normGradMag = true;
 		
 		/**
@@ -54,7 +54,6 @@ public class CannyEdgeDetector extends ColorEdgeDetector {
 	}
 	
 	private final Parameters params;
-//	private final ImageProcessor I;				// original image
 	private final int M, N;						// width and height of I
 	
 	private FloatProcessor Emag = null;				// gradient magnitude
@@ -176,7 +175,6 @@ public class CannyEdgeDetector extends ColorEdgeDetector {
 				Ey.setf(u, v, 2*C);
 			}
 		}
-		//IJ.log("RGB emax = " + emax);
 		// normalize gradient magnitude 
 		if (params.normGradMag && emax > 0.001) 
 			Emag.multiply(100.0/emax);
@@ -185,8 +183,8 @@ public class CannyEdgeDetector extends ColorEdgeDetector {
 	
 	//---------------------------------------------------------------------------
 	
+	// perform non-maximum suppression along gradient direction
 	private void nonMaxSuppression() {
-		// perform non-maximum suppression along gradient direction
 		Enms = new FloatProcessor(M, N);
 		for (int v = 1; v < N - 1; v++) {
 			for (int u = 1; u < M - 1; u++) {
