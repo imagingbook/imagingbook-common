@@ -21,15 +21,15 @@ import imagingbook.lib.settings.PrintPrecision;
  *   | C D | </pre>
  * There are typically (but not in general) two pairs of real-valued 
  * solutions (&lambda;, x).
- * such that M&#8231;x = &lambda;&#8231;x.
+ * such that M*x = &lambda;*x.
  * <p>
  * This implementation is inspired by Blinn, Jim: "Jim Blinn's Corner: 
  * Notation, Notation, Notation", Morgan Kaufmann (2002) -
  * Ch. 5 ("Consider the Lowly 2x2 Matrix").
  * Note that Blinn uses the (common computer graphics) notation 
- * x&#8231;M = &lambda;&#8231;x,
+ * x*M = &lambda;*x,
  * while this implementation adopts the notation 
- * M&#8231;x = &lambda;&#8231;x, 
+ * M*x = &lambda;*x, 
  * i.e., the matrix M is transposed (elements B/C are exchanged).
  * </p>
  * 
@@ -94,7 +94,7 @@ public class Eigensolver2x2 {
 	
 	/**
 	 * Returns a vector holding the two real eigenvalues, which are both
-	 * {@link Double.NaN} if the associated matrix has no real eigenvalues.
+	 * {@code NaN} if the associated matrix has no real eigenvalues.
 	 * If the input matrix is symmetric, the first eigenvalue is the greater
 	 * of the two.
 	 * Note that the returned array is merely a reference to the internal array and 
