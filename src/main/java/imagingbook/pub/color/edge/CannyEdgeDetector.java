@@ -14,6 +14,7 @@ import ij.process.ByteProcessor;
 import ij.process.ColorProcessor;
 import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
+import imagingbook.lib.math.Eigensolver2x2;
 
 import java.awt.Point;
 import java.util.LinkedList;
@@ -24,10 +25,10 @@ import java.util.Stack;
  * This class implements a Canny edge detector for grayscale and RGB images.
  * The edge detector is "lazy" in the sense that it performs local non-
  * maximum suppression and edge tracing only when the results are explicitly 
- * asked for (by the methods {@link #getEdgeBinary()} and {@link #getEdgeTraces()}).
+ * queried (by the methods {@link #getEdgeBinary()} and {@link #getEdgeTraces()}).
  * 
  * @author W. Burger
- * @version 2017/04/13
+ * @version 2020/02/08
  */
 public class CannyEdgeDetector extends ColorEdgeDetector {
 	
@@ -71,7 +72,6 @@ public class CannyEdgeDetector extends ColorEdgeDetector {
 	public CannyEdgeDetector(ImageProcessor I, Parameters params) {
 		if (params.isInValid()) throw new IllegalArgumentException();
 		this.params = params;
-//		this.I = I;
 		M = I.getWidth();
 		N = I.getHeight();
 		makeGradientsAndMagnitude(I);
@@ -88,7 +88,6 @@ public class CannyEdgeDetector extends ColorEdgeDetector {
 		//nonMaxSuppression();
 		//detectAndTraceEdges();
 	}
-	
 
 	private void makeGradientsAndMagnitudeGray(ImageProcessor I) {		
 		FloatProcessor If = I.convertToFloatProcessor();	// always makes a copy
@@ -135,7 +134,7 @@ public class CannyEdgeDetector extends ColorEdgeDetector {
 		float[] gaussKernel = makeGaussKernel1d(params.gSigma);
 		Convolver conv = new Convolver();
 		conv.setNormalize(true);
-		for (int i=0; i<Irgb.length; i++) {
+		for (int i=0; i < Irgb.length; i++) {
 			FloatProcessor If = Irgb[i];
 			conv.convolve(If, gaussKernel, gaussKernel.length, 1);
 			conv.convolve(If, gaussKernel, 1, gaussKernel.length);
@@ -163,23 +162,27 @@ public class CannyEdgeDetector extends ColorEdgeDetector {
 				float rx = Ixrgb[0].getf(u,v), ry = Iyrgb[0].getf(u,v);
 				float gx = Ixrgb[1].getf(u,v), gy = Iyrgb[1].getf(u,v);
 				float bx = Ixrgb[2].getf(u,v), by = Iyrgb[2].getf(u,v);
-				float A = rx*rx + gx*gx + bx*bx;
-				float B = ry*ry + gy*gy + by*by;
-				float C = rx*ry + gx*gy + bx*by;
-				float D = (float) Math.sqrt((A - B)*(A - B) + 4*C*C);
+				float Ixx = rx*rx + gx*gx + bx*bx;
+				float Iyy = ry*ry + gy*gy + by*by;
+				float Ixy = rx*ry + gx*gy + bx*by;
 				
-				float mag = (float) Math.sqrt(0.5*(A+B+D));
-				if (mag > emax)	emax = mag;
+				Eigensolver2x2 es = new Eigensolver2x2(Ixx, Ixy, Ixy, Iyy);
+				if (!es.isReal()) {
+					throw new ArithmeticException(
+							String.format("No real eigenvalues for structure matrix at position (%d, %d)", u, v));
+				}
+				float mag = (float) Math.sqrt(es.getEigenvalues()[0]);
 				Emag.setf(u, v, mag);
-				Ex.setf(u, v, A - B + D);
-				Ey.setf(u, v, 2*C);
+				
+				double[] eVecs = es.getEigenvectors()[0];
+				Ex.setf(u, v, (float) eVecs[0]);
+				Ey.setf(u, v, (float) eVecs[1]);
 			}
 		}
 		// normalize gradient magnitude 
 		if (params.normGradMag && emax > 0.001) 
 			Emag.multiply(100.0/emax);
 	}
-	
 	
 	//---------------------------------------------------------------------------
 	
@@ -346,8 +349,8 @@ public class CannyEdgeDetector extends ColorEdgeDetector {
 	
 	//---------------------------------------------------------------------------
 
+	// make 1D Gaussian filter kernel large enough
 	private float[] makeGaussKernel1d(double sigma) {
-		// make 1D Gauss filter kernel large enough
 		int rad = (int) (3.5 * sigma);
 		int size = rad + rad + 1;
 		float[] kernel = new float[size]; // center cell = kernel[rad]
@@ -373,12 +376,12 @@ public class CannyEdgeDetector extends ColorEdgeDetector {
 		float[] rpix = (float[]) rp.getPixels();
 		float[] gpix = (float[]) gp.getPixels();
 		float[] bpix = (float[]) bp.getPixels();
-    	for (int i=0; i<pixels.length; i++) {
-            int c = pixels[i];
-            rpix[i] = (c&0xff0000)>>16;
-    		gpix[i] = (c&0xff00)>>8;
-			bpix[i] =  c&0xff;
-    	}
+		for (int i = 0; i < pixels.length; i++) {
+			int c = pixels[i];
+			rpix[i] = (c & 0xff0000) >> 16;
+			gpix[i] = (c & 0xff00) >> 8;
+			bpix[i] = c & 0xff;
+		}
     	return new FloatProcessor[] {rp, gp, bp};
 	}
 	
