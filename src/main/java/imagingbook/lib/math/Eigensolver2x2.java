@@ -81,8 +81,8 @@ public class Eigensolver2x2 {
 				eVecs[1] = new double[] { B, -sBC};
 			}
 			else {									// |B| == |C|
-				eVecs[0] = new double[] { B, B};
-				eVecs[1] = new double[] { -B, B};
+				eVecs[0] = new double[] { C, C};
+				eVecs[1] = new double[] { -C, C};
 			}
 		}
 		return true;
