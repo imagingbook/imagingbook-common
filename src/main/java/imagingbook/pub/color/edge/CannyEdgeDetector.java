@@ -60,7 +60,7 @@ public class CannyEdgeDetector extends ColorEdgeDetector {
 	private FloatProcessor Emag = null;				// gradient magnitude
 	private FloatProcessor Enms = null;				// non-max suppressed gradient magnitude
 	private FloatProcessor Ex = null, Ey = null;	// edge normal vectors
-	private ByteProcessor Ebin = null;				// final (binary) edge image
+	private ByteProcessor Ebin = null;				// final (binary) edge map
 	private List<List<Point>> traceList = null;		// list of edge traces
 	
 	// Constructor with default parameters:
