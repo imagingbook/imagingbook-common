@@ -15,23 +15,43 @@ import ij.process.ImageProcessor;
  * Utility methods for filtering images. 
  * None of the filter methods modifies the kernel, i.e., kernels are 
  * used as supplied and never normalized.
+ * 
  * @author WB
- *
+ * @version 2020-02-19
  */
 public abstract class Filter {
 
+	/**
+	 * Applies a one-dimensional convolution kernel to the given image,
+	 * which is modified. The 1D kernel is applied in horizontal direction only.
+	 * @param fp the image to be filtered (modified)
+	 * @param h the filter kernel
+	 */
 	public static void convolveX (ImageProcessor fp, float[] h) {
 		Convolver conv = new Convolver();
 		conv.setNormalize(false);
 		conv.convolve(fp, h, h.length, 1);
 	}
 
+	/**
+	 * Applies a one-dimensional convolution kernel to the given image,
+	 * which is modified. The 1D kernel is applied in vertical direction only.
+	 * @param fp the image to be filtered (modified)
+	 * @param h the filter kernel
+	 */
 	public static void convolveY (ImageProcessor fp, float[] h) {
 		Convolver conv = new Convolver();
 		conv.setNormalize(false);
 		conv.convolve(fp, h, 1, h.length);
 	}
 
+	/**
+	 * Applies a one-dimensional convolution kernel to the given image,
+	 * which is modified. The 1D kernel is applied twice in horizontal and
+	 * vertical direction.
+	 * @param fp the image to be filtered (modified)
+	 * @param h the filter kernel
+	 */
 	public static void convolveXY (ImageProcessor fp, float[] h) {
 		Convolver conv = new Convolver();
 		conv.setNormalize(false);

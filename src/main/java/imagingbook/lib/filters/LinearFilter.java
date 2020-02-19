@@ -34,7 +34,7 @@ public class LinearFilter extends GenericFilter {
 	
 	// --------------------------------------------------------------
 	
-
+	@Override
 	public float filterPixel(ImageAccessor.Scalar ia, int u, int v) {
 		float sum = 0;
 		for (int j = 0; j < kernelHeight; j++) {
@@ -47,6 +47,7 @@ public class LinearFilter extends GenericFilter {
  		return sum;
 	}
 	
+	@Override
 	public float[] filterPixel(ImageAccessor.Rgb ia, int u, int v) {
 		float sumR = 0;	// sum of weighted red
 		float sumG = 0;	// sum of weighted green
@@ -67,6 +68,16 @@ public class LinearFilter extends GenericFilter {
 		rgb[2] = sumB;
 		return rgb;
  	}
+	
+	// --------------------------------------------------------------
+	
+	/**
+	 * Returns the kernel of this filter as a 2D {@code float} array.
+	 * @return the filter kernel
+	 */
+	public float[][] getKernel() {
+		return this.kernel2d;
+	}
 
 	// --------------------------------------------------------------
 
