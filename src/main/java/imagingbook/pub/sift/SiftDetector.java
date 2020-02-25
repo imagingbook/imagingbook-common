@@ -775,9 +775,9 @@ public class SiftDetector {
 					+ a + " " + y1 + " " + y2 + " " + y3);
 		}
 		float b = (y3 - y1) / 2;
-		//		float c = y2;
+//		float c = y2;
 		float x_extrm = -b / (2*a);		// extremal position
-		//		float y_extrm = a*x*x + b*x + c;	// extremal value (not needed)
+//		float y_extrm = a*x*x + b*x + c;	// extremal value (not needed)
 		return x_extrm;	// x is in [-1,+1]
 	}
 

@@ -14,6 +14,7 @@ import ij.process.ByteProcessor;
 import ij.process.ColorProcessor;
 import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
+import imagingbook.lib.filters.GaussianFilter;
 import imagingbook.lib.math.Eigensolver2x2;
 
 import java.awt.Point;
@@ -93,7 +94,7 @@ public class CannyEdgeDetector extends ColorEdgeDetector {
 		FloatProcessor If = I.convertToFloatProcessor();	// always makes a copy
 				
 		// apply a separable Gaussian filter to I
-		float[] gaussKernel = makeGaussKernel1d(params.gSigma);
+		float[] gaussKernel = GaussianFilter.makeGaussKernel1D(params.gSigma);
 		Convolver conv = new Convolver();
 		conv.setNormalize(true);
 		conv.convolve(If, gaussKernel, gaussKernel.length, 1);
@@ -131,7 +132,7 @@ public class CannyEdgeDetector extends ColorEdgeDetector {
 		FloatProcessor[] Iyrgb = new FloatProcessor[3];
 		
 		// apply a separable Gaussian filter to each RGB channel
-		float[] gaussKernel = makeGaussKernel1d(params.gSigma);
+		float[] gaussKernel = GaussianFilter.makeGaussKernel1D(params.gSigma);
 		Convolver conv = new Convolver();
 		conv.setNormalize(true);
 		for (int i=0; i < Irgb.length; i++) {
@@ -348,22 +349,6 @@ public class CannyEdgeDetector extends ColorEdgeDetector {
 	}
 	
 	//---------------------------------------------------------------------------
-
-	// make 1D Gaussian filter kernel large enough
-	private float[] makeGaussKernel1d(double sigma) {
-		int rad = (int) (3.5 * sigma);
-		int size = rad + rad + 1;
-		float[] kernel = new float[size]; // center cell = kernel[rad]
-		double sigma2 = sigma * sigma;
-		double scale = 1 / Math.sqrt(2 * Math.PI * sigma2);
-		for (int i = 0; i < size; i++) {
-			double x = rad - i;
-			kernel[i] = (float) (
-			scale * Math.exp(-0.5 * (x * x) / sigma2)
-			);
-		}
-		return kernel;
-	}
 	
 	// extract RGB channels of 'cp' as 3 float processors
 	private FloatProcessor[] rgbToFloatChannels(ColorProcessor cp) {

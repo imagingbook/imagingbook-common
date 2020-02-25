@@ -17,13 +17,14 @@ import ij.IJ;
 import ij.plugin.filter.Convolver;
 import ij.process.FloatProcessor;
 
+@Deprecated		// will disappear soon!
 public class GaussianFilter {
 	
 	static final double kernelSizeFactor = 3.5;   // times sigma
 	private float[] kernel1D;
 	
 	public GaussianFilter(double sigma) {
-		kernel1D = makeGaussKernel1d(sigma);
+		kernel1D = makeGaussKernel1D(sigma);
 	}
 	
 	public void applyTo(FloatProcessor fp) {
@@ -33,7 +34,7 @@ public class GaussianFilter {
 		Conv.convolve(fp, kernel1D, kernel1D.length, 1);
 	}
 	
-	public static float[] makeGaussKernel1d(double sigma){
+	public static float[] makeGaussKernel1D(double sigma){
 		//make 1D Gauss filter kernel large enough
 		//to avoid truncation effects (too small in ImageJ) 
 		int rad = (int) (kernelSizeFactor * sigma);
@@ -51,7 +52,7 @@ public class GaussianFilter {
 		return kernel;
 	}
 	
-	static float[][] makeGaussKernel2d(double sigma) {
+	static float[][] makeGaussKernel2D(double sigma) {
 		int rad = (int) (kernelSizeFactor * sigma);
 		int size = rad+rad+1;
 		float[][] kernel = new float[size][size]; //center cell = kernel[rad][rad]
