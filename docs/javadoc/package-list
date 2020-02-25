@@ -40,7 +40,6 @@ imagingbook.pub.noise.perlin
 imagingbook.pub.regions
 imagingbook.pub.regions.geometry
 imagingbook.pub.sift
-imagingbook.pub.sift.filters
 imagingbook.pub.sift.scalespace
 imagingbook.pub.sift.util
 imagingbook.pub.threshold

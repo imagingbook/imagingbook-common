@@ -11,7 +11,7 @@
 <span class="sourceLineNo">003</span> *  image processing published by Springer-Verlag in various languages and editions.<a name="line.3"></a>
 <span class="sourceLineNo">004</span> * Permission to use and distribute this software is granted under the BSD 2-Clause <a name="line.4"></a>
 <span class="sourceLineNo">005</span> * "Simplified" License (see http://opensource.org/licenses/BSD-2-Clause). <a name="line.5"></a>
-<span class="sourceLineNo">006</span> * Copyright (c) 2006-2016 Wilhelm Burger, Mark J. Burge. All rights reserved. <a name="line.6"></a>
+<span class="sourceLineNo">006</span> * Copyright (c) 2006-2020 Wilhelm Burger, Mark J. Burge. All rights reserved. <a name="line.6"></a>
 <span class="sourceLineNo">007</span> * Visit http://imagingbook.com for additional details.<a name="line.7"></a>
 <span class="sourceLineNo">008</span> *******************************************************************************/<a name="line.8"></a>
 <span class="sourceLineNo">009</span><a name="line.9"></a>
@@ -431,165 +431,166 @@
 <span class="sourceLineNo">423</span>        /*<a name="line.423"></a>
 <span class="sourceLineNo">424</span>         * Convolve the 2D array source successively with a sequence of kernels<a name="line.424"></a>
 <span class="sourceLineNo">425</span>         * and store the result in target.<a name="line.425"></a>
-<span class="sourceLineNo">426</span>         * This should eventually be implemented without an ImageJ FloatProcessor!<a name="line.426"></a>
-<span class="sourceLineNo">427</span>         */<a name="line.427"></a>
-<span class="sourceLineNo">428</span>        void convolve2dArray(float[][] source, float[][] target, float[][]... kernels) {<a name="line.428"></a>
-<span class="sourceLineNo">429</span>                if (source.length != target.length || source[0].length != target[0].length) {<a name="line.429"></a>
-<span class="sourceLineNo">430</span>                        throw new Error("source/target arrays have different dimensions");<a name="line.430"></a>
-<span class="sourceLineNo">431</span>                }<a name="line.431"></a>
-<span class="sourceLineNo">432</span>                int w = source.length;<a name="line.432"></a>
-<span class="sourceLineNo">433</span>                int h = source[0].length;<a name="line.433"></a>
-<span class="sourceLineNo">434</span>                if (tmpFp == null || tmpFp.getWidth() != w || tmpFp.getHeight() != h) {<a name="line.434"></a>
-<span class="sourceLineNo">435</span>                        tmpFp = new FloatProcessor(w, h);<a name="line.435"></a>
-<span class="sourceLineNo">436</span>                }<a name="line.436"></a>
-<span class="sourceLineNo">437</span>                // copy data to FloatProcessors         <a name="line.437"></a>
-<span class="sourceLineNo">438</span>                for (int u = 0; u &lt; w; u++) {<a name="line.438"></a>
-<span class="sourceLineNo">439</span>                        for (int v = 0; v &lt; h; v++) {<a name="line.439"></a>
-<span class="sourceLineNo">440</span>                                tmpFp.setf(u, v, source[u][v]);<a name="line.440"></a>
-<span class="sourceLineNo">441</span>                        }<a name="line.441"></a>
-<span class="sourceLineNo">442</span>                }<a name="line.442"></a>
-<span class="sourceLineNo">443</span>                <a name="line.443"></a>
-<span class="sourceLineNo">444</span>                Convolver conv = new Convolver();<a name="line.444"></a>
-<span class="sourceLineNo">445</span>                conv.setNormalize(false);<a name="line.445"></a>
-<span class="sourceLineNo">446</span>                // convolve with all specified kernels<a name="line.446"></a>
-<span class="sourceLineNo">447</span>                for (float[][] H : kernels) {<a name="line.447"></a>
-<span class="sourceLineNo">448</span>                        if (H == null) break;<a name="line.448"></a>
-<span class="sourceLineNo">449</span>                        int wH = H.length;<a name="line.449"></a>
-<span class="sourceLineNo">450</span>                        int hH = H[0].length;<a name="line.450"></a>
-<span class="sourceLineNo">451</span>                        float[] H1 = flatten(H);<a name="line.451"></a>
-<span class="sourceLineNo">452</span>                        conv.convolveFloat(tmpFp, H1, wH, hH);<a name="line.452"></a>
-<span class="sourceLineNo">453</span>                }<a name="line.453"></a>
-<span class="sourceLineNo">454</span>                // copy data back to array      <a name="line.454"></a>
-<span class="sourceLineNo">455</span>                for (int u = 0; u &lt; w; u++) {<a name="line.455"></a>
-<span class="sourceLineNo">456</span>                        for (int v = 0; v &lt; h; v++) {<a name="line.456"></a>
-<span class="sourceLineNo">457</span>                                target[u][v] = tmpFp.getf(u, v);<a name="line.457"></a>
-<span class="sourceLineNo">458</span>                        }<a name="line.458"></a>
-<span class="sourceLineNo">459</span>                }<a name="line.459"></a>
-<span class="sourceLineNo">460</span>        }<a name="line.460"></a>
-<span class="sourceLineNo">461</span>        <a name="line.461"></a>
-<span class="sourceLineNo">462</span>        /*<a name="line.462"></a>
-<span class="sourceLineNo">463</span>         * Copy a 2D float  array into a 1D float array<a name="line.463"></a>
-<span class="sourceLineNo">464</span>         */<a name="line.464"></a>
-<span class="sourceLineNo">465</span>        float[] flatten (float[][] arr2d) {<a name="line.465"></a>
-<span class="sourceLineNo">466</span>                int w = arr2d.length;<a name="line.466"></a>
-<span class="sourceLineNo">467</span>                int h = arr2d[0].length;<a name="line.467"></a>
-<span class="sourceLineNo">468</span>                float[] arr1d = new float[w*h];<a name="line.468"></a>
-<span class="sourceLineNo">469</span>                int k = 0;<a name="line.469"></a>
-<span class="sourceLineNo">470</span>                for (int i = 0; i &lt; w; i++) {<a name="line.470"></a>
-<span class="sourceLineNo">471</span>                        for (int j = 0; j &lt; h; j++) {<a name="line.471"></a>
-<span class="sourceLineNo">472</span>                                arr1d[k] = arr2d[i][j];<a name="line.472"></a>
-<span class="sourceLineNo">473</span>                                k++;<a name="line.473"></a>
-<span class="sourceLineNo">474</span>                        }<a name="line.474"></a>
-<span class="sourceLineNo">475</span>                }<a name="line.475"></a>
-<span class="sourceLineNo">476</span>                return arr1d;<a name="line.476"></a>
-<span class="sourceLineNo">477</span>        }<a name="line.477"></a>
-<span class="sourceLineNo">478</span>        <a name="line.478"></a>
-<span class="sourceLineNo">479</span>        /*<a name="line.479"></a>
-<span class="sourceLineNo">480</span>         * Construct a 2D Gaussian filter kernel large enough to avoid truncation effects.<a name="line.480"></a>
-<span class="sourceLineNo">481</span>         * Returns a 1D kernel as a 2D array, so it can be used flexibly in horizontal<a name="line.481"></a>
-<span class="sourceLineNo">482</span>         * or vertical direction.<a name="line.482"></a>
-<span class="sourceLineNo">483</span>         */<a name="line.483"></a>
-<span class="sourceLineNo">484</span>        private float[][] makeGaussKernel1D(double sigma, boolean horizontal){<a name="line.484"></a>
-<span class="sourceLineNo">485</span>                // Construct a 2D Gaussian filter kernel large enough<a name="line.485"></a>
-<span class="sourceLineNo">486</span>                // to avoid truncation effects.<a name="line.486"></a>
-<span class="sourceLineNo">487</span>                final double sigma2 = sigma * sigma;<a name="line.487"></a>
-<span class="sourceLineNo">488</span>                final double scale = 1.0 / (Math.sqrt(2 * Math.PI) * sigma);    <a name="line.488"></a>
-<span class="sourceLineNo">489</span>                final int rad = Math.max((int) (3.5 * sigma), 1); <a name="line.489"></a>
-<span class="sourceLineNo">490</span>                int size = rad + 1 +rad;        //center cell = kernel[rad]<a name="line.490"></a>
-<span class="sourceLineNo">491</span>                float[][] kernel = (horizontal) ?  <a name="line.491"></a>
-<span class="sourceLineNo">492</span>                                new float[size][1] : <a name="line.492"></a>
-<span class="sourceLineNo">493</span>                                new float[1][size]; <a name="line.493"></a>
-<span class="sourceLineNo">494</span>                double sum = 0;<a name="line.494"></a>
-<span class="sourceLineNo">495</span>                for (int i = 0; i &lt; size; i++) {<a name="line.495"></a>
-<span class="sourceLineNo">496</span>                        double x = rad - i;<a name="line.496"></a>
-<span class="sourceLineNo">497</span>                        float val = (float) (scale * Math.exp(-0.5 * (x*x) / sigma2));<a name="line.497"></a>
-<span class="sourceLineNo">498</span>                        if (horizontal) <a name="line.498"></a>
-<span class="sourceLineNo">499</span>                                kernel[i][0] =  val;<a name="line.499"></a>
-<span class="sourceLineNo">500</span>                        else <a name="line.500"></a>
-<span class="sourceLineNo">501</span>                                kernel[0][i] =  val;<a name="line.501"></a>
-<span class="sourceLineNo">502</span>                        sum = sum + val;<a name="line.502"></a>
-<span class="sourceLineNo">503</span>                }<a name="line.503"></a>
-<span class="sourceLineNo">504</span>                <a name="line.504"></a>
-<span class="sourceLineNo">505</span>                // normalize (just to be safe)<a name="line.505"></a>
-<span class="sourceLineNo">506</span>                for (int i = 0; i &lt; kernel.length; i++) {<a name="line.506"></a>
-<span class="sourceLineNo">507</span>                        for (int j = 0; j &lt; kernel[i].length; j++) {<a name="line.507"></a>
-<span class="sourceLineNo">508</span>                                kernel[i][j] = (float) (kernel[i][j] / sum);<a name="line.508"></a>
-<span class="sourceLineNo">509</span>                        }<a name="line.509"></a>
-<span class="sourceLineNo">510</span>                }<a name="line.510"></a>
-<span class="sourceLineNo">511</span>                return kernel;<a name="line.511"></a>
-<span class="sourceLineNo">512</span>        }<a name="line.512"></a>
-<span class="sourceLineNo">513</span>        <a name="line.513"></a>
-<span class="sourceLineNo">514</span>        // ----------------------------------------------------------------<a name="line.514"></a>
-<span class="sourceLineNo">515</span>        <a name="line.515"></a>
-<span class="sourceLineNo">516</span>        void normalize(double[] vec) {<a name="line.516"></a>
-<span class="sourceLineNo">517</span>                double sum = 0;<a name="line.517"></a>
-<span class="sourceLineNo">518</span>                for (double v : vec) {<a name="line.518"></a>
-<span class="sourceLineNo">519</span>                        sum = sum + v * v;<a name="line.519"></a>
-<span class="sourceLineNo">520</span>                }<a name="line.520"></a>
-<span class="sourceLineNo">521</span>                if (sum &gt; 0.000001) {<a name="line.521"></a>
-<span class="sourceLineNo">522</span>                        double s = 1 / Math.sqrt(sum);<a name="line.522"></a>
-<span class="sourceLineNo">523</span>                        for (int i = 0; i &lt; vec.length; i++) {<a name="line.523"></a>
-<span class="sourceLineNo">524</span>                                vec[i] = vec[i] * s;<a name="line.524"></a>
-<span class="sourceLineNo">525</span>                        }<a name="line.525"></a>
-<span class="sourceLineNo">526</span>                }<a name="line.526"></a>
-<span class="sourceLineNo">527</span>        }<a name="line.527"></a>
-<span class="sourceLineNo">528</span>        <a name="line.528"></a>
-<span class="sourceLineNo">529</span>        boolean realEigenValues2x2 (<a name="line.529"></a>
-<span class="sourceLineNo">530</span>                        double A, double B, double C, double D, <a name="line.530"></a>
-<span class="sourceLineNo">531</span>                        double[] lam12, double[] x1, double[] x2) {<a name="line.531"></a>
-<span class="sourceLineNo">532</span>                final double R = (A + D) / 2;<a name="line.532"></a>
-<span class="sourceLineNo">533</span>                final double S = (A - D) / 2;<a name="line.533"></a>
-<span class="sourceLineNo">534</span>                final double V = S * S + B * C;<a name="line.534"></a>
-<span class="sourceLineNo">535</span>                if (V &lt; 0) <a name="line.535"></a>
-<span class="sourceLineNo">536</span>                        return false; // matrix has no real eigenvalues<a name="line.536"></a>
-<span class="sourceLineNo">537</span>                else {<a name="line.537"></a>
-<span class="sourceLineNo">538</span>                        double T = Math.sqrt(V);<a name="line.538"></a>
-<span class="sourceLineNo">539</span>                        lam12[0] = R + T;       // lambda_1<a name="line.539"></a>
-<span class="sourceLineNo">540</span>                        lam12[1] = R - T;       // lambda_2<a name="line.540"></a>
-<span class="sourceLineNo">541</span>                        if ((A - D) &gt;= 0) {<a name="line.541"></a>
-<span class="sourceLineNo">542</span>                                x1[0] = S + T;  //e_1x<a name="line.542"></a>
-<span class="sourceLineNo">543</span>                                x1[1] = C;              //e_1y                  <a name="line.543"></a>
-<span class="sourceLineNo">544</span>                                x2[0] = B;              //e_2x<a name="line.544"></a>
-<span class="sourceLineNo">545</span>                                x2[1] = -S - T; //e_2y          <a name="line.545"></a>
-<span class="sourceLineNo">546</span>                        } <a name="line.546"></a>
-<span class="sourceLineNo">547</span>                        else {<a name="line.547"></a>
-<span class="sourceLineNo">548</span>                                x1[0] = B;              //e_1x<a name="line.548"></a>
-<span class="sourceLineNo">549</span>                                x1[1] = -S + T; //e_1y  <a name="line.549"></a>
-<span class="sourceLineNo">550</span>                                x2[0] = S - T;  //e_2x<a name="line.550"></a>
-<span class="sourceLineNo">551</span>                                x2[1] = C;              //e_2y  <a name="line.551"></a>
-<span class="sourceLineNo">552</span>                        }<a name="line.552"></a>
-<span class="sourceLineNo">553</span>                        return true;<a name="line.553"></a>
-<span class="sourceLineNo">554</span>                }<a name="line.554"></a>
-<span class="sourceLineNo">555</span>        }<a name="line.555"></a>
-<span class="sourceLineNo">556</span>        <a name="line.556"></a>
-<span class="sourceLineNo">557</span>        //  RGB/sRGB conversion -----------------------------------<a name="line.557"></a>
-<span class="sourceLineNo">558</span>        // TODO: move this to lib.colorimage.sRgbUtil class<a name="line.558"></a>
-<span class="sourceLineNo">559</span>        <a name="line.559"></a>
-<span class="sourceLineNo">560</span>        float srgbToRgb(float nc) {<a name="line.560"></a>
-<span class="sourceLineNo">561</span>                float nc01 = nc/255;<a name="line.561"></a>
-<span class="sourceLineNo">562</span>                return (float)(gammaInv(nc01) * 255);<a name="line.562"></a>
-<span class="sourceLineNo">563</span>        }<a name="line.563"></a>
-<span class="sourceLineNo">564</span><a name="line.564"></a>
-<span class="sourceLineNo">565</span>        float rgbToSrgb(float lc) {<a name="line.565"></a>
-<span class="sourceLineNo">566</span>                float lc01 = lc/255;<a name="line.566"></a>
-<span class="sourceLineNo">567</span>                return (float) (gammaFwd(lc01) * 255);<a name="line.567"></a>
-<span class="sourceLineNo">568</span>        }<a name="line.568"></a>
-<span class="sourceLineNo">569</span>        <a name="line.569"></a>
+<span class="sourceLineNo">426</span>         * TODO: This should be implemented without an ImageJ FloatProcessor!<a name="line.426"></a>
+<span class="sourceLineNo">427</span>         * TODO: Use methods from imagingbook/lib/filters/GaussianFilter ! <a name="line.427"></a>
+<span class="sourceLineNo">428</span>         */<a name="line.428"></a>
+<span class="sourceLineNo">429</span>        void convolve2dArray(float[][] source, float[][] target, float[][]... kernels) {<a name="line.429"></a>
+<span class="sourceLineNo">430</span>                if (source.length != target.length || source[0].length != target[0].length) {<a name="line.430"></a>
+<span class="sourceLineNo">431</span>                        throw new Error("source/target arrays have different dimensions");<a name="line.431"></a>
+<span class="sourceLineNo">432</span>                }<a name="line.432"></a>
+<span class="sourceLineNo">433</span>                int w = source.length;<a name="line.433"></a>
+<span class="sourceLineNo">434</span>                int h = source[0].length;<a name="line.434"></a>
+<span class="sourceLineNo">435</span>                if (tmpFp == null || tmpFp.getWidth() != w || tmpFp.getHeight() != h) {<a name="line.435"></a>
+<span class="sourceLineNo">436</span>                        tmpFp = new FloatProcessor(w, h);<a name="line.436"></a>
+<span class="sourceLineNo">437</span>                }<a name="line.437"></a>
+<span class="sourceLineNo">438</span>                // copy data to FloatProcessors         <a name="line.438"></a>
+<span class="sourceLineNo">439</span>                for (int u = 0; u &lt; w; u++) {<a name="line.439"></a>
+<span class="sourceLineNo">440</span>                        for (int v = 0; v &lt; h; v++) {<a name="line.440"></a>
+<span class="sourceLineNo">441</span>                                tmpFp.setf(u, v, source[u][v]);<a name="line.441"></a>
+<span class="sourceLineNo">442</span>                        }<a name="line.442"></a>
+<span class="sourceLineNo">443</span>                }<a name="line.443"></a>
+<span class="sourceLineNo">444</span>                <a name="line.444"></a>
+<span class="sourceLineNo">445</span>                Convolver conv = new Convolver();<a name="line.445"></a>
+<span class="sourceLineNo">446</span>                conv.setNormalize(false);<a name="line.446"></a>
+<span class="sourceLineNo">447</span>                // convolve with all specified kernels<a name="line.447"></a>
+<span class="sourceLineNo">448</span>                for (float[][] H : kernels) {<a name="line.448"></a>
+<span class="sourceLineNo">449</span>                        if (H == null) break;<a name="line.449"></a>
+<span class="sourceLineNo">450</span>                        int wH = H.length;<a name="line.450"></a>
+<span class="sourceLineNo">451</span>                        int hH = H[0].length;<a name="line.451"></a>
+<span class="sourceLineNo">452</span>                        float[] H1 = flatten(H);<a name="line.452"></a>
+<span class="sourceLineNo">453</span>                        conv.convolveFloat(tmpFp, H1, wH, hH);<a name="line.453"></a>
+<span class="sourceLineNo">454</span>                }<a name="line.454"></a>
+<span class="sourceLineNo">455</span>                // copy data back to array      <a name="line.455"></a>
+<span class="sourceLineNo">456</span>                for (int u = 0; u &lt; w; u++) {<a name="line.456"></a>
+<span class="sourceLineNo">457</span>                        for (int v = 0; v &lt; h; v++) {<a name="line.457"></a>
+<span class="sourceLineNo">458</span>                                target[u][v] = tmpFp.getf(u, v);<a name="line.458"></a>
+<span class="sourceLineNo">459</span>                        }<a name="line.459"></a>
+<span class="sourceLineNo">460</span>                }<a name="line.460"></a>
+<span class="sourceLineNo">461</span>        }<a name="line.461"></a>
+<span class="sourceLineNo">462</span>        <a name="line.462"></a>
+<span class="sourceLineNo">463</span>        /*<a name="line.463"></a>
+<span class="sourceLineNo">464</span>         * Copy a 2D float  array into a 1D float array<a name="line.464"></a>
+<span class="sourceLineNo">465</span>         */<a name="line.465"></a>
+<span class="sourceLineNo">466</span>        float[] flatten (float[][] arr2d) {<a name="line.466"></a>
+<span class="sourceLineNo">467</span>                int w = arr2d.length;<a name="line.467"></a>
+<span class="sourceLineNo">468</span>                int h = arr2d[0].length;<a name="line.468"></a>
+<span class="sourceLineNo">469</span>                float[] arr1d = new float[w*h];<a name="line.469"></a>
+<span class="sourceLineNo">470</span>                int k = 0;<a name="line.470"></a>
+<span class="sourceLineNo">471</span>                for (int i = 0; i &lt; w; i++) {<a name="line.471"></a>
+<span class="sourceLineNo">472</span>                        for (int j = 0; j &lt; h; j++) {<a name="line.472"></a>
+<span class="sourceLineNo">473</span>                                arr1d[k] = arr2d[i][j];<a name="line.473"></a>
+<span class="sourceLineNo">474</span>                                k++;<a name="line.474"></a>
+<span class="sourceLineNo">475</span>                        }<a name="line.475"></a>
+<span class="sourceLineNo">476</span>                }<a name="line.476"></a>
+<span class="sourceLineNo">477</span>                return arr1d;<a name="line.477"></a>
+<span class="sourceLineNo">478</span>        }<a name="line.478"></a>
+<span class="sourceLineNo">479</span>        <a name="line.479"></a>
+<span class="sourceLineNo">480</span>        /*<a name="line.480"></a>
+<span class="sourceLineNo">481</span>         * Construct a 2D Gaussian filter kernel large enough to avoid truncation effects.<a name="line.481"></a>
+<span class="sourceLineNo">482</span>         * Returns a 1D kernel as a 2D array, so it can be used flexibly in horizontal<a name="line.482"></a>
+<span class="sourceLineNo">483</span>         * or vertical direction.<a name="line.483"></a>
+<span class="sourceLineNo">484</span>         */<a name="line.484"></a>
+<span class="sourceLineNo">485</span>        private float[][] makeGaussKernel1D(double sigma, boolean horizontal){<a name="line.485"></a>
+<span class="sourceLineNo">486</span>                // Construct a 2D Gaussian filter kernel large enough<a name="line.486"></a>
+<span class="sourceLineNo">487</span>                // to avoid truncation effects.<a name="line.487"></a>
+<span class="sourceLineNo">488</span>                final double sigma2 = sigma * sigma;<a name="line.488"></a>
+<span class="sourceLineNo">489</span>                final double scale = 1.0 / (Math.sqrt(2 * Math.PI) * sigma);    <a name="line.489"></a>
+<span class="sourceLineNo">490</span>                final int rad = Math.max((int) (3.5 * sigma), 1); <a name="line.490"></a>
+<span class="sourceLineNo">491</span>                int size = rad + 1 +rad;        //center cell = kernel[rad]<a name="line.491"></a>
+<span class="sourceLineNo">492</span>                float[][] kernel = (horizontal) ?  <a name="line.492"></a>
+<span class="sourceLineNo">493</span>                                new float[size][1] : <a name="line.493"></a>
+<span class="sourceLineNo">494</span>                                new float[1][size]; <a name="line.494"></a>
+<span class="sourceLineNo">495</span>                double sum = 0;<a name="line.495"></a>
+<span class="sourceLineNo">496</span>                for (int i = 0; i &lt; size; i++) {<a name="line.496"></a>
+<span class="sourceLineNo">497</span>                        double x = rad - i;<a name="line.497"></a>
+<span class="sourceLineNo">498</span>                        float val = (float) (scale * Math.exp(-0.5 * (x*x) / sigma2));<a name="line.498"></a>
+<span class="sourceLineNo">499</span>                        if (horizontal) <a name="line.499"></a>
+<span class="sourceLineNo">500</span>                                kernel[i][0] =  val;<a name="line.500"></a>
+<span class="sourceLineNo">501</span>                        else <a name="line.501"></a>
+<span class="sourceLineNo">502</span>                                kernel[0][i] =  val;<a name="line.502"></a>
+<span class="sourceLineNo">503</span>                        sum = sum + val;<a name="line.503"></a>
+<span class="sourceLineNo">504</span>                }<a name="line.504"></a>
+<span class="sourceLineNo">505</span>                <a name="line.505"></a>
+<span class="sourceLineNo">506</span>                // normalize (just to be safe)<a name="line.506"></a>
+<span class="sourceLineNo">507</span>                for (int i = 0; i &lt; kernel.length; i++) {<a name="line.507"></a>
+<span class="sourceLineNo">508</span>                        for (int j = 0; j &lt; kernel[i].length; j++) {<a name="line.508"></a>
+<span class="sourceLineNo">509</span>                                kernel[i][j] = (float) (kernel[i][j] / sum);<a name="line.509"></a>
+<span class="sourceLineNo">510</span>                        }<a name="line.510"></a>
+<span class="sourceLineNo">511</span>                }<a name="line.511"></a>
+<span class="sourceLineNo">512</span>                return kernel;<a name="line.512"></a>
+<span class="sourceLineNo">513</span>        }<a name="line.513"></a>
+<span class="sourceLineNo">514</span>        <a name="line.514"></a>
+<span class="sourceLineNo">515</span>        // ----------------------------------------------------------------<a name="line.515"></a>
+<span class="sourceLineNo">516</span>        <a name="line.516"></a>
+<span class="sourceLineNo">517</span>        void normalize(double[] vec) {<a name="line.517"></a>
+<span class="sourceLineNo">518</span>                double sum = 0;<a name="line.518"></a>
+<span class="sourceLineNo">519</span>                for (double v : vec) {<a name="line.519"></a>
+<span class="sourceLineNo">520</span>                        sum = sum + v * v;<a name="line.520"></a>
+<span class="sourceLineNo">521</span>                }<a name="line.521"></a>
+<span class="sourceLineNo">522</span>                if (sum &gt; 0.000001) {<a name="line.522"></a>
+<span class="sourceLineNo">523</span>                        double s = 1 / Math.sqrt(sum);<a name="line.523"></a>
+<span class="sourceLineNo">524</span>                        for (int i = 0; i &lt; vec.length; i++) {<a name="line.524"></a>
+<span class="sourceLineNo">525</span>                                vec[i] = vec[i] * s;<a name="line.525"></a>
+<span class="sourceLineNo">526</span>                        }<a name="line.526"></a>
+<span class="sourceLineNo">527</span>                }<a name="line.527"></a>
+<span class="sourceLineNo">528</span>        }<a name="line.528"></a>
+<span class="sourceLineNo">529</span>        <a name="line.529"></a>
+<span class="sourceLineNo">530</span>        boolean realEigenValues2x2 (<a name="line.530"></a>
+<span class="sourceLineNo">531</span>                        double A, double B, double C, double D, <a name="line.531"></a>
+<span class="sourceLineNo">532</span>                        double[] lam12, double[] x1, double[] x2) {<a name="line.532"></a>
+<span class="sourceLineNo">533</span>                final double R = (A + D) / 2;<a name="line.533"></a>
+<span class="sourceLineNo">534</span>                final double S = (A - D) / 2;<a name="line.534"></a>
+<span class="sourceLineNo">535</span>                final double V = S * S + B * C;<a name="line.535"></a>
+<span class="sourceLineNo">536</span>                if (V &lt; 0) <a name="line.536"></a>
+<span class="sourceLineNo">537</span>                        return false; // matrix has no real eigenvalues<a name="line.537"></a>
+<span class="sourceLineNo">538</span>                else {<a name="line.538"></a>
+<span class="sourceLineNo">539</span>                        double T = Math.sqrt(V);<a name="line.539"></a>
+<span class="sourceLineNo">540</span>                        lam12[0] = R + T;       // lambda_1<a name="line.540"></a>
+<span class="sourceLineNo">541</span>                        lam12[1] = R - T;       // lambda_2<a name="line.541"></a>
+<span class="sourceLineNo">542</span>                        if ((A - D) &gt;= 0) {<a name="line.542"></a>
+<span class="sourceLineNo">543</span>                                x1[0] = S + T;  //e_1x<a name="line.543"></a>
+<span class="sourceLineNo">544</span>                                x1[1] = C;              //e_1y                  <a name="line.544"></a>
+<span class="sourceLineNo">545</span>                                x2[0] = B;              //e_2x<a name="line.545"></a>
+<span class="sourceLineNo">546</span>                                x2[1] = -S - T; //e_2y          <a name="line.546"></a>
+<span class="sourceLineNo">547</span>                        } <a name="line.547"></a>
+<span class="sourceLineNo">548</span>                        else {<a name="line.548"></a>
+<span class="sourceLineNo">549</span>                                x1[0] = B;              //e_1x<a name="line.549"></a>
+<span class="sourceLineNo">550</span>                                x1[1] = -S + T; //e_1y  <a name="line.550"></a>
+<span class="sourceLineNo">551</span>                                x2[0] = S - T;  //e_2x<a name="line.551"></a>
+<span class="sourceLineNo">552</span>                                x2[1] = C;              //e_2y  <a name="line.552"></a>
+<span class="sourceLineNo">553</span>                        }<a name="line.553"></a>
+<span class="sourceLineNo">554</span>                        return true;<a name="line.554"></a>
+<span class="sourceLineNo">555</span>                }<a name="line.555"></a>
+<span class="sourceLineNo">556</span>        }<a name="line.556"></a>
+<span class="sourceLineNo">557</span>        <a name="line.557"></a>
+<span class="sourceLineNo">558</span>        //  RGB/sRGB conversion -----------------------------------<a name="line.558"></a>
+<span class="sourceLineNo">559</span>        // TODO: move this to lib.colorimage.sRgbUtil class<a name="line.559"></a>
+<span class="sourceLineNo">560</span>        <a name="line.560"></a>
+<span class="sourceLineNo">561</span>        float srgbToRgb(float nc) {<a name="line.561"></a>
+<span class="sourceLineNo">562</span>                float nc01 = nc/255;<a name="line.562"></a>
+<span class="sourceLineNo">563</span>                return (float)(gammaInv(nc01) * 255);<a name="line.563"></a>
+<span class="sourceLineNo">564</span>        }<a name="line.564"></a>
+<span class="sourceLineNo">565</span><a name="line.565"></a>
+<span class="sourceLineNo">566</span>        float rgbToSrgb(float lc) {<a name="line.566"></a>
+<span class="sourceLineNo">567</span>                float lc01 = lc/255;<a name="line.567"></a>
+<span class="sourceLineNo">568</span>                return (float) (gammaFwd(lc01) * 255);<a name="line.568"></a>
+<span class="sourceLineNo">569</span>        }<a name="line.569"></a>
 <span class="sourceLineNo">570</span>        <a name="line.570"></a>
-<span class="sourceLineNo">571</span>        double gammaFwd(double lc) {    // input: linear component value<a name="line.571"></a>
-<span class="sourceLineNo">572</span>                return (lc &gt; 0.0031308) ?<a name="line.572"></a>
-<span class="sourceLineNo">573</span>                        (1.055 * Math.pow(lc, 1/2.4) - 0.055) :<a name="line.573"></a>
-<span class="sourceLineNo">574</span>                        (lc * 12.92);<a name="line.574"></a>
-<span class="sourceLineNo">575</span>    }<a name="line.575"></a>
-<span class="sourceLineNo">576</span>    <a name="line.576"></a>
-<span class="sourceLineNo">577</span>    double gammaInv(double nc) {        // input: nonlinear component value<a name="line.577"></a>
-<span class="sourceLineNo">578</span>        return (nc &gt; 0.03928) ?<a name="line.578"></a>
-<span class="sourceLineNo">579</span>                        Math.pow((nc + 0.055)/1.055, 2.4) :<a name="line.579"></a>
-<span class="sourceLineNo">580</span>                        (nc / 12.92);<a name="line.580"></a>
-<span class="sourceLineNo">581</span>    }<a name="line.581"></a>
-<span class="sourceLineNo">582</span><a name="line.582"></a>
-<span class="sourceLineNo">583</span>}<a name="line.583"></a>
-<span class="sourceLineNo">584</span><a name="line.584"></a>
+<span class="sourceLineNo">571</span>        <a name="line.571"></a>
+<span class="sourceLineNo">572</span>        double gammaFwd(double lc) {    // input: linear component value<a name="line.572"></a>
+<span class="sourceLineNo">573</span>                return (lc &gt; 0.0031308) ?<a name="line.573"></a>
+<span class="sourceLineNo">574</span>                        (1.055 * Math.pow(lc, 1/2.4) - 0.055) :<a name="line.574"></a>
+<span class="sourceLineNo">575</span>                        (lc * 12.92);<a name="line.575"></a>
+<span class="sourceLineNo">576</span>    }<a name="line.576"></a>
+<span class="sourceLineNo">577</span>    <a name="line.577"></a>
+<span class="sourceLineNo">578</span>    double gammaInv(double nc) {        // input: nonlinear component value<a name="line.578"></a>
+<span class="sourceLineNo">579</span>        return (nc &gt; 0.03928) ?<a name="line.579"></a>
+<span class="sourceLineNo">580</span>                        Math.pow((nc + 0.055)/1.055, 2.4) :<a name="line.580"></a>
+<span class="sourceLineNo">581</span>                        (nc / 12.92);<a name="line.581"></a>
+<span class="sourceLineNo">582</span>    }<a name="line.582"></a>
+<span class="sourceLineNo">583</span><a name="line.583"></a>
+<span class="sourceLineNo">584</span>}<a name="line.584"></a>
+<span class="sourceLineNo">585</span><a name="line.585"></a>
 
 
 
