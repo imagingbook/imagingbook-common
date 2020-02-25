@@ -146,6 +146,7 @@ public class Eigensolver2x2 {
 		
 	// for Testing only --------------------------------------------------------------
 	
+	@SuppressWarnings("unused")
 	private static void checkEigen(double[][] M) {
 		System.out.format("Checking M  = \n%s\n", Matrix.toString(M));
 		Eigensolver2x2 es = new Eigensolver2x2(M);

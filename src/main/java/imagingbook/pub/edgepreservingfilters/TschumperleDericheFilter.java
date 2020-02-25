@@ -423,7 +423,8 @@ public class TschumperleDericheFilter {
 	/*
 	 * Convolve the 2D array source successively with a sequence of kernels
 	 * and store the result in target.
-	 * This should eventually be implemented without an ImageJ FloatProcessor!
+	 * TODO: This should be implemented without an ImageJ FloatProcessor!
+	 * TODO: Use methods from imagingbook/lib/filters/GaussianFilter ! 
 	 */
 	void convolve2dArray(float[][] source, float[][] target, float[][]... kernels) {
 		if (source.length != target.length || source[0].length != target[0].length) {
