@@ -9,6 +9,7 @@
 
 package imagingbook.pub.corners;
 
+import ij.process.ImageProcessor;
 import imagingbook.pub.geometry.basic.Point;
 
 /**
@@ -16,7 +17,7 @@ import imagingbook.pub.geometry.basic.Point;
  * A corner is essentially a {@link Point} plus a scalar quantity
  * {@link #q} for the corner strength.
  * 
- * @version 2020-01-09
+ * @version 2020/02/25
  */
 public class Corner implements Point, Comparable<Corner> {
 	protected final float x, y, q;
@@ -51,5 +52,15 @@ public class Corner implements Point, Comparable<Corner> {
 	public int compareTo (Corner c2) {
 		return Double.compare(c2.q, this.q);
 	}
+	
+	// ----------------------------------------------------------------
+	
+	public void draw(ImageProcessor ip, int size) {
+		int x = (int) Math.round(this.getX());
+		int y = (int) Math.round(this.getY());
+		ip.drawLine(x - size, y, x + size, y);
+		ip.drawLine(x, y - size, x, y + size);
+	}
+	
 }
 
