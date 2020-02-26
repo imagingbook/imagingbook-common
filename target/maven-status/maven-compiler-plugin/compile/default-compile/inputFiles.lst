@@ -40,6 +40,7 @@ D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingb
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\dft\Dft2d.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\moments\BinaryMoments.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\sift\KeyPoint.java
+D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\corners\ShiTomasiDetector.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\lib\interpolation\PixelInterpolator.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\noise\perlin\PerlinNoiseGen.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\color\filters\FilterMask.java
@@ -121,6 +122,7 @@ D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingb
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\color\edge\DiZenzoCumaniEdgeDetector.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\sift\SiftDetector.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\regions\ContourOverlay.java
+D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\corners\PointFeatureDetector.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\lib\package-info.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\dft\Dft1dDirect.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\threshold\Thresholder.java
@@ -197,6 +199,7 @@ D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingb
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\edgepreservingfilters\NagaoMatsuyamaFilter.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\regions\geometry\AxisAlignedBoundingBox.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\threshold\global\GlobalThresholder.java
+D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\corners\AbstractGradientCornerDetector.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\histogram\Util.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\lucaskanade\LucasKanadeMatcher.java
 D:\GITHUB-imagingbook\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\geometry\delaunay\guibas\Edge2D.java

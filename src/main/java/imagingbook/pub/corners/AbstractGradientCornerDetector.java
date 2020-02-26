@@ -55,7 +55,7 @@ public abstract class AbstractGradientCornerDetector implements PointFeatureDete
 	protected final Parameters params;
 	protected final FloatProcessor Q;
 	
-	// for protocol only - REMOVE!
+	// for testing only - REMOVE!
 	public FloatProcessor Ixx = null;
 	public FloatProcessor Iyy = null;
 	public FloatProcessor Ixy = null;

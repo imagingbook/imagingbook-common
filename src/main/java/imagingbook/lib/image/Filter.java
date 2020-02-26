@@ -23,7 +23,9 @@ public abstract class Filter {
 
 	/**
 	 * Applies a one-dimensional convolution kernel to the given image,
-	 * which is modified. The 1D kernel is applied in horizontal direction only.
+	 * which is modified. The 1D kernel is applied in horizontal direction only.#
+	 * The supplied filter kernel is not normalized.
+	 * 
 	 * @param fp the image to be filtered (modified)
 	 * @param h the filter kernel
 	 */
@@ -36,6 +38,8 @@ public abstract class Filter {
 	/**
 	 * Applies a one-dimensional convolution kernel to the given image,
 	 * which is modified. The 1D kernel is applied in vertical direction only.
+	 * The supplied filter kernel is not normalized.
+	 * 
 	 * @param fp the image to be filtered (modified)
 	 * @param h the filter kernel
 	 */
@@ -47,8 +51,11 @@ public abstract class Filter {
 
 	/**
 	 * Applies a one-dimensional convolution kernel to the given image,
-	 * which is modified. The 1D kernel is applied twice in horizontal and
+	 * which is modified.
+	 * The 1D kernel is applied twice, once in horizontal and once in
 	 * vertical direction.
+	 * The supplied filter kernel is not normalized.
+	 * 
 	 * @param fp the image to be filtered (modified)
 	 * @param h the filter kernel
 	 */
