@@ -147,6 +147,7 @@ imagingbook\pub\color\quantize\OctreeQuantizer.class
 imagingbook\pub\geometry\delaunay\guibas\Vector2D.class
 imagingbook\pub\color\edge\CannyEdgeDetector.class
 imagingbook\pub\color\edge\ColorEdgeDetector.class
+imagingbook\pub\corners\PointFeatureDetector.class
 imagingbook\pub\lucaskanade\LucasKanadeInverseMatcher.class
 imagingbook\pub\morphology\old\BinMorpherDisk.class
 imagingbook\lib\ij\GuiTools.class
@@ -178,6 +179,7 @@ imagingbook\lib\ij\IjLogStream.class
 imagingbook\lib\math\VectorNorm.class
 imagingbook\pub\geometry\delaunay\plugin\Delaunay_Demo_Plugin.class
 imagingbook\lib\image\PixelIndexer$NearestBorderIndexer.class
+imagingbook\pub\corners\AbstractGradientCornerDetector.class
 imagingbook\pub\dft\obsolete\Dft2d.class
 imagingbook\pub\geometry\delaunay\chew\Pnt.class
 imagingbook\pub\edgepreservingfilters\KuwaharaFilter$Parameters.class
@@ -193,11 +195,13 @@ imagingbook\pub\threshold\global\IsodataThresholder.class
 imagingbook\lib\interpolation\NearestNeighborInterpolator.class
 imagingbook\lib\math\HomogeneousVector.class
 imagingbook\pub\dct\Dct1dFast$1.class
+imagingbook\pub\corners\ShiTomasiDetector.class
 imagingbook\pub\threshold\adaptive\AdaptiveThresholder.class
 imagingbook\pub\dft\Dft1dFast$Float.class
 imagingbook\pub\geometry\mappings\linear\LinearMapping2D.class
 imagingbook\lib\interpolation\BilinearInterpolator.class
 imagingbook\pub\regions\SequentialLabeling$LabelCollision.class
+imagingbook\pub\corners\ShiTomasiDetector$Parameters.class
 imagingbook\test\TestMe.class
 imagingbook\lib\math\VectorNorm$NormType$2.class
 imagingbook\pub\sift\SiftDescriptor.class
@@ -228,6 +232,7 @@ imagingbook\pub\dft\Dft2d$Double.class
 imagingbook\pub\color\quantize\KMeansClusteringQuantizer.class
 imagingbook\lib\math\Complex.class
 imagingbook\lib\image\ImageMath.class
+imagingbook\pub\corners\AbstractGradientCornerDetector$Parameters.class
 imagingbook\pub\morphology\BinaryMorphologyFilter$1.class
 imagingbook\pub\morphology\BinaryMorphologyFilter$Disk.class
 imagingbook\pub\threshold\global\OtsuThresholder.class
