@@ -13,6 +13,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.jar.Manifest;
@@ -65,11 +67,22 @@ public abstract class FileUtils {
 	 * @param clazz a class.
 	 * @return the path of the .class file for the given class or null (e.g.
 	 * if the class is anonymous).
-	 */   
+	 */
 	public static String getClassPath(Class<?> clazz) {
-		return clazz.getProtectionDomain().getCodeSource().getLocation().getFile();
-		//return clazz.getProtectionDomain().getCodeSource().getLocation().toString();
+		String path = null;
+		try {
+			URI uri = clazz.getProtectionDomain().getCodeSource().getLocation().toURI();
+			if (uri != null && !uri.getPath().isEmpty()) {
+				path = new File(uri).getCanonicalPath();
+			}
+		} catch (URISyntaxException | IOException e) { }
+		return path;
 	}
+	
+//	public static String getClassPath(Class<?> clazz) {
+//		return clazz.getProtectionDomain().getCodeSource().getLocation().getFile();
+//		//return clazz.getProtectionDomain().getCodeSource().getLocation().toString();
+//	}
 	
 	// ----------------------------------------------------------------
 
