@@ -44,6 +44,7 @@ imagingbook\pub\regions\SequentialLabeling.class
 imagingbook\pub\color\statistics\ColorHistogram.class
 imagingbook\lib\math\Matrix$ZeroLengthVectorException.class
 imagingbook\pub\dft\Dft1dDirect.class
+imagingbook\pub\geometry\delaunay\plugin\Voronoi_Demo.class
 imagingbook\pub\color\filters\VectorMedianFilterSharpen.class
 imagingbook\pub\geometry\mappings\nonlinear\BilinearMapping.class
 imagingbook\lib\image\PixelIndexer.class

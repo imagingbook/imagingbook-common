@@ -132,6 +132,10 @@ public class TriangulationChew extends AbstractSet<Triangle2D> implements Delaun
     }
     
     // ----------------------------------------------------------
+    
+    public Triangle2D getSuperTriangle() {
+    	return this.superTriangle;
+    }
 
     /* The following two methods are required by AbstractSet */
 

@@ -301,12 +301,12 @@ public class TriangulationGuibas implements DelaunayTriangulation {
 
 	/**
 	 * Removes all triangles that contain the specified corner point.
-	 * @param vertex the corner point
+	 * @param point the corner point
 	 */
-	public void removeTrianglesUsing(Vector2D vertex) {
+	public void removeTrianglesUsing(Vector2D point) {
 		List<Triangle2D> trianglesToBeRemoved = new LinkedList<>();
 		for (Triangle2D triangle : triangles) {
-			if (triangle.hasVertex(vertex)) {
+			if (triangle.hasVertex(point)) {
 				trianglesToBeRemoved.add(triangle);
 			}
 		}
