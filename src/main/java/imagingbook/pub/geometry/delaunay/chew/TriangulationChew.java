@@ -22,6 +22,7 @@ package imagingbook.pub.geometry.delaunay.chew;
 
 import java.util.AbstractSet;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -32,6 +33,7 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import ij.process.ImageProcessor;
 import imagingbook.pub.geometry.basic.Point;
 import imagingbook.pub.geometry.delaunay.DelaunayTriangulation;
 import imagingbook.pub.geometry.delaunay.Triangle;
@@ -374,6 +376,30 @@ public class TriangulationChew extends AbstractSet<Triangle2D> implements Delaun
 	public List<Point> getPoints() {
 		return Collections.unmodifiableList(points);
 	}
+	
+	// --- this should not be here ----------------------------------------
+	
+//	private void drawVoronoiDiagram (ImageProcessor ip) {
+//		TriangulationChew dt = this;
+//    	// Keep track of sites done; no drawing for initial triangles sites
+//    	//Pnt[] initPoints = dt.getInitialTriangle().getVertices();
+//    	Point[] initPoints = superTriangle.getPoints();
+//    	Set<Point> processed = new HashSet<>(Arrays.asList(initPoints));
+//    	for (Triangle triangle : dt.getTriangles()) {
+//    		for (Point pnt : triangle.getPoints()) {
+//    			if (!processed.contains(pnt)) {
+//	    			processed.add(pnt);
+//	    			List<Triangle> triangles = dt.surroundingTriangles(pnt, triangle);
+//	    			List<Pnt> vertices = new ArrayList<>(triangles.size());
+//	    			for (Triangle tri : triangles) {
+//	    				Pnt center = tri.getCircumcenter();
+//	    				vertices.add(center);
+//	    			}
+//	    			IjUtil.draw(vertices.toArray(new Point[0]), ip);
+//    			}
+//    		}
+//    	}
+//    }
 
 //    /**
 //     * Main program; used for testing. ------------------------------------
