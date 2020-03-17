@@ -35,7 +35,7 @@ public class ProjectiveMapping2D extends LinearMapping2D {
 	 */
 	public static ProjectiveMapping2D fromPoints(Point[] P, Point[] Q) {
 		ProjectiveFit2D fit = new ProjectiveFit2D(P, Q);
-		return new ProjectiveMapping2D(fit.getTransformationMatrix());
+		return new ProjectiveMapping2D(fit.getTransformationMatrix().getData());
 	}
 	
 //	/**

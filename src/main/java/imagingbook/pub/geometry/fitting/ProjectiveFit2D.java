@@ -7,7 +7,6 @@ import org.apache.commons.math3.linear.RealVector;
 import org.apache.commons.math3.linear.SingularValueDecomposition;
 
 import imagingbook.pub.geometry.basic.Point;
-import imagingbook.pub.geometry.mappings.linear.LinearMapping2D;
 
 public class ProjectiveFit2D implements LinearFit2D {
 	
@@ -58,8 +57,8 @@ public class ProjectiveFit2D implements LinearFit2D {
 	}
 
 	@Override
-	public double[][] getTransformationMatrix() {
-		return A.getData();
+	public RealMatrix getTransformationMatrix() {
+		return A;
 	}
 
 	@Override
@@ -73,28 +72,6 @@ public class ProjectiveFit2D implements LinearFit2D {
 		if (P.length < 4 || Q.length < 4) {
 			throw new IllegalArgumentException("At least 4 point pairs are required to calculate this fit");
 		}
-	}
-	
-	/**
-	 * Calculates and returns the cumulative distance error
-	 * between the two point sequences under the transformation A,
-	 * i.e., {@code e = sum_i (||p_i * A - q_i||)}.
-	 * @param P	the first point sequence
-	 * @param Q the second point sequence
-	 * @param A	a (3 x 3) projective transformation matrix
-	 * @return the error {@code e}
-	 */
-	private double calculateError(Point[] P, Point[] Q, RealMatrix A) {
-		int m = Math.min(P.length,  Q.length);
-		LinearMapping2D map = new LinearMapping2D(A.getData());
-		double errSum = 0;
-		for (int i = 0; i < m; i++) {
-			Point p = P[i];
-			Point q = Q[i];
-			Point pp = map.applyTo(p);
-			errSum = errSum + Point.distance(q, pp);
-		}
-		return errSum;
 	}
 
 }

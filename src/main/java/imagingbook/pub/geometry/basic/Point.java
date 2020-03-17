@@ -28,7 +28,7 @@ public interface Point {
 	}
 	
 	static double distance(Point p, Point q) {
-		return Math.sqrt(distance2(p, p));
+		return Math.sqrt(distance2(p, q));
 	}
 	
 	static double distance2(Point p, Point q) {

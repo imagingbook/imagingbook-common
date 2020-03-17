@@ -8,7 +8,6 @@ import org.apache.commons.math3.linear.RealVector;
 import org.apache.commons.math3.linear.SingularValueDecomposition;
 
 import imagingbook.pub.geometry.basic.Point;
-import imagingbook.pub.geometry.mappings.linear.AffineMapping2D;
 
 public class AffineFit2D implements LinearFit2D {
 	
@@ -81,33 +80,12 @@ public class AffineFit2D implements LinearFit2D {
 		}
 	}
 	
-	/**
-	 * Calculates and returns the cumulative distance error
-	 * between the two point sequences under the transformation A,
-	 * i.e., {@code e = sum_i (||p_i * A - q_i||)}.
-	 * @param P	the first point sequence
-	 * @param Q the second point sequence
-	 * @param A	a 2 x 3 (affine) transformation matrix
-	 * @return the error {@code e}
-	 */
-	protected static double calculateError(Point[] P, Point[] Q, RealMatrix A) {
-		int m = Math.min(P.length,  Q.length);
-		AffineMapping2D map = new AffineMapping2D(A.getData());
-		double errSum = 0;
-		for (int i = 0; i < m; i++) {
-			Point p = P[i];
-			Point q = Q[i];
-			Point pp = map.applyTo(p);
-			errSum = errSum + Point.distance(q, pp);
-		}
-		return errSum;
-	}
-	
 	// --------------------------------------------------------
 
 	@Override
-	public double[][] getTransformationMatrix() {
-		return A.getData();
+	public RealMatrix getTransformationMatrix() {
+//		return A.getData();
+		return A;
 	}
 
 	@Override

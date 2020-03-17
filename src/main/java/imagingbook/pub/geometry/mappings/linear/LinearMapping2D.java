@@ -38,12 +38,17 @@ public class LinearMapping2D implements Mapping2D {
 	
 	/**
 	 * Creates a linear mapping from a transformation matrix A.
-	 * @param A a 3 x 3 matrix
+	 * @param A a (3,3) or (2,3) matrix
 	 */
 	public LinearMapping2D(double[][] A) {
 		a00 = A[0][0]; a01 = A[0][1]; a02 = A[0][2];
 		a10 = A[1][0]; a11 = A[1][1]; a12 = A[1][2];
-		a20 = A[2][0]; a21 = A[2][1]; a22 = A[2][2];
+		if (A.length == 3) {
+			a20 = A[2][0]; a21 = A[2][1]; a22 = A[2][2];
+		}
+		else {
+			a20 = 0; a21 = 0; a22 = 1;
+		}
 	}
 
 	/**
