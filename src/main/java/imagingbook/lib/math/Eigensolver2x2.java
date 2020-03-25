@@ -9,9 +9,8 @@
 
 package imagingbook.lib.math;
 
-
 import imagingbook.lib.math.Matrix;
-//import imagingbook.lib.settings.PrintPrecision;
+import imagingbook.lib.settings.PrintPrecision;
 
 /**
  * Implements an efficient, closed form algorithm for calculating the real 
@@ -146,34 +145,35 @@ public class Eigensolver2x2 {
 		
 	// for Testing only --------------------------------------------------------------
 	
-	@SuppressWarnings("unused")
-	private static void checkEigen(double[][] M) {
-		System.out.format("Checking M  = \n%s\n", Matrix.toString(M));
-		Eigensolver2x2 es = new Eigensolver2x2(M);
-		double[] eVals = es.getEigenvalues();
-		double[][] eVecs = es.getEigenvectors();
-		
-		for (int i = 0; i < 2; i++) {
-			checkEigenPair(i+1, M, eVals[i], eVecs[i]);
-		}
-		System.out.println();
-	}
-	
-	private static void checkEigenPair(int i, double[][] M, double lambda, double[] x) {
-		double[] Mx = Matrix.multiply(M, x);
-		double[] lx = Matrix.multiply(lambda, x);
-		double d = Matrix.normL2(Matrix.add(Mx, Matrix.multiply(-1, lx)));
-		System.out.format("    \u03BB_%d  = %.6f\n", i, lambda);
-		System.out.format("    x_%d = %s\n", i, Matrix.toString(x));
+//	@SuppressWarnings("unused")
+//	private static void checkEigen(double[][] M) {
+//		System.out.format("Checking M  = \n%s\n", Matrix.toString(M));
+//		Eigensolver2x2 es = new Eigensolver2x2(M);
+//		double[] eVals = es.getEigenvalues();
+//		double[][] eVecs = es.getEigenvectors();
+//		
+//		for (int i = 0; i < 2; i++) {
+//			checkEigenPair(i+1, M, eVals[i], eVecs[i]);
+//			System.out.println();
+//		}
+//		System.out.println();
+//	}
+//	
+//	private static void checkEigenPair(int i, double[][] M, double lambda, double[] x) {
+//		double[] Mx = Matrix.multiply(M, x);
+//		double[] lx = Matrix.multiply(lambda, x);
+//		double d = Matrix.normL2(Matrix.add(Mx, Matrix.multiply(-1, lx)));
+//		System.out.format("    \u03BB_%d  = %.6f\n", i, lambda);
+//		System.out.format("    x_%d = %s\n", i, Matrix.toString(x));
 //		System.out.format("    M.x = %s\n", Matrix.toString(Mx));
 //		System.out.format("    \u03BB.x = %s\n", Matrix.toString(lx));
 //		System.out.format("    error = %.6f\n", d);
-		if (d > 0.000001) {
-			System.out.println("    **** WRONG ****");
-		}
-	}
-	
-	
+//		if (d > 0.000001) {
+//			System.out.println("    **** WRONG ****");
+//		}
+//	}
+//	
+//	
 //	public static void main(String[] args) {
 //		PrintPrecision.set(6);
 //		{
@@ -239,6 +239,7 @@ public class Eigensolver2x2 {
 //			// Mathematica: {3, -1} | {{1, 1}, {-1, 1}}
 //		}
 //	}
+	
 }
 	
 /*
