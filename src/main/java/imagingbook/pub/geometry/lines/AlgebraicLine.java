@@ -6,12 +6,12 @@
  * Copyright (c) 2006-2020 Wilhelm Burger, Mark J. Burge. All rights reserved. 
  * Visit http://imagingbook.com for additional details.
  *******************************************************************************/
-package imagingbook.pub.hough.lines;
+package imagingbook.pub.geometry.lines;
 
-import java.awt.geom.Point2D;
 import java.util.Locale;
 
 import ij.process.ImageProcessor;
+import imagingbook.pub.geometry.basic.Point;
 
 /**
  * This class represents an algebraic line of the form a * x + b * y + c = 0.
@@ -22,10 +22,8 @@ import ij.process.ImageProcessor;
  */
 public class AlgebraicLine {
 	
-	protected final double a;
-	protected final double b;
-	protected final double c;
-	
+	protected final double a, b, c;
+
 	// static factory methods ----------------------------------------
 	
 	public static AlgebraicLine create(double a, double b, double c) {
@@ -33,7 +31,7 @@ public class AlgebraicLine {
 		return new AlgebraicLine(a / norm, b / norm , c / norm);
 	}
 	
-	public static AlgebraicLine create(Point2D p1, Point2D p2) {
+	public static AlgebraicLine create(Point p1, Point p2) {
 		double a = p1.getY() - p2.getY();
 		double b = p2.getX() - p1.getX();
 		double c = -a * p1.getX() - b * p1.getY();
@@ -67,14 +65,15 @@ public class AlgebraicLine {
 	/**
 	 * Returns the perpendicular distance between this line and the point (x, y).
 	 * The result may be positive or negative, depending on which side of the line
-	 * (x, y) is located. It is assumed that the line is normalized
+	 * (x, y) is located. It is assumed that the line is normalized, i.e.,
+	 * sqrt(a * a + b * b) == 1.
 	 * 
 	 * @param x x-coordinate of point position.
 	 * @param y y-coordinate of point position.
 	 * @return The perpendicular distance between this line and the point (x, y).
 	 */
 	public double getDistance(double x, double y) {
-		return (a * x + b * y + c) / Math.sqrt(a * a + b * b);
+		return (a * x + b * y + c); // / Math.sqrt(a * a + b * b);
 	}
 	
 	
@@ -86,7 +85,7 @@ public class AlgebraicLine {
 	 * @param p point position.
 	 * @return The perpendicular distance between this line and the point p.
 	 */
-	public double getDistance(Point2D p) {
+	public double getDistance(Point p) {
 		return getDistance(p.getX(), p.getY());
 	}
 	
@@ -101,8 +100,8 @@ public class AlgebraicLine {
 	 * are sufficiently close to the HoughLine hl. The drawing color for ip must be
 	 * previously set.
 	 * 
-	 * @param ip        The ImageProcessor to draw to.
-	 * @param thickness The thickness of the lines to be drawn.
+	 * @param ip        the {@link ImageProcessor} instance to draw to.
+	 * @param thickness the thickness of the lines to be drawn.
 	 */
 	public void draw(ImageProcessor ip, double thickness) {
 		final int w = ip.getWidth();
@@ -117,17 +116,24 @@ public class AlgebraicLine {
 				}
 			}
 		}
-
 	}
 	
 	// ------------------------------------------------------------------------------
 	
 //	public static void main(String[] args) {
-//		Point2D p1 = new Point(30, 10);
-//		Point2D p2 = new Point(200, 100);
+//		Point p1 = Point.create(30, 10);
+//		Point p2 = Point.create(200, 100);
 //		
 //		AlgebraicLine L = AlgebraicLine.create(p1, p2);
 //		System.out.println(L.toString());
 //		
+//		System.out.println("d1 = " + L.getDistance(p1));
+//		System.out.println("d2 = " + L.getDistance(p2));
+//		System.out.println("d3 = " + L.getDistance(Point.create(0, 0)));	
 //	}
+	
+//	AlgebraicLine <a = -0.468, b = 0.884, c = 5.199>
+//	d1 = 0.0
+//	d2 = -5.329070518200751E-15
+//	d3 = 5.198752449100363
 }

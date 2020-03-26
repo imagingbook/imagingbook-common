@@ -6,10 +6,11 @@
  * Copyright (c) 2006-2020 Wilhelm Burger, Mark J. Burge. All rights reserved. 
  * Visit http://imagingbook.com for additional details.
  *******************************************************************************/
-package imagingbook.pub.hough.lines;
+package imagingbook.pub.geometry.lines;
 
-import java.awt.geom.Point2D;
 import java.util.Locale;
+
+import imagingbook.pub.geometry.basic.Point;
 
 /**
  * This class represents a straight line in Hessian normal form, i.e., x *
@@ -21,7 +22,7 @@ public class HessianLine extends AlgebraicLine {
 	
 	// static factory methods ----------------------------------------
 	
-	public static HessianLine create(Point2D p1, Point2D p2) {
+	public static HessianLine create(Point p1, Point p2) {
 		return new HessianLine(AlgebraicLine.create(p1, p2));
 	}
 	
@@ -57,29 +58,22 @@ public class HessianLine extends AlgebraicLine {
 				this.getClass().getSimpleName(), angle, radius);
 	}
 
-	/**
-	 * Returns the perpendicular distance between this line and the point (x, y).
-	 * The result may be positive or negative, depending on which side of the line
-	 * (x, y) is located.
-	 * 
-	 * @param x x-coordinate of point position.
-	 * @param y y-coordinate of point position.
-	 * @return The perpendicular distance between this line and the point (x, y).
-	 */
-	@Override
-	public double getDistance(double x, double y) {
-		return a * x + b * y + c;
-	}
-
-
 	// ------------------------------------------------------------------------------
 	
 //	public static void main(String[] args) {
-//		Point2D p1 = new Point(30, 10);
-//		Point2D p2 = new Point(200, 100);
+//		Point p1 = Point.create(30, 10);
+//		Point p2 = Point.create(200, 100);
 //		
 //		HessianLine L = HessianLine.create(p1, p2);
 //		System.out.println(L.toString());
 //		
+//		System.out.println("d1 = " + L.getDistance(p1));
+//		System.out.println("d2 = " + L.getDistance(p2));
+//		System.out.println("d3 = " + L.getDistance(Point.create(0, 0)));	
 //	}
+	
+//	HessianLine <angle = 2.058, radius = -5.199>
+//	d1 = 0.0
+//	d2 = -5.329070518200751E-15
+//	d3 = 5.198752449100363
 }

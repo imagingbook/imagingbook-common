@@ -8,19 +8,16 @@
  *******************************************************************************/
 package imagingbook.pub.hough.lines;
 
-import java.awt.geom.Point2D;
 import java.util.Locale;
 
 import ij.gui.PolygonRoi;
 import ij.gui.Roi;
-import ij.process.ImageProcessor;
-import imagingbook.pub.hough.HoughTransformLines;
+import imagingbook.pub.geometry.basic.Point;
+import imagingbook.pub.geometry.lines.HessianLine;
 
 /**
  * This class represents a straight line in Hessian normal form, i.e.,
  * x * cos(angle) + y * sin(angle) = radius. 
- * It is implemented as a non-static inner class of {@link HoughTransformLines} 
- * since instances reference the enclosing Hough transform object.
  */
 public class HoughLine extends HessianLine implements Comparable<HoughLine> {
 	private final int count;
@@ -46,9 +43,9 @@ public class HoughLine extends HessianLine implements Comparable<HoughLine> {
 		this(hline.getAngle(), hline.getRadius(), xRef, yRef, count);
 	}
 	
-	public static HoughLine create(Point2D p1, Point2D p2, double xRef, double yRef, int count) {
-		Point2D p1r = new Point2D.Double(p1.getX() - xRef, p1.getY() - yRef);
-		Point2D p2r = new Point2D.Double(p2.getX() - xRef, p2.getY() - yRef);
+	public static HoughLine create(Point p1, Point p2, double xRef, double yRef, int count) {
+		Point p1r = Point.create(p1.getX() - xRef, p1.getY() - yRef);
+		Point p2r = Point.create(p2.getX() - xRef, p2.getY() - yRef);
 		return new HoughLine(HessianLine.create(p1r, p2r), xRef, yRef, count);
 	}
 	
@@ -85,29 +82,29 @@ public class HoughLine extends HessianLine implements Comparable<HoughLine> {
 		return super.getDistance(x - xRef, y - yRef);
 	}
 	
-	/**
-	 * This is a brute-force drawing method which simply marks all image pixels that
-	 * are sufficiently close to the HoughLine hl. The drawing color for ip must be
-	 * previously set.
-	 * 
-	 * @param ip        the {@link ImageProcessor} instance to draw to.
-	 * @param thickness the thickness of the lines to be drawn.
-	 */
-	@Override
-	public void draw(ImageProcessor ip, double thickness) {
-		final int w = ip.getWidth();
-		final int h = ip.getHeight();
-		final double dmax = 0.5 * thickness;
-		for (int u = 0; u < w; u++) {
-			for (int v = 0; v < h; v++) {
-				// get the distance between (u,v) and the line hl:
-				double d = Math.abs(this.getDistance(u, v));
-				if (d <= dmax) {
-					ip.drawPixel(u, v);
-				}
-			}
-		}
-	}
+//	/**
+//	 * This is a brute-force drawing method which simply marks all image pixels that
+//	 * are sufficiently close to the HoughLine hl. The drawing color for ip must be
+//	 * previously set.
+//	 * 
+//	 * @param ip        the {@link ImageProcessor} instance to draw to.
+//	 * @param thickness the thickness of the lines to be drawn.
+//	 */
+//	@Override
+//	public void draw(ImageProcessor ip, double thickness) {
+//		final int w = ip.getWidth();
+//		final int h = ip.getHeight();
+//		final double dmax = 0.5 * thickness;
+//		for (int u = 0; u < w; u++) {
+//			for (int v = 0; v < h; v++) {
+//				// get the distance between (u,v) and the line hl:
+//				double d = Math.abs(this.getDistance(u, v));
+//				if (d <= dmax) {
+//					ip.drawPixel(u, v);
+//				}
+//			}
+//		}
+//	}
 	
 	/**
 	 * Creates a vector line to be used an element in an ImageJ graphic overlay
@@ -171,11 +168,12 @@ public class HoughLine extends HessianLine implements Comparable<HoughLine> {
 	// ------------------------------------------------------------------------------
 	
 //	public static void main(String[] args) {
-//		Point2D p1 = new Point(30, 10);
-//		Point2D p2 = new Point(200, 100);
+//		Point p1 = Point.create(30, 10);
+//		Point p2 = Point.create(200, 100);
 //		
 //		HoughLine L = HoughLine.create(p1, p2, 90, 60, 0);
 //		System.out.println(L.toString());
-//		
 //	}
+	
+	// HoughLine <angle = 2.058, radius = -16.116, xRef = 90.000, yRef = 60.000, count = 0>
 }

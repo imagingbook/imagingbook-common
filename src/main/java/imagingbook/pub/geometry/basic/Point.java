@@ -2,10 +2,16 @@ package imagingbook.pub.geometry.basic;
 
 import static imagingbook.lib.math.Arithmetic.sqr;
 
+import java.awt.geom.Point2D;
 import java.util.Collection;
 
 /** 
  * Interface specifying the behavior of a simple 2D point.
+ * It is used to accommodate different (legacy) point implementations 
+ * a common API.
+ * This file also defines a nested default implementation class which
+ * simply extends {@link Point2D.Double}.
+ * 
  */
 public interface Point {
 	double getX();
@@ -18,6 +24,12 @@ public interface Point {
 	static Point create(double[] xy) {
 		return new Imp(xy[0], xy[1]);
 	}
+	
+	static Point create(Point2D p) {
+		return new Imp(p.getX(), p.getY());
+	}
+	
+	// ----------------------------------------------------------
 	
 	default double[] toArray() {
 		return new double[] {this.getX(), this.getY()};
@@ -48,7 +60,7 @@ public interface Point {
 	 * Simple fallback implementation of the {@link Point} interface.
 	 * If dependency on AWT is to be avoided, just implement your own.
 	 */
-	public class Imp extends java.awt.geom.Point2D.Double implements Point {
+	class Imp extends java.awt.geom.Point2D.Double implements Point {
 		private static final long serialVersionUID = 1L;
 
 		public Imp(double x, double y) {
