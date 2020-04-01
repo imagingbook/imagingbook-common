@@ -25,6 +25,10 @@ public interface Point {
 		return new Imp(xy[0], xy[1]);
 	}
 	
+	static Point create(Point p) {
+		return new Imp(p.getX(), p.getY());
+	}
+	
 	static Point create(Point2D p) {
 		return new Imp(p.getX(), p.getY());
 	}
