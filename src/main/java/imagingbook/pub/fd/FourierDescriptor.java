@@ -13,7 +13,7 @@ import imagingbook.lib.math.Arithmetic;
 import imagingbook.lib.math.Complex;
 
 import java.awt.geom.Path2D;
-import java.awt.geom.Point2D;
+import imagingbook.pub.geometry.basic.Point;
 
 import org.apache.commons.math3.analysis.UnivariateFunction;
 import org.apache.commons.math3.optim.MaxEval;
@@ -105,7 +105,7 @@ public abstract class FourierDescriptor implements Cloneable {
 
 	// ----------------------------------------------------------------
 
-	protected static Complex[] makeComplex(Point2D[] points) {
+	protected static Complex[] makeComplex(Point[] points) {
 		int N = points.length;
 		Complex[] samples = new Complex[N];
 		for (int i = 0; i < N; i++) {
