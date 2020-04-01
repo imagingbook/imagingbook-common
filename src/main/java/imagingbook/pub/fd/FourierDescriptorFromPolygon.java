@@ -14,15 +14,14 @@ import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 import static java.lang.Math.sqrt;
 
-import java.awt.Point;
 import java.awt.Polygon;
-import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
 
 import ij.gui.Roi;
 import imagingbook.lib.math.Arithmetic;
 import imagingbook.lib.math.Complex;
+import imagingbook.pub.geometry.basic.Point;
 
 
 /**
@@ -30,7 +29,7 @@ import imagingbook.lib.math.Complex;
  * that input polygons are non-uniformly sampled.
  * 
  * @author W. Burger
- * @version 2015/08/13
+ * @version 2020/04/01
  */
 public class FourierDescriptorFromPolygon extends FourierDescriptor {
 
@@ -39,7 +38,7 @@ public class FourierDescriptorFromPolygon extends FourierDescriptor {
 	 * @param V sequences of 2D points describing an arbitrary, closed polygon.
 	 * @param Mp the number of Fourier coefficient pairs (M = 2 * Mp + 1).
 	 */
-	public FourierDescriptorFromPolygon(Point2D[] V, int Mp) {
+	public FourierDescriptorFromPolygon(Point[] V, int Mp) {
 		g = makeComplex(V);
 		makeDftSpectrumTrigonometric(Mp);
 	}
@@ -112,17 +111,17 @@ public class FourierDescriptorFromPolygon extends FourierDescriptor {
         }
 	}
 	
-	static Point2D[] getRoiPoints(Roi roi) {
+	static Point[] getRoiPoints(Roi roi) {
 		Polygon poly = roi.getPolygon();
 		int[] xp = poly.xpoints;
 		int[] yp = poly.ypoints;
 		// copy vertices for all non-zero-length polygon segments:
 		List<Point> points = new ArrayList<Point>(xp.length);
-		points.add(new Point(xp[0], yp[0]));
+		points.add(Point.create(xp[0], yp[0]));
 		int last = 0;
 		for (int i = 1; i < xp.length; i++) {
 			if (xp[last] != xp[i] || yp[last] != yp[i]) {
-				points.add(new Point(xp[i], yp[i]));
+				points.add(Point.create(xp[i], yp[i]));
 				last = i;
 			}
 		}
@@ -130,6 +129,6 @@ public class FourierDescriptorFromPolygon extends FourierDescriptor {
 		if (xp[last] == xp[0] && yp[last] == yp[0]) {
 			points.remove(last);
 		}
-		return points.toArray(new Point2D[0]);
+		return points.toArray(new Point[0]);
 	}
 }

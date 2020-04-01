@@ -10,7 +10,6 @@ package imagingbook.pub.fd;
 
 import imagingbook.lib.math.Arithmetic;
 import imagingbook.lib.math.Complex;
-
 import imagingbook.pub.geometry.basic.Point;
 
 
@@ -19,7 +18,7 @@ import imagingbook.pub.geometry.basic.Point;
  * that input polygons are uniformly sampled.
  * 
  * @author W. Burger
- * @version 2015/08/13
+ * @version 2020/04/01
  */
 public class FourierDescriptorUniform extends FourierDescriptor {
 	

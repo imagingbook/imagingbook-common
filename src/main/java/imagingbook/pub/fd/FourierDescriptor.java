@@ -9,11 +9,7 @@
 
 package imagingbook.pub.fd;
 
-import imagingbook.lib.math.Arithmetic;
-import imagingbook.lib.math.Complex;
-
 import java.awt.geom.Path2D;
-import imagingbook.pub.geometry.basic.Point;
 
 import org.apache.commons.math3.analysis.UnivariateFunction;
 import org.apache.commons.math3.optim.MaxEval;
@@ -24,11 +20,15 @@ import org.apache.commons.math3.optim.univariate.UnivariateObjectiveFunction;
 import org.apache.commons.math3.optim.univariate.UnivariateOptimizer;
 import org.apache.commons.math3.optim.univariate.UnivariatePointValuePair;
 
+import imagingbook.lib.math.Arithmetic;
+import imagingbook.lib.math.Complex;
+import imagingbook.pub.geometry.basic.Point;
+
 /**
  * This is the abstract super-class for Fourier descriptors. It cannot
  * be instantiated.
  * @author W. Burger
- * @version 2015/08/13
+ * @version 2020/04/01
  */
 public abstract class FourierDescriptor implements Cloneable {
 

@@ -11,6 +11,11 @@ package imagingbook.pub.fd;
 
 import imagingbook.pub.geometry.basic.Point;
 
+/**
+ * @version 2020/04/01
+ * @author WB
+ *
+ */
 public class PolygonSampler {
 	
 	public PolygonSampler() {
