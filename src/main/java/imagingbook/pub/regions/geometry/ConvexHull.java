@@ -8,8 +8,6 @@
  *******************************************************************************/
 package imagingbook.pub.regions.geometry;
 
-import java.awt.Point;
-import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -17,6 +15,7 @@ import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import org.apache.commons.math3.geometry.euclidean.twod.hull.ConvexHull2D;
 import org.apache.commons.math3.geometry.euclidean.twod.hull.MonotoneChain;
 
+import imagingbook.pub.geometry.basic.Point;
 import imagingbook.pub.regions.Contour;
 import imagingbook.pub.regions.RegionLabeling.BinaryRegion;
 
@@ -31,7 +30,7 @@ import imagingbook.pub.regions.RegionLabeling.BinaryRegion;
  * is used.
  * 
  * @author W. Burger
- * @version 2015-12-02
+ * @version 2020/04/01
  */
 public class ConvexHull {
 	
@@ -55,7 +54,7 @@ public class ConvexHull {
 	
 	// public methods ------------------------
 	
-	public Point2D[] getVertices() {
+	public Point[] getVertices() {
 		return toPoint2D(hull.getVertices());
 	}
 	
@@ -65,7 +64,7 @@ public class ConvexHull {
 //		IJ.log("making hull from contour");
 		Collection<Vector2D> points = new ArrayList<Vector2D>();
 		for (Point p : ctr.getPointArray()) {
-			points.add(new Vector2D(p.x, p.y));
+			points.add(new Vector2D(p.getX(), p.getY()));
 		}
 		return points;
 	}
@@ -74,7 +73,7 @@ public class ConvexHull {
 //		IJ.log("making hull from all region points");
 		Collection<Vector2D> points = new ArrayList<Vector2D>();
 		for (Point p : r) {
-			points.add(new Vector2D(p.x, p.y));
+			points.add(new Vector2D(p.getX(), p.getY()));
 		}
 		return points;
 	}
@@ -83,10 +82,10 @@ public class ConvexHull {
 		return new MonotoneChain().generate(points);
 	}
 	
-	private Point2D[] toPoint2D(Vector2D[] vecs) {
-		Point2D[] pnts = new Point2D[vecs.length];
+	private Point[] toPoint2D(Vector2D[] vecs) {
+		Point[] pnts = new Point[vecs.length];
 		for (int i = 0; i < vecs.length; i++) {
-			pnts[i] = new Point2D.Double(vecs[i].getX(), vecs[i].getY());
+			pnts[i] = Point.create(vecs[i].getX(), vecs[i].getY());
 		}
 		return pnts;
 	}

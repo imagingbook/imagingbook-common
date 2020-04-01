@@ -20,8 +20,7 @@ import java.util.List;
 
 
 /**
- * Updated: 2014-11-12
- *
+ * @version 2020/04/01
  */
 public class ContourOverlay extends Overlay {
 

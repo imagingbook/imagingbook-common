@@ -9,18 +9,18 @@
 
 package imagingbook.pub.regions;
 
-import ij.process.ByteProcessor;
-
-import java.awt.Point;
 import java.util.Deque;
 import java.util.LinkedList;
+
+import ij.process.ByteProcessor;
+import imagingbook.pub.geometry.basic.Point;
 
 /**
  * Binary region labeler based on a depth-first flood filling
  * algorithm. 
  * 
  * @author WB
- * @version 2016-11-08
+ * @version 2020/04/01
  */
 public class DepthFirstLabeling extends RegionLabeling {
 	
@@ -50,18 +50,18 @@ public class DepthFirstLabeling extends RegionLabeling {
 
 	private void floodFill(int u, int v, int label) {
 		Deque<Point> S = new LinkedList<Point>();	//stack contains pixel coordinates
-		S.push(new Point(u, v));
+		S.push(Point.create(u, v));
 		while (!S.isEmpty()){
 			Point p = S.pop();
-			int x = p.x;
-			int y = p.y;
+			int x = (int) p.getX();
+			int y = (int) p.getY();
 			if ((x >= 0) && (x < width) && (y >= 0) && (y < height)
 					&& getLabel(x, y) == FOREGROUND) {
 				setLabel(x, y, label);
-				S.push(new Point(x + 1, y));
-				S.push(new Point(x, y + 1));
-				S.push(new Point(x, y - 1));
-				S.push(new Point(x - 1, y));
+				S.push(Point.create(x + 1, y));
+				S.push(Point.create(x, y + 1));
+				S.push(Point.create(x, y - 1));
+				S.push(Point.create(x - 1, y));
 			}
 		}
 	}

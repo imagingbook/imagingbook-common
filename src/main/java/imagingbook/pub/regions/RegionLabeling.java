@@ -10,9 +10,7 @@
 package imagingbook.pub.regions;
 
 import java.awt.Color;
-import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Formatter;
@@ -28,13 +26,14 @@ import ij.process.ByteProcessor;
 import ij.process.ColorProcessor;
 import ij.process.ImageProcessor;
 import ij.process.ShortProcessor;
+import imagingbook.pub.geometry.basic.Point;
 
 /**
  * This class does the complete region labeling for a given image.
  * It is abstract, because the implementation of some parts depends
  * on the region labeling algorithm being used.
  * 
- * @version 2018/04/01
+ * @version 2020/04/01
  */
 public abstract class RegionLabeling {
 	
@@ -314,7 +313,7 @@ public abstract class RegionLabeling {
 					if (getLabel(u, v) == label) { // next pixel found (uses surrounding labeling)
 						uCur = u;
 						vCur = v;
-						return new Point(uCur, vCur);
+						return Point.create(uCur, vCur);
 					}
 					u++;
 				}
@@ -505,11 +504,11 @@ public abstract class RegionLabeling {
 		 * Use {@link getCenterPoint} or {@link getXc} and {@link getYc} instead.
 		 * @return the centroid of this region.
 		 */
-		public Point2D getCenter() {
+		public Point getCenter() {
 			if (Double.isNaN(xc))
 				return null;
 			else
-				return new Point2D.Double(xc, yc);
+				return Point.create(xc, yc);
 		}
 		
 		
@@ -519,11 +518,11 @@ public abstract class RegionLabeling {
 		 * 
 		 * @return the centroid of this region.
 		 */
-		public Point2D getCenterPoint() {
+		public Point getCenterPoint() {
 			if (Double.isNaN(xc))
 				return null;
 			else
-				return new Point2D.Double(xc, yc);
+				return Point.create(xc, yc);
 		}
 		
 		// iteration --------------------------------------

@@ -9,13 +9,13 @@
 
 package imagingbook.pub.regions;
 
-import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import ij.IJ;
 import ij.process.ByteProcessor;
+import imagingbook.pub.geometry.basic.Point;
 
 /**
  * Binary region labeler based on a combined region labeling
@@ -25,7 +25,7 @@ import ij.process.ByteProcessor;
  * and Image Processing: Image Understanding 93(2), 206-220 (2004).
  * 
  * @author WB
- * @version 2016-11-08
+ * @version 2020/04/01
  */
 public class RegionContourLabeling extends RegionLabeling implements ContourTracer { 
 	
@@ -128,25 +128,29 @@ public class RegionContourLabeling extends RegionLabeling implements ContourTrac
 		int xT, yT; // T = successor of starting point (xS,yS)
 		int xP, yP; // P = previous contour point
 		int xC, yC; // C = current contour point
-		Point pt = new Point(xS, yS); 
+//		Point pt = Point.create(xS, yS); 
+		int[] pt = {xS, yS};
 		int dNext = findNextPoint(pt, dS);
-		contr.addPoint(pt); 
+//		contr.addPoint(pt); 
+		contr.addPoint(Point.create(pt[0], pt[1]));
 		xP = xS; yP = yS;
-		xC = xT = pt.x;
-		yC = yT = pt.y;
+		xC = xT = pt[0];
+		yC = yT = pt[1];
 		
 		boolean done = (xS == xT && yS == yT);  // true if isolated pixel
 		while (!done) {
 			setLabel(xC, yC, label);
-			pt = new Point(xC, yC);
+//			pt = Point.create(xC, yC);
+			int[] pn = {xC, yC};
 			int dSearch = (dNext + 6) % 8;
-			dNext = findNextPoint(pt, dSearch);
+			dNext = findNextPoint(pn, dSearch);
 			xP = xC;  yP = yC;	
-			xC = pt.x; yC = pt.y; 
+			xC = pn[0]; 
+			yC = pn[1]; 
 			// are we back at the starting position?
 			done = (xP==xS && yP==yS && xC==xT && yC==yT);
 			if (!done) {
-				contr.addPoint(pt);
+				contr.addPoint(Point.create(pn[0], pn[1]));
 			}
 		}
 		return contr;
@@ -156,20 +160,40 @@ public class RegionContourLabeling extends RegionLabeling implements ContourTrac
 			{ 1,0}, { 1, 1}, {0, 1}, {-1, 1}, 
 			{-1,0}, {-1,-1}, {0,-1}, { 1,-1}};
 	
-	private int findNextPoint (Point pt, int dir) { 
-		// Starts at Point pt in direction dir,
+//	private int findNextPoint (Point pt, int dir) { 	// TODO: PROBLEM!!
+//		// Starts at Point pt in direction dir,
+//		// returns the resulting tracing direction
+//		// and modifies pt.
+//		for (int i = 0; i < 7; i++) {
+//			int x = (int) pt.getX() + delta[dir][0];
+//			int y = (int) pt.getY() + delta[dir][1];
+//			if (ip.getPixel(x, y) == BACKGROUND) {
+//				setLabel(x, y, VISITED);	// mark surrounding background pixels
+//				dir = (dir + 1) % 8;
+//			} 
+//			else {	// found a non-background pixel (next pixel to follow)
+//				pt.x = x; 
+//				pt.y = y; 
+//				break;
+//			}
+//		}
+//		return dir;
+//	}
+	
+	private int findNextPoint (int[] pos, int dir) { 	// TODO: PROBLEM!!
+		// Starts at point pos in direction dir,
 		// returns the resulting tracing direction
 		// and modifies pt.
 		for (int i = 0; i < 7; i++) {
-			int x = pt.x + delta[dir][0];
-			int y = pt.y + delta[dir][1];
+			int x = pos[0] + delta[dir][0];
+			int y = pos[1] + delta[dir][1];
 			if (ip.getPixel(x, y) == BACKGROUND) {
 				setLabel(x, y, VISITED);	// mark surrounding background pixels
 				dir = (dir + 1) % 8;
 			} 
 			else {	// found a non-background pixel (next pixel to follow)
-				pt.x = x; 
-				pt.y = y; 
+				pos[0] = x; 
+				pos[1] = y; 
 				break;
 			}
 		}

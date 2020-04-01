@@ -14,6 +14,9 @@ import java.util.List;
 /**
  * This interface defines the functionality of region segmenters
  * that perform contour extraction.
+ * 
+ * @version 2020/04/01
+ * 
  */
 public interface ContourTracer {
 	

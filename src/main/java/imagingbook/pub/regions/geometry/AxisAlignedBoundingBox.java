@@ -8,15 +8,16 @@
  *******************************************************************************/
 package imagingbook.pub.regions.geometry;
 
-import java.awt.Point;
-import java.awt.geom.Point2D;
-
 import ij.process.ImageProcessor;
 import imagingbook.lib.math.Matrix;
+import imagingbook.pub.geometry.basic.Point;
 import imagingbook.pub.regions.RegionLabeling.BinaryRegion;
 
-
-
+/**
+ * 
+ * @author WB
+ * @version 2020/04/01
+ */
 public class AxisAlignedBoundingBox {
 	
 	private final double[][] boundingBox;
@@ -30,10 +31,10 @@ public class AxisAlignedBoundingBox {
 //		return boundingBox;
 //	}
 	
-	public Point2D[] getCornerPoints() {
-		Point2D[] cpts = new Point2D[boundingBox.length];
+	public Point[] getCornerPoints() {
+		Point[] cpts = new Point[boundingBox.length];
 		for (int i = 0; i < boundingBox.length; i++) {
-			cpts[i] = new Point2D.Double(boundingBox[i][0], boundingBox[i][1]);
+			cpts[i] = Point.create(boundingBox[i][0], boundingBox[i][1]);
 		}
 		return cpts;
 	}
@@ -59,8 +60,8 @@ public class AxisAlignedBoundingBox {
 		double bmax = Double.NEGATIVE_INFINITY;
 		
 		for (Point p : r) {
-			double a = p.x * xa + p.y * ya;	// project (x,y) on the major axis vector
-			double b = p.x * ya - p.y * xa;	// project (x,y) on perpendicular vector
+			double a = p.getX() * xa + p.getY() * ya;	// project (x,y) on the major axis vector
+			double b = p.getX() * ya - p.getY() * xa;	// project (x,y) on perpendicular vector
 			amin = Math.min(a, amin);
 			amax = Math.max(a, amax);
 			bmin = Math.min(b, bmin);
@@ -88,8 +89,8 @@ public class AxisAlignedBoundingBox {
 		double mu20 = 0;
 		double mu02 = 0;
 		for (Point p : r) {
-			double dx = (p.x - xc);
-			double dy = (p.y - yc);
+			double dx = (p.getX() - xc);
+			double dy = (p.getY() - yc);
 			mu11 = mu11 + dx * dy;
 			mu20 = mu20 + dx * dx;
 			mu02 = mu02 + dy * dy;

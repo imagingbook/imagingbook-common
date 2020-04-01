@@ -9,11 +9,12 @@
 
 package imagingbook.pub.regions;
 
-import java.awt.Point;
 import java.awt.geom.Path2D;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import imagingbook.pub.geometry.basic.Point;
 
 /**
  * This class represents a closed contour as a sequence of
@@ -28,7 +29,7 @@ import java.util.List;
  * }
  * </pre>
  * 
- * @version 2016-11-08
+ * @version 2020/04/01
  */
 public class Contour implements Comparable<Contour>, Iterable<Point> {
 	
@@ -121,15 +122,15 @@ public class Contour implements Comparable<Contour>, Iterable<Point> {
 		Path2D path = new Path2D.Float();
 		Point[] pnts = this.getPointArray();
 		if (pnts.length > 1){
-			path.moveTo(pnts[0].x + xOffset, pnts[0].y + yOffset);
+			path.moveTo(pnts[0].getX() + xOffset, pnts[0].getY() + yOffset);
 			for (int i = 1; i < pnts.length; i++) {
-				path.lineTo(pnts[i].x + xOffset,  pnts[i].y + yOffset);
+				path.lineTo(pnts[i].getX() + xOffset,  pnts[i].getY() + yOffset);
 			}
 			path.closePath();
 		}
 		else {	// mark single pixel region "X"
-			double x = pnts[0].x;
-			double y = pnts[0].y;
+			double x = pnts[0].getX();
+			double y = pnts[0].getY();
 			path.moveTo(x + xOffset - 0.5, y + yOffset - 0.5);
 			path.lineTo(x + xOffset + 0.5, y + yOffset + 0.5);
 			path.moveTo(x + xOffset - 0.5, y + yOffset + 0.5);

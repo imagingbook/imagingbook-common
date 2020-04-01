@@ -16,7 +16,7 @@ import ij.process.ByteProcessor;
  * algorithm. 
  * 
  * @author WB
- * @version 2016-11-08
+ * @version 2020/04/01
  */
 public class RecursiveLabeling extends RegionLabeling {
 

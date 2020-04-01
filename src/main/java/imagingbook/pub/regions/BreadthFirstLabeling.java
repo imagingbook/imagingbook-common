@@ -9,18 +9,18 @@
 
 package imagingbook.pub.regions;
 
-import ij.process.ByteProcessor;
-
-import java.awt.Point;
 import java.util.LinkedList;
 import java.util.Queue;
+
+import ij.process.ByteProcessor;
+import imagingbook.pub.geometry.basic.Point;
 
 /**
  * Binary region labeler based on a breadth-first flood filling
  * algorithm. 
  * 
  * @author WB
- * @version 2016-11-08
+ * @version 2020/04/01
  */
 public class BreadthFirstLabeling extends RegionLabeling {
 	
@@ -50,18 +50,18 @@ public class BreadthFirstLabeling extends RegionLabeling {
 
 	private void floodFill(int u, int v, int label) {
 		Queue<Point> Q = new LinkedList<Point>();	//queue contains pixel coordinates
-		Q.add(new Point(u, v));
+		Q.add(Point.create(u, v));
 		while (!Q.isEmpty()) {
 			Point p = Q.remove();	// get the next point to process
-			int x = p.x;
-			int y = p.y;
+			int x = (int) p.getX();
+			int y = (int) p.getY();
 			if ((x >= 0) && (x < width) && (y >= 0) && (y < height)
 					&& getLabel(x, y) == FOREGROUND) {
 				setLabel(x, y, label);
-				Q.add(new Point(x+1, y));
-				Q.add(new Point(x, y+1));
-				Q.add(new Point(x, y-1));
-				Q.add(new Point(x-1, y));
+				Q.add(Point.create(x + 1, y));
+				Q.add(Point.create(x, y + 1));
+				Q.add(Point.create(x, y - 1));
+				Q.add(Point.create(x - 1, y));
 			}
 		}
 	}
