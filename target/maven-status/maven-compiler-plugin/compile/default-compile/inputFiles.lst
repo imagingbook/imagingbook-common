@@ -4,6 +4,7 @@ D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\s
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\geometry\delaunay\DelaunayTriangulation.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\threshold\adaptive\NiblackThresholder.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\noise\hashing\HashFun.java
+D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\test\EarthMoversDistanceTest.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\geometry\mappings\Mapping2D.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\color\image\ColorStack.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\lib\color\CssColor.java
@@ -24,9 +25,9 @@ D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\s
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\lib\image\OutOfBoundsStrategy.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\threshold\global\IsodataThresholderSlow.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\lib\util\ArrayIterator.java
+D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\lib\math\Eigensolver2x2Demo.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\lib\package-info.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\lib\util\Enums.java
-D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\hough\lines\AlgebraicLine.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\color\statistics\ColorStatistics.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\sift\SiftMatcher.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\lib\util\FileUtils.java
@@ -50,6 +51,7 @@ D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\s
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\matching\DistanceTransform.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\dct\Dct1dFast.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\color\image\CieUtil.java
+D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\geometry\lines\HessianLine.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\lib\image\PixelIndexer.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\noise\hashing\HashPermute.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\morphology\BinaryMorphologyFilter.java
@@ -142,7 +144,6 @@ D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\s
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\lib\ij\GuiTools.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\threshold\global\MedianThresholder.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\lib\util\ClassUtils.java
-D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\hough\lines\HessianLine.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\sift\SiftMatch3.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\threshold\adaptive\SauvolaThresholder.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\color\filters\FilterMask.java
@@ -183,6 +184,7 @@ D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\s
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\dct\Dct1dDirect.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\lucaskanade\LucasKanadeForwardMatcher.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\noise\hashing\Hash32Shift.java
+D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\geometry\lines\AlgebraicLine.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\noise\hashing\Hash32ShiftMult.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\color\quantize\KMeansClusteringQuantizer.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\lib\image\IntegralImage.java
