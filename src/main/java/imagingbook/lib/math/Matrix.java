@@ -659,12 +659,61 @@ public abstract class Matrix {
 	// --------------------------------------------------
 	
 	/**
-	 * Calculates the sums of all matrix columns and returns 
-	 * them as a vector.
-	 * @param A  a matrix
-	 * @return a vector containing the sums of all matrix columns
+	 * Calculates the sum of the elements in the specified matrix row.
+	 * @param A a matrix
+	 * @param row the row index
+	 * @return the sum of the row's elements
 	 */
-	public static double[] sumColumns(final double[][] A) {
+	public static double sumRow(final double[][] A, final int row) {
+		return sum(A[row]);
+	}
+	
+	/**
+	 * Calculates the sum of the elements in the specified matrix row.
+	 * @param A a matrix
+	 * @param row the row index
+	 * @return the sum of the row's elements
+	 */
+	public static float sumRow(final float[][] A, final int row) {
+		return sum(A[row]);
+	}
+	
+
+	/**
+	 * Calculates the sum of the elements in the specified matrix column.
+	 * @param A a matrix
+	 * @param col the column index
+	 * @return the sum of the column's elements
+	 */
+	public static double sumColumn(final double[][] A, final int col) {
+		double sum = 0;
+		for (int r = 0; r < A.length; r++) {
+			sum = sum + A[r][col];
+		}
+		return sum;
+	}
+	
+	/**
+	 * Calculates the sum of the elements in the specified matrix column.
+	 * @param A a matrix
+	 * @param col the column index
+	 * @return the sum of the column's elements
+	 */
+	public static float sumColumn(final float[][] A, final int col) {
+		double sum = 0;
+		for (int r = 0; r < A.length; r++) {
+			sum = sum + A[r][col];
+		}
+		return (float) sum;
+	}
+	
+	/**
+	 * Calculates the sums of all matrix rows and returns 
+	 * them as a vector with one element per row.
+	 * @param A a matrix of size (M,N)
+	 * @return a vector of length M containing the sums of all matrix columns
+	 */
+	public static double[] sumRows(final double[][] A) {
 		double[] sumVec = new double[getNumberOfRows(A)];
 		for (int r = 0; r < sumVec.length; r++) {
 			double sum = 0;
@@ -677,12 +726,12 @@ public abstract class Matrix {
 	}
 	
 	/**
-	 * Calculates the sums of all matrix columns and returns 
-	 * them as a vector.
-	 * @param A a matrix
-	 * @return a vector containing the sums of all matrix columns
+	 * Calculates the sums of all matrix rows and returns 
+	 * them as a vector with one element per row.
+	 * @param A a matrix of size (M,N)
+	 * @return a vector of length M containing the sums of all matrix columns
 	 */
-	public static float[] sumColumns(final float[][] A) {
+	public static float[] sumRows(final float[][] A) {
 		float[] sumVec = new float[getNumberOfRows(A)];
 		for (int r = 0; r < sumVec.length; r++) {
 			double sum = 0;
@@ -695,11 +744,12 @@ public abstract class Matrix {
 	}
 	
 	/**
-	 * Calculates the sums of all matrix rows.
-	 * @param A The input matrix
-	 * @return A vector with sum of all matrix rows
+	 * Calculates the sums of all matrix columns and returns
+	 * them as a vector with one element per column.
+	 * @param A a matrix of size (M,N)
+	 * @return a vector of length N containing the sums of all matrix rows
 	 */
-	public static double[] sumRows(final double[][] A) {
+	public static double[] sumColumns(final double[][] A) {
 		double[] sumVec = new double[getNumberOfColumns(A)];
 		for (int c = 0; c < sumVec.length; c++) {
 			double sum = 0;
@@ -712,11 +762,12 @@ public abstract class Matrix {
 	}
 	
 	/**
-	 * Calculates the sums of all matrix rows.
-	 * @param A The input matrix
-	 * @return A vector with sum of all matrix rows
+	 * Calculates the sums of all matrix columns and returns
+	 * them as a vector with one element per column.
+	 * @param A a matrix of size (M,N)
+	 * @return a vector of length N containing the sums of all matrix rows
 	 */
-	public static float[] sumRows(final float[][] A) {
+	public static float[] sumColumns(final float[][] A) {
 		float[] sumVec = new float[getNumberOfColumns(A)];
 		for (int c = 0; c < sumVec.length; c++) {
 			double sum = 0;
@@ -773,6 +824,30 @@ public abstract class Matrix {
 		for (double val : x) {
 			if (val > maxval) {
 				maxval = val;
+			}
+		}
+		return maxval;
+	}
+	
+	public static double max(double[][] A) {
+		double maxval = Double.NEGATIVE_INFINITY;
+		for (int r = 0; r < A.length; r++) {
+			for (double val : A[r]) {
+				if (val > maxval) {
+					maxval = val;
+				}
+			}
+		}
+		return maxval;
+	}
+	
+	public static float max(float[][] A) {
+		float maxval = Float.NEGATIVE_INFINITY;
+		for (int r = 0; r < A.length; r++) {
+			for (float val : A[r]) {
+				if (val > maxval) {
+					maxval = val;
+				}
 			}
 		}
 		return maxval;
@@ -1157,10 +1232,10 @@ public abstract class Matrix {
 		System.out.println("B rows = " + getNumberOfRows(B));
 		System.out.println("B columns = " + getNumberOfColumns(B));
 		
-		double[] rowSum = sumRows(B);
-		System.out.println("B sum of rows = " + toString(rowSum));
-		double[] colSum = sumColumns(B);
-		System.out.println("B sum of cols = " + toString(colSum));
+		double[] colsSum = sumColumns(B);
+		System.out.println("B sum of columns = " + toString(colsSum));
+		double[] rowsSum = sumRows(B);
+		System.out.println("B sum of rows = " + toString(rowsSum));
 		
 		PrintPrecision.set(5);
 
