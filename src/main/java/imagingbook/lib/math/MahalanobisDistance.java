@@ -139,7 +139,11 @@ public class MahalanobisDistance { // extends VectorNorm
 		return S.getData();
 	}
 
-	public int getSampleDimension() {
+	/**
+	 * Returns the sample dimension (M) for this instance.
+	 * @return the sample dimension
+	 */
+	public int getDimension() {
 		return M;
 	}
 
@@ -188,10 +192,22 @@ public class MahalanobisDistance { // extends VectorNorm
 
 	//------------------------------------------------------------------------------------
 
+	/**
+	 * Returns the Mahalanobis distance between the given points.
+	 * @param X first point
+	 * @param Y second point
+	 * @return the Mahalanobis distance
+	 */
 	public double distance(double[] X, double[] Y) {
 		return Math.sqrt(distance2(X, Y));
 	}
 
+	/**
+	 * Returns the squared Mahalanobis distance between the given points.
+	 * @param X first point
+	 * @param Y second point
+	 * @return the squared Mahalanobis distance
+	 */
 	public double distance2(double[] X, double[] Y) {
 		if (X.length != M || Y.length != M) {
 			throw new IllegalArgumentException("vectors must be of length " + M);
@@ -237,191 +253,4 @@ public class MahalanobisDistance { // extends VectorNorm
 		return distance2(x, mean);
 	}
 
-	// ----------------------------------------------------------------
-
-	/** 
-	 * For testing only.
-	 * @param args ignored
-	 */
-	public static void main(String[] args) {
-		/*
-		 * Test example from Burger/Burge UTICS-C Appendix:
-		 * N = 4 samples, K = 3 dimensions
-		 */
-
-		double[] X1 = {75, 37, 12};
-		double[] X2 = {41, 27, 20};
-		double[] X3 = {93, 81, 11};
-		double[] X4 = {12, 48, 52};
-
-		System.out.println("X1 = " + Matrix.toString(X1));
-		System.out.println("X2 = " + Matrix.toString(X2));
-		System.out.println("X3 = " + Matrix.toString(X3));
-		System.out.println("X4 = " + Matrix.toString(X4));
-		System.out.println();
-
-		double[][] samples = {X1, X2, X3, X4};
-
-		MahalanobisDistance mhd = new MahalanobisDistance(samples);
-
-		double[] mu = mhd.getMeanVector();
-		System.out.println("mu = " + Matrix.toString(mu));
-
-		System.out.println();
-
-		// covariance matrix cov (3x3)
-		double[][] cov = mhd.getCovarianceMatrix();
-		System.out.println("cov = \n" + Matrix.toString(cov));
-
-		System.out.println();
-
-		double[][] icov =  mhd.getInverseCovarianceMatrix();
-		System.out.println("icov = \n" + Matrix.toString(icov)); System.out.println();
-
-		System.out.format("MH-dist(X1,X1) = %.3f\n", mhd.distance(X1, X1));
-		System.out.format("MH-dist(X1,X2) = %.3f\n", mhd.distance(X1, X2));
-		System.out.format("MH-dist(X2,X1) = %.3f\n", mhd.distance(X2, X1));
-		System.out.format("MH-dist(X1,X3) = %.3f\n", mhd.distance(X1, X3));
-		System.out.format("MH-dist(X1,X4) = %.3f\n", mhd.distance(X1, X4));
-		//		System.out.format("MH-dist(X1,X5) = %.3f\n", mhd.distance(X1, X5));
-		System.out.println();
-
-		System.out.format("MH-dist(X1,mu) = %.3f\n", mhd.distance(X1, mu));
-		System.out.format("MH-dist(X2,mu) = %.3f\n", mhd.distance(X2, mu));
-		System.out.format("MH-dist(X3,mu) = %.3f\n", mhd.distance(X3, mu));
-		System.out.format("MH-dist(X4,mu) = %.3f\n", mhd.distance(X4, mu));
-		System.out.println();
-
-		//		System.out.format("MH-dist(X5,mu) = %.3f\n", mhd.distance(X5, mu));
-		//		System.out.format("MH-dist(X0,mu) = %.3f\n", mhd.distance(X0, mu));
-		System.out.println();
-
-		VectorNorm L2 = new VectorNorm.L2();
-		System.out.format("L2-distance(X1,X2) = %.3f\n", L2.distance(X1, X2));
-		System.out.format("L2-distance(X2,X1) = %.3f\n", L2.distance(X2, X1));
-
-		// ------------------------------------------------------
-
-		System.out.println();
-		System.out.println("Testing pre-transformed Mahalanobis distances:");
-		RealMatrix U = MatrixUtils.createRealMatrix(mhd.getWhiteningTransformation());
-		System.out.println("U = \n" + Matrix.toString(U.getData()));
-		//		double[] Y0 = U.operate(X0);
-		double[] Y1 = U.operate(X1);
-		double[] Y2 = U.operate(X2);
-		double[] Y3 = U.operate(X3);
-		double[] Y4 = U.operate(X4);
-		//		double[] Y5 = U.operate(X5);
-
-		//		System.out.println("Y0 = " + Matrix.toString(Y0));
-		System.out.println("Y1 = " + Matrix.toString(Y1));
-		System.out.println("Y2 = " + Matrix.toString(Y2));
-		System.out.println("Y3 = " + Matrix.toString(Y3));
-		System.out.println("Y4 = " + Matrix.toString(Y4));
-		//		System.out.println("Y5 = " + Matrix.toString(Y5));
-
-		System.out.format("pre-transformed MH-distance(X1,X2) = %.3f\n", L2.distance(Y1, Y2));
-		System.out.format("pre-transformed MH-distance(X1,X3) = %.3f\n", L2.distance(Y1, Y3));
-		System.out.format("pre-transformed MH-distance(X1,X4) = %.3f\n", L2.distance(Y1, Y4));
-		//		System.out.format("pre-transformed MH-distance(X1,X5) = %.3f\n", L2.distance(Y1, Y5));
-
-	}
-
-	/* Results: verified with Mathematica (bias-corrected):
-X0 = {0.000, 0.000, 0.000}
-X1 = {75.000, 37.000, 12.000}
-X2 = {41.000, 27.000, 20.000}
-X3 = {93.000, 81.000, 11.000}
-X4 = {12.000, 48.000, 52.000}
-X5 = {12.000, 48.000, 100.000}
-
-mu = {55.250, 48.250, 23.750}
-
-cov = {{1296.250, 442.583, -627.250}, 
-{442.583, 550.250, -70.917}, 
-{-627.250, -70.917, 370.917}}
-
-icov = {{0.024, -0.014, 0.038}, 
-{-0.014, 0.011, -0.022}, 
-{0.038, -0.022, 0.063}}
-
-MH-dist(X1,X1) = 0.000
-MH-dist(X1,X2) = 2.449
-MH-dist(X2,X1) = 2.449
-MH-dist(X1,X3) = 2.449
-MH-dist(X1,X4) = 2.449
-MH-dist(X1,X5) = 11.714
-
-MH-dist(X1,mu) = 1.500
-MH-dist(X2,mu) = 1.500
-MH-dist(X3,mu) = 1.500
-MH-dist(X4,mu) = 1.500
-
-MH-dist(X5,mu) = 12.613
-MH-dist(X0,mu) = 10.214
-
-L2-distance(X1,X2) = 36.332
-L2-distance(X2,X1) = 36.332
-
-Testing pre-transformed Mahalanobis distances:
-U = {{0.155, -0.093, 0.245}, 
-{0.000, 0.043, 0.008}, 
-{0.000, 0.000, 0.052}}
-pre-transformed MH-distance(X1,X2) = 2.449
-pre-transformed MH-distance(X1,X3) = 2.449
-pre-transformed MH-distance(X1,X4) = 2.449
-pre-transformed MH-distance(X1,X5) = 11.714
-	 */
-
-	/* Results non-bias corrected:
-X0 = {0.000, 0.000, 0.000}
-X1 = {75.000, 37.000, 12.000}
-X2 = {41.000, 27.000, 20.000}
-X3 = {93.000, 81.000, 11.000}
-X4 = {12.000, 48.000, 52.000}
-X5 = {12.000, 48.000, 100.000}
-
-mu = {55.250, 48.250, 23.750}
-
-cov = {{972.188, 331.938, -470.438}, 
-{331.938, 412.687, -53.188}, 
-{-470.438, -53.188, 278.188}}
-
-icov = {{0.032, -0.019, 0.051}, 
-{-0.019, 0.014, -0.030}, 
-{0.051, -0.030, 0.083}}
-
-MH-dist(X1,X1) = 0.000
-MH-dist(X1,X2) = 2.828
-MH-dist(X2,X1) = 2.828
-MH-dist(X1,X3) = 2.828
-MH-dist(X1,X4) = 2.828
-MH-dist(X1,X5) = 13.527
-
-MH-dist(X1,mu) = 1.732
-MH-dist(X2,mu) = 1.732
-MH-dist(X3,mu) = 1.732
-MH-dist(X4,mu) = 1.732
-
-MH-dist(X5,mu) = 14.564
-MH-dist(X0,mu) = 11.794
-
-L2-distance(X1,X2) = 36.332
-L2-distance(X2,X1) = 36.332
-
-Testing pre-transformed Mahalanobis distances:
-U = {{0.179, -0.108, 0.282}, 
-{0.000, 0.050, 0.010}, 
-{0.000, 0.000, 0.060}}
-Y0 = {0.000, 0.000, 0.000}
-Y1 = {12.840, 1.959, 0.719}
-Y2 = {10.085, 1.536, 1.199}
-Y3 = {11.044, 4.142, 0.660}
-Y4 = {11.664, 2.888, 3.118}
-Y5 = {25.218, 3.345, 5.996}
-pre-transformed MH-distance(X1,X2) = 2.828
-pre-transformed MH-distance(X1,X3) = 2.828
-pre-transformed MH-distance(X1,X4) = 2.828
-pre-transformed MH-distance(X1,X5) = 13.527
-	 */
 }

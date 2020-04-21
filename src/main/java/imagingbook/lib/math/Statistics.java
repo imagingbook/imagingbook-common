@@ -13,67 +13,12 @@ import org.apache.commons.math3.linear.MatrixUtils;
 //import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.stat.correlation.Covariance;
 
-@Deprecated	// this class is used nowhere
+/**
+ * Utility class defines a few statistical methods.
+ * @author WB
+ *
+ */
 public abstract class Statistics {
-	
-//	public static int getMax(int[] A) {
-//		int maxVal = A[0];
-//		for (int i = 1; i < A.length; i++) {
-//			if (A[i] > maxVal)
-//				maxVal = A[i];
-//		}
-//		return maxVal;
-//	}
-//	
-//	public static int getMin(int[] A) {
-//		int minVal = A[0];
-//		for (int i = 1; i < A.length; i++) {
-//			if (A[i] < minVal)
-//				minVal = A[i];
-//		}
-//		return minVal;
-//	}
-//	
-//	public static float getMax(float[] A) {
-//		float maxVal = A[0];
-//		for (int i = 1; i < A.length; i++) {
-//			if (A[i] > maxVal)
-//				maxVal = A[i];
-//		}
-//		return maxVal;
-//	}
-//	
-//	public static float getMin(float[] A) {
-//		float minVal = A[0];
-//		for (int i = 1; i < A.length; i++) {
-//			if (A[i] < minVal)
-//				minVal = A[i];
-//		}
-//		return minVal;
-//	}
-//	
-//	public static double getMax(double[] A) {
-//		double maxVal = A[0];
-//		for (int i = 1; i < A.length; i++) {
-//			if (A[i] > maxVal)
-//				maxVal = A[i];
-//		}
-//		return maxVal;
-//	}
-//	
-//	public static double getMin(double[] A) {
-//		double minVal = A[0];
-//		for (int i = 1; i < A.length; i++) {
-//			if (A[i] < minVal)
-//				minVal = A[i];
-//		}
-//		return minVal;
-//	}
-	
-	// --------------------------------------------------------------------
-	
-	//TODO: mean, variance for int, float, double arrays
-	
 	
 	/**
 	 * Calculates the covariance matrix for a sequence of sample vectors.
@@ -97,7 +42,7 @@ public abstract class Statistics {
 	 * @return The covariance matrix (of dimension double{m][m]).
 	 */
 	public static double[][] covarianceMatrix(double[][] samples, boolean biasCorrect) {
-		Covariance cov = new Covariance(samples, false);
+		Covariance cov = new Covariance(samples, biasCorrect);
 		return cov.getCovarianceMatrix().getData();
 	}
 	
@@ -109,6 +54,8 @@ public abstract class Statistics {
 	 */
 	public static void main(String[] args) {
 		
+		boolean BIAS_CORRECT = false;
+		
 		// example: n = 4 samples of dimension m = 3:
 		// samples[i][j], i = column (sample index), j = row (dimension index).
 		double[][] samples = { 
@@ -119,7 +66,7 @@ public abstract class Statistics {
 		};
 		
 		// covariance matrix Cov (3x3)
-		double[][] cov = covarianceMatrix(samples);
+		double[][] cov = covarianceMatrix(samples, BIAS_CORRECT);
 		System.out.println("cov = \n" + Matrix.toString(cov));
 		
 		System.out.println();
@@ -127,17 +74,12 @@ public abstract class Statistics {
 		double[][] icov = Matrix.inverse(cov);
 		System.out.println("icov = \n" + Matrix.toString(icov));
 		
+		System.out.println();
+		
 		double trace = MatrixUtils.createRealMatrix(cov).getTrace();
 		System.out.println("trace(cov) = " + trace);
-		
-//		double trace2 = Matrix.trace(cov);
-//		System.out.println("trace2(cov) = " + trace2);
-		
 		double Fnorm = MatrixUtils.createRealMatrix(cov).getFrobeniusNorm();
 		System.out.println("Fnorm(cov) = " + Fnorm);
-		
-//		double Fnorm2 = Matrix.froebeniusNorm(cov);
-//		System.out.println("Fnorm2(cov) = " + Fnorm2);
 	}
 	
 /* Results (bias-corrected):

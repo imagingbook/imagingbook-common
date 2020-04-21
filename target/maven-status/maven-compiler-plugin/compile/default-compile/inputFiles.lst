@@ -156,6 +156,7 @@ D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\s
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\dft\obsolete\Dft2d.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\morphology\old\BinMorpherBox.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\threshold\global\QuantileThresholder.java
+D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\lib\math\MahalanobisTest2.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\noise\hashing\Hash32.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\geometry\fitting\ProcrustesFit.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\edgepreservingfilters\TschumperleDericheFilter.java
@@ -170,6 +171,7 @@ D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\s
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\histogram\HistogramMatcher.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\fd\Colors.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\sift\SiftDetector.java
+D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\lib\math\MahalanobisTest1.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\threshold\adaptive\BernsenThresholder.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\lib\util\SerializationHelper.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\matching\ChamferMatcher.java
