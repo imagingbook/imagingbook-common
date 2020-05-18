@@ -8,19 +8,7 @@
  *******************************************************************************/
 
 /**
- * 
+ * This package implements David Lowe's SIFT feature detection.
+ * TODO: cleanup point-related classes (KeyPoint, SiftKeyPoint, SiftDescriptor)
  */
-package imagingbook.pub.sift.util;
-
-public class SiftKeypoint {
-	public double x, y, scale, orientation;
-	int[] descriptor;
-	
-	SiftKeypoint(double x, double y, double scale, double orientation, int[] descriptor) {
-		this.x = x;
-		this.y = y;
-		this.scale = scale;
-		this.orientation = orientation;
-		this.descriptor = descriptor;
-	}
-}
+package imagingbook.pub.sift;

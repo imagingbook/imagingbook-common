@@ -123,7 +123,7 @@
 <span class="sourceLineNo">115</span>         * @param keypoints the sequence of original key points<a name="line.115"></a>
 <span class="sourceLineNo">116</span>         * @return a sequence of enhanced key points<a name="line.116"></a>
 <span class="sourceLineNo">117</span>         */<a name="line.117"></a>
-<span class="sourceLineNo">118</span>        public List&lt;KeyPoint&gt; makeRichKeypoints(List&lt;KeyPoint&gt; keypoints) {<a name="line.118"></a>
+<span class="sourceLineNo">118</span>        private  List&lt;KeyPoint&gt; makeRichKeypoints(List&lt;KeyPoint&gt; keypoints) {<a name="line.118"></a>
 <span class="sourceLineNo">119</span>                if (params.DEBUG) {IJ.log("makeSiftDescriptors...");}<a name="line.119"></a>
 <span class="sourceLineNo">120</span>                //int cnt = 0;<a name="line.120"></a>
 <span class="sourceLineNo">121</span>                List&lt;KeyPoint&gt; richKeyPoints = new ArrayList&lt;KeyPoint&gt;();<a name="line.121"></a>
@@ -154,7 +154,7 @@
 <span class="sourceLineNo">146</span>         * @param oh orientation histogram<a name="line.146"></a>
 <span class="sourceLineNo">147</span>         * @return list of histogram indices for the peak orientations<a name="line.147"></a>
 <span class="sourceLineNo">148</span>         */<a name="line.148"></a>
-<span class="sourceLineNo">149</span>        public List&lt;Double&gt; findPeakOrientationIndices(float[] oh) {<a name="line.149"></a>
+<span class="sourceLineNo">149</span>        private List&lt;Double&gt; findPeakOrientationIndices(float[] oh) {<a name="line.149"></a>
 <span class="sourceLineNo">150</span>                int nb = oh.length;<a name="line.150"></a>
 <span class="sourceLineNo">151</span>                List&lt;Double&gt; orientIndexes = new ArrayList&lt;Double&gt;(nb);<a name="line.151"></a>
 <span class="sourceLineNo">152</span>                // find the maximum entry in the orientation histogram 'oh'<a name="line.152"></a>
@@ -211,7 +211,7 @@
 <span class="sourceLineNo">203</span>                return siftDescriptors;<a name="line.203"></a>
 <span class="sourceLineNo">204</span>        }<a name="line.204"></a>
 <span class="sourceLineNo">205</span><a name="line.205"></a>
-<span class="sourceLineNo">206</span>        public List&lt;KeyPoint&gt; getKeyPoints() {<a name="line.206"></a>
+<span class="sourceLineNo">206</span>        private List&lt;KeyPoint&gt; getKeyPoints() {<a name="line.206"></a>
 <span class="sourceLineNo">207</span>                List&lt;KeyPoint&gt; keyPts = new ArrayList&lt;KeyPoint&gt;();<a name="line.207"></a>
 <span class="sourceLineNo">208</span>                final int P = params.P;<a name="line.208"></a>
 <span class="sourceLineNo">209</span>                final int K = params.Q;<a name="line.209"></a>
@@ -336,7 +336,7 @@
 <span class="sourceLineNo">328</span>                return isLocalMin(nh, tExtrm) || isLocalMax(nh, tExtrm);<a name="line.328"></a>
 <span class="sourceLineNo">329</span>        }<a name="line.329"></a>
 <span class="sourceLineNo">330</span><a name="line.330"></a>
-<span class="sourceLineNo">331</span>        boolean isLocalMin(final float[][][] neighborhood, float tExtrm) {<a name="line.331"></a>
+<span class="sourceLineNo">331</span>        private boolean isLocalMin(final float[][][] neighborhood, float tExtrm) {<a name="line.331"></a>
 <span class="sourceLineNo">332</span>                final float c = neighborhood[1][1][1] + tExtrm; // center value + threshold<a name="line.332"></a>
 <span class="sourceLineNo">333</span>                if (c &gt;= 0) return false;       // local minimum must have a negative value<a name="line.333"></a>
 <span class="sourceLineNo">334</span>                // check 8 neighbors in scale plane q<a name="line.334"></a>
@@ -378,7 +378,7 @@
 <span class="sourceLineNo">370</span>                return true;<a name="line.370"></a>
 <span class="sourceLineNo">371</span>        }<a name="line.371"></a>
 <span class="sourceLineNo">372</span><a name="line.372"></a>
-<span class="sourceLineNo">373</span>        boolean isLocalMax(final float[][][] neighborhood, float tExtrm) {<a name="line.373"></a>
+<span class="sourceLineNo">373</span>        private boolean isLocalMax(final float[][][] neighborhood, float tExtrm) {<a name="line.373"></a>
 <span class="sourceLineNo">374</span>                final float c = neighborhood[1][1][1] - tExtrm;         // center value - threshold<a name="line.374"></a>
 <span class="sourceLineNo">375</span>                if (c &lt;= 0) return false;       // local maximum must have a positive value<a name="line.375"></a>
 <span class="sourceLineNo">376</span>                // check 8 neighbors in scale plane q<a name="line.376"></a>
@@ -425,7 +425,7 @@
 <span class="sourceLineNo">417</span>         * nh[s][x][y]. The result is stored in the supplied vector grad, to which a reference is <a name="line.417"></a>
 <span class="sourceLineNo">418</span>         * returned.<a name="line.418"></a>
 <span class="sourceLineNo">419</span>         */<a name="line.419"></a>
-<span class="sourceLineNo">420</span>        float[] gradient(final float[][][] nh, final float[] grad) {<a name="line.420"></a>
+<span class="sourceLineNo">420</span>        private float[] gradient(final float[][][] nh, final float[] grad) {<a name="line.420"></a>
 <span class="sourceLineNo">421</span>                // Note: factor 0.5f not needed, kept for clarity.<a name="line.421"></a>
 <span class="sourceLineNo">422</span>                grad[0] = 0.5f * (nh[1][2][1] - nh[1][0][1]);   // = dx<a name="line.422"></a>
 <span class="sourceLineNo">423</span>                grad[1] = 0.5f * (nh[1][1][2] - nh[1][1][0]);   // = dy<a name="line.423"></a>
@@ -439,7 +439,7 @@
 <span class="sourceLineNo">431</span>         * The result is stored in the supplied array hess, to which a reference is <a name="line.431"></a>
 <span class="sourceLineNo">432</span>         * returned.<a name="line.432"></a>
 <span class="sourceLineNo">433</span>         */<a name="line.433"></a>
-<span class="sourceLineNo">434</span>        float[][] hessian(final float[][][] nh, final float[][] hess) {<a name="line.434"></a>
+<span class="sourceLineNo">434</span>        private float[][] hessian(final float[][][] nh, final float[][] hess) {<a name="line.434"></a>
 <span class="sourceLineNo">435</span>                final float nh_111 = 2 * nh[1][1][1];<a name="line.435"></a>
 <span class="sourceLineNo">436</span>                final float dxx = nh[1][0][1] - nh_111 + nh[1][2][1];<a name="line.436"></a>
 <span class="sourceLineNo">437</span>                final float dyy = nh[1][1][0] - nh_111 + nh[1][1][2];<a name="line.437"></a>
@@ -455,7 +455,7 @@
 <span class="sourceLineNo">447</span>                return hess;<a name="line.447"></a>
 <span class="sourceLineNo">448</span>        }<a name="line.448"></a>
 <span class="sourceLineNo">449</span><a name="line.449"></a>
-<span class="sourceLineNo">450</span>        void printMatrix3x3(float[][] A) {<a name="line.450"></a>
+<span class="sourceLineNo">450</span>        private void printMatrix3x3(float[][] A) {<a name="line.450"></a>
 <span class="sourceLineNo">451</span>                IJ.log(String.format(Locale.US, "{{%.6f, %.6f, %.6f},", A[0][0], A[0][1], A[0][2]));<a name="line.451"></a>
 <span class="sourceLineNo">452</span>                IJ.log(String.format(Locale.US, " {%.6f, %.6f, %.6f},", A[1][0], A[1][1], A[1][2]));<a name="line.452"></a>
 <span class="sourceLineNo">453</span>                IJ.log(String.format(Locale.US, " {%.6f, %.6f, %.6f}}", A[2][0], A[2][1], A[2][2]));<a name="line.453"></a>
@@ -464,14 +464,14 @@
 <span class="sourceLineNo">456</span>        /*<a name="line.456"></a>
 <span class="sourceLineNo">457</span>         * Returns a list of orientations (angles) for the keypoint c.<a name="line.457"></a>
 <span class="sourceLineNo">458</span>         */<a name="line.458"></a>
-<span class="sourceLineNo">459</span>        List&lt;Double&gt; getDominantOrientations(KeyPoint c) {<a name="line.459"></a>
+<span class="sourceLineNo">459</span>        private List&lt;Double&gt; getDominantOrientations(KeyPoint c) {<a name="line.459"></a>
 <span class="sourceLineNo">460</span>                float[] h_phi = getOrientationHistogram(c);<a name="line.460"></a>
 <span class="sourceLineNo">461</span>                smoothCircular(h_phi, params.n_Smooth);<a name="line.461"></a>
 <span class="sourceLineNo">462</span>                return findPeakOrientations(h_phi);<a name="line.462"></a>
 <span class="sourceLineNo">463</span>        }<a name="line.463"></a>
 <span class="sourceLineNo">464</span><a name="line.464"></a>
 <span class="sourceLineNo">465</span>        // Smoothes the array A in-place (i.e., destructively) in 'iterations' passes.<a name="line.465"></a>
-<span class="sourceLineNo">466</span>        void smoothCircular(float[] X, int n_iter) {<a name="line.466"></a>
+<span class="sourceLineNo">466</span>        private void smoothCircular(float[] X, int n_iter) {<a name="line.466"></a>
 <span class="sourceLineNo">467</span>                final float[] H = { 0.25f, 0.5f, 0.25f }; // filter kernel<a name="line.467"></a>
 <span class="sourceLineNo">468</span>                final int n = X.length;<a name="line.468"></a>
 <span class="sourceLineNo">469</span>                for (int i = 1; i &lt;= n_iter; i++) {<a name="line.469"></a>
@@ -490,7 +490,7 @@
 <span class="sourceLineNo">482</span>         * Extracts the peaks in the orientation histogram 'h_phi'<a name="line.482"></a>
 <span class="sourceLineNo">483</span>         * and returns the corresponding angles in a (possibly empty) list. <a name="line.483"></a>
 <span class="sourceLineNo">484</span>         */<a name="line.484"></a>
-<span class="sourceLineNo">485</span>        List&lt;Double&gt; findPeakOrientations(float[] h_phi) {<a name="line.485"></a>
+<span class="sourceLineNo">485</span>        private List&lt;Double&gt; findPeakOrientations(float[] h_phi) {<a name="line.485"></a>
 <span class="sourceLineNo">486</span>                int n = h_phi.length;<a name="line.486"></a>
 <span class="sourceLineNo">487</span>                List&lt;Double&gt; angles = new ArrayList&lt;Double&gt;(n);<a name="line.487"></a>
 <span class="sourceLineNo">488</span>                // find the maximum entry in the orientation histogram 'h_phi'<a name="line.488"></a>
@@ -520,7 +520,7 @@
 <span class="sourceLineNo">512</span>                return angles;<a name="line.512"></a>
 <span class="sourceLineNo">513</span>        }<a name="line.513"></a>
 <span class="sourceLineNo">514</span><a name="line.514"></a>
-<span class="sourceLineNo">515</span>        float[] getOrientationHistogram(KeyPoint c) {<a name="line.515"></a>
+<span class="sourceLineNo">515</span>        private float[] getOrientationHistogram(KeyPoint c) {<a name="line.515"></a>
 <span class="sourceLineNo">516</span>                final int n_phi = params.n_Orient;<a name="line.516"></a>
 <span class="sourceLineNo">517</span>                final int K = params.Q;<a name="line.517"></a>
 <span class="sourceLineNo">518</span><a name="line.518"></a>
@@ -563,7 +563,7 @@
 <span class="sourceLineNo">555</span>                return h_phi;<a name="line.555"></a>
 <span class="sourceLineNo">556</span>        }<a name="line.556"></a>
 <span class="sourceLineNo">557</span><a name="line.557"></a>
-<span class="sourceLineNo">558</span>        SiftDescriptor makeSiftDescriptor(KeyPoint c, double phi_d) {<a name="line.558"></a>
+<span class="sourceLineNo">558</span>        private SiftDescriptor makeSiftDescriptor(KeyPoint c, double phi_d) {<a name="line.558"></a>
 <span class="sourceLineNo">559</span>                final int p = c.p, q = c.q;<a name="line.559"></a>
 <span class="sourceLineNo">560</span>                final double x = c.x, y = c.y;<a name="line.560"></a>
 <span class="sourceLineNo">561</span>                final double mag = c.magnitude;<a name="line.561"></a>
@@ -791,7 +791,7 @@
 <span class="sourceLineNo">783</span><a name="line.783"></a>
 <span class="sourceLineNo">784</span>        // -------------------------------------------<a name="line.784"></a>
 <span class="sourceLineNo">785</span><a name="line.785"></a>
-<span class="sourceLineNo">786</span>        void print(float[] arr) {<a name="line.786"></a>
+<span class="sourceLineNo">786</span>        private void print(float[] arr) {<a name="line.786"></a>
 <span class="sourceLineNo">787</span>                int linelength = 16;<a name="line.787"></a>
 <span class="sourceLineNo">788</span>                StringBuilder sb = new StringBuilder();<a name="line.788"></a>
 <span class="sourceLineNo">789</span>                Formatter fm = new Formatter(sb, Locale.US);<a name="line.789"></a>
@@ -806,27 +806,27 @@
 <span class="sourceLineNo">798</span>                fm.close();<a name="line.798"></a>
 <span class="sourceLineNo">799</span>        }<a name="line.799"></a>
 <span class="sourceLineNo">800</span><a name="line.800"></a>
-<span class="sourceLineNo">801</span>        String logvar(float x, String name) {<a name="line.801"></a>
+<span class="sourceLineNo">801</span>        private String logvar(float x, String name) {<a name="line.801"></a>
 <span class="sourceLineNo">802</span>                return name + " = " + String.format("%.3f ", x);<a name="line.802"></a>
 <span class="sourceLineNo">803</span>        }<a name="line.803"></a>
 <span class="sourceLineNo">804</span><a name="line.804"></a>
-<span class="sourceLineNo">805</span>        String logvar(double x, String name) {<a name="line.805"></a>
+<span class="sourceLineNo">805</span>        private String logvar(double x, String name) {<a name="line.805"></a>
 <span class="sourceLineNo">806</span>                return name + " = " + String.format("%.3f ", x);<a name="line.806"></a>
 <span class="sourceLineNo">807</span>        }<a name="line.807"></a>
 <span class="sourceLineNo">808</span><a name="line.808"></a>
-<span class="sourceLineNo">809</span>        String logvar(int x, String name) {<a name="line.809"></a>
+<span class="sourceLineNo">809</span>        private String logvar(int x, String name) {<a name="line.809"></a>
 <span class="sourceLineNo">810</span>                return name + " = " + x + " ";<a name="line.810"></a>
 <span class="sourceLineNo">811</span>        }<a name="line.811"></a>
 <span class="sourceLineNo">812</span><a name="line.812"></a>
-<span class="sourceLineNo">813</span>        void Debug(String s) {<a name="line.813"></a>
+<span class="sourceLineNo">813</span>        private void Debug(String s) {<a name="line.813"></a>
 <span class="sourceLineNo">814</span>                IJ.log(s);<a name="line.814"></a>
 <span class="sourceLineNo">815</span>        }<a name="line.815"></a>
 <span class="sourceLineNo">816</span><a name="line.816"></a>
-<span class="sourceLineNo">817</span>        void Stop() {<a name="line.817"></a>
+<span class="sourceLineNo">817</span>        private void Stop() {<a name="line.817"></a>
 <span class="sourceLineNo">818</span>                throw new IllegalArgumentException("HALTED");<a name="line.818"></a>
 <span class="sourceLineNo">819</span>        }<a name="line.819"></a>
 <span class="sourceLineNo">820</span>        <a name="line.820"></a>
-<span class="sourceLineNo">821</span>        public void printGaussianScaleSpace() {<a name="line.821"></a>
+<span class="sourceLineNo">821</span>        private void printGaussianScaleSpace() {<a name="line.821"></a>
 <span class="sourceLineNo">822</span>                G.print();<a name="line.822"></a>
 <span class="sourceLineNo">823</span>        }<a name="line.823"></a>
 <span class="sourceLineNo">824</span>}<a name="line.824"></a>

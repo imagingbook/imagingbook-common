@@ -11,7 +11,7 @@ package imagingbook.pub.sift;
 
 import java.util.Locale;
 
-public class KeyPoint implements Cloneable, Comparable<KeyPoint> {
+class KeyPoint implements Cloneable, Comparable<KeyPoint> {
 	public final int p;	// octave index
 	public final int q;	// level index
 	

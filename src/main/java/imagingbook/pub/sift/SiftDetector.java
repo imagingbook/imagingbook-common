@@ -115,7 +115,7 @@ public class SiftDetector {
 	 * @param keypoints the sequence of original key points
 	 * @return a sequence of enhanced key points
 	 */
-	public List<KeyPoint> makeRichKeypoints(List<KeyPoint> keypoints) {
+	private  List<KeyPoint> makeRichKeypoints(List<KeyPoint> keypoints) {
 		if (params.DEBUG) {IJ.log("makeSiftDescriptors...");}
 		//int cnt = 0;
 		List<KeyPoint> richKeyPoints = new ArrayList<KeyPoint>();
@@ -146,7 +146,7 @@ public class SiftDetector {
 	 * @param oh orientation histogram
 	 * @return list of histogram indices for the peak orientations
 	 */
-	public List<Double> findPeakOrientationIndices(float[] oh) {
+	private List<Double> findPeakOrientationIndices(float[] oh) {
 		int nb = oh.length;
 		List<Double> orientIndexes = new ArrayList<Double>(nb);
 		// find the maximum entry in the orientation histogram 'oh'
@@ -203,7 +203,7 @@ public class SiftDetector {
 		return siftDescriptors;
 	}
 
-	public List<KeyPoint> getKeyPoints() {
+	private List<KeyPoint> getKeyPoints() {
 		List<KeyPoint> keyPts = new ArrayList<KeyPoint>();
 		final int P = params.P;
 		final int K = params.Q;
@@ -328,7 +328,7 @@ public class SiftDetector {
 		return isLocalMin(nh, tExtrm) || isLocalMax(nh, tExtrm);
 	}
 
-	boolean isLocalMin(final float[][][] neighborhood, float tExtrm) {
+	private boolean isLocalMin(final float[][][] neighborhood, float tExtrm) {
 		final float c = neighborhood[1][1][1] + tExtrm; // center value + threshold
 		if (c >= 0) return false;	// local minimum must have a negative value
 		// check 8 neighbors in scale plane q
@@ -370,7 +370,7 @@ public class SiftDetector {
 		return true;
 	}
 
-	boolean isLocalMax(final float[][][] neighborhood, float tExtrm) {
+	private boolean isLocalMax(final float[][][] neighborhood, float tExtrm) {
 		final float c = neighborhood[1][1][1] - tExtrm; 	// center value - threshold
 		if (c <= 0) return false;	// local maximum must have a positive value
 		// check 8 neighbors in scale plane q
@@ -417,7 +417,7 @@ public class SiftDetector {
 	 * nh[s][x][y]. The result is stored in the supplied vector grad, to which a reference is 
 	 * returned.
 	 */
-	float[] gradient(final float[][][] nh, final float[] grad) {
+	private float[] gradient(final float[][][] nh, final float[] grad) {
 		// Note: factor 0.5f not needed, kept for clarity.
 		grad[0] = 0.5f * (nh[1][2][1] - nh[1][0][1]);	// = dx
 		grad[1] = 0.5f * (nh[1][1][2] - nh[1][1][0]);	// = dy
@@ -431,7 +431,7 @@ public class SiftDetector {
 	 * The result is stored in the supplied array hess, to which a reference is 
 	 * returned.
 	 */
-	float[][] hessian(final float[][][] nh, final float[][] hess) {
+	private float[][] hessian(final float[][][] nh, final float[][] hess) {
 		final float nh_111 = 2 * nh[1][1][1];
 		final float dxx = nh[1][0][1] - nh_111 + nh[1][2][1];
 		final float dyy = nh[1][1][0] - nh_111 + nh[1][1][2];
@@ -447,7 +447,7 @@ public class SiftDetector {
 		return hess;
 	}
 
-	void printMatrix3x3(float[][] A) {
+	private void printMatrix3x3(float[][] A) {
 		IJ.log(String.format(Locale.US, "{{%.6f, %.6f, %.6f},", A[0][0], A[0][1], A[0][2]));
 		IJ.log(String.format(Locale.US, " {%.6f, %.6f, %.6f},", A[1][0], A[1][1], A[1][2]));
 		IJ.log(String.format(Locale.US, " {%.6f, %.6f, %.6f}}", A[2][0], A[2][1], A[2][2]));
@@ -456,14 +456,14 @@ public class SiftDetector {
 	/*
 	 * Returns a list of orientations (angles) for the keypoint c.
 	 */
-	List<Double> getDominantOrientations(KeyPoint c) {
+	private List<Double> getDominantOrientations(KeyPoint c) {
 		float[] h_phi = getOrientationHistogram(c);
 		smoothCircular(h_phi, params.n_Smooth);
 		return findPeakOrientations(h_phi);
 	}
 
 	// Smoothes the array A in-place (i.e., destructively) in 'iterations' passes.
-	void smoothCircular(float[] X, int n_iter) {
+	private void smoothCircular(float[] X, int n_iter) {
 		final float[] H = { 0.25f, 0.5f, 0.25f }; // filter kernel
 		final int n = X.length;
 		for (int i = 1; i <= n_iter; i++) {
@@ -482,7 +482,7 @@ public class SiftDetector {
 	 * Extracts the peaks in the orientation histogram 'h_phi'
 	 * and returns the corresponding angles in a (possibly empty) list. 
 	 */
-	List<Double> findPeakOrientations(float[] h_phi) {
+	private List<Double> findPeakOrientations(float[] h_phi) {
 		int n = h_phi.length;
 		List<Double> angles = new ArrayList<Double>(n);
 		// find the maximum entry in the orientation histogram 'h_phi'
@@ -512,7 +512,7 @@ public class SiftDetector {
 		return angles;
 	}
 
-	float[] getOrientationHistogram(KeyPoint c) {
+	private float[] getOrientationHistogram(KeyPoint c) {
 		final int n_phi = params.n_Orient;
 		final int K = params.Q;
 
@@ -555,7 +555,7 @@ public class SiftDetector {
 		return h_phi;
 	}
 
-	SiftDescriptor makeSiftDescriptor(KeyPoint c, double phi_d) {
+	private SiftDescriptor makeSiftDescriptor(KeyPoint c, double phi_d) {
 		final int p = c.p, q = c.q;
 		final double x = c.x, y = c.y;
 		final double mag = c.magnitude;
@@ -783,7 +783,7 @@ public class SiftDetector {
 
 	// -------------------------------------------
 
-	void print(float[] arr) {
+	private void print(float[] arr) {
 		int linelength = 16;
 		StringBuilder sb = new StringBuilder();
 		Formatter fm = new Formatter(sb, Locale.US);
@@ -798,27 +798,27 @@ public class SiftDetector {
 		fm.close();
 	}
 
-	String logvar(float x, String name) {
+	private String logvar(float x, String name) {
 		return name + " = " + String.format("%.3f ", x);
 	}
 
-	String logvar(double x, String name) {
+	private String logvar(double x, String name) {
 		return name + " = " + String.format("%.3f ", x);
 	}
 
-	String logvar(int x, String name) {
+	private String logvar(int x, String name) {
 		return name + " = " + x + " ";
 	}
 
-	void Debug(String s) {
+	private void Debug(String s) {
 		IJ.log(s);
 	}
 
-	void Stop() {
+	private void Stop() {
 		throw new IllegalArgumentException("HALTED");
 	}
 	
-	public void printGaussianScaleSpace() {
+	private void printGaussianScaleSpace() {
 		G.print();
 	}
 }

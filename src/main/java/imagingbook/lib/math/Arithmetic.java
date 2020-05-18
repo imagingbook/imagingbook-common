@@ -71,30 +71,30 @@ public abstract class Arithmetic {
 	/**
 	 * Test for zero (float version).
 	 * Returns true if the argument's absolute value
-	 * is less than {@link Arithmetic.EPSILON_FLOAT}.
+	 * is less than {@link EPSILON_FLOAT}.
 	 * @param x quantity to be tested
 	 * @return true if argument is close to zero
 	 */
 	public static boolean isZero(float x) {
-		return Math.abs(x) < Arithmetic.EPSILON_FLOAT;
+		return Math.abs(x) < EPSILON_FLOAT;
 	}
 	
 	/**
 	 * Test for zero (double version).
 	 * Returns true if the argument's absolute value
-	 * is less than {@link Arithmetic.EPSILON_DOUBLE}.
+	 * is less than {@link EPSILON_DOUBLE}.
 	 * @param x quantity to be tested
 	 * @return true if argument is close to zero
 	 */
 	public static boolean isZero(double x) {
-		return Math.abs(x) < Arithmetic.EPSILON_DOUBLE;
+		return Math.abs(x) < EPSILON_DOUBLE;
 	}
 	
 	
 	/**
 	 * Test for numerical equality (double version).
 	 * Returns true if the absolute difference of the arguments
-	 * is less than {@link Arithmetic.EPSILON_DOUBLE}.
+	 * is less than {@link EPSILON_DOUBLE}.
 	 * @param x first argument
 	 * @param y second argument
 	 * @return true if both arguments are numerically the same.
@@ -106,7 +106,7 @@ public abstract class Arithmetic {
 	/**
 	 * Test for numerical equality (float version).
 	 * Returns true if the absolute difference of the arguments
-	 * is less than {@link Arithmetic.EPSILON_FLOAT}.
+	 * is less than {@link EPSILON_FLOAT}.
 	 * @param x first argument
 	 * @param y second argument
 	 * @return true if both arguments are numerically the same.

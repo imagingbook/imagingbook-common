@@ -17,26 +17,26 @@
 <span class="sourceLineNo">009</span><a name="line.9"></a>
 <span class="sourceLineNo">010</span>package imagingbook.pub.fd;<a name="line.10"></a>
 <span class="sourceLineNo">011</span><a name="line.11"></a>
-<span class="sourceLineNo">012</span>import imagingbook.lib.math.Arithmetic;<a name="line.12"></a>
-<span class="sourceLineNo">013</span>import imagingbook.lib.math.Complex;<a name="line.13"></a>
-<span class="sourceLineNo">014</span><a name="line.14"></a>
-<span class="sourceLineNo">015</span>import java.awt.geom.Path2D;<a name="line.15"></a>
-<span class="sourceLineNo">016</span>import java.awt.geom.Point2D;<a name="line.16"></a>
-<span class="sourceLineNo">017</span><a name="line.17"></a>
-<span class="sourceLineNo">018</span>import org.apache.commons.math3.analysis.UnivariateFunction;<a name="line.18"></a>
-<span class="sourceLineNo">019</span>import org.apache.commons.math3.optim.MaxEval;<a name="line.19"></a>
-<span class="sourceLineNo">020</span>import org.apache.commons.math3.optim.nonlinear.scalar.GoalType;<a name="line.20"></a>
-<span class="sourceLineNo">021</span>import org.apache.commons.math3.optim.univariate.BrentOptimizer;<a name="line.21"></a>
-<span class="sourceLineNo">022</span>import org.apache.commons.math3.optim.univariate.SearchInterval;<a name="line.22"></a>
-<span class="sourceLineNo">023</span>import org.apache.commons.math3.optim.univariate.UnivariateObjectiveFunction;<a name="line.23"></a>
-<span class="sourceLineNo">024</span>import org.apache.commons.math3.optim.univariate.UnivariateOptimizer;<a name="line.24"></a>
-<span class="sourceLineNo">025</span>import org.apache.commons.math3.optim.univariate.UnivariatePointValuePair;<a name="line.25"></a>
+<span class="sourceLineNo">012</span>import java.awt.geom.Path2D;<a name="line.12"></a>
+<span class="sourceLineNo">013</span><a name="line.13"></a>
+<span class="sourceLineNo">014</span>import org.apache.commons.math3.analysis.UnivariateFunction;<a name="line.14"></a>
+<span class="sourceLineNo">015</span>import org.apache.commons.math3.optim.MaxEval;<a name="line.15"></a>
+<span class="sourceLineNo">016</span>import org.apache.commons.math3.optim.nonlinear.scalar.GoalType;<a name="line.16"></a>
+<span class="sourceLineNo">017</span>import org.apache.commons.math3.optim.univariate.BrentOptimizer;<a name="line.17"></a>
+<span class="sourceLineNo">018</span>import org.apache.commons.math3.optim.univariate.SearchInterval;<a name="line.18"></a>
+<span class="sourceLineNo">019</span>import org.apache.commons.math3.optim.univariate.UnivariateObjectiveFunction;<a name="line.19"></a>
+<span class="sourceLineNo">020</span>import org.apache.commons.math3.optim.univariate.UnivariateOptimizer;<a name="line.20"></a>
+<span class="sourceLineNo">021</span>import org.apache.commons.math3.optim.univariate.UnivariatePointValuePair;<a name="line.21"></a>
+<span class="sourceLineNo">022</span><a name="line.22"></a>
+<span class="sourceLineNo">023</span>import imagingbook.lib.math.Arithmetic;<a name="line.23"></a>
+<span class="sourceLineNo">024</span>import imagingbook.lib.math.Complex;<a name="line.24"></a>
+<span class="sourceLineNo">025</span>import imagingbook.pub.geometry.basic.Point;<a name="line.25"></a>
 <span class="sourceLineNo">026</span><a name="line.26"></a>
 <span class="sourceLineNo">027</span>/**<a name="line.27"></a>
 <span class="sourceLineNo">028</span> * This is the abstract super-class for Fourier descriptors. It cannot<a name="line.28"></a>
 <span class="sourceLineNo">029</span> * be instantiated.<a name="line.29"></a>
 <span class="sourceLineNo">030</span> * @author W. Burger<a name="line.30"></a>
-<span class="sourceLineNo">031</span> * @version 2015/08/13<a name="line.31"></a>
+<span class="sourceLineNo">031</span> * @version 2020/04/01<a name="line.31"></a>
 <span class="sourceLineNo">032</span> */<a name="line.32"></a>
 <span class="sourceLineNo">033</span>public abstract class FourierDescriptor implements Cloneable {<a name="line.33"></a>
 <span class="sourceLineNo">034</span><a name="line.34"></a>
@@ -113,7 +113,7 @@
 <span class="sourceLineNo">105</span><a name="line.105"></a>
 <span class="sourceLineNo">106</span>        // ----------------------------------------------------------------<a name="line.106"></a>
 <span class="sourceLineNo">107</span><a name="line.107"></a>
-<span class="sourceLineNo">108</span>        protected static Complex[] makeComplex(Point2D[] points) {<a name="line.108"></a>
+<span class="sourceLineNo">108</span>        protected static Complex[] makeComplex(Point[] points) {<a name="line.108"></a>
 <span class="sourceLineNo">109</span>                int N = points.length;<a name="line.109"></a>
 <span class="sourceLineNo">110</span>                Complex[] samples = new Complex[N];<a name="line.110"></a>
 <span class="sourceLineNo">111</span>                for (int i = 0; i &lt; N; i++) {<a name="line.111"></a>

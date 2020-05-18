@@ -16,114 +16,115 @@
 <span class="sourceLineNo">008</span> *******************************************************************************/<a name="line.8"></a>
 <span class="sourceLineNo">009</span>package imagingbook.pub.regions.geometry;<a name="line.9"></a>
 <span class="sourceLineNo">010</span><a name="line.10"></a>
-<span class="sourceLineNo">011</span>import java.awt.Point;<a name="line.11"></a>
-<span class="sourceLineNo">012</span>import java.awt.geom.Point2D;<a name="line.12"></a>
-<span class="sourceLineNo">013</span><a name="line.13"></a>
-<span class="sourceLineNo">014</span>import ij.process.ImageProcessor;<a name="line.14"></a>
-<span class="sourceLineNo">015</span>import imagingbook.lib.math.Matrix;<a name="line.15"></a>
-<span class="sourceLineNo">016</span>import imagingbook.pub.regions.RegionLabeling.BinaryRegion;<a name="line.16"></a>
-<span class="sourceLineNo">017</span><a name="line.17"></a>
-<span class="sourceLineNo">018</span><a name="line.18"></a>
-<span class="sourceLineNo">019</span><a name="line.19"></a>
-<span class="sourceLineNo">020</span>public class AxisAlignedBoundingBox {<a name="line.20"></a>
-<span class="sourceLineNo">021</span>        <a name="line.21"></a>
-<span class="sourceLineNo">022</span>        private final double[][] boundingBox;<a name="line.22"></a>
-<span class="sourceLineNo">023</span>        <a name="line.23"></a>
-<span class="sourceLineNo">024</span>        public AxisAlignedBoundingBox(BinaryRegion r) {<a name="line.24"></a>
-<span class="sourceLineNo">025</span>                boundingBox = makeBox(r);<a name="line.25"></a>
-<span class="sourceLineNo">026</span>        }<a name="line.26"></a>
-<span class="sourceLineNo">027</span>        <a name="line.27"></a>
+<span class="sourceLineNo">011</span>import ij.process.ImageProcessor;<a name="line.11"></a>
+<span class="sourceLineNo">012</span>import imagingbook.lib.math.Matrix;<a name="line.12"></a>
+<span class="sourceLineNo">013</span>import imagingbook.pub.geometry.basic.Point;<a name="line.13"></a>
+<span class="sourceLineNo">014</span>import imagingbook.pub.regions.RegionLabeling.BinaryRegion;<a name="line.14"></a>
+<span class="sourceLineNo">015</span><a name="line.15"></a>
+<span class="sourceLineNo">016</span>/**<a name="line.16"></a>
+<span class="sourceLineNo">017</span> * <a name="line.17"></a>
+<span class="sourceLineNo">018</span> * @author WB<a name="line.18"></a>
+<span class="sourceLineNo">019</span> * @version 2020/04/01<a name="line.19"></a>
+<span class="sourceLineNo">020</span> */<a name="line.20"></a>
+<span class="sourceLineNo">021</span>public class AxisAlignedBoundingBox {<a name="line.21"></a>
+<span class="sourceLineNo">022</span>        <a name="line.22"></a>
+<span class="sourceLineNo">023</span>        private final double[][] boundingBox;<a name="line.23"></a>
+<span class="sourceLineNo">024</span>        <a name="line.24"></a>
+<span class="sourceLineNo">025</span>        public AxisAlignedBoundingBox(BinaryRegion r) {<a name="line.25"></a>
+<span class="sourceLineNo">026</span>                boundingBox = makeBox(r);<a name="line.26"></a>
+<span class="sourceLineNo">027</span>        }<a name="line.27"></a>
 <span class="sourceLineNo">028</span>        <a name="line.28"></a>
-<span class="sourceLineNo">029</span>//      public double[][] getCorners() {<a name="line.29"></a>
-<span class="sourceLineNo">030</span>//              return boundingBox;<a name="line.30"></a>
-<span class="sourceLineNo">031</span>//      }<a name="line.31"></a>
-<span class="sourceLineNo">032</span>        <a name="line.32"></a>
-<span class="sourceLineNo">033</span>        public Point2D[] getCornerPoints() {<a name="line.33"></a>
-<span class="sourceLineNo">034</span>                Point2D[] cpts = new Point2D[boundingBox.length];<a name="line.34"></a>
-<span class="sourceLineNo">035</span>                for (int i = 0; i &lt; boundingBox.length; i++) {<a name="line.35"></a>
-<span class="sourceLineNo">036</span>                        cpts[i] = new Point2D.Double(boundingBox[i][0], boundingBox[i][1]);<a name="line.36"></a>
-<span class="sourceLineNo">037</span>                }<a name="line.37"></a>
-<span class="sourceLineNo">038</span>                return cpts;<a name="line.38"></a>
-<span class="sourceLineNo">039</span>        }<a name="line.39"></a>
-<span class="sourceLineNo">040</span>                <a name="line.40"></a>
-<span class="sourceLineNo">041</span>        /**<a name="line.41"></a>
-<span class="sourceLineNo">042</span>         * Calculates the major axis-aligned bounding box of <a name="line.42"></a>
-<span class="sourceLineNo">043</span>         * the supplied region, as a sequence of four point<a name="line.43"></a>
-<span class="sourceLineNo">044</span>         * coordinates (A, B, C, D).<a name="line.44"></a>
-<span class="sourceLineNo">045</span>         * @param r binary region<a name="line.45"></a>
-<span class="sourceLineNo">046</span>         * @return the region's bounding box as a sequence of 4 coordinates,<a name="line.46"></a>
-<span class="sourceLineNo">047</span>         * (A, B, C, D)<a name="line.47"></a>
-<span class="sourceLineNo">048</span>         */<a name="line.48"></a>
-<span class="sourceLineNo">049</span>        private double[][] makeBox(BinaryRegion r) {<a name="line.49"></a>
-<span class="sourceLineNo">050</span>                double theta = getRegionOrientation(r);<a name="line.50"></a>
-<span class="sourceLineNo">051</span>                double xa = Math.cos(theta);<a name="line.51"></a>
-<span class="sourceLineNo">052</span>                double ya = Math.sin(theta);<a name="line.52"></a>
-<span class="sourceLineNo">053</span>                double[] ea = {xa,  ya};<a name="line.53"></a>
-<span class="sourceLineNo">054</span>                double[] eb = {ya, -xa};<a name="line.54"></a>
-<span class="sourceLineNo">055</span>                <a name="line.55"></a>
-<span class="sourceLineNo">056</span>                double amin = Double.POSITIVE_INFINITY;<a name="line.56"></a>
-<span class="sourceLineNo">057</span>                double amax = Double.NEGATIVE_INFINITY;<a name="line.57"></a>
-<span class="sourceLineNo">058</span>                double bmin = Double.POSITIVE_INFINITY;<a name="line.58"></a>
-<span class="sourceLineNo">059</span>                double bmax = Double.NEGATIVE_INFINITY;<a name="line.59"></a>
-<span class="sourceLineNo">060</span>                <a name="line.60"></a>
-<span class="sourceLineNo">061</span>                for (Point p : r) {<a name="line.61"></a>
-<span class="sourceLineNo">062</span>                        double a = p.x * xa + p.y * ya; // project (x,y) on the major axis vector<a name="line.62"></a>
-<span class="sourceLineNo">063</span>                        double b = p.x * ya - p.y * xa; // project (x,y) on perpendicular vector<a name="line.63"></a>
-<span class="sourceLineNo">064</span>                        amin = Math.min(a, amin);<a name="line.64"></a>
-<span class="sourceLineNo">065</span>                        amax = Math.max(a, amax);<a name="line.65"></a>
-<span class="sourceLineNo">066</span>                        bmin = Math.min(b, bmin);<a name="line.66"></a>
-<span class="sourceLineNo">067</span>                        bmax = Math.max(b, bmax);<a name="line.67"></a>
-<span class="sourceLineNo">068</span>                }<a name="line.68"></a>
-<span class="sourceLineNo">069</span>                                        <a name="line.69"></a>
-<span class="sourceLineNo">070</span>                double[] A = Matrix.add(Matrix.multiply(amin, ea), Matrix.multiply(bmin, eb));<a name="line.70"></a>
-<span class="sourceLineNo">071</span>                double[] B = Matrix.add(Matrix.multiply(amin, ea), Matrix.multiply(bmax, eb));<a name="line.71"></a>
-<span class="sourceLineNo">072</span>                double[] C = Matrix.add(Matrix.multiply(amax, ea), Matrix.multiply(bmax, eb));<a name="line.72"></a>
-<span class="sourceLineNo">073</span>                double[] D = Matrix.add(Matrix.multiply(amax, ea), Matrix.multiply(bmin, eb));<a name="line.73"></a>
-<span class="sourceLineNo">074</span>                <a name="line.74"></a>
-<span class="sourceLineNo">075</span>                return new double[][] {A, B, C, D};<a name="line.75"></a>
-<span class="sourceLineNo">076</span>        }<a name="line.76"></a>
-<span class="sourceLineNo">077</span>        <a name="line.77"></a>
-<span class="sourceLineNo">078</span>        /**<a name="line.78"></a>
-<span class="sourceLineNo">079</span>         * Calculates the orientation of major axis.<a name="line.79"></a>
-<span class="sourceLineNo">080</span>         * TODO: move this somewhere else (into class BinaryRegion)<a name="line.80"></a>
-<span class="sourceLineNo">081</span>         * @param r binary region<a name="line.81"></a>
-<span class="sourceLineNo">082</span>         * @return orientation of the major axis (angle in radians)<a name="line.82"></a>
-<span class="sourceLineNo">083</span>         */<a name="line.83"></a>
-<span class="sourceLineNo">084</span>        private double getRegionOrientation(BinaryRegion r) {<a name="line.84"></a>
-<span class="sourceLineNo">085</span>                final double xc = r.getXc();<a name="line.85"></a>
-<span class="sourceLineNo">086</span>                final double yc = r.getYc();<a name="line.86"></a>
-<span class="sourceLineNo">087</span>                double mu11 = 0;<a name="line.87"></a>
-<span class="sourceLineNo">088</span>                double mu20 = 0;<a name="line.88"></a>
-<span class="sourceLineNo">089</span>                double mu02 = 0;<a name="line.89"></a>
-<span class="sourceLineNo">090</span>                for (Point p : r) {<a name="line.90"></a>
-<span class="sourceLineNo">091</span>                        double dx = (p.x - xc);<a name="line.91"></a>
-<span class="sourceLineNo">092</span>                        double dy = (p.y - yc);<a name="line.92"></a>
-<span class="sourceLineNo">093</span>                        mu11 = mu11 + dx * dy;<a name="line.93"></a>
-<span class="sourceLineNo">094</span>                        mu20 = mu20 + dx * dx;<a name="line.94"></a>
-<span class="sourceLineNo">095</span>                        mu02 = mu02 + dy * dy;<a name="line.95"></a>
-<span class="sourceLineNo">096</span>                }<a name="line.96"></a>
-<span class="sourceLineNo">097</span>                <a name="line.97"></a>
-<span class="sourceLineNo">098</span>                return 0.5 * Math.atan2(2 * mu11, mu20 - mu02);<a name="line.98"></a>
-<span class="sourceLineNo">099</span>        }<a name="line.99"></a>
-<span class="sourceLineNo">100</span>        <a name="line.100"></a>
-<span class="sourceLineNo">101</span>        // drawing --------------------------------------------<a name="line.101"></a>
-<span class="sourceLineNo">102</span>        <a name="line.102"></a>
-<span class="sourceLineNo">103</span>        public void draw(ImageProcessor ip) {<a name="line.103"></a>
-<span class="sourceLineNo">104</span>                drawLine(ip, boundingBox[0], boundingBox[1]);<a name="line.104"></a>
-<span class="sourceLineNo">105</span>                drawLine(ip, boundingBox[1], boundingBox[2]);<a name="line.105"></a>
-<span class="sourceLineNo">106</span>                drawLine(ip, boundingBox[2], boundingBox[3]);<a name="line.106"></a>
-<span class="sourceLineNo">107</span>                drawLine(ip, boundingBox[3], boundingBox[0]);<a name="line.107"></a>
-<span class="sourceLineNo">108</span>        }<a name="line.108"></a>
-<span class="sourceLineNo">109</span>        <a name="line.109"></a>
-<span class="sourceLineNo">110</span>        private void drawLine(ImageProcessor ip, double[] p1, double[] p2) {<a name="line.110"></a>
-<span class="sourceLineNo">111</span>                int u1 = (int) Math.round(p1[0]);<a name="line.111"></a>
-<span class="sourceLineNo">112</span>                int v1 = (int) Math.round(p1[1]);<a name="line.112"></a>
-<span class="sourceLineNo">113</span>                int u2 = (int) Math.round(p2[0]);<a name="line.113"></a>
-<span class="sourceLineNo">114</span>                int v2 = (int) Math.round(p2[1]);<a name="line.114"></a>
-<span class="sourceLineNo">115</span>                ip.drawLine(u1, v1, u2, v2);    <a name="line.115"></a>
-<span class="sourceLineNo">116</span>        }<a name="line.116"></a>
-<span class="sourceLineNo">117</span><a name="line.117"></a>
-<span class="sourceLineNo">118</span>}<a name="line.118"></a>
+<span class="sourceLineNo">029</span>        <a name="line.29"></a>
+<span class="sourceLineNo">030</span>//      public double[][] getCorners() {<a name="line.30"></a>
+<span class="sourceLineNo">031</span>//              return boundingBox;<a name="line.31"></a>
+<span class="sourceLineNo">032</span>//      }<a name="line.32"></a>
+<span class="sourceLineNo">033</span>        <a name="line.33"></a>
+<span class="sourceLineNo">034</span>        public Point[] getCornerPoints() {<a name="line.34"></a>
+<span class="sourceLineNo">035</span>                Point[] cpts = new Point[boundingBox.length];<a name="line.35"></a>
+<span class="sourceLineNo">036</span>                for (int i = 0; i &lt; boundingBox.length; i++) {<a name="line.36"></a>
+<span class="sourceLineNo">037</span>                        cpts[i] = Point.create(boundingBox[i][0], boundingBox[i][1]);<a name="line.37"></a>
+<span class="sourceLineNo">038</span>                }<a name="line.38"></a>
+<span class="sourceLineNo">039</span>                return cpts;<a name="line.39"></a>
+<span class="sourceLineNo">040</span>        }<a name="line.40"></a>
+<span class="sourceLineNo">041</span>                <a name="line.41"></a>
+<span class="sourceLineNo">042</span>        /**<a name="line.42"></a>
+<span class="sourceLineNo">043</span>         * Calculates the major axis-aligned bounding box of <a name="line.43"></a>
+<span class="sourceLineNo">044</span>         * the supplied region, as a sequence of four point<a name="line.44"></a>
+<span class="sourceLineNo">045</span>         * coordinates (A, B, C, D).<a name="line.45"></a>
+<span class="sourceLineNo">046</span>         * @param r binary region<a name="line.46"></a>
+<span class="sourceLineNo">047</span>         * @return the region's bounding box as a sequence of 4 coordinates,<a name="line.47"></a>
+<span class="sourceLineNo">048</span>         * (A, B, C, D)<a name="line.48"></a>
+<span class="sourceLineNo">049</span>         */<a name="line.49"></a>
+<span class="sourceLineNo">050</span>        private double[][] makeBox(BinaryRegion r) {<a name="line.50"></a>
+<span class="sourceLineNo">051</span>                double theta = getRegionOrientation(r);<a name="line.51"></a>
+<span class="sourceLineNo">052</span>                double xa = Math.cos(theta);<a name="line.52"></a>
+<span class="sourceLineNo">053</span>                double ya = Math.sin(theta);<a name="line.53"></a>
+<span class="sourceLineNo">054</span>                double[] ea = {xa,  ya};<a name="line.54"></a>
+<span class="sourceLineNo">055</span>                double[] eb = {ya, -xa};<a name="line.55"></a>
+<span class="sourceLineNo">056</span>                <a name="line.56"></a>
+<span class="sourceLineNo">057</span>                double amin = Double.POSITIVE_INFINITY;<a name="line.57"></a>
+<span class="sourceLineNo">058</span>                double amax = Double.NEGATIVE_INFINITY;<a name="line.58"></a>
+<span class="sourceLineNo">059</span>                double bmin = Double.POSITIVE_INFINITY;<a name="line.59"></a>
+<span class="sourceLineNo">060</span>                double bmax = Double.NEGATIVE_INFINITY;<a name="line.60"></a>
+<span class="sourceLineNo">061</span>                <a name="line.61"></a>
+<span class="sourceLineNo">062</span>                for (Point p : r) {<a name="line.62"></a>
+<span class="sourceLineNo">063</span>                        double a = p.getX() * xa + p.getY() * ya;       // project (x,y) on the major axis vector<a name="line.63"></a>
+<span class="sourceLineNo">064</span>                        double b = p.getX() * ya - p.getY() * xa;       // project (x,y) on perpendicular vector<a name="line.64"></a>
+<span class="sourceLineNo">065</span>                        amin = Math.min(a, amin);<a name="line.65"></a>
+<span class="sourceLineNo">066</span>                        amax = Math.max(a, amax);<a name="line.66"></a>
+<span class="sourceLineNo">067</span>                        bmin = Math.min(b, bmin);<a name="line.67"></a>
+<span class="sourceLineNo">068</span>                        bmax = Math.max(b, bmax);<a name="line.68"></a>
+<span class="sourceLineNo">069</span>                }<a name="line.69"></a>
+<span class="sourceLineNo">070</span>                                        <a name="line.70"></a>
+<span class="sourceLineNo">071</span>                double[] A = Matrix.add(Matrix.multiply(amin, ea), Matrix.multiply(bmin, eb));<a name="line.71"></a>
+<span class="sourceLineNo">072</span>                double[] B = Matrix.add(Matrix.multiply(amin, ea), Matrix.multiply(bmax, eb));<a name="line.72"></a>
+<span class="sourceLineNo">073</span>                double[] C = Matrix.add(Matrix.multiply(amax, ea), Matrix.multiply(bmax, eb));<a name="line.73"></a>
+<span class="sourceLineNo">074</span>                double[] D = Matrix.add(Matrix.multiply(amax, ea), Matrix.multiply(bmin, eb));<a name="line.74"></a>
+<span class="sourceLineNo">075</span>                <a name="line.75"></a>
+<span class="sourceLineNo">076</span>                return new double[][] {A, B, C, D};<a name="line.76"></a>
+<span class="sourceLineNo">077</span>        }<a name="line.77"></a>
+<span class="sourceLineNo">078</span>        <a name="line.78"></a>
+<span class="sourceLineNo">079</span>        /**<a name="line.79"></a>
+<span class="sourceLineNo">080</span>         * Calculates the orientation of major axis.<a name="line.80"></a>
+<span class="sourceLineNo">081</span>         * TODO: move this somewhere else (into class BinaryRegion)<a name="line.81"></a>
+<span class="sourceLineNo">082</span>         * @param r binary region<a name="line.82"></a>
+<span class="sourceLineNo">083</span>         * @return orientation of the major axis (angle in radians)<a name="line.83"></a>
+<span class="sourceLineNo">084</span>         */<a name="line.84"></a>
+<span class="sourceLineNo">085</span>        private double getRegionOrientation(BinaryRegion r) {<a name="line.85"></a>
+<span class="sourceLineNo">086</span>                final double xc = r.getXc();<a name="line.86"></a>
+<span class="sourceLineNo">087</span>                final double yc = r.getYc();<a name="line.87"></a>
+<span class="sourceLineNo">088</span>                double mu11 = 0;<a name="line.88"></a>
+<span class="sourceLineNo">089</span>                double mu20 = 0;<a name="line.89"></a>
+<span class="sourceLineNo">090</span>                double mu02 = 0;<a name="line.90"></a>
+<span class="sourceLineNo">091</span>                for (Point p : r) {<a name="line.91"></a>
+<span class="sourceLineNo">092</span>                        double dx = (p.getX() - xc);<a name="line.92"></a>
+<span class="sourceLineNo">093</span>                        double dy = (p.getY() - yc);<a name="line.93"></a>
+<span class="sourceLineNo">094</span>                        mu11 = mu11 + dx * dy;<a name="line.94"></a>
+<span class="sourceLineNo">095</span>                        mu20 = mu20 + dx * dx;<a name="line.95"></a>
+<span class="sourceLineNo">096</span>                        mu02 = mu02 + dy * dy;<a name="line.96"></a>
+<span class="sourceLineNo">097</span>                }<a name="line.97"></a>
+<span class="sourceLineNo">098</span>                <a name="line.98"></a>
+<span class="sourceLineNo">099</span>                return 0.5 * Math.atan2(2 * mu11, mu20 - mu02);<a name="line.99"></a>
+<span class="sourceLineNo">100</span>        }<a name="line.100"></a>
+<span class="sourceLineNo">101</span>        <a name="line.101"></a>
+<span class="sourceLineNo">102</span>        // drawing --------------------------------------------<a name="line.102"></a>
+<span class="sourceLineNo">103</span>        <a name="line.103"></a>
+<span class="sourceLineNo">104</span>        public void draw(ImageProcessor ip) {<a name="line.104"></a>
+<span class="sourceLineNo">105</span>                drawLine(ip, boundingBox[0], boundingBox[1]);<a name="line.105"></a>
+<span class="sourceLineNo">106</span>                drawLine(ip, boundingBox[1], boundingBox[2]);<a name="line.106"></a>
+<span class="sourceLineNo">107</span>                drawLine(ip, boundingBox[2], boundingBox[3]);<a name="line.107"></a>
+<span class="sourceLineNo">108</span>                drawLine(ip, boundingBox[3], boundingBox[0]);<a name="line.108"></a>
+<span class="sourceLineNo">109</span>        }<a name="line.109"></a>
+<span class="sourceLineNo">110</span>        <a name="line.110"></a>
+<span class="sourceLineNo">111</span>        private void drawLine(ImageProcessor ip, double[] p1, double[] p2) {<a name="line.111"></a>
+<span class="sourceLineNo">112</span>                int u1 = (int) Math.round(p1[0]);<a name="line.112"></a>
+<span class="sourceLineNo">113</span>                int v1 = (int) Math.round(p1[1]);<a name="line.113"></a>
+<span class="sourceLineNo">114</span>                int u2 = (int) Math.round(p2[0]);<a name="line.114"></a>
+<span class="sourceLineNo">115</span>                int v2 = (int) Math.round(p2[1]);<a name="line.115"></a>
+<span class="sourceLineNo">116</span>                ip.drawLine(u1, v1, u2, v2);    <a name="line.116"></a>
+<span class="sourceLineNo">117</span>        }<a name="line.117"></a>
+<span class="sourceLineNo">118</span><a name="line.118"></a>
+<span class="sourceLineNo">119</span>}<a name="line.119"></a>
 
 
 

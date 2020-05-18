@@ -12,13 +12,15 @@ package imagingbook.pub.sift;
 
 import java.util.Locale;
 
+import imagingbook.pub.geometry.basic.Point;
+
 /**
  * SIFT descriptor.
  * Added magnitude field and Comparable interface for easy sorting.
  * @author W. Burger
  *
  */
-public class SiftDescriptor implements Comparable<SiftDescriptor> {
+public class SiftDescriptor implements Point, Comparable<SiftDescriptor> {
 	
 	private final double x;	// image position
 	private final double y;
