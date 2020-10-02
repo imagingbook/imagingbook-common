@@ -9,7 +9,6 @@
 
 package imagingbook.pub.corners;
 
-import ij.process.ImageProcessor;
 import imagingbook.pub.geometry.basic.Point;
 
 /**
@@ -17,11 +16,17 @@ import imagingbook.pub.geometry.basic.Point;
  * A corner is essentially a {@link Point} plus a scalar quantity
  * {@link #q} for the corner strength.
  * 
- * @version 2020/02/25
+ * @version 2020/10/02
  */
 public class Corner implements Point, Comparable<Corner> {
 	protected final float x, y, q;
 
+	public Corner (float x, float y, float q) {
+		this.x = x;
+		this.y = y;
+		this.q = q;
+	}
+	
 	public double getX() {
 		return x;
 	}
@@ -33,19 +38,14 @@ public class Corner implements Point, Comparable<Corner> {
 	public double getQ() {
 		return q;
 	}
-	
-	public Corner (float x, float y, float q) {
-		this.x = x;
-		this.y = y;
-		this.q = q;
-	}
-	
-	double dist2 (Corner c2){
-		//returns the squared distance between this corner and corner c2
-		float dx = this.x - c2.x;
-		float dy = this.y - c2.y;
-		return (dx * dx) + (dy * dy);	
-	}
+
+	// not needed, since already implemented by a static method in 'Point' 
+//	double dist2 (Corner c2){
+//		//returns the squared distance between this corner and corner c2
+//		float dx = this.x - c2.x;
+//		float dy = this.y - c2.y;
+//		return (dx * dx) + (dy * dy);	
+//	}
 
 	// used for sorting corners by corner strength q
 	@Override
@@ -55,12 +55,13 @@ public class Corner implements Point, Comparable<Corner> {
 	
 	// ----------------------------------------------------------------
 	
-	public void draw(ImageProcessor ip, int size) {
-		int x = (int) Math.round(this.getX());
-		int y = (int) Math.round(this.getY());
-		ip.drawLine(x - size, y, x + size, y);
-		ip.drawLine(x, y - size, x, y + size);
-	}
+	// Moved to plugins to make class independent of ImageJ
+//	public void draw(ImageProcessor ip, int size) {
+//		int x = (int) Math.round(this.getX());
+//		int y = (int) Math.round(this.getY());
+//		ip.drawLine(x - size, y, x + size, y);
+//		ip.drawLine(x, y - size, x, y + size);
+//	}
 	
 }
 
