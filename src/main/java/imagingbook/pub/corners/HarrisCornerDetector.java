@@ -22,7 +22,7 @@ import ij.process.ImageProcessor;
  *  </blockquote>
  *
  * @author W. Burger
- * @version 2020/02/25
+ * @version 2020/10/02
  */
 public class HarrisCornerDetector extends AbstractGradientCornerDetector {
 	
@@ -31,7 +31,7 @@ public class HarrisCornerDetector extends AbstractGradientCornerDetector {
 		public double alpha = 0.05;
 	}
 	
-	private float alpha;	// local, for improved efficiency only
+	private final float alpha;	// local, for improved efficiency only
 	
 	// ---------------------------------------------------------------------------
 	
@@ -41,11 +41,7 @@ public class HarrisCornerDetector extends AbstractGradientCornerDetector {
 	
 	public HarrisCornerDetector(ImageProcessor ip, Parameters params) {
 		super(ip, params);
-	}
-	
-	@Override
-	protected void init() {		// TODO: avoid this initialization?
-		alpha = (float) ((HarrisCornerDetector.Parameters) params).alpha;
+		this.alpha = (float) ((HarrisCornerDetector.Parameters) params).alpha;
 	}
 	
 	// ----------------------------------------------------------------------

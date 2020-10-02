@@ -9,6 +9,8 @@
 
 package imagingbook.pub.corners;
 
+import java.util.Locale;
+
 import imagingbook.pub.geometry.basic.Point;
 
 /**
@@ -62,6 +64,11 @@ public class Corner implements Point, Comparable<Corner> {
 //		ip.drawLine(x - size, y, x + size, y);
 //		ip.drawLine(x, y - size, x, y + size);
 //	}
+	
+	@Override
+	public String toString() {
+		return String.format(Locale.US, "Corner <%.3f, %.3f, %.3f>", x, y, q);
+	}
 	
 }
 
