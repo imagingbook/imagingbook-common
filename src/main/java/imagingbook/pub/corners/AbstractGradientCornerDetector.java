@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import ij.IJ;
 import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
 import imagingbook.lib.filters.GaussianFilter;
@@ -23,6 +22,7 @@ import imagingbook.lib.image.Filter;
 import imagingbook.lib.image.ImageMath;
 import imagingbook.pub.corners.subpixel.ParabolicInterpolator2D;
 import imagingbook.pub.corners.subpixel.PolynomialInterpolator2D;
+import imagingbook.pub.corners.subpixel.PolynomialInterpolator2D.SubpixelMethod;
 import imagingbook.pub.corners.subpixel.QuarticInterpolator2D;
 import imagingbook.pub.corners.subpixel.TaylorInterpolator2D;
 
@@ -39,10 +39,6 @@ public abstract class AbstractGradientCornerDetector implements PointFeatureDete
 	public static boolean RETAIN_TEMPORARY_DATA = false;
 	
 	public static class Parameters {
-		
-		public static enum SubpixelMethod {
-			None, Parabolic, Quartic, Taylor
-		}
 		
 		/** Sigma of Gaussian filter used for smoothing gradient maps */
 		public double sigma = 1.275;
@@ -242,37 +238,31 @@ public abstract class AbstractGradientCornerDetector implements PointFeatureDete
 	private List<Corner> collectCorners() {
 		final float tH = (float) params.tH;
 		final int border = params.border;
-		int cnt = 0;
 		List<Corner> C = new ArrayList<Corner>();
 		for (int v = border; v < N - border; v++) {
 			for (int u = border; u < M - border; u++) {
 				float[] s = getNeighborhood(Q, u, v);
 				if (s != null && s[0] > tH && isLocalMax(s)) {
-					cnt++;
 					Corner c = makeCorner(u, v, s);
 					if (c != null) {
 						C.add(makeCorner(u, v, s));
 					}
 				}
-//				float q = Q.getf(u, v);
-//				if (q > tH && isLocalMax(Q, u, v)) {	//
-//					C.add(new Corner(u, v, q));
-//				}
 			}
 		}
-		IJ.log("****  corner count = " + cnt);
-		IJ.log("****  list length  = " + C.size());
 		return C;
 	}
 	
 	private Corner makeCorner(int u, int v, float[] s) {
-		Parameters.SubpixelMethod sm = params.subpixel;
-		if (sm == Parameters.SubpixelMethod.None) {
+		SubpixelMethod sm = params.subpixel;
+		if (sm == null || sm == SubpixelMethod.None) {
 			// no sub-pixel refinement
 			return new Corner(u, v, s[0]);
 		}
 		else {
-			PolynomialInterpolator2D ipol = getSubpixelInterpolator(s);
+			// do sub-pixel refinement
+//			PolynomialInterpolator2D ipol = getSubpixelInterpolator(s);
+			PolynomialInterpolator2D ipol = sm.getInterpolator(s);
 			float[] xy = ipol.getMaxPosition();
 			if (xy != null) {
 				float qmax = ipol.getInterpolatedValue(xy);
@@ -285,19 +275,19 @@ public abstract class AbstractGradientCornerDetector implements PointFeatureDete
 		
 	}
 	
-	private PolynomialInterpolator2D getSubpixelInterpolator(float[] s) {
-		switch (params.subpixel) {
-		case None:
-			return null;
-		case Parabolic:
-			return new ParabolicInterpolator2D(s);
-		case Quartic:
-			return new QuarticInterpolator2D(s);
-		case Taylor:
-			return new TaylorInterpolator2D(s);
-		default:
-			return null;	// TODO: throw exception?
-		}
-	}
+//	private PolynomialInterpolator2D getSubpixelInterpolator(float[] s) {
+//		switch (params.subpixel) {
+//		case None:
+//			return null;
+//		case Parabolic:
+//			return new ParabolicInterpolator2D(s);
+//		case Quartic:
+//			return new QuarticInterpolator2D(s);
+//		case Taylor:
+//			return new TaylorInterpolator2D(s);
+//		default:
+//			return null;	// TODO: throw exception?
+//		}
+//	}
 	
 }

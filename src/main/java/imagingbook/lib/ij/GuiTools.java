@@ -17,27 +17,27 @@ import ij.ImagePlus;
 import ij.WindowManager;
 import ij.gui.GenericDialog;
 
+/**
+ * 
+ * @author WB
+ * @version 2012/02
+ *
+ */
 public class GuiTools {
+	
+	static String defaultTitle = "Choose image";
 	
 	/**
 	 * Queries the user to select one of the currently open images.
-	 * String parameter 'title' can be used to specify the title
-	 * of the dialog (if null, the default title is used).
-	 * Parameter 'excludeIm' can be used to specify an image to exclude
-	 * from being selected (typically the current image).
-	 * Returns a reference to the chosen image (ImagePlus) or
-	 * null, if the dialog was canceled.
-	 * 
-	 * @author W. Burger
-	 * @version 2012/02
+	 *  
+	 * @param title name of the dialog window (if null, the default title is used)
+	 * @param excludeIm image to exclude from being selected (typically the current image)
+	 * @return a reference to the chosen image (ImagePlus) or null, if the dialog was cancelled
 	 */
-	static String defaultTitle = "Choose image";
-	
     public static ImagePlus chooseOpenImage(String title, ImagePlus excludeIm) {
 		if (title == null) {
 			title = defaultTitle;
 		}
-    	
 		int[] imgIdsAll = WindowManager.getIDList();
 		if (imgIdsAll==null) {
 			IJ.error("No images are open.");
@@ -72,10 +72,6 @@ public class GuiTools {
 			return WindowManager.getImage(imgIds[idx]);
 		}
     }
-    
-    /* 
-     * Convenience methods for the above.
-     */
     
 	public static ImagePlus chooseOpenImage(String title) {
 		return chooseOpenImage(title, null);

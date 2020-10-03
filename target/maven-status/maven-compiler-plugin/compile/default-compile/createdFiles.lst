@@ -12,7 +12,6 @@ imagingbook\lib\filters\LinearFilter.class
 imagingbook\lib\image\PixelIndexer$DefaultValueIndexer.class
 imagingbook\lib\math\MahalanobisTest2.class
 imagingbook\pub\regions\ContourOverlay.class
-imagingbook\pub\corners\AbstractGradientCornerDetector$Parameters$SubpixelMethod.class
 imagingbook\pub\dft\ScalingMode.class
 imagingbook\lib\math\Eigensolver2x2Demo.class
 imagingbook\pub\regions\geometry\ConvexHull.class
@@ -143,6 +142,7 @@ imagingbook\pub\edgepreservingfilters\BilateralFilterSeparable.class
 imagingbook\lib\util\ClassUtils.class
 imagingbook\pub\matching\ChamferMatcher.class
 imagingbook\lib\math\Eigensolver2x2.class
+imagingbook\pub\corners\subpixel\PolynomialInterpolator2D$1.class
 imagingbook\pub\dct\Dct1d$Float.class
 imagingbook\pub\threshold\Thresholder.class
 imagingbook\lib\ij\CallbackSender.class
@@ -188,7 +188,6 @@ imagingbook\pub\geometry\delaunay\chew\Pnt.class
 imagingbook\pub\edgepreservingfilters\KuwaharaFilter$Parameters.class
 imagingbook\Info.class
 imagingbook\pub\dct\Dct2d.class
-imagingbook\pub\corners\AbstractGradientCornerDetector$1.class
 imagingbook\pub\edgepreservingfilters\PeronaMalikFilter.class
 imagingbook\pub\sift\SiftDetector$Parameters.class
 imagingbook\lib\color\CssColorSequencer.class

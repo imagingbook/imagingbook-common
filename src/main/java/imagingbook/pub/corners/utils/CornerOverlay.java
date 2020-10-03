@@ -1,51 +1,30 @@
 package imagingbook.pub.corners.utils;
 
-import java.awt.Color;
-import java.awt.geom.AffineTransform;
 import java.awt.geom.Path2D;
-import java.util.List;
 
-import ij.gui.Overlay;
+import ij.gui.Roi;
 import ij.gui.ShapeRoi;
+import imagingbook.lib.ij.CustomOverlay;
 import imagingbook.pub.corners.Corner;
 
-// TODO: add size of cross parameter! Make color/width dynamic??
-public class CornerOverlay extends Overlay {
+public class CornerOverlay extends CustomOverlay<Corner> {
 	
-	public static Color DefaultStrokeColor = Color.green;
-	public static double DefaultStrokeWidth = 0.25;
+	private double size = 2;
 	
-	private static AffineTransform offset = AffineTransform.getTranslateInstance(0.5, 0.5);
-	
-	private final Color strokeColor;
-	private final double strokeWidth;
-	
-	public CornerOverlay(List<Corner> corners, Color strokeColor, double strokeWidth) {
-		this.strokeColor = strokeColor;
-		this.strokeWidth = strokeWidth;
-		for (Corner c : corners) {
-			addCorner(c);
-		}
+	public void setMarkerSize(double size) {
+		this.size = size;
 	}
 	
-	public CornerOverlay(List<Corner> corners) {
-		this(corners, DefaultStrokeColor, DefaultStrokeWidth);
-	}
-	
-	public void addCorner(Corner c) {
-		final double x = c.getX(); 
-		final double y = c.getY(); 
+	@Override
+	public Roi makeRoi(Corner c) {
+		double x = c.getX(); 
+		double y = c.getY(); 
 		Path2D poly = new Path2D.Double();
-		poly.moveTo(x - 2, y);
-		poly.lineTo(x + 2, y);
-		poly.moveTo(x, y - 2);
-		poly.lineTo(x, y + 2);
-		poly.closePath();
-		poly.transform(offset);
-		ShapeRoi roi = new ShapeRoi(poly);
-		roi.setStrokeWidth(this.strokeWidth);
-		roi.setStrokeColor(this.strokeColor);
-		this.add(roi);
+		poly.moveTo(x - size, y);
+		poly.lineTo(x + size, y);
+		poly.moveTo(x, y - size);
+		poly.lineTo(x, y + size);
+		return new ShapeRoi(poly);
 	}
 
 }
