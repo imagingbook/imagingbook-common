@@ -103,6 +103,7 @@ imagingbook\pub\morphology\old\BinMorpher$1.class
 imagingbook\pub\threshold\adaptive\BernsenThresholder.class
 imagingbook\pub\geometry\delaunay\chew\TriangulationChew.class
 imagingbook\lib\util\LinearContainer.class
+imagingbook\pub\corners\subpixel\MaxLocator$1.class
 imagingbook\lib\image\ImageAccessor.class
 imagingbook\pub\edgepreservingfilters\PeronaMalikFilter$3.class
 imagingbook\lib\math\VectorNorm$NormType$3.class
@@ -117,7 +118,6 @@ imagingbook\pub\geometry\delaunay\guibas\TriangulationGuibas.class
 imagingbook\pub\sift\SiftMatcher$Parameters.class
 imagingbook\pub\color\edge\CannyEdgeDetector$Parameters.class
 imagingbook\pub\geometry\fitting\LinearFit2D.class
-imagingbook\pub\corners\subpixel\TaylorInterpolator2D.class
 imagingbook\pub\edgepreservingfilters\PeronaMalikFilter$ColorMode.class
 imagingbook\lib\interpolation\SplineInterpolator.class
 imagingbook\pub\edgepreservingfilters\PeronaMalikFilter$Parameters.class
@@ -142,7 +142,6 @@ imagingbook\pub\edgepreservingfilters\BilateralFilterSeparable.class
 imagingbook\lib\util\ClassUtils.class
 imagingbook\pub\matching\ChamferMatcher.class
 imagingbook\lib\math\Eigensolver2x2.class
-imagingbook\pub\corners\subpixel\PolynomialInterpolator2D$1.class
 imagingbook\pub\dct\Dct1d$Float.class
 imagingbook\pub\threshold\Thresholder.class
 imagingbook\lib\ij\CallbackSender.class
@@ -155,6 +154,7 @@ imagingbook\pub\lucaskanade\LucasKanadeInverseMatcher.class
 imagingbook\pub\morphology\old\BinMorpherDisk.class
 imagingbook\lib\ij\GuiTools.class
 imagingbook\lib\math\Matrix$SameSourceTargetException.class
+imagingbook\pub\corners\obsolete\PolynomialInterpolator2D$1.class
 imagingbook\pub\dct\Dct1dDirect$Double.class
 imagingbook\pub\sift\util\Colors.class
 imagingbook\lib\util\ResourceUtils.class
@@ -170,7 +170,6 @@ imagingbook\pub\edgepreservingfilters\PeronaMalikFilter$FilterColorBrightnessGra
 imagingbook\pub\noise\hashing\Hash32.class
 imagingbook\lib\color\CssColor.class
 imagingbook\pub\matching\CorrCoeffMatcher.class
-imagingbook\pub\corners\subpixel\PolynomialInterpolator2D.class
 imagingbook\pub\threshold\global\GlobalThresholder.class
 imagingbook\lib\math\VectorNorm$NormType.class
 imagingbook\lib\image\IntegralImage.class
@@ -287,7 +286,6 @@ imagingbook\pub\color\quantize\KMeansClusteringQuantizer$1.class
 imagingbook\pub\edgepreservingfilters\NagaoMatsuyamaFilter.class
 imagingbook\pub\noise\hashing\Hash32Shift.class
 imagingbook\pub\color\quantize\MedianCutQuantizer.class
-imagingbook\pub\corners\subpixel\QuarticInterpolator2D.class
 imagingbook\pub\moments\BinaryMoments.class
 imagingbook\pub\color\image\ChromaticAdaptation.class
 imagingbook\pub\color\quantize\MedianCutQuantizer$ColorDimension$1.class
@@ -324,7 +322,6 @@ imagingbook\lib\math\Statistics.class
 imagingbook\pub\color\filters\VectorMedianFilter.class
 imagingbook\pub\threshold\global\MeanThresholder.class
 imagingbook\pub\dft\Dft2d.class
-imagingbook\pub\corners\subpixel\ParabolicInterpolator2D.class
 imagingbook\pub\morphology\old\BinMorpherBox.class
 imagingbook\pub\threshold\adaptive\NiblackThresholder$Gauss.class
 imagingbook\pub\color\quantize\KMeansClusteringQuantizerApache$Parameters.class

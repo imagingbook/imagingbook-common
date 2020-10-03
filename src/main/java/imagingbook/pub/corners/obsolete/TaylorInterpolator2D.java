@@ -1,32 +1,32 @@
-package imagingbook.pub.corners.subpixel;
+package imagingbook.pub.corners.obsolete;
 
 import imagingbook.lib.math.Matrix;
 import imagingbook.lib.settings.PrintPrecision;
 
 /**
- * 2D interpolator based on fitting a quadratic polynomial (parabolic function) to the supplied samples.
+ * Second-order Taylor interpolator. 
  * Samples s0,...,s8 must be arranged in the following order:
  * <pre>
  *    s4 s3 s2
  *    s5 s0 s1
  *    s6 s7 s8 </pre>
- * Only 5 of the 9 supplied sample values are used (the corner samples are ignored).
+ * All sample values are used.
  * @author WB
  * @version 2020/09/29
- *
+ * @deprecated
  */
-public class ParabolicInterpolator2D implements PolynomialInterpolator2D {
+public class TaylorInterpolator2D implements PolynomialInterpolator2D {
 	
 	private final double[] c;	// polynomial coefficients
 	
-	public ParabolicInterpolator2D(float[] s) {
-		c = new double[5];
+	public TaylorInterpolator2D(float[] s) {
+		c = new double[6];
 		c[0] = s[0];
 		c[1] = (s[1] - s[5]) / 2;
 		c[2] = (s[7] - s[3]) / 2;
-		c[3] = (s[1] - 2 * s[0] + s[5]) / 2;
-		c[4] = (s[3] - 2 * s[0] + s[7]) / 2;
-		// TODO: check for zero values of c[3], c[4]
+		c[3] = (s[1] - 2*s[0] + s[5]) / 2;
+		c[4] = (s[3] - 2*s[0] + s[7]) / 2;
+		c[5] = (s[4] + s[8] - s[2] - s[6]) / 4;
 	}
 	
 	// ---------------------------------------------------------
@@ -38,29 +38,29 @@ public class ParabolicInterpolator2D implements PolynomialInterpolator2D {
 
 	@Override
 	public double[] getGradient(double x, double y) {
-		double gx = c[1] + 2 * c[3] * x;
-		double gy = c[2] + 2 * c[4] * y;
+		double gx = c[1] + 2*c[3]*x + c[5]*y;
+		double gy = c[2] + c[5]*x + 2*c[4]*y;
 		return new double[] {gx, gy};
 	}
 
 	@Override
 	public double[][] getHessian(double x, double y) {
 		double[][] H = {
-				{2 * c[3], 0}, 
-				{0, 2 * c[4]}
-				};
+				{2*c[3], c[5]}, 
+				{c[5], 2*c[4]}};
 		return H;
 	}
 	
 	@Override
 	public float getInterpolatedValue(double x, double y) {
-		return (float) (c[0] + c[1] * x + c[2] * y + c[3] * x * x + c[4] * y * y);
+		return (float) (c[0] + c[1]*x + c[2]*y + c[3]*x*x + c[4]*y*y + c[5]*x*y);
 	}
 
 	@Override
 	public float[] getMaxPosition() {
-		float xMax = (float) (-0.5 * c[1] / c[3]);
-		float yMax = (float) (-0.5 * c[2] / c[4]);
+		double a = 1.0 / (4*c[3]*c[4] - c[5]*c[5]);
+		float xMax = (float) (a*(c[2]*c[5] - 2*c[1]*c[4]));
+		float yMax = (float) (a*(c[1]*c[5] - 2*c[2]*c[3]));
 		return new float[] {xMax, yMax};
 	}
 	
@@ -69,9 +69,9 @@ public class ParabolicInterpolator2D implements PolynomialInterpolator2D {
 	public static void main(String[] args) {
 		PrintPrecision.set(5);
 		float[] samples = {16,9,7,11,8,15,14,12,10}; // = s_0,...,s_8
-		ParabolicInterpolator2D interp = new ParabolicInterpolator2D(samples);
+		TaylorInterpolator2D interp = new TaylorInterpolator2D(samples);
 		
-		System.out.println(ParabolicInterpolator2D.class.getName());
+		System.out.println(TaylorInterpolator2D.class.getName());
 		System.out.println("c = " + Matrix.toString(interp.getCoefficients()));
 		
 		double[][] iVals = new double[3][3];

@@ -20,11 +20,8 @@ import ij.process.ImageProcessor;
 import imagingbook.lib.filters.GaussianFilter;
 import imagingbook.lib.image.Filter;
 import imagingbook.lib.image.ImageMath;
-import imagingbook.pub.corners.subpixel.ParabolicInterpolator2D;
-import imagingbook.pub.corners.subpixel.PolynomialInterpolator2D;
-import imagingbook.pub.corners.subpixel.PolynomialInterpolator2D.SubpixelMethod;
-import imagingbook.pub.corners.subpixel.QuarticInterpolator2D;
-import imagingbook.pub.corners.subpixel.TaylorInterpolator2D;
+import imagingbook.pub.corners.subpixel.MaxLocator;
+import imagingbook.pub.corners.subpixel.MaxLocator.Method;
 
 /**
  * Abstract super class for all corner detectors based on local 
@@ -51,7 +48,7 @@ public abstract class AbstractGradientCornerDetector implements PointFeatureDete
 		/** Min. distance between final corners */
 		public double dmin = 10;
 		/** If/how to perform subpixel localization */
-		public SubpixelMethod subpixel = SubpixelMethod.None;
+		public Method maxLocatorMethod = Method.None;
 	}
 	
 	//filter kernels (one-dim. part of separable 2D filters)
@@ -62,6 +59,8 @@ public abstract class AbstractGradientCornerDetector implements PointFeatureDete
 	protected final int M, N;
 	protected final Parameters params;
 	protected final FloatProcessor Q;
+	
+	private final MaxLocator maxLocator;
 	
 	// for testing only - REMOVE!
 	public FloatProcessor Ixx = null;
@@ -75,13 +74,16 @@ public abstract class AbstractGradientCornerDetector implements PointFeatureDete
 		this.M = ip.getWidth();
 		this.N = ip.getHeight();
 		this.params = params;
-		Q = makeCornerScores(ip);
+		this.Q = makeCornerScores(ip);
+		this.maxLocator = MaxLocator.create(params.maxLocatorMethod);
 	}
 	
 	/**
 	 * Calculates the corner response score for a single image position (u,v)
 	 * from the elements A, B, C of the local structure matrix.
 	 * To be implemented by concrete sub-classes.
+	 * @see HarrisCornerDetector
+	 * @see ShiTomasiDetector
 	 * @param A = Ixx(u,v)
 	 * @param B = Iyy(u,v)
 	 * @param C = Iyy(u,v)
@@ -152,24 +154,6 @@ public abstract class AbstractGradientCornerDetector implements PointFeatureDete
 		return getPoints();
 	}
 	
-	// uses 8-neighborhood
-	private boolean isLocalMax(FloatProcessor Q, int u, int v) {
-		if (u <= 0 || u >= M - 1 || v <= 0 || v >= N - 1) {
-			return false;
-		} 
-		else {
-			final float[] q = (float[]) Q.getPixels();
-			final int i0 = (v - 1) * M + u;
-			final int i1 = v * M + u;
-			final int i2 = (v + 1) * M + u;
-			final float q0 = q[i1];
-			return	// check 8 neighbors of q0
-				q0 >= q[i0 - 1] && q0 >= q[i0] && q0 >= q[i0 + 1] &&
-				q0 >= q[i1 - 1] &&                q0 >= q[i1 + 1] && 
-				q0 >= q[i2 - 1] && q0 >= q[i2] && q0 >= q[i2 + 1] ;
-		}
-	}
-	
 	/*
 	 * Returned samples are arranged as follows:
 	 * 	s4 s3 s2
@@ -199,7 +183,6 @@ public abstract class AbstractGradientCornerDetector implements PointFeatureDete
 		}
 	}
 	
-	
 	private boolean isLocalMax(float[] s) {
 		if (s == null) {
 			return false;
@@ -207,9 +190,9 @@ public abstract class AbstractGradientCornerDetector implements PointFeatureDete
 		else {
 			final float s0 = s[0];
 			return	// check 8 neighbors of q0
-					s0 >= s[4] && s0 >= s[3] && s0 >= s[2] &&
-					s0 >= s[5] &&               s0 >= s[1] && 
-					s0 >= s[6] && s0 >= s[7] && s0 >= s[8] ;
+					s0 > s[4] && s0 > s[3] && s0 > s[2] &&
+					s0 > s[5] &&              s0 > s[1] && 
+					s0 > s[6] && s0 > s[7] && s0 > s[8] ;
 		}
 	}
 	
@@ -254,40 +237,15 @@ public abstract class AbstractGradientCornerDetector implements PointFeatureDete
 	}
 	
 	private Corner makeCorner(int u, int v, float[] s) {
-		SubpixelMethod sm = params.subpixel;
-		if (sm == null || sm == SubpixelMethod.None) {
-			// no sub-pixel refinement
+		if (maxLocator == null) {
+			// no sub-pixel refinement, use original integer coordinates
 			return new Corner(u, v, s[0]);
 		}
 		else {
 			// do sub-pixel refinement
-//			PolynomialInterpolator2D ipol = getSubpixelInterpolator(s);
-			PolynomialInterpolator2D ipol = sm.getInterpolator(s);
-			float[] xy = ipol.getMaxPosition();
-			if (xy != null) {
-				float qmax = ipol.getInterpolatedValue(xy);
-				return new Corner(u + xy[0], v + xy[1], qmax);
-			}
-			else {
-				return null;
-			}
+			float[] xyz = maxLocator.locateMaximum(s);
+			return (xyz == null) ? null : new Corner(u + xyz[0], v + xyz[1], xyz[2]);
 		}
-		
 	}
-	
-//	private PolynomialInterpolator2D getSubpixelInterpolator(float[] s) {
-//		switch (params.subpixel) {
-//		case None:
-//			return null;
-//		case Parabolic:
-//			return new ParabolicInterpolator2D(s);
-//		case Quartic:
-//			return new QuarticInterpolator2D(s);
-//		case Taylor:
-//			return new TaylorInterpolator2D(s);
-//		default:
-//			return null;	// TODO: throw exception?
-//		}
-//	}
 	
 }

@@ -1,5 +1,6 @@
-package imagingbook.pub.corners.subpixel;
+package imagingbook.pub.corners.obsolete;
 
+@Deprecated
 public interface PolynomialInterpolator2D {
 	
 	public float getInterpolatedValue(double x, double y);

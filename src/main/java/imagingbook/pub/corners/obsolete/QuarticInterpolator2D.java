@@ -1,6 +1,5 @@
-package imagingbook.pub.corners.subpixel;
+package imagingbook.pub.corners.obsolete;
 
-import java.util.Locale;
 
 import imagingbook.lib.math.Matrix;
 import imagingbook.lib.settings.PrintPrecision;
@@ -15,7 +14,7 @@ import imagingbook.lib.settings.PrintPrecision;
  * All sample values are used.
  * @author WB
  * @version 2020/09/29
- *
+ * @deprecated
  */
 public class QuarticInterpolator2D implements PolynomialInterpolator2D {
 	

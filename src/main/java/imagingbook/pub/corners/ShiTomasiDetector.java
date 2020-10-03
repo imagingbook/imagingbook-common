@@ -30,7 +30,7 @@ import ij.process.ImageProcessor;
 public class ShiTomasiDetector extends AbstractGradientCornerDetector {
 	
 	public static class Parameters extends AbstractGradientCornerDetector.Parameters {
-		// no specific parameters
+		// no additional parameters
 	}
 
 	public ShiTomasiDetector(ImageProcessor ip){
