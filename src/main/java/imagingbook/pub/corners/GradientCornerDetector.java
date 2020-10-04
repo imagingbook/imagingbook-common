@@ -28,9 +28,9 @@ import imagingbook.pub.corners.subpixel.MaxLocator.Method;
  * structure tensor.
  * 
  * @author W. Burger
- * @version 2020/10/02
+ * @version 2020/10/04
  */
-public abstract class AbstractGradientCornerDetector implements PointFeatureDetector {
+public abstract class GradientCornerDetector {
 	
 	/** For testing/example calculations only! */
 	public static boolean RETAIN_TEMPORARY_DATA = false;
@@ -70,7 +70,7 @@ public abstract class AbstractGradientCornerDetector implements PointFeatureDete
 	
 	// ---------------------------------------------------------------------------
 	
-	protected AbstractGradientCornerDetector(ImageProcessor ip, Parameters params) {
+	protected GradientCornerDetector(ImageProcessor ip, Parameters params) {
 		this.M = ip.getWidth();
 		this.N = ip.getHeight();
 		this.params = params;
@@ -141,17 +141,12 @@ public abstract class AbstractGradientCornerDetector implements PointFeatureDete
 		return Q;
 	}
 	
-	@Override
-	public List<Corner> getPoints() {	
+	public List<Corner> getCorners() {	
 		List<Corner> corners = collectCorners();
 		if (params.doCleanUp) {
 			corners = cleanupCorners(corners);
 		}
 		return corners;
-	}
-	
-	public List<Corner> getCorners() {
-		return getPoints();
 	}
 	
 	/*

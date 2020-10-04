@@ -27,9 +27,9 @@ import ij.process.ImageProcessor;
  * @author W. Burger
  * @version 2020/10/02
  */
-public class ShiTomasiDetector extends AbstractGradientCornerDetector {
+public class ShiTomasiDetector extends GradientCornerDetector {
 	
-	public static class Parameters extends AbstractGradientCornerDetector.Parameters {
+	public static class Parameters extends GradientCornerDetector.Parameters {
 		// no additional parameters
 	}
 

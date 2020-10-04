@@ -1,4 +1,4 @@
-package imagingbook.pub.corners.obsolete;
+package imagingbook.pub.corners.subpixel_obsolete;
 
 @Deprecated
 public interface PolynomialInterpolator2D {

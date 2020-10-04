@@ -24,9 +24,9 @@ import ij.process.ImageProcessor;
  * @author W. Burger
  * @version 2020/10/02
  */
-public class HarrisCornerDetector extends AbstractGradientCornerDetector {
+public class HarrisCornerDetector extends GradientCornerDetector {
 	
-	public static class Parameters extends AbstractGradientCornerDetector.Parameters {
+	public static class Parameters extends GradientCornerDetector.Parameters {
 		/** Sensitivity parameter */
 		public double alpha = 0.05;
 	}
