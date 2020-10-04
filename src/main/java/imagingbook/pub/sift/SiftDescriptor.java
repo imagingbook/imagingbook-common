@@ -17,13 +17,16 @@ import imagingbook.pub.geometry.basic.Point;
 /**
  * SIFT descriptor.
  * Added magnitude field and Comparable interface for easy sorting.
+ * 2020/10/04: Added scale level for display reasons.
+ * 
  * @author W. Burger
- *
+ * @version 2020/10/04
  */
 public class SiftDescriptor implements Point, Comparable<SiftDescriptor> {
 	
 	private final double x;	// image position
 	private final double y;
+	private final int scaleLevel;
 	private final double scale;
 	private final double magnitude;
 	private final double orientation;
@@ -41,10 +44,13 @@ public class SiftDescriptor implements Point, Comparable<SiftDescriptor> {
 		return scale;
 	}
 	
+	public int getScaleLevel() {
+		return scaleLevel;
+	}
+	
 	public double getMagnitude() {
 		return magnitude;
 	}
-
 
 	public double getOrientation() {
 		return orientation;
@@ -53,10 +59,11 @@ public class SiftDescriptor implements Point, Comparable<SiftDescriptor> {
 		return features;
 	}
 
-	public SiftDescriptor(double x, double y, double scale, double magnitude, double orientation, int[] features) {
+	public SiftDescriptor(double x, double y, double scale, int scaleLevel, double magnitude, double orientation, int[] features) {
 		this.x = x;
 		this.y = y;
 		this.scale = scale;
+		this.scaleLevel = scaleLevel;
 		this.magnitude = magnitude;
 		this.orientation = orientation;
 		this.features = features;

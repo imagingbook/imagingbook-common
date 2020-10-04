@@ -19,7 +19,7 @@ public class Colors {
 	public static Color Magenta = new Color(255,0,200);
 	public static Color Yellow = new Color(255,155,0);
 	
-	public static Color[] defaultDisplayColors = {
+	public static Color[] DefaultDisplayColors = {
 		Red, Green, Blue, Magenta, Yellow
 		};
 	

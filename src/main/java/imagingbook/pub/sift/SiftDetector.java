@@ -9,6 +9,14 @@
 
 package imagingbook.pub.sift;
 
+import static imagingbook.lib.math.Arithmetic.mod;
+import static imagingbook.lib.math.Arithmetic.sqr;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
+
 import ij.IJ;
 import ij.process.FloatProcessor;
 import imagingbook.lib.math.Arithmetic;
@@ -17,12 +25,6 @@ import imagingbook.pub.sift.scalespace.DogScaleSpace;
 import imagingbook.pub.sift.scalespace.GaussianScaleSpace;
 import imagingbook.pub.sift.scalespace.ScaleLevel;
 import imagingbook.pub.sift.scalespace.ScaleOctave;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Formatter;
-import java.util.List;
-import java.util.Locale;
 
 public class SiftDetector {
 
@@ -87,12 +89,11 @@ public class SiftDetector {
 	
 	static private final double PI2 = 2 * Math.PI;
 
-	/* non-static fields */
+	/* non-static/final fields */
 
-	private GaussianScaleSpace G;
-	private DogScaleSpace D;
-	private int nhSize;
-
+	private final int nhSize;
+	private final GaussianScaleSpace G;
+	private final DogScaleSpace D;
 
 	/* Constructors */
 
@@ -103,9 +104,9 @@ public class SiftDetector {
 	public SiftDetector(FloatProcessor fp, Parameters params) {
 		//normalize(fp);	// was destructive, delegated to ScaleLevel.getValues()
 		this.params = params;
-		nhSize = params.nhType.size;
-		G = new GaussianScaleSpace(fp, params.sigma_s, params.sigma_0, params.P, params.Q, -1, params.Q+1);
-		D = new DogScaleSpace(G);
+		this.nhSize = params.nhType.size;
+		this.G = new GaussianScaleSpace(fp, params.sigma_s, params.sigma_0, params.P, params.Q, -1, params.Q+1);
+		this.D = new DogScaleSpace(G);
 	}
 
 	/**
@@ -545,8 +546,8 @@ public class SiftDetector {
 					double z = E * wG;
 					double k_phi = n_phi * phi / (2 * Math.PI);				// continuous histogram bin index
 					double alpha = k_phi - Math.floor(k_phi);				// weight alpha
-					int k_0 = mod((int)Math.floor(k_phi), n_phi);			// lower histogram index
-					int k_1 = mod(k_0 + 1, n_phi);							// upper histogram index
+					int k_0 = Math.floorMod((int)Math.floor(k_phi), n_phi);	// lower histogram index
+					int k_1 = Math.floorMod(k_0 + 1, n_phi);							// upper histogram index
 					h_phi[k_0] = (float) (h_phi[k_0] + (1 - alpha) * z);	// distribute z into bins k_0, k_1
 					h_phi[k_1] = (float) (h_phi[k_1] + alpha * z);
 				}
@@ -614,7 +615,7 @@ public class SiftDetector {
 		double sigma_pq = G.getAbsoluteScale(p, q);
 		double x_real = G.getRealX(p, x);
 		double y_real = G.getRealY(p, y);
-		return new SiftDescriptor(x_real, y_real, sigma_pq, mag, phi_d, f_int);
+		return new SiftDescriptor(x_real, y_real, sigma_pq, p, mag, phi_d, f_int);
 	}
 
 	private void updateGradientHistogram(double[][][] h_grad, double uu, double vv, double phi_norm, double z) {
@@ -623,7 +624,7 @@ public class SiftDetector {
 
 		final double ii = n_Spat * uu + 0.5 * (n_Spat - 1);	// continuous spatial histogram index i'
 		final double jj = n_Spat * vv + 0.5 * (n_Spat - 1);	// continuous spatial histogram index j'
-		final double kk = phi_norm * (n_Angl / PI2);			// continuous orientation histogram index k'
+		final double kk = phi_norm * (n_Angl / PI2);		// continuous orientation histogram index k'
 
 		final int i0 = (int) Math.floor(ii);
 		final int i1 = i0 + 1;
@@ -631,7 +632,7 @@ public class SiftDetector {
 		final int j0 = (int) Math.floor(jj);
 		final int j1 = j0 + 1;
 		
-		final int k0 = mod((int) Math.floor(kk), n_Angl);
+		final int k0 = Math.floorMod((int) Math.floor(kk), n_Angl);
 		final int k1 = (k0 + 1) % n_Angl;			// k0 >= 0
 		
 		final double alpha0 = 1.0 - (ii - i0);
@@ -648,7 +649,7 @@ public class SiftDetector {
 		final int[] K = {k0, k1};
 
 		final double[] A = {alpha0, alpha1};
-		final double[] B  = {beta0, beta1};
+		final double[] B = {beta0, beta1};
 		final double[] C = {gamma0, gamma1};
 
 		// distribute z over 8 adjacent spatial/angular bins:
@@ -696,7 +697,7 @@ public class SiftDetector {
 	}
 
 	private void normalize(float[] x) {
-		final double norm = normL2(x);
+		final double norm = Matrix.normL2(x);
 		if (norm > Arithmetic.EPSILON_FLOAT) {
 			final float s = (float) (1.0 / norm);
 			for (int i = 0; i < x.length; i++) {
@@ -722,47 +723,6 @@ public class SiftDetector {
 	}
 
 	//  auxiliary methods -------------------------
-	
-//	private void normalize(FloatProcessor fp) {	// replaced by method in class ScaleLevel
-//		double minVal = fp.getMin();
-//		double maxVal = fp.getMax();
-//		fp.add(-minVal);
-//		fp.multiply(1.0 / (maxVal - minVal));
-//	}
-
-	// also in imagingbook.math.Arithmetic.java
-	private float sqr(float x) {
-		return x*x;
-	}
-
-	// also in imagingbook.math.Arithmetic.java
-	private double sqr(double x) {
-		return x*x;
-	}
-
-	// also in imagingbook.math.Arithmetic.java
-	private int mod(int a, int b) {
-		if (b == 0)
-			return a;
-		if (a * b >= 0)
-			return a - b * (a / b);	
-		else
-			return a - b * (a / b - 1);
-	}
-
-	// also in imagingbook.math.Arithmetic.java
-	private double mod(double a, double n) {
-		return a - n * Math.floor(a / n);
-	}
-
-	// also in imagingbook.math.Matrix.java
-	private double normL2(float[] vec) {
-		double sum = 0;
-		for (float x : vec) {
-			sum = sum + (x * x);
-		}
-		return Math.sqrt(sum);
-	}
 
 	/*
 	 * Calculate the extremal position from 3 discrete function values 
@@ -783,42 +743,27 @@ public class SiftDetector {
 
 	// -------------------------------------------
 
-	private void print(float[] arr) {
-		int linelength = 16;
-		StringBuilder sb = new StringBuilder();
-		Formatter fm = new Formatter(sb, Locale.US);
-		for (int i = 0; i < arr.length; i++) {
-			if (i > 0 && i % linelength == 0) {
-				IJ.log(sb.toString());
-				sb.setLength(0);
-			}
-			fm.format(" %.2f", arr[i]);
-		}
-		IJ.log(sb.toString());
-		fm.close();
-	}
-
-	private String logvar(float x, String name) {
-		return name + " = " + String.format("%.3f ", x);
-	}
-
-	private String logvar(double x, String name) {
-		return name + " = " + String.format("%.3f ", x);
-	}
-
-	private String logvar(int x, String name) {
-		return name + " = " + x + " ";
-	}
-
-	private void Debug(String s) {
-		IJ.log(s);
-	}
-
-	private void Stop() {
-		throw new IllegalArgumentException("HALTED");
-	}
-	
-	private void printGaussianScaleSpace() {
-		G.print();
-	}
+//	private String logvar(float x, String name) {
+//		return name + " = " + String.format("%.3f ", x);
+//	}
+//
+//	private String logvar(double x, String name) {
+//		return name + " = " + String.format("%.3f ", x);
+//	}
+//
+//	private String logvar(int x, String name) {
+//		return name + " = " + x + " ";
+//	}
+//
+//	private void debug(String s) {
+//		IJ.log(s);
+//	}
+//
+//	private void stop() {
+//		throw new IllegalArgumentException("HALTED");
+//	}
+//	
+//	private void printGaussianScaleSpace() {
+//		G.print();
+//	}
 }

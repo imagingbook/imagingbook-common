@@ -11,10 +11,12 @@ D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\s
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\lib\ij\CallbackHandler.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\lib\interpolation\PixelInterpolator.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\color\quantize\ColorQuantizer.java
+D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\corners\subpixel\MaxLocatorParabolic.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\geometry\basic\Point.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\lib\ij\CallbackSender.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\lib\interpolation\SplineInterpolator.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\lib\math\MahalanobisDistance.java
+D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\sift\util\SiftOverlay.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\dft\Dft1dDirect.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\matching\CorrCoeffMatcher.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\lib\filters\GenericFilter.java
@@ -32,11 +34,11 @@ D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\s
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\sift\SiftMatcher.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\lib\util\FileUtils.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\lib\interpolation\NearestNeighborInterpolator.java
+D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\corners\subpixel_obsolete\ParabolicInterpolator2D.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\lib\image\Filter.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\color\image\XYZscalingAdaptation.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\threshold\Thresholder.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\lib\ij\LookupTables.java
-D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\corners\subpixel\ParabolicInterpolator2D.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\fd\PolygonSampler.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\geometry\delaunay\guibas\package-info.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\lib\image\ImageAccessor.java
@@ -80,11 +82,11 @@ D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\s
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\regions\RegionContourLabeling.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\color\edge\GrayscaleEdgeDetector.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\fd\FourierDescriptorUniform.java
+D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\corners\util\CornerOverlay.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\geometry\delaunay\Triangle.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\lib\image\Statistics.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\lib\image\ImageMapper.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\lib\filters\LinearFilter.java
-D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\corners\subpixel\QuarticInterpolator2D.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\color\filters\VectorMedianFilter.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\lib\interpolation\BilinearInterpolator.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\lucaskanade\RoiUtils.java
@@ -95,6 +97,7 @@ D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\s
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\threshold\global\OtsuThresholder.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\regions\geometry\AxisAlignedBoundingBox.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\lib\math\HomogeneousVector.java
+D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\corners\subpixel\MaxLocatorTaylor.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\lib\util\Clipboard.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\edgepreservingfilters\BilateralFilterSeparable.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\threshold\BackgroundMode.java
@@ -105,10 +108,8 @@ D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\s
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\lib\ij\IjLogStream.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\sift\FeatureDistanceNorm.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\lib\ij\IjUtils.java
-D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\corners\subpixel\PolynomialInterpolator2D.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\sift\scalespace\ScaleOctave.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\geometry\delaunay\chew\Triangle2D.java
-D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\corners\AbstractGradientCornerDetector.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\regions\ContourTracer.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\sift\scalespace\GaussianScaleSpace.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\geometry\delaunay\chew\package-info.java
@@ -123,6 +124,7 @@ D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\s
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\regions\ContourOverlay.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\geometry\mappings\linear\AffineMapping2D.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\color\image\sRgb65ColorSpace.java
+D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\corners\subpixel_obsolete\QuarticInterpolator2D.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\lib\math\VectorNorm.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\regions\BreadthFirstLabeling.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\sift\scalespace\DogOctave.java
@@ -131,12 +133,12 @@ D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\s
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\lib\settings\PrintPrecision.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\geometry\delaunay\chew\Pnt.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\geometry\mappings\linear\Shear2D.java
+D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\lib\ij\CustomOverlay.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\dct\Dct1dSlow.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\geometry\fitting\AffineFit2D.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\noise\hashing\Hash32Ward.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\regions\SequentialLabeling.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\noise\perlin\PerlinNoiseGenNd.java
-D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\corners\PointFeatureDetector.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\geometry\homography\HomographyEstimator.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\lib\util\MathematicaIO.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\fd\FourierDescriptor.java
@@ -145,6 +147,7 @@ D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\s
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\lib\color\sRgbUtil.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\color\image\Illuminant.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\color\quantize\OctreeQuantizer.java
+D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\corners\GradientCornerDetector.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\lib\ij\GuiTools.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\threshold\global\MedianThresholder.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\lib\util\ClassUtils.java
@@ -172,6 +175,7 @@ D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\s
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\threshold\global\MaxEntropyThresholder.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\geometry\mappings\linear\Translation2D.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\threshold\global\MeanThresholder.java
+D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\corners\subpixel\MaxLocatorQuartic.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\histogram\HistogramMatcher.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\fd\Colors.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\sift\SiftDetector.java
@@ -192,7 +196,6 @@ D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\s
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\lucaskanade\LucasKanadeForwardMatcher.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\noise\hashing\Hash32Shift.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\geometry\lines\AlgebraicLine.java
-D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\corners\subpixel\TaylorInterpolator2D.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\noise\hashing\Hash32ShiftMult.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\color\quantize\KMeansClusteringQuantizer.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\lib\image\IntegralImage.java
@@ -208,6 +211,8 @@ D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\s
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\sift\scalespace\ScaleLevel.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\lib\util\DirectoryWalker.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\edgepreservingfilters\PeronaMalikFilter.java
+D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\corners\subpixel\MaxLocator.java
+D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\corners\subpixel_obsolete\TaylorInterpolator2D.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\geometry\mappings\nonlinear\BilinearMapping.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\geometry\mappings\nonlinear\SphereMapping.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\geometry\delaunay\guibas\Triangle2D.java
@@ -229,3 +234,4 @@ D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\s
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\color\edge\CannyEdgeDetector.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\dct\Dct1d.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\regions\RecursiveLabeling.java
+D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\corners\subpixel_obsolete\PolynomialInterpolator2D.java
