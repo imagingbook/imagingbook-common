@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.geom.Rectangle2D;
 import java.util.List;
 
+import ij.IJ;
 import ij.gui.Overlay;
 import ij.gui.Roi;
 import ij.gui.ShapeRoi;
@@ -52,6 +53,18 @@ public abstract class CustomOverlay<T> extends Overlay {
 	
 	// -----------------------------------------------------------
 	
+	@Override  // deactivated method:
+	public void setStrokeColor(Color strokeColor) {
+		IJ.log(CustomOverlay.class.getSimpleName() + ": setStrokeColor() has no effect, use strokeColor()!");
+	}
+	
+	@Override  // deactivated method:
+	public void setStrokeWidth(Double strokeWidth) {
+		IJ.log(CustomOverlay.class.getSimpleName() + ": setStrokeWidth() has no effect, use strokeWidth()!");
+	}
+	
+	// -----------------------------------------------------------
+	
 	/**
 	 * Sets the stroke color for all items subsequently added to this overlay.
 	 * The stroke color can be changed any time between insertions.
@@ -73,6 +86,8 @@ public abstract class CustomOverlay<T> extends Overlay {
 	public Color getStrokeColor() {
 		return this.strokeColor;
 	}
+	
+
 	
 	/**
 	 * Sets the stroke width for all items subsequently added to this overlay.
@@ -131,6 +146,15 @@ public abstract class CustomOverlay<T> extends Overlay {
 	public void addItems(List<T> items) {
 		for(T item : items) {
 			this.addItem(item);
+		}
+	}
+	
+	// -----------------------------------------------------------
+	
+	public void addToOverlay(Overlay otherOverlay) {
+		Roi[] rois = this.toArray();
+		for (Roi r : rois) {
+			otherOverlay.add(r);
 		}
 	}
 
