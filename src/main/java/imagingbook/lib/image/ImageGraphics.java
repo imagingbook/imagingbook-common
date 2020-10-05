@@ -157,8 +157,8 @@ public class ImageGraphics implements AutoCloseable {
 	/**
 	 * Forces the image to be updated by copying the (modified)
 	 * {@link BufferedImage} back to the input image.
-	 * This method is "expensive" and should not be called
-	 * directly unless intended. It is called automatically at end of the 
+	 * There is usually no need to call this (expensive) method explicitly.
+	 * It is called automatically and only once at end of the 
 	 * {@code try() ...} clause, as described in the {@link ImageGraphics}
 	 * class documentation above.
 	 */

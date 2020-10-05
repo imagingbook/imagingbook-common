@@ -9,49 +9,49 @@
 
 package imagingbook.pub.corners;
 
+import static imagingbook.lib.math.Arithmetic.isZero;
+
 import ij.process.ImageProcessor;
 
 
 /**
- * This is an implementation of the Harris corner detector, as described
- * in
+ * This is an implementation of the Shi-Tomasi corner detector, as 
+ * described in
  * <blockquote>
- *  C. G. Harris and M. Stephens. A combined corner and edge
- *  detector. In C. J. Taylor, editor, “4th Alvey Vision Conference”,
- *  pp. 147–151, Manchester (1988).
- *  </blockquote>
- *
+ *  J. Shi and C. Tomasi. Good features to track. In “Proceedings
+ *  of IEEE Conference on Computer Vision and Pattern Recognition,
+ *  CVPR’94”, pp. 593–600, Seattle, WA, USA (1994).
+ * </blockquote>
+ * 
  * @author W. Burger
- * @version 2020/10/02
+ * @version 2020/10/05
  */
-public class HarrisCornerDetector extends GradientCornerDetector {
-
+public class MopsCornerDetector extends GradientCornerDetector {
+	
 	public static class Parameters extends GradientCornerDetector.Parameters {
-		/** Sensitivity parameter */
-		public double alpha = 0.05;
 		/** Corner response threshold */
-		public double scoreThreshold = 20000;
+		public double scoreThreshold = 100;
 	}
 
-	// ---------------------------------------------------------------------------
-	
-	public HarrisCornerDetector(ImageProcessor ip, Parameters params) {
+	public MopsCornerDetector(ImageProcessor ip, Parameters params) {
 		super(ip, params);
 	}
 	
-	// ----------------------------------------------------------------------
+	// --------------------------------------------------------------
 
-	@Override	// pass as a function object?
+	@Override
 	protected float computeCornerScore(float A, float B, float C) {
-		float alpha = (float) ((Parameters) params).alpha;
-		float det = A * B - C * C;
 		float trace = A + B;
-		return det - alpha * (trace * trace);
+		if (isZero(trace)) {
+			return UndefinedScoreValue;
+		}
+		float det = A * B - C * C;
+		return det / trace;
 	}
 
 	@Override
 	protected boolean acceptScore(float score) {
 		return score > ((Parameters) params).scoreThreshold;
 	}
-	
+
 }

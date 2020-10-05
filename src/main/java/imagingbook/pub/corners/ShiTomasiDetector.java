@@ -16,25 +16,23 @@ import ij.process.ImageProcessor;
 
 
 /**
- * This is an implementation of the Shi-Tomasi corner detector, as 
- * described in
+ * This is an implementation of the corner detector described in
  * <blockquote>
- *  J. Shi and C. Tomasi. Good features to track. In “Proceedings
- *  of IEEE Conference on Computer Vision and Pattern Recognition,
- *  CVPR’94”, pp. 593–600, Seattle, WA, USA (1994).
+ *  M. Brown, R. Szeliski, and S. Winder, Multi-image matching using multi-scale oriented
+ * patches, in Proc. of the IEEE Computer Society Conference on Computer Vision and Pattern Recognition
+ * (CVPR), 2005, pp. 510–517.
  * </blockquote>
+ * The corner score is defined as the harmonic mean of the local structure tensor's eigenvalues 
+ * lambda_1, lambda_2.
  * 
  * @author W. Burger
- * @version 2020/10/02
+ * @version 2020/10/05
  */
 public class ShiTomasiDetector extends GradientCornerDetector {
 	
 	public static class Parameters extends GradientCornerDetector.Parameters {
-		// no additional parameters
-	}
-
-	public ShiTomasiDetector(ImageProcessor ip){
-		this(ip, new Parameters());
+		/** Corner response threshold */
+		public double scoreThreshold = 20000;
 	}
 	
 	public ShiTomasiDetector(ImageProcessor ip, Parameters params) {
@@ -44,9 +42,18 @@ public class ShiTomasiDetector extends GradientCornerDetector {
 	// --------------------------------------------------------------
 
 	@Override
-	public float computeScore(float A, float B, float C) {
-		double lambda2 = (A + B) / 2 - sqrt(sqr((A - B) / 2) + sqr(C));
+	protected float computeCornerScore(float A, float B, float C) {
+		double rootExpr = sqr((A - B) / 2) + sqr(C);
+		if (rootExpr < 0) {
+			return UndefinedScoreValue;
+		}
+		double lambda2 = (A + B) / 2 - sqrt(rootExpr);
 		return (float) sqr(lambda2); 	// returns lambda_2^2
+	}
+
+	@Override
+	protected boolean acceptScore(float score) {
+		return score > ((Parameters) params).scoreThreshold;
 	}
 
 }

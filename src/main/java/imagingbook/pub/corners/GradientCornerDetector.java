@@ -36,11 +36,10 @@ public abstract class GradientCornerDetector {
 	public static boolean RETAIN_TEMPORARY_DATA = false;
 	
 	public static class Parameters {
-		
+		/** Set true to perform pre-filering on the input image (before gradient calc.) */
+		public boolean doPreFilter = true;
 		/** Sigma of Gaussian filter used for smoothing gradient maps */
 		public double sigma = 1.275;
-		/** Corner response threshold */
-		public double tH = 20000;
 		/** Width of border region ignored in corner search */
 		public int border = 20;
 		/** Set true to perform final corner cleanup */
@@ -51,22 +50,24 @@ public abstract class GradientCornerDetector {
 		public Method maxLocatorMethod = Method.None;
 	}
 	
+	protected static final float UndefinedScoreValue = 0;	// to be returned when corner score is undefined
+	
 	//filter kernels (one-dim. part of separable 2D filters)
-	private final static float[] hp = {2f/9, 5f/9, 2f/9};	// pre-smoothing filter kernel
-	private final static float[] hd = {0.5f, 0, -0.5f};		// first derivative kernel
+	private final static float[] hp = {2f/9, 5f/9, 2f/9};		// pre-smoothing filter kernel
+	private final static float[] hd = {0.5f, 0, -0.5f};			// first-derivative kernel
 //	private final static float[] hb = {1f/64, 6f/64, 15f/64, 20f/64, 15f/64, 6f/64, 1f/64};	// original gradient blur filter kernel
-		
+	
 	protected final int M, N;
 	protected final Parameters params;
 	protected final FloatProcessor Q;
 	
 	private final MaxLocator maxLocator;
+	private final List<Corner> corners;
 	
-	// for testing only - REMOVE!
-	public FloatProcessor Ixx = null;
-	public FloatProcessor Iyy = null;
-	public FloatProcessor Ixy = null;
-	
+	// retained mainly for debugging
+	private FloatProcessor Ixx = null;
+	private FloatProcessor Iyy = null;
+	private FloatProcessor Ixy = null;
 	
 	// ---------------------------------------------------------------------------
 	
@@ -74,8 +75,9 @@ public abstract class GradientCornerDetector {
 		this.M = ip.getWidth();
 		this.N = ip.getHeight();
 		this.params = params;
-		this.Q = makeCornerScores(ip);
 		this.maxLocator = MaxLocator.create(params.maxLocatorMethod);
+		this.Q = makeCornerScores(ip);
+		this.corners = makeCorners();
 	}
 	
 	/**
@@ -86,25 +88,31 @@ public abstract class GradientCornerDetector {
 	 * @see ShiTomasiDetector
 	 * @param A = Ixx(u,v)
 	 * @param B = Iyy(u,v)
-	 * @param C = Iyy(u,v)
+	 * @param C = Ixy(u,v)
 	 * @return the corner score
 	 */
-	public abstract float computeScore(float A, float B, float C);
+	protected abstract float computeCornerScore(float A, float B, float C);
+	protected abstract boolean acceptScore(float score);
+	
+	// -------------------------------------------------------------
 	
 	private FloatProcessor makeCornerScores(ImageProcessor I) {
 		FloatProcessor Ix = I.convertToFloatProcessor(); 
 		FloatProcessor Iy = I.convertToFloatProcessor();
 		
-		// nothing but a Sobel gradient estimate:
-		Filter.convolveY(Ix, hp);				// pre-filter Ix vertically
-		Filter.convolveX(Iy, hp);				// pre-filter Iy horizontally
-		Filter.convolveX(Ix, hd);				// get horizontal derivative 
-		Filter.convolveY(Iy, hd);				// get vertical derivative
+		// nothing really but a Sobel-like gradient:
+		if (params.doPreFilter) {
+			Filter.convolveY(Ix, hp);				// pre-filter Ix vertically
+			Filter.convolveX(Iy, hp);				// pre-filter Iy horizontally
+		}
+		
+		Filter.convolveX(Ix, hd);				// get first derivative in x
+		Filter.convolveY(Iy, hd);				// get first derivative in y
 		
 		// gradient products:
-		FloatProcessor Ixx = ImageMath.sqr(Ix);				// Ixx = Ix^2
-		FloatProcessor Iyy = ImageMath.sqr(Iy);				// Iyy = Iy^2
-		FloatProcessor Ixy = ImageMath.mult(Ix, Iy);		// Ixy = Ix * Iy
+		Ixx = ImageMath.sqr(Ix);				// Ixx = Ix^2
+		Iyy = ImageMath.sqr(Iy);				// Iyy = Iy^2
+		Ixy = ImageMath.mult(Ix, Iy);			// Ixy = Ix * Iy
 		
 		// blur the gradient components with a small Gaussian:
 		float[] gaussKernel = GaussianFilter.makeGaussKernel1D(params.sigma);
@@ -120,34 +128,43 @@ public abstract class GradientCornerDetector {
 		final float[] q = (float[]) Q.getPixels();
 		
 		for (int i = 0; i < M * N; i++) {
-			q[i] = computeScore(A[i], B[i], C[i]);
+			q[i] = computeCornerScore(A[i], B[i], C[i]);
 		}
-
-		// for demo examples only - REMOVE!
-		if (RETAIN_TEMPORARY_DATA) {
-			this.Ixx = Ixx;
-			this.Iyy = Iyy;
-			this.Ixy = Ixy;
-		}
+		
+//		(new ImagePlus("Ixx", Ixx)).show();
+//		(new ImagePlus("Iyy", Iyy)).show();
+//		(new ImagePlus("Ixy", Ixy)).show();
+//		(new ImagePlus("Q", Q)).show();
 		
 		return Q;
 	}
 	
+
 	/**
 	 * Returns the corner score function as a {@link FloatProcessor} object.
 	 * @return the score function
 	 */
 	public FloatProcessor getQ() {
-		return Q;
+		return this.Q;
+	}
+	
+	public FloatProcessor getIxx() {
+		return this.Ixx;
+	}
+	
+	public FloatProcessor getIyy() {
+		return this.Iyy;
+	}
+	
+	public FloatProcessor getIxy() {
+		return this.Ixy;
 	}
 	
 	public List<Corner> getCorners() {	
-		List<Corner> corners = collectCorners();
-		if (params.doCleanUp) {
-			corners = cleanupCorners(corners);
-		}
-		return corners;
+		return Collections.unmodifiableList(corners);
 	}
+	
+	// ----------------------------------------------------------
 	
 	/*
 	 * Returned samples are arranged as follows:
@@ -191,6 +208,32 @@ public abstract class GradientCornerDetector {
 		}
 	}
 	
+	private List<Corner> makeCorners() {	
+		List<Corner> cl = collectCorners();
+		if (params.doCleanUp) {
+			cl = cleanupCorners(cl);
+		}
+		return cl;
+	}
+	
+	private List<Corner> collectCorners() {
+//		final float tH = (float) params.tH;
+		final int border = params.border;
+		List<Corner> C = new ArrayList<Corner>();
+		for (int v = border; v < N - border; v++) {
+			for (int u = border; u < M - border; u++) {
+				float[] s = getNeighborhood(Q, u, v);
+				if (s != null && acceptScore(s[0]) && isLocalMax(s)) {
+					Corner c = makeCorner(u, v, s);
+					if (c != null) {
+						C.add(makeCorner(u, v, s));
+					}
+				}
+			}
+		}
+		return C;
+	}
+	
 	private List<Corner> cleanupCorners(List<Corner> C) {
 		final double dmin2 = sqr(params.dmin);
 		// sort corners by descending q-value:
@@ -213,24 +256,14 @@ public abstract class GradientCornerDetector {
 		return Cclean;
 	}
 	
-	private List<Corner> collectCorners() {
-		final float tH = (float) params.tH;
-		final int border = params.border;
-		List<Corner> C = new ArrayList<Corner>();
-		for (int v = border; v < N - border; v++) {
-			for (int u = border; u < M - border; u++) {
-				float[] s = getNeighborhood(Q, u, v);
-				if (s != null && s[0] > tH && isLocalMax(s)) {
-					Corner c = makeCorner(u, v, s);
-					if (c != null) {
-						C.add(makeCorner(u, v, s));
-					}
-				}
-			}
-		}
-		return C;
-	}
-	
+	/**
+	 * Creates a new {@link Corner} instance. Performs sub-pixel
+	 * position refinement if a {@link #maxLocator} is defined.
+	 * @param u the corner's horizontal position (int)
+	 * @param v the corner's vertical position (int)
+	 * @param s the corner scores in the 3x3 neighborhood
+	 * @return a new {@link Corner} instance
+	 */
 	private Corner makeCorner(int u, int v, float[] s) {
 		if (maxLocator == null) {
 			// no sub-pixel refinement, use original integer coordinates

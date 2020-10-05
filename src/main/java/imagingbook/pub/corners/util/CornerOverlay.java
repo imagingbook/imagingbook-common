@@ -14,16 +14,19 @@ import imagingbook.pub.corners.Corner;
  */
 public class CornerOverlay extends CustomOverlay<Corner> {
 	
-	private static int MarkerType = 1;					// 0=hybrid, 1=cross, 2=dot, 3=circle (see PointRoi)
-	private static int MarkerSize = 1;					// 0-6 (Tiny-XXXL, see PointRoi)
-	private static Color MarkerColor = Color.green;		// color of cross markers
+	public static Color DefaultMarkerColor = Color.green;		// color of cross markers
+	public static int DefaultMarkerType = 1;					// 0=hybrid, 1=cross, 2=dot, 3=circle (see PointRoi)
+	public static int DefaultMarkerSize = 1;					// 0-6 (Tiny-XXXL, see PointRoi)
+	
+	public CornerOverlay() {
+		strokeColor(DefaultMarkerColor);
+	}
 	
 	@Override
 	public Roi makeRoi(Corner c) {
 		PointRoi roi = new PointRoi(c.getX(), c.getY());
-		roi.setPointType(MarkerType);
-		roi.setStrokeColor(MarkerColor);
-		roi.setSize(MarkerSize);
+		roi.setPointType(DefaultMarkerType);
+		roi.setSize(DefaultMarkerSize);
 		return roi;
 	}
 	
