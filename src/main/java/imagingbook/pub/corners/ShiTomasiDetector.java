@@ -31,8 +31,10 @@ import ij.process.ImageProcessor;
 public class ShiTomasiDetector extends GradientCornerDetector {
 	
 	public static class Parameters extends GradientCornerDetector.Parameters {
-		/** Corner response threshold */
-		public double scoreThreshold = 20000;
+		
+		public Parameters() {
+			scoreThreshold = 20000;	// individual default threshold
+		}
 	}
 	
 	public ShiTomasiDetector(ImageProcessor ip, Parameters params) {
@@ -49,11 +51,6 @@ public class ShiTomasiDetector extends GradientCornerDetector {
 		}
 		double lambda2 = (A + B) / 2 - sqrt(rootExpr);
 		return (float) sqr(lambda2); 	// returns lambda_2^2
-	}
-
-	@Override
-	protected boolean acceptScore(float score) {
-		return score > ((Parameters) params).scoreThreshold;
 	}
 
 }

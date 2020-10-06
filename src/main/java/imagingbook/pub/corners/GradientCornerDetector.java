@@ -36,7 +36,7 @@ public abstract class GradientCornerDetector {
 	public static boolean RETAIN_TEMPORARY_DATA = false;
 	
 	public static class Parameters {
-		/** Set true to perform pre-filering on the input image (before gradient calc.) */
+		/** Set true to perform pre-filtering on the input image (before gradient calc.) */
 		public boolean doPreFilter = true;
 		/** Sigma of Gaussian filter used for smoothing gradient maps */
 		public double sigma = 1.275;
@@ -48,6 +48,8 @@ public abstract class GradientCornerDetector {
 		public double dmin = 10;
 		/** If/how to perform subpixel localization */
 		public Method maxLocatorMethod = Method.None;
+		/** Corner response threshold */
+		public double scoreThreshold = 20000;
 	}
 	
 	protected static final float UndefinedScoreValue = 0;	// to be returned when corner score is undefined
@@ -92,7 +94,6 @@ public abstract class GradientCornerDetector {
 	 * @return the corner score
 	 */
 	protected abstract float computeCornerScore(float A, float B, float C);
-	protected abstract boolean acceptScore(float score);
 	
 	// -------------------------------------------------------------
 	
@@ -217,13 +218,13 @@ public abstract class GradientCornerDetector {
 	}
 	
 	private List<Corner> collectCorners() {
-//		final float tH = (float) params.tH;
+		final float th = (float) params.scoreThreshold;
 		final int border = params.border;
 		List<Corner> C = new ArrayList<Corner>();
 		for (int v = border; v < N - border; v++) {
 			for (int u = border; u < M - border; u++) {
 				float[] s = getNeighborhood(Q, u, v);
-				if (s != null && acceptScore(s[0]) && isLocalMax(s)) {
+				if (s != null && s[0] > th && isLocalMax(s)) {
 					Corner c = makeCorner(u, v, s);
 					if (c != null) {
 						C.add(makeCorner(u, v, s));

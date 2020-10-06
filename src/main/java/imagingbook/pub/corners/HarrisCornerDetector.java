@@ -29,8 +29,10 @@ public class HarrisCornerDetector extends GradientCornerDetector {
 	public static class Parameters extends GradientCornerDetector.Parameters {
 		/** Sensitivity parameter */
 		public double alpha = 0.05;
-		/** Corner response threshold */
-		public double scoreThreshold = 20000;
+		
+		public Parameters() {
+			scoreThreshold = 20000;	// individual default threshold
+		}
 	}
 
 	// ---------------------------------------------------------------------------
@@ -47,11 +49,6 @@ public class HarrisCornerDetector extends GradientCornerDetector {
 		float det = A * B - C * C;
 		float trace = A + B;
 		return det - alpha * (trace * trace);
-	}
-
-	@Override
-	protected boolean acceptScore(float score) {
-		return score > ((Parameters) params).scoreThreshold;
 	}
 	
 }

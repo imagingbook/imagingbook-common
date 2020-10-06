@@ -29,8 +29,10 @@ import ij.process.ImageProcessor;
 public class MopsCornerDetector extends GradientCornerDetector {
 	
 	public static class Parameters extends GradientCornerDetector.Parameters {
-		/** Corner response threshold */
-		public double scoreThreshold = 100;
+		
+		public Parameters() {
+			scoreThreshold = 100;	// individual default threshold
+		}
 	}
 
 	public MopsCornerDetector(ImageProcessor ip, Parameters params) {
@@ -47,11 +49,6 @@ public class MopsCornerDetector extends GradientCornerDetector {
 		}
 		float det = A * B - C * C;
 		return det / trace;
-	}
-
-	@Override
-	protected boolean acceptScore(float score) {
-		return score > ((Parameters) params).scoreThreshold;
 	}
 
 }

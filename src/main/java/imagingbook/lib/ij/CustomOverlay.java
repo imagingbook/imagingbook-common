@@ -23,7 +23,7 @@ import ij.gui.ShapeRoi;
  * shifted by a <strong>half-pixel distance</strong> (0.5, 0.5) 
  * to display integer points at the associated pixel centers.
  * <br>
- * Note: ImageJ draws all ROI types except {@link ShapeRoi} with a half-pixel offset (bug?).
+ * Note: ImageJ draws all ROI types except {@link ShapeRoi} with a half-pixel offset.
  * This class redefines the methods {@link Overlay#add(Roi)} 
  * to perform the half-pixel shift.
  * 
@@ -53,12 +53,12 @@ public abstract class CustomOverlay<T> extends Overlay {
 	
 	// -----------------------------------------------------------
 	
-	@Override  // deactivated method:
+	@Override  // deactivated method in super class:
 	public void setStrokeColor(Color strokeColor) {
 		IJ.log(CustomOverlay.class.getSimpleName() + ": setStrokeColor() has no effect, use strokeColor()!");
 	}
 	
-	@Override  // deactivated method:
+	@Override  // deactivated method in super class:
 	public void setStrokeWidth(Double strokeWidth) {
 		IJ.log(CustomOverlay.class.getSimpleName() + ": setStrokeWidth() has no effect, use strokeWidth()!");
 	}
@@ -112,17 +112,36 @@ public abstract class CustomOverlay<T> extends Overlay {
 	}
 	
 	// -----------------------------------------------------------
-
-	@Override
-	public void add(Roi roi) {
+	
+	/**
+	 * Adds an ImageJ {@link Roi} instance to this overlay.
+	 * Optionally, a half-pixel shift is applied if the passed ROI is of type {@link ShapeRoi}.
+	 * Should be used instead of {@link Overlay#add(Roi)}.
+	 * 
+	 * @param roi the ROI to be added 
+	 * @param shiftHalfPixel if set true a half-pixel shift is added to each coordinate
+	 */
+	public void addRoi(Roi roi, boolean shiftHalfPixel) {
 		roi.setDrawOffset(true);
 		// add half-pixel shift only to ShapeRoi instances (other ROI types are displayed with offset)
-		if (roi instanceof ShapeRoi) {
+		if (shiftHalfPixel && roi instanceof ShapeRoi) {
 			Rectangle2D r = roi.getFloatBounds();
 			roi.setLocation(r.getX() + 0.5, r.getY() + 0.5);
 		}
 		super.add(roi);
     }
+	
+	/**
+	 * Adds an ImageJ {@link Roi} instance to this overlay.
+	 * A half-pixel shift is applied if the passed ROI is of type {@link ShapeRoi}.
+	 * Should be used instead of {@link Overlay#add(Roi)}.
+	 * 
+	 * @param roi the ROI to be added 
+	 */
+	public void addRoi(Roi roi) {
+		this.addRoi(roi, true);
+	}
+	
 	
 	// -----------------------------------------------------------
 	
@@ -134,7 +153,7 @@ public abstract class CustomOverlay<T> extends Overlay {
 		Roi roi = makeRoi(item);
 		roi.setStrokeWidth(this.strokeWidth);
 		roi.setStrokeColor(this.strokeColor);
-		this.add(roi);
+		this.addRoi(roi);
 	}
 	
 	/**
