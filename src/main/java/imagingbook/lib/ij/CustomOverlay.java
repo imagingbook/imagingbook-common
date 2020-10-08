@@ -1,11 +1,16 @@
 package imagingbook.lib.ij;
 
 import java.awt.Color;
+import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.util.List;
 
 import ij.IJ;
+import ij.gui.Arrow;
+import ij.gui.Line;
 import ij.gui.Overlay;
+import ij.gui.PointRoi;
+import ij.gui.PolygonRoi;
 import ij.gui.Roi;
 import ij.gui.ShapeRoi;
 
@@ -115,16 +120,30 @@ public abstract class CustomOverlay<T> extends Overlay {
 	
 	/**
 	 * Adds an ImageJ {@link Roi} instance to this overlay.
-	 * Optionally, a half-pixel shift is applied if the passed ROI is of type {@link ShapeRoi}.
+	 * A half-pixel shift is applied if the passed ROI is of type {@link ShapeRoi}.
 	 * Should be used instead of {@link Overlay#add(Roi)}.
+	 * 
+	 * @param roi the ROI to be added 
+	 */
+	public void addRoi(Roi roi) {
+		this.addRoi(roi, false);
+	}
+	
+	
+	/**
+	 * Adds an ImageJ {@link Roi} instance to this overlay.
+	 * Optionally, a half-pixel shift is applied if the passed ROI 
+	 * is not drawn with a half-pixel shift by ImageJ.
+	 * This method should be used instead of {@link Overlay#add(Roi)}.
 	 * 
 	 * @param roi the ROI to be added 
 	 * @param shiftHalfPixel if set true a half-pixel shift is added to each coordinate
 	 */
 	public void addRoi(Roi roi, boolean shiftHalfPixel) {
-		roi.setDrawOffset(true);
+		//IJ.log(roi.getClass().getSimpleName() + ": " + drawsWithHalfPixelShift(roi));
+		// roi.setDrawOffset(true); // does nothing
 		// add half-pixel shift only to ShapeRoi instances (other ROI types are displayed with offset)
-		if (shiftHalfPixel && roi instanceof ShapeRoi) {
+		if (shiftHalfPixel) { // && !drawsWithHalfPixelShift(roi)) { // && roi instanceof ShapeRoi) {
 			Rectangle2D r = roi.getFloatBounds();
 			roi.setLocation(r.getX() + 0.5, r.getY() + 0.5);
 		}
@@ -132,16 +151,27 @@ public abstract class CustomOverlay<T> extends Overlay {
     }
 	
 	/**
-	 * Adds an ImageJ {@link Roi} instance to this overlay.
-	 * A half-pixel shift is applied if the passed ROI is of type {@link ShapeRoi}.
-	 * Should be used instead of {@link Overlay#add(Roi)}.
-	 * 
-	 * @param roi the ROI to be added 
+	 * Checks if ImageJ automatically draws the particular roi instance with a half-pixel
+	 * shift or not.
+	 * Note that this is handled inconsistently in ImageJ and probably a bug -
+	 * all roi classes should have the same behavior.
+	 * Known ROI-types that do NOT half-pixel shift are
+	 * {@link ShapeRoi} and certain kinds of 
+	 * {@link Line} (namely {@link Roi.POLYGON}, {@link Roi.FREELINE}, {@link Roi.ANGLE}).
+	 *
+	 * @param roi
+	 * @return
 	 */
-	public void addRoi(Roi roi) {
-		this.addRoi(roi, true);
+	public static boolean drawsWithHalfPixelShift(Roi roi) {
+		return true;
+//		return
+//			roi instanceof Line ||
+//			roi instanceof Arrow ||
+//			roi instanceof PointRoi ||
+//			roi instanceof PolygonRoi && ((PolygonRoi)roi).getType() == Roi.POLYLINE ||
+//			roi instanceof PolygonRoi && ((PolygonRoi)roi).getType() == Roi.FREELINE 
+//			;
 	}
-	
 	
 	// -----------------------------------------------------------
 	
