@@ -77,7 +77,8 @@ public abstract class GradientCornerDetector {
 		this.M = ip.getWidth();
 		this.N = ip.getHeight();
 		this.params = params;
-		this.maxLocator = MaxLocator.create(params.maxLocatorMethod);
+//		this.maxLocator = MaxLocator.create(params.maxLocatorMethod);
+		this.maxLocator = MaxLocator.getInstance(params.maxLocatorMethod);
 		this.Q = makeCornerScores(ip);
 		this.corners = makeCorners();
 	}
@@ -272,7 +273,7 @@ public abstract class GradientCornerDetector {
 		}
 		else {
 			// do sub-pixel refinement
-			float[] xyz = maxLocator.locateMaximum(s);
+			float[] xyz = maxLocator.getInterpolatedMax(s);
 			return (xyz == null) ? null : new Corner(u + xyz[0], v + xyz[1], xyz[2]);
 		}
 	}
