@@ -273,7 +273,7 @@ public abstract class GradientCornerDetector {
 		}
 		else {
 			// do sub-pixel refinement
-			float[] xyz = maxLocator.getInterpolatedMax(s);
+			float[] xyz = maxLocator.getMax(s);
 			return (xyz == null) ? null : new Corner(u + xyz[0], v + xyz[1], xyz[2]);
 		}
 	}

@@ -4,7 +4,7 @@ import imagingbook.lib.math.Matrix;
 import imagingbook.lib.settings.PrintPrecision;
 import imagingbook.pub.corners.subpixel.MaxLocator.Method;
 
-public class MaxLocatorTest {
+class MaxLocatorTest {
 	
 	public static void main(String[] args) {
 		
@@ -18,7 +18,7 @@ public class MaxLocatorTest {
 			if (interp != null) {
 				System.out.println("interpolator = " + interp.getClass().getName());
 				
-				float[] xyz = interp.getInterpolatedMax(samples);
+				float[] xyz = interp.getMax(samples);
 				if (xyz != null) {
 					System.out.println("xyz = " + Matrix.toString(xyz));
 				}
@@ -33,7 +33,7 @@ public class MaxLocatorTest {
 }
 
 
-// Results:
+// Results for float[] samples = {16,9,7,11,8,15,14,12,10};
 //interpolator = imagingbook.pub.corners.subpixel.MaxLocator$Quadratic1
 //xyz = {-0.37500000, 0.05555556, 16.57638931}
 //
@@ -45,6 +45,8 @@ public class MaxLocatorTest {
 //
 //----------------------------------------------------------------------------
 //
+// Results for float[] samples = {40229.785156f, 33941.535156f, 25963.150391f, 39558.175781f, 39078.843750f, 33857.863281f, 39861.664063f, 38746.250000f, 33652.839844f};
+
 //interpolator = imagingbook.pub.corners.subpixel.MaxLocator$Quadratic1
 //xyz = {0.00330453, -0.18836921, 40268.08984375}
 //

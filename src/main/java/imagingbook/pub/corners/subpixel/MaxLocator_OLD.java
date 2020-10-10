@@ -12,7 +12,7 @@ import imagingbook.lib.math.Matrix;
  * @author WB
  * @version 2020/10/03
  */
-public abstract class MaxLocator {
+public interface MaxLocator_OLD {
 	
 	/**
 	 * Tries to locate the sub-pixel maximum from the 9 discrete sample values
@@ -28,35 +28,46 @@ public abstract class MaxLocator {
 	 * The position is relative to the center coordinate (0,0).
 	 * {@code null} is returned if the maximum position could not be located.
 	 */
-	public abstract float[] getMax(float[] s);
+	public float[] getInterpolatedMax(float[] s);
 	
 	/**
-	 * Enumeration of keys for {@link MaxLocator} methods.
+	 * Enumeration of keys for {@link MaxLocator_OLD} methods.
 	 */
 	public enum Method {
-		None, Quadratic1, Quadratic2, Quartic;
+		None(null),
+		Quadratic1(Quadratic1.class),
+		Quadratic2(Quadratic2.class),
+		Quartic(Quartic.class);
+
+		private Class<? extends MaxLocator_OLD> clazz;
+
+		// constructor:
+		Method(Class<? extends MaxLocator_OLD> clazz) {
+			this.clazz = clazz;
+		}
 	}
 	
 	/**
-	 * Creates a specific {@link MaxLocator} instance based on the supplied
+	 * Creates a specific {@link MaxLocator_OLD} instance based on the supplied
 	 * {@link Method} key.
 	 * @param m the method
-	 * @return a new {@link MaxLocator} instance
+	 * @return a new {@link MaxLocator_OLD} instance
 	 */
-	public static MaxLocator getInstance(Method m) {
-		MaxLocator ml = null;
-		switch(m) {
-		case Quadratic1:
-			ml = new Quadratic1(); break;
-		case Quadratic2:
-			ml = new Quadratic2(); break;
-		case Quartic:
-			ml = new Quartic(); break;
-		case None:
-			break;
+	public static MaxLocator_OLD getInstance(Method m) {
+		if (m == null || m.clazz == null) {
+			return null;
 		}
+		MaxLocator_OLD ml = null;
+		try {
+			ml = m.clazz.newInstance();
+		} catch (InstantiationException | IllegalAccessException e) { }
 		return ml;
 	}
+	
+	// ------------------------------------------------------------------------------
+	
+	
+	
 	
 	// ------------------------------------------------------------------------------
 	
@@ -68,13 +79,13 @@ public abstract class MaxLocator {
 	 * <br>
 	 * to the supplied samples.
 	 * Only 5 of the 9 supplied sample values are used (the 4 corner samples are ignored).
-	 * @see MaxLocator#getMax(float[])
+	 * @see MaxLocator_OLD#getInterpolatedMax(float[])
 	 */
-	public static class Quadratic1 extends MaxLocator {
+	public static class Quadratic1 implements MaxLocator_OLD {
 		
 		private final double[] c = new double[5];	// polynomial coefficients
 		
-		public float[] getMax(float[] s) {
+		public float[] getInterpolatedMax(float[] s) {
 			c[0] = s[0];
 			c[1] = (s[1] - s[5]) / 2;
 			c[2] = (s[7] - s[3]) / 2;
@@ -101,14 +112,14 @@ public abstract class MaxLocator {
 	 * f(x,y) = c_0 + c_1 x + c_2 y + c_3 x^2 + c_4 y^2  + c_5 xy
 	 * <br>
 	 * to the supplied samples. All 9 sample values are used.
-	 * @see MaxLocator#getMax(float[])
+	 * @see MaxLocator_OLD#getInterpolatedMax(float[])
 	 */
-	public static class Quadratic2 extends MaxLocator {
+	public static class Quadratic2 implements MaxLocator_OLD {
 		
 		private final double[] c = new double[6];	// polynomial coefficients
 
 		@Override
-		public float[] getMax(float[] s) {
+		public float[] getInterpolatedMax(float[] s) {
 			c[0] = s[0];
 			c[1] = (s[1] - s[5]) / 2;
 			c[2] = (s[7] - s[3]) / 2;
@@ -142,9 +153,9 @@ public abstract class MaxLocator {
 	 * all sample values. The local maximum cannot be found in closed form but 
 	 * is found iteratively, which is not guaranteed to succeed.
 	 * All 9 sample values are used.
-	 * @see MaxLocator#getMax(float[])
+	 * @see MaxLocator_OLD#getInterpolatedMax(float[])
 	 */
-	public static class Quartic extends MaxLocator {
+	public static class Quartic implements MaxLocator_OLD {
 		static int DefaultMaxIterations = 20;		// iteration limit
 		static double DefaulMinMove = 1e-6;			// smallest x/y move to continue search 
 		static double DefaultSearchWindow = 0.6;	// x/y search boundary (-xyLimit, +xyLimit)
@@ -168,7 +179,7 @@ public abstract class MaxLocator {
 		}
 		
 		@Override
-		public float[] getMax(float[] s) {
+		public float[] getInterpolatedMax(float[] s) {
 			c[0] = s[0];
 			c[1] = (s[1] - s[5]) / 2;
 			c[2] = (s[7] - s[3]) / 2;
