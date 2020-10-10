@@ -38,7 +38,6 @@ imagingbook\pub\color\edge\GrayscaleEdgeDetector.class
 imagingbook\pub\geometry\basic\Point$Imp.class
 imagingbook\pub\color\image\BradfordAdaptation.class
 imagingbook\pub\color\quantize\KMeansClusteringQuantizer$Cluster.class
-imagingbook\pub\corners\subpixel\MaxLocator$Method$3.class
 imagingbook\pub\regions\geometry\AxisAlignedBoundingBox.class
 imagingbook\pub\regions\RegionLabeling$1.class
 imagingbook\pub\geometry\fitting\ProcrustesFit.class
@@ -56,7 +55,6 @@ imagingbook\lib\math\Arithmetic$DivideByZeroException.class
 imagingbook\pub\color\image\LuvColorSpace.class
 imagingbook\lib\math\VectorNorm$Linf.class
 imagingbook\pub\geometry\mappings\linear\AffineMapping2D.class
-imagingbook\pub\corners\subpixel\MaxLocator$Method$4.class
 imagingbook\pub\dft\Dft1d.class
 imagingbook\pub\sift\KeyPoint.class
 imagingbook\pub\color\image\CieUtil.class
@@ -124,7 +122,6 @@ imagingbook\pub\geometry\delaunay\guibas\TriangulationGuibas.class
 imagingbook\pub\sift\SiftMatcher$Parameters.class
 imagingbook\pub\color\edge\CannyEdgeDetector$Parameters.class
 imagingbook\pub\geometry\fitting\LinearFit2D.class
-imagingbook\pub\corners\subpixel\MaxLocatorTaylor.class
 imagingbook\pub\edgepreservingfilters\PeronaMalikFilter$ColorMode.class
 imagingbook\pub\corners\subpixel_obsolete\PolynomialInterpolator2D$SubpixelMethod$1.class
 imagingbook\lib\interpolation\SplineInterpolator.class
@@ -146,7 +143,6 @@ imagingbook\pub\color\filters\ScalarMedianFilter.class
 imagingbook\lib\image\ImageMapper.class
 imagingbook\pub\color\filters\FilterMask.class
 imagingbook\pub\regions\RecursiveLabeling.class
-imagingbook\pub\corners\subpixel\MaxLocator$Method$1.class
 imagingbook\pub\edgepreservingfilters\BilateralFilterSeparable.class
 imagingbook\lib\util\ClassUtils.class
 imagingbook\pub\matching\ChamferMatcher.class
@@ -162,7 +158,6 @@ imagingbook\pub\lucaskanade\LucasKanadeInverseMatcher.class
 imagingbook\pub\morphology\old\BinMorpherDisk.class
 imagingbook\lib\ij\GuiTools.class
 imagingbook\lib\math\Matrix$SameSourceTargetException.class
-imagingbook\pub\corners\subpixel\MaxLocator$Method$2.class
 imagingbook\pub\dct\Dct1dDirect$Double.class
 imagingbook\pub\sift\util\Colors.class
 imagingbook\lib\util\ResourceUtils.class
@@ -243,7 +238,6 @@ imagingbook\pub\color\quantize\KMeansClusteringQuantizer.class
 imagingbook\lib\math\Complex.class
 imagingbook\pub\geometry\homography\HomographyEstimator.class
 imagingbook\lib\image\ImageMath.class
-imagingbook\pub\corners\subpixel\MaxLocatorQuartic.class
 imagingbook\pub\morphology\BinaryMorphologyFilter$1.class
 imagingbook\pub\morphology\BinaryMorphologyFilter$Disk.class
 imagingbook\pub\threshold\global\OtsuThresholder.class
@@ -314,7 +308,6 @@ imagingbook\pub\color\statistics\ColorStatistics.class
 imagingbook\pub\edgepreservingfilters\BilateralFilter$Parameters.class
 imagingbook\pub\lucaskanade\LucasKanadeMatcher$Parameters.class
 imagingbook\lib\color\RandomColorGenerator.class
-imagingbook\pub\corners\subpixel\MaxLocatorParabolic.class
 imagingbook\pub\geometry\homography\HomographyEstimator$1.class
 imagingbook\pub\threshold\adaptive\NiblackThresholder$Disk.class
 imagingbook\lib\ij\IjUtils$1.class

@@ -22,7 +22,7 @@ public abstract class Enums {
 	 */
 	public static String[] getEnumNames(Class<? extends Enum<?>> enumclass) {
 		Enum<?>[] eConstants = (Enum<?>[]) enumclass.getEnumConstants();
-		if (eConstants == null) {
+		if (eConstants == null || eConstants.length == 0) {
 			return new String[0];
 		}
 		else {
