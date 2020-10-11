@@ -6,30 +6,26 @@
  * Copyright (c) 2006-2020 Wilhelm Burger, Mark J. Burge. All rights reserved. 
  * Visit http://imagingbook.com for additional details.
  *******************************************************************************/
-package imagingbook.pub.regions.geometry;
+package imagingbook.pub.geometry.hulls;
 
-import ij.process.ImageProcessor;
+import ij.IJ;
+import imagingbook.lib.math.Arithmetic;
 import imagingbook.lib.math.Matrix;
 import imagingbook.pub.geometry.basic.Point;
-import imagingbook.pub.regions.RegionLabeling.BinaryRegion;
 
 /**
  * 
  * @author WB
- * @version 2020/04/01
+ * @version 2020/10/11
+ * 
  */
 public class AxisAlignedBoundingBox {
 	
 	private final double[][] boundingBox;
 	
-	public AxisAlignedBoundingBox(BinaryRegion r) {
-		boundingBox = makeBox(r);
+	public AxisAlignedBoundingBox(Iterable<Point> points) {
+		this.boundingBox = makeBox(points);
 	}
-	
-	
-//	public double[][] getCorners() {
-//		return boundingBox;
-//	}
 	
 	public Point[] getCornerPoints() {
 		Point[] cpts = new Point[boundingBox.length];
@@ -43,12 +39,13 @@ public class AxisAlignedBoundingBox {
 	 * Calculates the major axis-aligned bounding box of 
 	 * the supplied region, as a sequence of four point
 	 * coordinates (A, B, C, D).
-	 * @param r binary region
+	 * @param points binary region
 	 * @return the region's bounding box as a sequence of 4 coordinates,
 	 * (A, B, C, D)
 	 */
-	private double[][] makeBox(BinaryRegion r) {
-		double theta = getRegionOrientation(r);
+	private double[][] makeBox(Iterable<Point> points) {
+		double theta = getRegionOrientation(points);	// TODO: can be done without trigonom. functions!
+		
 		double xa = Math.cos(theta);
 		double ya = Math.sin(theta);
 		double[] ea = {xa,  ya};
@@ -59,7 +56,7 @@ public class AxisAlignedBoundingBox {
 		double bmin = Double.POSITIVE_INFINITY;
 		double bmax = Double.NEGATIVE_INFINITY;
 		
-		for (Point p : r) {
+		for (Point p : points) {
 			double a = p.getX() * xa + p.getY() * ya;	// project (x,y) on the major axis vector
 			double b = p.getX() * ya - p.getY() * xa;	// project (x,y) on perpendicular vector
 			amin = Math.min(a, amin);
@@ -79,16 +76,18 @@ public class AxisAlignedBoundingBox {
 	/**
 	 * Calculates the orientation of major axis.
 	 * TODO: move this somewhere else (into class BinaryRegion)
-	 * @param r binary region
+	 * @param points binary region
 	 * @return orientation of the major axis (angle in radians)
 	 */
-	private double getRegionOrientation(BinaryRegion r) {
-		final double xc = r.getXc();
-		final double yc = r.getYc();
+	private double getRegionOrientation(Iterable<Point> points) {
+		double[] centroid = getCentroid(points);
+		final double xc = centroid[0];
+		final double yc = centroid[1];
 		double mu11 = 0;
 		double mu20 = 0;
 		double mu02 = 0;
-		for (Point p : r) {
+
+		for (Point p : points) {
 			double dx = (p.getX() - xc);
 			double dy = (p.getY() - yc);
 			mu11 = mu11 + dx * dy;
@@ -96,24 +95,45 @@ public class AxisAlignedBoundingBox {
 			mu02 = mu02 + dy * dy;
 		}
 		
+		if (Arithmetic.isZero(mu11) && Arithmetic.isZero(mu20 - mu02)) {
+			IJ.log("point set orientation is undefined!");
+			//return Double.NaN;
+		}
+		
 		return 0.5 * Math.atan2(2 * mu11, mu20 - mu02);
 	}
 	
-	// drawing --------------------------------------------
-	
-	public void draw(ImageProcessor ip) {
-		drawLine(ip, boundingBox[0], boundingBox[1]);
-		drawLine(ip, boundingBox[1], boundingBox[2]);
-		drawLine(ip, boundingBox[2], boundingBox[3]);
-		drawLine(ip, boundingBox[3], boundingBox[0]);
+	private double[] getCentroid(Iterable<Point> points) {
+		int n = 0;
+		double sumX = 0;
+		double sumY = 0;
+		for (Point p : points) {
+			sumX += p.getX();
+			sumY += p.getY();
+			n++;
+		}
+		if (n == 0) {
+			throw new IllegalArgumentException("empty point sequence!");
+		}
+		return new double[] {sumX/n, sumY/n};
 	}
 	
-	private void drawLine(ImageProcessor ip, double[] p1, double[] p2) {
-		int u1 = (int) Math.round(p1[0]);
-		int v1 = (int) Math.round(p1[1]);
-		int u2 = (int) Math.round(p2[0]);
-		int v2 = (int) Math.round(p2[1]);
-		ip.drawLine(u1, v1, u2, v2);	
+	// --------------------------------------------------------------------
+	
+	
+	public static void main(String[] args) {
+		
+		for (int i = -180; i <= 180; i++) {
+			double angle = i * 2 * Math.PI / 360;
+			double A = Math.sin(angle);
+			double B = Math.cos(angle);
+			double T = 0.5 * Math.atan2(A, B);
+			double sT = Math.sin(T);
+			double cT = Math.cos(T);
+			double T2 = Math.atan2(A, 1 + B);
+			double T3 = Math.atan2(Math.sqrt(0.5 * (1 - B)), Math.sqrt(0.5 * (1 + B)));
+			System.out.format("%4d a=%6.3f | A=%5.2f B=%5.2f | T=%6.3f sT=%5.2f cT=%5.2f | T2=%6.3f | T3=%6.3f\n", i, angle, A, B, T, sT, cT, T2, T3);
+		}
 	}
 
 }

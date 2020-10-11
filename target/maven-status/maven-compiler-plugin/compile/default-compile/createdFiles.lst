@@ -14,7 +14,6 @@ imagingbook\lib\math\MahalanobisTest2.class
 imagingbook\pub\regions\ContourOverlay.class
 imagingbook\pub\dft\ScalingMode.class
 imagingbook\lib\math\Eigensolver2x2Demo.class
-imagingbook\pub\regions\geometry\ConvexHull.class
 imagingbook\lib\filters\GaussianFilter.class
 imagingbook\pub\color\quantize\KMeansClusteringQuantizer$SamplingMethod.class
 imagingbook\pub\dft\Dft1dFast$1.class
@@ -38,7 +37,6 @@ imagingbook\pub\color\edge\GrayscaleEdgeDetector.class
 imagingbook\pub\geometry\basic\Point$Imp.class
 imagingbook\pub\color\image\BradfordAdaptation.class
 imagingbook\pub\color\quantize\KMeansClusteringQuantizer$Cluster.class
-imagingbook\pub\regions\geometry\AxisAlignedBoundingBox.class
 imagingbook\pub\regions\RegionLabeling$1.class
 imagingbook\pub\geometry\fitting\ProcrustesFit.class
 imagingbook\pub\noise\hashing\HashPermute.class
