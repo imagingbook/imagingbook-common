@@ -5,6 +5,8 @@ import static imagingbook.lib.math.Arithmetic.sqr;
 import java.awt.geom.Point2D;
 import java.util.Collection;
 
+import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
+
 /** 
  * Interface specifying the behavior of a simple 2D point.
  * It is used to accommodate different (legacy) point implementations 
@@ -31,6 +33,10 @@ public interface Point {
 	
 	static Point create(Point2D p) {
 		return new Imp(p.getX(), p.getY());
+	}
+	
+	static Point create(Vector2D vec) {
+		return new Imp(vec.getX(), vec.getY());
 	}
 	
 	// ----------------------------------------------------------

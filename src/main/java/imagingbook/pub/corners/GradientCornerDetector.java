@@ -27,6 +27,8 @@ import imagingbook.pub.corners.subpixel.MaxLocator.Method;
  * Abstract super class for all corner detectors based on local 
  * structure tensor.
  * 
+ * TODO: replace 'border' by ROI rectangle
+ * 
  * @author W. Burger
  * @version 2020/10/04
  */

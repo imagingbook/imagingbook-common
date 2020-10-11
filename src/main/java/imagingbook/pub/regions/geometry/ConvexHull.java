@@ -28,9 +28,13 @@ import imagingbook.pub.regions.RegionLabeling.BinaryRegion;
  * If a region provides an outer contour, then this is used for 
  * the convex hull computation, otherwise the entire (inner) region
  * is used.
+ * <br>
+ * NOTE: this class has been replaced by {@link imagingbook.pub.geometry.hulls}!
  * 
  * @author W. Burger
  * @version 2020/04/01
+ * @deprecated
+ * @see imagingbook.pub.geometry.hulls.ConvexHull
  */
 public class ConvexHull {
 	
