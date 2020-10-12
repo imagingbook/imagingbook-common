@@ -8,12 +8,16 @@
  *******************************************************************************/
 package imagingbook.pub.geometry.hulls;
 
-import ij.IJ;
-import imagingbook.lib.math.Arithmetic;
-import imagingbook.lib.math.Matrix;
+import static imagingbook.lib.math.Arithmetic.isZero;
+import static imagingbook.lib.math.Arithmetic.sqr;
+import static imagingbook.lib.math.Matrix.add;
+import static imagingbook.lib.math.Matrix.multiply;
+import static java.lang.Math.sqrt;
+
 import imagingbook.pub.geometry.basic.Point;
 
 /**
+ * Represents a major axis-aligned bounding box of a 2D point set.
  * 
  * @author WB
  * @version 2020/10/11
@@ -21,33 +25,39 @@ import imagingbook.pub.geometry.basic.Point;
  */
 public class AxisAlignedBoundingBox {
 	
-	private final double[][] boundingBox;
+	private final Point[] boundingBox;	
 	
 	public AxisAlignedBoundingBox(Iterable<Point> points) {
 		this.boundingBox = makeBox(points);
 	}
 	
+	/**
+	 * Returns an array holding the 4 corner points of the bounding box or 
+	 * {@code null} if the orientation of the point set is undefined.
+	 * @return as described above
+	 */
 	public Point[] getCornerPoints() {
-		Point[] cpts = new Point[boundingBox.length];
-		for (int i = 0; i < boundingBox.length; i++) {
-			cpts[i] = Point.create(boundingBox[i][0], boundingBox[i][1]);
-		}
-		return cpts;
+		return (boundingBox == null) ? null : boundingBox;
 	}
 		
 	/**
 	 * Calculates the major axis-aligned bounding box of 
 	 * the supplied region, as a sequence of four point
-	 * coordinates (A, B, C, D).
+	 * coordinates (p0, p1, p2, p3).
+	 * 
 	 * @param points binary region
-	 * @return the region's bounding box as a sequence of 4 coordinates,
-	 * (A, B, C, D)
+	 * @return the region's bounding box as a sequence of 4 coordinates (p0, p1, p2, p3)
 	 */
-	private double[][] makeBox(Iterable<Point> points) {
-		double theta = getRegionOrientation(points);	// TODO: can be done without trigonom. functions!
+	private Point[] makeBox(Iterable<Point> points) {
+		//double theta = getOrientationAngle(points);
 		
-		double xa = Math.cos(theta);
-		double ya = Math.sin(theta);
+		double[] xy = getOrientationVector(points);
+		if (xy == null) {	// regin's orientation is undefined
+			return null;
+		}
+			
+		double xa = xy[0]; // = Math.cos(theta);
+		double ya = xy[1]; // = Math.sin(theta);
 		double[] ea = {xa,  ya};
 		double[] eb = {ya, -xa};
 		
@@ -65,21 +75,16 @@ public class AxisAlignedBoundingBox {
 			bmax = Math.max(b, bmax);
 		}
 					
-		double[] A = Matrix.add(Matrix.multiply(amin, ea), Matrix.multiply(bmin, eb));
-		double[] B = Matrix.add(Matrix.multiply(amin, ea), Matrix.multiply(bmax, eb));
-		double[] C = Matrix.add(Matrix.multiply(amax, ea), Matrix.multiply(bmax, eb));
-		double[] D = Matrix.add(Matrix.multiply(amax, ea), Matrix.multiply(bmin, eb));
+		Point p0 = Point.create(add(multiply(amin, ea), multiply(bmin, eb)));
+		Point p1 = Point.create(add(multiply(amin, ea), multiply(bmax, eb)));
+		Point p2 = Point.create(add(multiply(amax, ea), multiply(bmax, eb)));
+		Point p3 = Point.create(add(multiply(amax, ea), multiply(bmin, eb)));
 		
-		return new double[][] {A, B, C, D};
+		return new Point[] {p0, p1, p2, p3};
 	}
+
 	
-	/**
-	 * Calculates the orientation of major axis.
-	 * TODO: move this somewhere else (into class BinaryRegion)
-	 * @param points binary region
-	 * @return orientation of the major axis (angle in radians)
-	 */
-	private double getRegionOrientation(Iterable<Point> points) {
+	private double[] getOrientationVector(Iterable<Point> points) {
 		double[] centroid = getCentroid(points);
 		final double xc = centroid[0];
 		final double yc = centroid[1];
@@ -95,12 +100,15 @@ public class AxisAlignedBoundingBox {
 			mu02 = mu02 + dy * dy;
 		}
 		
-		if (Arithmetic.isZero(mu11) && Arithmetic.isZero(mu20 - mu02)) {
-			IJ.log("point set orientation is undefined!");
-			//return Double.NaN;
+		double A = 2 * mu11;
+		double B = mu20 - mu02;
+		double s = sqrt(2 * (sqr(A) + sqr(B) + B * sqrt(sqr(A) + sqr(B))));
+		if (isZero(s)) {
+			return null;
 		}
-		
-		return 0.5 * Math.atan2(2 * mu11, mu20 - mu02);
+		double x0 = (B + sqrt(sqr(A) + sqr(B))) / s;
+		double y0 = A / s;
+		return new double[] {x0, y0};
 	}
 	
 	private double[] getCentroid(Iterable<Point> points) {
@@ -118,22 +126,4 @@ public class AxisAlignedBoundingBox {
 		return new double[] {sumX/n, sumY/n};
 	}
 	
-	// --------------------------------------------------------------------
-	
-	
-	public static void main(String[] args) {
-		
-		for (int i = -180; i <= 180; i++) {
-			double angle = i * 2 * Math.PI / 360;
-			double A = Math.sin(angle);
-			double B = Math.cos(angle);
-			double T = 0.5 * Math.atan2(A, B);
-			double sT = Math.sin(T);
-			double cT = Math.cos(T);
-			double T2 = Math.atan2(A, 1 + B);
-			double T3 = Math.atan2(Math.sqrt(0.5 * (1 - B)), Math.sqrt(0.5 * (1 + B)));
-			System.out.format("%4d a=%6.3f | A=%5.2f B=%5.2f | T=%6.3f sT=%5.2f cT=%5.2f | T2=%6.3f | T3=%6.3f\n", i, angle, A, B, T, sT, cT, T2, T3);
-		}
-	}
-
 }
