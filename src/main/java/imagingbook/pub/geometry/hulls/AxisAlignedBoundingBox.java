@@ -67,20 +67,22 @@ public class AxisAlignedBoundingBox {
 		double bmax = Double.NEGATIVE_INFINITY;
 		
 		for (Point p : points) {
-			double a = p.getX() * xa + p.getY() * ya;	// project (x,y) on the major axis vector
-			double b = p.getX() * ya - p.getY() * xa;	// project (x,y) on perpendicular vector
+			double u = p.getX();
+			double v = p.getY();
+			double a = u * xa + v * ya;	// project (u,v) on the major axis vector
+			double b = u * ya - v * xa;	// project (u,v) on perpendicular vector
 			amin = Math.min(a, amin);
 			amax = Math.max(a, amax);
 			bmin = Math.min(b, bmin);
 			bmax = Math.max(b, bmax);
 		}
-					
-		Point p0 = Point.create(add(multiply(amin, ea), multiply(bmin, eb)));
-		Point p1 = Point.create(add(multiply(amin, ea), multiply(bmax, eb)));
-		Point p2 = Point.create(add(multiply(amax, ea), multiply(bmax, eb)));
-		Point p3 = Point.create(add(multiply(amax, ea), multiply(bmin, eb)));
 		
-		return new Point[] {p0, p1, p2, p3};
+		Point[] corners = new Point[4];
+		corners[0] = Point.create(add(multiply(amin, ea), multiply(bmin, eb)));
+		corners[1] = Point.create(add(multiply(amin, ea), multiply(bmax, eb)));
+		corners[2] = Point.create(add(multiply(amax, ea), multiply(bmax, eb)));
+		corners[3] = Point.create(add(multiply(amax, ea), multiply(bmin, eb)));
+		return corners;
 	}
 
 	

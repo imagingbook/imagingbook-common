@@ -130,7 +130,6 @@ imagingbook\pub\regions\RegionLabeling$RegionPixelIterator.class
 imagingbook\pub\dft\Dft2d$Float.class
 imagingbook\pub\noise\perlin\PerlinNoiseGen2d.class
 imagingbook\pub\color\quantize\KMeansClusteringQuantizer$Parameters.class
-imagingbook\pub\regions\RegionLabeling$BinaryRegion$1.class
 imagingbook\pub\fd\Colors$ColorSequencer.class
 imagingbook\pub\dft\Dft1dFast$Double.class
 imagingbook\pub\corners\HarrisCornerDetector$Parameters.class
