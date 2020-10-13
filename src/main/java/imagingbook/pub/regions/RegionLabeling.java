@@ -263,25 +263,29 @@ public abstract class RegionLabeling {
 	
 	// --------- Iteration over region pixels -----------------------------------
 	
-	/**
-	 * @deprecated
-	 * This method is not supported any longer.
-	 * Instead use {@code Iterable<Point>} capability of {@link BinaryRegion}
-	 * to iterate directly over region points.
-	 * 
-	 * @param r the binary region.
-	 * @return an {@link Iterable} to iterate over all region points.
-	 */
-	public Iterable<Point> getRegionPoints(final BinaryRegion r) {
-		return r.getRegionPoints();
-	}
+//	/**
+//	 * @deprecated
+//	 * This method is not supported any longer.
+//	 * Instead use {@code Iterable<Point>} capability of {@link BinaryRegion}
+//	 * to iterate directly over region points.
+//	 * 
+//	 * @param r the binary region.
+//	 * @return an {@link Iterable} to iterate over all region points.
+//	 */
+//	public Iterable<Point> getRegionPoints(final BinaryRegion r) {
+//		return r.getRegionPoints();
+//	}
 	
+	/**
+	 * Instances of this class are returned by {@link BinaryRegion#iterator()},
+	 * which implements  {@link Iterable} for instances of class {@link Point}.
+	 */
 	private class RegionPixelIterator implements Iterator<Point> {
-		final int label;					// the corresponding region's label
-		final int uMin, uMax, vMin, vMax;	// coordinates of region's bounding box
-		int uCur, vCur;						// current pixel position
-		Point pNext;						// coordinates of the next region pixel
-		boolean first;						// control flag
+		private final int label;					// the corresponding region's label
+		private final int uMin, uMax, vMin, vMax;	// coordinates of region's bounding box
+		int uCur, vCur;								// current pixel position
+		private Point pNext;						// coordinates of the next region pixel
+		private boolean first;						// control flag
 
 		RegionPixelIterator(BinaryRegion R) {
 			label = R.getLabel();
@@ -363,16 +367,21 @@ public abstract class RegionLabeling {
 	 * component or binary region. 
 	 * It is implemented as an inner class to {@link RegionLabeling} because
 	 * it references common region labeling data.
+	 * A {@link BinaryRegion} instance does not have its own list or array of 
+	 * contained pixel coordinates but refers to the region label-array of the
+	 * enclosing {@link RegionLabeling} instance.
 	 * Instances of this class support iteration over the contained pixel
 	 * coordinates of type {@link Point}, e.g., by
 	 * <pre>
-	 * import java.awt.Point;
+	 * import imagingbook.pub.geometry.basic.Point;
 	 * 
 	 * BinaryRegion R = ...;
 	 * for (Point p : R) {
 	 *    // process point p ...
 	 * }
 	 * </pre>
+	 * The advantage of providing iteration only is that it avoids the
+	 * creation of (possibly large) arrays of pixel coordinates.
 	 */
 	public class BinaryRegion implements Comparable<BinaryRegion>, Iterable<Point> {
 		private final int label;				// the label of THIS region
@@ -403,16 +412,20 @@ public abstract class RegionLabeling {
 		}
 		
 		/**
+		 * Obsolete - use {@link #getCenterPoint()} instead!
 		 * Get the x-value of the region's centroid.
 		 * @return the x-value of the region's centroid.
+		 * @deprecated
 		 */
 		public double getXc() {
 			return xc;
 		}
 
 		/**
+		 * Obsolete - use {@link #getCenterPoint()} instead!
 		 * Get the y-value of the region's centroid.
 		 * @return the y-value of the region's centroid.
+		 * @deprecated
 		 */
 		public double getYc() {
 			return yc;
@@ -498,19 +511,18 @@ public abstract class RegionLabeling {
 				return new Rectangle(left, top, right-left + 1, bottom - top + 1);
 		}
 		
-		/**
-		 * @deprecated
-		 * Returns the centroid of this region as a 2D point.
-		 * Use {@link getCenterPoint} or {@link getXc} and {@link getYc} instead.
-		 * @return the centroid of this region.
-		 */
-		public Point getCenter() {
-			if (Double.isNaN(xc))
-				return null;
-			else
-				return Point.create(xc, yc);
-		}
-		
+//		/**
+//		 * @deprecated
+//		 * Returns the centroid of this region as a 2D point.
+//		 * Use {@link getCenterPoint} instead.
+//		 * @return the centroid of this region.
+//		 */
+//		public Point getCenter() {
+//			if (Double.isNaN(xc))
+//				return null;
+//			else
+//				return Point.create(xc, yc);
+//		}
 		
 		/**
 		 * Returns the centroid of this region as a 2D point.
@@ -532,21 +544,20 @@ public abstract class RegionLabeling {
 			return new RegionPixelIterator(this);
 		}
 		
-		/**
-		 * @deprecated
-		 * Replaced by BinaryRegion implementing {@code Iterable<Point>}.
-		 * @return iterator to be used in a for-loop. 
-		 */
-		public Iterable<Point> getRegionPoints() {
-			//return RegionLabeling.this.getRegionPoints(this);
-			return new Iterable<Point>() {	// anonymous class!
-				public Iterator<Point> iterator() {
-					return new RegionPixelIterator(BinaryRegion.this);
-				}
-			};
-		}
+//		/**
+//		 * @deprecated
+//		 * Replaced by BinaryRegion implementing {@code Iterable<Point>}.
+//		 * @return iterator to be used in a for-loop. 
+//		 */
+//		public Iterable<Point> getRegionPoints() {
+//			//return RegionLabeling.this.getRegionPoints(this);
+//			return new Iterable<Point>() {	// anonymous class!
+//				public Iterator<Point> iterator() {
+//					return new RegionPixelIterator(BinaryRegion.this);
+//				}
+//			};
+//		}
 		
-
 		/**
 		 * Use this method to add a single pixel to this region. Updates summation
 		 * and boundary variables used to calculate various region statistics.
@@ -633,6 +644,21 @@ public abstract class RegionLabeling {
 			return r2.size - this.size;
 		}
 		
+		/**
+		 * Checks if the given pixel position is contained in this
+		 * {@link BinaryRegion} instance.
+		 * @param u x-coordinate
+		 * @param v y-coordinate
+		 * @return true if (u,v) is contained in this region
+		 */
+		public boolean contains(int u, int v) {
+			return RegionLabeling.this.getLabel(u, v) == this.label;
+		}
+		
+		// ------------------------------------------------------------
+		// ------------------------------------------------------------
+		
+		
 		/* EXPERIMENTAL STUFF for attaching region properties dynamically:
 		 * Properties can be used to hash results of region calculations
 		 * to avoid multiple calculations.
@@ -660,7 +686,7 @@ public abstract class RegionLabeling {
 		
 		/**
 		 * Retrieves the specified region property. 
-		 * An {@link IllegalArgumentException} is thrown if the property 
+		 * {@link IllegalArgumentException} is thrown if the property 
 		 * is not defined for this region.
 		 * 
 		 * @param name The name of the property.
@@ -680,8 +706,6 @@ public abstract class RegionLabeling {
 		public void clearProperties() {
 			properties.clear();
 		}
-
-
 
 	}
 
