@@ -1,13 +1,14 @@
 package imagingbook.pub.corners.subpixel;
 
-import static imagingbook.lib.math.Arithmetic.isZero;
+import static imagingbook.lib.math.Arithmetic.EPSILON_DOUBLE;
+import static imagingbook.lib.math.Arithmetic.sqr;
 
 import imagingbook.lib.math.Matrix;
 
 /**
  * The common interface for all sub-pixel locators in this package.
- * @see Quadratic1
- * @see Quadratic2
+ * @see QuadraticTaylor
+ * @see QuadraticLeastSquares
  * @see Quartic
  * @author WB
  * @version 2020/10/03
@@ -34,7 +35,7 @@ public abstract class MaxLocator {
 	 * Enumeration of keys for {@link MaxLocator} methods.
 	 */
 	public enum Method {
-		None, Quadratic1, Quadratic2, Quartic;
+		QuadraticTaylor, QuadraticLeastSquares, Quartic, None;
 	}
 	
 	/**
@@ -46,10 +47,10 @@ public abstract class MaxLocator {
 	public static MaxLocator getInstance(Method m) {
 		MaxLocator ml = null;
 		switch(m) {
-		case Quadratic1:
-			ml = new Quadratic1(); break;
-		case Quadratic2:
-			ml = new Quadratic2(); break;
+		case QuadraticTaylor:
+			ml = new QuadraticTaylor(); break;
+		case QuadraticLeastSquares:
+			ml = new QuadraticLeastSquares(); break;
 		case Quartic:
 			ml = new Quartic(); break;
 		case None:
@@ -61,49 +62,15 @@ public abstract class MaxLocator {
 	// ------------------------------------------------------------------------------
 	
 	/**
-	 * 2D interpolator based on fitting a quadratic polynomial (axis-parallel
-	 * paraboloid, with no mixed terms) of the form
-	 * <br>
-	 * f(x,y) = c_0 + c_1 x + c_2 y + c_3 x^2 + c_4 y^2 
-	 * <br>
-	 * to the supplied samples.
-	 * Only 5 of the 9 supplied sample values are used (the 4 corner samples are ignored).
-	 * @see MaxLocator#getMax(float[])
-	 */
-	public static class Quadratic1 extends MaxLocator {
-		
-		private final double[] c = new double[5];	// polynomial coefficients
-		
-		public float[] getMax(float[] s) {
-			c[0] = s[0];
-			c[1] = (s[1] - s[5]) / 2;
-			c[2] = (s[7] - s[3]) / 2;
-			c[3] = (s[1] - 2 * s[0] + s[5]) / 2;
-			c[4] = (s[3] - 2 * s[0] + s[7]) / 2;
-			
-			if (isZero(c[3]) || isZero(c[4])) {
-				return null;
-			}
-			
-			float x = (float) (-0.5 * c[1] / c[3]);
-			float y = (float) (-0.5 * c[2] / c[4]);
-			float z = (float) (c[0] + c[1] * x + c[2] * y + c[3] * x * x + c[4] * y * y);
-			return new float[] {x, y, z};
-		}
-	}
-	
-	// ------------------------------------------------------------------------------
-	
-	/**
-	 * 2D interpolator based on fitting a quadratic polynomial (non-axis-parallel 
-	 * paraboloid, including mixed terms) of the form
+	 * 2D interpolator using second-order Taylor expansion to fit a quadratic
+	 * polynomial of the form
 	 * <br>
 	 * f(x,y) = c_0 + c_1 x + c_2 y + c_3 x^2 + c_4 y^2  + c_5 xy
 	 * <br>
-	 * to the supplied samples. All 9 sample values are used.
+	 * to the supplied samples values.
 	 * @see MaxLocator#getMax(float[])
 	 */
-	public static class Quadratic2 extends MaxLocator {
+	public static class QuadraticTaylor extends MaxLocator {
 		
 		private final double[] c = new double[6];	// polynomial coefficients
 
@@ -114,18 +81,18 @@ public abstract class MaxLocator {
 			c[2] = (s[7] - s[3]) / 2;
 			c[3] = (s[1] - 2*s[0] + s[5]) / 2;
 			c[4] = (s[3] - 2*s[0] + s[7]) / 2;
-			c[5] = (s[4] + s[8] - s[2] - s[6]) / 4;
+			c[5] = (-s[2] + s[4] - s[6] + s[8]) / 4;
 			
-			double d = (4*c[3]*c[4] - c[5]*c[5]);
-			if (isZero(d)) {
+			double d = (4*c[3]*c[4] - sqr(c[5]));
+			
+			if (d < EPSILON_DOUBLE || c[3] >= 0) {	// not a maximum (minimum or saddle point)
 				return null;
 			}
 			
-			// get max position:
-			double a = 1.0 / d;
-			float x = (float) (a*(c[2]*c[5] - 2*c[1]*c[4]));
-			float y = (float) (a*(c[1]*c[5] - 2*c[2]*c[3]));
-			// get max value:
+			// max position:
+			float x = (float) ((c[2]*c[5] - 2*c[1]*c[4]) / d);
+			float y = (float) ((c[1]*c[5] - 2*c[2]*c[3]) / d);
+			// max value:
 			float z = (float) (c[0] + c[1]*x + c[2]*y + c[3]*x*x + c[4]*y*y + c[5]*x*y);
 			return new float[] {x, y, z};
 		}
@@ -134,37 +101,77 @@ public abstract class MaxLocator {
 	// ------------------------------------------------------------------------------
 	
 	/**
-	 * 2D interpolator based on fitting a 'quartic' (i.e., 4th-order) polynomial  of the form
+	 * 2D interpolator based on least-squares fitting a quadratic polynomial 
+	 * <br>
+	 * f(x,y) = c_0 + c_1 x + c_2 y + c_3 x^2 + c_4 y^2  + c_5 xy
+	 * <br>
+	 * to the supplied sample values.
+	 * @see MaxLocator#getMax(float[])
+	 */
+	public static class QuadraticLeastSquares extends MaxLocator {
+		
+		private final double[] c = new double[6];	// polynomial coefficients
+
+		@Override
+		public float[] getMax(float[] s) {
+			c[0] = (5 * s[0] + 2 * s[1] - s[2] + 2 * s[3] - s[4] + 2 * s[5] - s[6] + 2 * s[7] - s[8]) / 9;
+			c[1] = (s[1] + s[2] - s[4] - s[5] - s[6] + s[8]) / 6;
+			c[2] = (-s[2] - s[3] - s[4] + s[6] + s[7] + s[8]) / 6;
+			c[3] = (-2 * s[0] + s[1] + s[2] - 2 * s[3] + s[4] + s[5] + s[6] - 2 * s[7] + s[8]) / 6;
+			c[4] = (-2 * s[0] - 2 * s[1] + s[2] + s[3] + s[4] - 2 * s[5] + s[6] + s[7] + s[8]) / 6;
+			c[5] = (-s[2] + s[4] - s[6] + s[8]) / 4;
+			
+			//System.out.println("c = " + Matrix.toString(c));
+			
+			double d = (4*c[3]*c[4] - sqr(c[5]));
+			
+			if (d < EPSILON_DOUBLE || c[3] >= 0) {	// not a maximum (minimum or saddle point)
+				return null;
+			}
+			
+			// max position:
+			float x = (float) ((c[2]*c[5] - 2*c[1]*c[4]) / d);
+			float y = (float) ((c[1]*c[5] - 2*c[2]*c[3]) / d);
+			// max value:
+			float z = (float) (c[0] + c[1]*x + c[2]*y + c[3]*x*x + c[4]*y*y + c[5]*x*y);
+			return new float[] {x, y, z};
+		}
+	}
+	
+	// ------------------------------------------------------------------------------
+	
+	/**
+	 * 2D interpolator based on fitting a 'quartic' (i.e., 4th-order) polynomial
 	 * <br>
 	 * f(x,y) = c_0 + c_1 x + c_2 y + c_3 x^2 + c_4 y^2 + c_5 x y + c_6 x^2 y + c_7 x y^2 + c_8 x^2 y^2  
 	 * <br>
-	 * to the supplied samples. The underlying interpolation function passes through
+	 * to the supplied sample values. The interpolation function passes through
 	 * all sample values. The local maximum cannot be found in closed form but 
 	 * is found iteratively, which is not guaranteed to succeed.
-	 * All 9 sample values are used.
 	 * @see MaxLocator#getMax(float[])
 	 */
 	public static class Quartic extends MaxLocator {
 		static int DefaultMaxIterations = 20;		// iteration limit
-		static double DefaulMinMove = 1e-6;			// smallest x/y move to continue search 
-		static double DefaultSearchWindow = 0.6;	// x/y search boundary (-xyLimit, +xyLimit)
+		static double DefaulMaxDelta = 1e-6;			// smallest x/y move to continue search 
+		static double DefaultMaxRad = 1.0;	// x/y search boundary (-xyLimit, +xyLimit)
 		
 		private final int maxIterations;
-		private final double minMove;
-		private final double searchWindow;
+		private final double maxDelta;
+		private final double maxRad;
+//		private final double searchWindow;
 		
 		private final double[] c = new double[9];	// polynomial coefficients
 		
 		// -----------------------------------------------------------
 		
 		public Quartic() {
-			this(DefaultMaxIterations, DefaulMinMove, DefaultSearchWindow);
+			this(DefaultMaxIterations, DefaulMaxDelta, DefaultMaxRad);
 		}
 				
-		public Quartic(int maxIterations, double minMove, double searchWindow) {
+		public Quartic(int maxIterations, double maxDelta, double maxRad) {
 			this.maxIterations = maxIterations;
-			this.minMove = minMove;
-			this.searchWindow = searchWindow;
+			this.maxDelta = maxDelta;
+			this.maxRad = maxRad;
 		}
 		
 		@Override
@@ -174,10 +181,18 @@ public abstract class MaxLocator {
 			c[2] = (s[7] - s[3]) / 2;
 			c[3] = (s[1] - 2 * s[0] + s[5]) / 2;
 			c[4] = (s[3] - 2 * s[0] + s[7]) / 2;
-			c[5] = (s[4] + s[8] - s[2] - s[6]) / 4;
-			c[6] = (s[6] + s[8] - s[2] - s[4]) / 4 - c[2];
-			c[7] = (s[2] + s[8] - s[4] - s[6]) / 4 - c[1];
-			c[8] = s[0] - (s[1] + s[3] + s[5] + s[7]) / 2 + (s[2] + s[4] + s[6] + s[8]) / 4;
+			c[5] = (-s[2] + s[4] - s[6] + s[8]) / 4;
+			c[6] = (-s[2] + 2 *s[3] - s[4] + s[6] - 2 * s[7] + s[8]) / 4;
+			c[7] = (-2 * s[1] + s[2] - s[4] + 2 * s[5] - s[6] + s[8]) / 4;
+			c[8] = s[0] + (-2 * s[1] + s[2] - 2 * s[3] + s[4] - 2 * s[5] + s[6] - 2 * s[7] + s[8]) / 4;
+			
+			//System.out.println("c = " + Matrix.toString(c));
+			
+			double d = (4*c[3]*c[4] - sqr(c[5]));
+			
+			if (d < EPSILON_DOUBLE || c[3] >= 0) {	// not a maximum (minimum or saddle point)
+				return null;
+			}
 			
 			double[] xyMax = getMaxPosition();
 			if (xyMax == null) {	// did not converge!
@@ -187,46 +202,30 @@ public abstract class MaxLocator {
 			return new float[] {(float) xyMax[0], (float) xyMax[1], z};
 		}
 		
-		private float getInterpolatedValue(double[] xy) {
-			final double x = xy[0];
-			final double y = xy[1];
+		private float getInterpolatedValue(double[] X) {
+			final double x = X[0];
+			final double y = X[1];
 			return (float) (c[0] + c[1]*x + c[2]*y + c[3]*x*x + c[4]*y*y
 							+ c[5]*x*y + c[6]*x*x*y + c[7]*x*y*y + c[8]*x*x*y*y);
 		}
 		
-		private boolean closeEnough(double a, double b) {
-			return Math.abs(a - b) < minMove;
-		}
-		
 		private double[] getMaxPosition() {
+			boolean done = false;
+			int n = 0;
 			double[] Xcur = {0, 0};
-			boolean inside = true;
-			int n;
-			for (n = 1; n <= maxIterations; n++) {
-				
-				if (Xcur[0] < -searchWindow || Xcur[0] > searchWindow || Xcur[1] < -searchWindow || Xcur[1] > searchWindow) {
-					inside = false;
-					break;
+
+			while (!done && n < maxIterations && Matrix.normL2(Xcur) < maxRad) {
+				double[] Xnext = this.getNextPos(Xcur);	
+				if (Matrix.distL2(Xcur, Xnext) < maxDelta) {
+					done = true;
 				}
-				
-				double[] Xnext = this.getNextMaxPosition(Xcur);
-				if (closeEnough(Xcur[0], Xnext[0]) && closeEnough(Xcur[1], Xnext[1])) {
-					break;
+				else {
+					Xcur[0] = Xnext[0];
+					Xcur[1] = Xnext[1];
 				}
-				
-				Xcur[0] = Xnext[0];
-				Xcur[1] = Xnext[1];
 			}
 			
-			if (n >= maxIterations) {
-				return null;
-//				throw new RuntimeException("getMaxPosition() did not converge, s = \n" + toString(s));
-			}
-			if (!inside) {
-				return null;
-//				throw new RuntimeException("getMaxPosition() exceeded search limit!");
-			}
-			return Xcur;
+			return done ? Xcur : null;
 		}
 		
 		/**
@@ -234,14 +233,14 @@ public abstract class MaxLocator {
 		 * @param X Taylor expansion point
 		 * @return the estimated maximum position
 		 */
-		private double[] getNextMaxPosition(double[] X) {
+		private double[] getNextPos(double[] X) {
 			double[] g = this.getGradient(X);
 			double[][] Hi = this.getInverseHessian(X);
 			return Matrix.add(X, Matrix.multiply(Matrix.multiply(-1, Hi), g));
 		}
 		
-		private double[] getGradient(double[] xy) {
-			return this.getGradient(xy[0], xy[1]);
+		private double[] getGradient(double[] X) {
+			return this.getGradient(X[0], X[1]);
 		}
 
 		private double[] getGradient(double x, double y) {
@@ -250,9 +249,11 @@ public abstract class MaxLocator {
 			return new double[] {gx, gy};
 		}
 		
-		private double[][] getInverseHessian(double[] xy) {
-			final double x = xy[0];
-			final double y = xy[1];
+		private double[][] getInverseHessian(double[] X) {
+			return this.getInverseHessian(X[0], X[1]);
+		}
+		
+		private double[][] getInverseHessian(double x, double y) {
 			double R = 2*(c[4] + x*(c[7] + c[8]*x));
 			double S = 2*(c[3] + y*(c[6] + c[8]*y));
 			double T = c[5] + 2*c[6]*x + 2*c[7]*y + 4*c[8]*x*y;
