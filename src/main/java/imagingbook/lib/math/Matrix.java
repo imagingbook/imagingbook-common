@@ -10,6 +10,7 @@
 package imagingbook.lib.math;
 
 import static imagingbook.lib.math.Arithmetic.isZero;
+import static imagingbook.lib.math.Arithmetic.sqr;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -595,6 +596,64 @@ public abstract class Matrix {
 		double sum = 0;
 		for (double val : x) {
 			sum = sum + (val * val);
+		}
+		return (float) sum;
+	}
+	
+	// Distance between vectors ---------------------------------------
+	
+	/** 
+	 * Calculates the L2 distance between two vectors (points)
+	 * in n-dimensional space. Both vectors must have the same 
+	 * number of elements.
+	 * @param x first vector
+	 * @param y second vector
+	 * @return the distance
+	 */
+	public static double distL2(double[] x, double[] y) {
+		return Math.sqrt(distL2squared(x, y));
+	}
+	
+	/** 
+	 * Calculates the squared L2 distance between two vectors (points)
+	 * in n-dimensional space. Both vectors must have the same 
+	 * number of elements.
+	 * @param x first vector
+	 * @param y second vector
+	 * @return the squared distance
+	 */
+	public static double distL2squared(double[] x, double[] y) {
+		double sum = 0;
+		for  (int i = 0; i < x.length; i++) {
+			sum = sum + sqr(x[i] - y[i]);
+		}
+		return sum;
+	}
+	
+	/** 
+	 * Calculates the L2 distance between two vectors (points)
+	 * in n-dimensional space. Both vectors must have the same 
+	 * number of elements.
+	 * @param x first vector
+	 * @param y second vector
+	 * @return the distance
+	 */
+	public static float distL2(float[] x, float[] y) {
+		return (float) Math.sqrt(distL2squared(x, y));
+	}
+	
+	/** 
+	 * Calculates the squared L2 distance between two vectors (points)
+	 * in n-dimensional space. Both vectors must have the same 
+	 * number of elements.
+	 * @param x first vector
+	 * @param y second vector
+	 * @return the squared distance
+	 */
+	public static float distL2squared(float[] x, float[] y) {
+		double sum = 0;
+		for  (int i = 0; i < x.length; i++) {
+			sum = sum + sqr(x[i] - y[i]);
 		}
 		return (float) sum;
 	}
