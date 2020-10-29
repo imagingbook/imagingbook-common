@@ -1,16 +1,12 @@
 package imagingbook.lib.ij;
 
 import java.awt.Color;
-import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.util.List;
 
 import ij.IJ;
-import ij.gui.Arrow;
 import ij.gui.Line;
 import ij.gui.Overlay;
-import ij.gui.PointRoi;
-import ij.gui.PolygonRoi;
 import ij.gui.Roi;
 import ij.gui.ShapeRoi;
 

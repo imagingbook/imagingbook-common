@@ -9,8 +9,8 @@
 
 package imagingbook.lib.math;
 
-import imagingbook.lib.math.Matrix;
-import imagingbook.lib.settings.PrintPrecision;
+//import imagingbook.lib.math.Matrix;
+//import imagingbook.lib.settings.PrintPrecision;
 
 /**
  * Implements an efficient, closed form algorithm for calculating the real 

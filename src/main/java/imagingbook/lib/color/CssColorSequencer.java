@@ -9,7 +9,6 @@
 
 package imagingbook.lib.color;
 
-import imagingbook.lib.color.CssColor;
 import java.awt.Color;
 
 public class CssColorSequencer {
