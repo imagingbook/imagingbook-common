@@ -151,14 +151,13 @@ public abstract class MaxLocator {
 	 * @see MaxLocator#getMax(float[])
 	 */
 	public static class Quartic extends MaxLocator {
-		static int DefaultMaxIterations = 20;		// iteration limit
-		static double DefaulMaxDelta = 1e-6;			// smallest x/y move to continue search 
-		static double DefaultMaxRad = 1.0;	// x/y search boundary (-xyLimit, +xyLimit)
+		static int DefaultMaxIterations = 20;	// iteration limit
+		static double DefaulMaxDelta = 1e-6;	// smallest x/y move to continue search 
+		static double DefaultMaxRad = 1.0;		// x/y search boundary (-xyLimit, +xyLimit)
 		
 		private final int maxIterations;
 		private final double maxDelta;
 		private final double maxRad;
-//		private final double searchWindow;
 		
 		private final double[] c = new double[9];	// polynomial coefficients
 		
@@ -188,55 +187,47 @@ public abstract class MaxLocator {
 			
 			//System.out.println("c = " + Matrix.toString(c));
 			
-			double d = (4*c[3]*c[4] - sqr(c[5]));
-			
-			if (d < EPSILON_DOUBLE || c[3] >= 0) {	// not a maximum (minimum or saddle point)
-				return null;
-			}
-			
-			double[] xyMax = getMaxPosition();
-			if (xyMax == null) {	// did not converge!
-				return null;
-			}
-			float z = getInterpolatedValue(xyMax);
-			return new float[] {(float) xyMax[0], (float) xyMax[1], z};
-		}
-		
-		private float getInterpolatedValue(double[] X) {
-			final double x = X[0];
-			final double y = X[1];
-			return (float) (c[0] + c[1]*x + c[2]*y + c[3]*x*x + c[4]*y*y
-							+ c[5]*x*y + c[6]*x*x*y + c[7]*x*y*y + c[8]*x*x*y*y);
-		}
-		
-		private double[] getMaxPosition() {
 			boolean done = false;
 			int n = 0;
-			double[] Xcur = {0, 0};
-
-			while (!done && n < maxIterations && Matrix.normL2(Xcur) < maxRad) {
-				double[] Xnext = this.getNextPos(Xcur);	
-				if (Matrix.distL2(Xcur, Xnext) < maxDelta) {
+			double[] xCur = {0, 0};
+			double H00 = 0, H11 = 0, H01 = 0, d = 0;
+			while (!done && n < maxIterations && Matrix.normL2(xCur) < maxRad) {
+				double[] g = this.getGradient(xCur);
+				double[][] H = this.getHessian(xCur);
+				H00 = H[0][0];
+				H11 = H[1][1];
+				H01 = H[0][1];
+				d = H00 * H11 - sqr(H01);	// TODO: check for zero d
+				double[][] Hi = {			// inverse Hessian
+						{ H11/d, -H01/d}, 
+						{-H01/d,  H00/d}};	
+				double[] xNext = Matrix.add(xCur, Matrix.multiply(Matrix.multiply(-1, Hi), g));
+				if (Matrix.distL2(xCur, xNext) < maxDelta) {
 					done = true;
 				}
 				else {
-					Xcur[0] = Xnext[0];
-					Xcur[1] = Xnext[1];
+					xCur[0] = xNext[0];
+					xCur[1] = xNext[1];
+					n = n + 1;
 				}
 			}
 			
-			return done ? Xcur : null;
+			boolean isMax = (d > 0) && (H00 < 0);
+			
+			if (done && isMax) {
+				float z = (float) getInterpolatedValue(xCur);
+				return new float[] {(float) xCur[0], (float) xCur[1], z};
+			}
+			else {
+				return null;
+			}
 		}
 		
-		/**
-		 * Estimate max. position using Taylor expansion from the given position
-		 * @param X Taylor expansion point
-		 * @return the estimated maximum position
-		 */
-		private double[] getNextPos(double[] X) {
-			double[] g = this.getGradient(X);
-			double[][] Hi = this.getInverseHessian(X);
-			return Matrix.add(X, Matrix.multiply(Matrix.multiply(-1, Hi), g));
+		private double getInterpolatedValue(double[] X) {
+			final double x = X[0];
+			final double y = X[1];
+			return c[0] + c[1]*x + c[2]*y + c[3]*x*x + c[4]*y*y
+						+ c[5]*x*y + c[6]*x*x*y + c[7]*x*y*y + c[8]*x*x*y*y;
 		}
 		
 		private double[] getGradient(double[] X) {
@@ -249,19 +240,19 @@ public abstract class MaxLocator {
 			return new double[] {gx, gy};
 		}
 		
-		private double[][] getInverseHessian(double[] X) {
-			return this.getInverseHessian(X[0], X[1]);
+		private double[][] getHessian(double[] X) {
+			return this.getHessian(X[0], X[1]);
 		}
 		
-		private double[][] getInverseHessian(double x, double y) {
-			double R = 2*(c[4] + x*(c[7] + c[8]*x));
-			double S = 2*(c[3] + y*(c[6] + c[8]*y));
-			double T = c[5] + 2*c[6]*x + 2*c[7]*y + 4*c[8]*x*y;
-			double a = 1.0 / (R*S - T*T);	// TODO: check denominator for zero!
+		private double[][] getHessian(double x, double y) {
+			final double H00 = 2*(c[3] + y*(c[6] + c[8]*y));
+			final double H11 = 2*(c[4] + x*(c[7] + c[8]*x));
+			final double H01 = c[5] + 2*c[6]*x + 2*c[7]*y + 4*c[8]*x*y;
 			double[][] Hi = {
-					{ a*R, -a*T}, 
-					{-a*T,  a*S}};
+					{ H00, H01}, 
+					{ H01, H11}};
 			return Hi;
 		}
+		
 	}
 }

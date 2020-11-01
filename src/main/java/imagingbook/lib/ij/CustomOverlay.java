@@ -18,7 +18,7 @@ import ij.gui.ShapeRoi;
  * overlay types, e.g., for displaying corners, SIFT markers etc.
  * (e.g., see {@link imagingbook.pub.sift.util.SiftOverlay}).
  * In the simplest case, the concrete subclass just needs to implement the method 
- * {@link #makeRoi(T)}, which is only concerned with geometry.
+ * {@link #makeRoi(Object)}, which is only concerned with geometry.
  * Stroke width and color are handled uniformly by this class ({@link CustomOverlay}).
  * The coordinates of added {@link ShapeRoi} instances are automatically 
  * shifted by a <strong>half-pixel distance</strong> (0.5, 0.5) 
