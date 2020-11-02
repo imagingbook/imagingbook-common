@@ -167,7 +167,7 @@ public class GuiTools {
 	 * @param magnification the new magnification factor (1.0 = 100%)
 	 * @param marginX horizontal screen margin
 	 * @param marginY vertical screen margin
-	 * @return
+	 * @return true if successful, false otherwise
 	 */
 	public static boolean zoomExact(ImagePlus im, double magnification, int marginX, int marginY) {
 		ImageWindow win = im.getWindow();
@@ -210,7 +210,7 @@ public class GuiTools {
 	 * 
 	 * @param im the image, which must be currently open (displayed)
 	 * @param magnification the new magnification factor (1.0 = 100%)
-	 * @return
+	 * @return true if successful, false otherwise
 	 */
 	public static boolean zoomExact(ImagePlus im, double magnification) {
 		return zoomExact(im, magnification, DEFAULT_SCREEN_MARGIN_X, DEFAULT_SCREEN_MARGIN_Y);

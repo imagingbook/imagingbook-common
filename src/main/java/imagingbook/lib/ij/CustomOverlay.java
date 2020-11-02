@@ -146,20 +146,20 @@ public abstract class CustomOverlay<T> extends Overlay {
 		super.add(roi);
     }
 	
-	/**
-	 * Checks if ImageJ automatically draws the particular roi instance with a half-pixel
-	 * shift or not.
-	 * Note that this is handled inconsistently in ImageJ and probably a bug -
-	 * all roi classes should have the same behavior.
-	 * Known ROI-types that do NOT half-pixel shift are
-	 * {@link ShapeRoi} and certain kinds of 
-	 * {@link Line} (namely {@link Roi.POLYGON}, {@link Roi.FREELINE}, {@link Roi.ANGLE}).
-	 *
-	 * @param roi
-	 * @return
-	 */
-	public static boolean drawsWithHalfPixelShift(Roi roi) {
-		return true;
+//	/**
+//	 * Checks if ImageJ automatically draws the particular roi instance with a half-pixel
+//	 * shift or not.
+//	 * Note that this is handled inconsistently in ImageJ and probably a bug -
+//	 * all roi classes should have the same behavior.
+//	 * Known ROI-types that do NOT half-pixel shift are
+//	 * {@link ShapeRoi} and certain kinds of 
+//	 * {@link Line} (namely {@link Roi.POLYGON}, {@link Roi.FREELINE}, {@link Roi.ANGLE}).
+//	 *
+//	 * @param roi
+//	 * @return
+//	 */
+//	public static boolean drawsWithHalfPixelShift(Roi roi) {
+//		return true;
 //		return
 //			roi instanceof Line ||
 //			roi instanceof Arrow ||
@@ -167,7 +167,7 @@ public abstract class CustomOverlay<T> extends Overlay {
 //			roi instanceof PolygonRoi && ((PolygonRoi)roi).getType() == Roi.POLYLINE ||
 //			roi instanceof PolygonRoi && ((PolygonRoi)roi).getType() == Roi.FREELINE 
 //			;
-	}
+//	}
 	
 	// -----------------------------------------------------------
 	

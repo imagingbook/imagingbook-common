@@ -2,6 +2,7 @@ package imagingbook.pub.corners.subpixel;
 
 import static imagingbook.lib.math.Arithmetic.EPSILON_DOUBLE;
 import static imagingbook.lib.math.Arithmetic.sqr;
+import static imagingbook.lib.math.Arithmetic.isZero;
 
 import imagingbook.lib.math.Matrix;
 
@@ -185,8 +186,7 @@ public abstract class MaxLocator {
 			c[7] = (-2 * s[1] + s[2] - s[4] + 2 * s[5] - s[6] + s[8]) / 4;
 			c[8] = s[0] + (-2 * s[1] + s[2] - 2 * s[3] + s[4] - 2 * s[5] + s[6] - 2 * s[7] + s[8]) / 4;
 			
-			//System.out.println("c = " + Matrix.toString(c));
-			
+			// iteratively find the max location:
 			boolean done = false;
 			int n = 0;
 			double[] xCur = {0, 0};
@@ -197,10 +197,13 @@ public abstract class MaxLocator {
 				H00 = H[0][0];
 				H11 = H[1][1];
 				H01 = H[0][1];
-				d = H00 * H11 - sqr(H01);	// TODO: check for zero d
+				d = H00 * H11 - sqr(H01);
+				if (isZero(d)) {
+					throw new RuntimeException(Quartic.class.getSimpleName() + ": zero determinant");
+				}
 				double[][] Hi = {			// inverse Hessian
-						{ H11/d, -H01/d}, 
-						{-H01/d,  H00/d}};	
+						{ H11 / d, -H01 / d}, 
+						{-H01 / d,  H00 / d}};	
 				double[] xNext = Matrix.add(xCur, Matrix.multiply(Matrix.multiply(-1, Hi), g));
 				if (Matrix.distL2(xCur, xNext) < maxDelta) {
 					done = true;
@@ -212,7 +215,7 @@ public abstract class MaxLocator {
 				}
 			}
 			
-			boolean isMax = (d > 0) && (H00 < 0);
+			boolean isMax = (d > 0) && (H00 < 0);	// false if saddle point or relative minimum
 			
 			if (done && isMax) {
 				float z = (float) getInterpolatedValue(xCur);
