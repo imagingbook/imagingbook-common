@@ -5,6 +5,7 @@ import static imagingbook.lib.math.Arithmetic.sqr;
 import static imagingbook.lib.math.Arithmetic.isZero;
 
 import imagingbook.lib.math.Matrix;
+import imagingbook.lib.util.choice.DeclareChoice;
 
 /**
  * The common interface for all sub-pixel locators in this package.
@@ -71,6 +72,7 @@ public abstract class MaxLocator {
 	 * to the supplied samples values.
 	 * @see MaxLocator#getMax(float[])
 	 */
+	@DeclareChoice("Quadratic Taylor Interpolator")
 	public static class QuadraticTaylor extends MaxLocator {
 		
 		private final double[] c = new double[6];	// polynomial coefficients
@@ -109,6 +111,7 @@ public abstract class MaxLocator {
 	 * to the supplied sample values.
 	 * @see MaxLocator#getMax(float[])
 	 */
+	@DeclareChoice("Quadratic Least-Squares Interpolator")
 	public static class QuadraticLeastSquares extends MaxLocator {
 		
 		private final double[] c = new double[6];	// polynomial coefficients
@@ -151,6 +154,7 @@ public abstract class MaxLocator {
 	 * is found iteratively, which is not guaranteed to succeed.
 	 * @see MaxLocator#getMax(float[])
 	 */
+	@DeclareChoice("Quartic Interpolator")
 	public static class Quartic extends MaxLocator {
 		static int DefaultMaxIterations = 20;	// iteration limit
 		static double DefaulMaxDelta = 1e-6;	// smallest x/y move to continue search 

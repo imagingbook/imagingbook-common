@@ -8,6 +8,7 @@ imagingbook.lib.interpolation
 imagingbook.lib.math
 imagingbook.lib.settings
 imagingbook.lib.util
+imagingbook.lib.util.choice
 imagingbook.pub
 imagingbook.pub.color.edge
 imagingbook.pub.color.filters

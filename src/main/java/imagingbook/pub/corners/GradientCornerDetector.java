@@ -20,7 +20,9 @@ import ij.process.ImageProcessor;
 import imagingbook.lib.filters.GaussianFilter;
 import imagingbook.lib.image.Filter;
 import imagingbook.lib.image.ImageMath;
+import imagingbook.lib.util.choice.Choices;
 import imagingbook.pub.corners.subpixel.MaxLocator;
+//import imagingbook.pub.corners.subpixel.MaxLocator.Method;
 import imagingbook.pub.corners.subpixel.MaxLocator.Method;
 
 /**
@@ -50,6 +52,7 @@ public abstract class GradientCornerDetector {
 		public double dmin = 10;
 		/** If/how to perform subpixel localization */
 		public Method maxLocatorMethod = Method.None;
+//		public Class<? extends MaxLocator> maxLocatorMethod = MaxLocator.QuadraticLeastSquares.class; //Method.None;
 		/** Corner response threshold */
 		public double scoreThreshold = 20000;
 	}
@@ -81,6 +84,7 @@ public abstract class GradientCornerDetector {
 		this.params = params;
 //		this.maxLocator = MaxLocator.create(params.maxLocatorMethod);
 		this.maxLocator = MaxLocator.getInstance(params.maxLocatorMethod);
+//		this.maxLocator = Choices.getInstance(params.maxLocatorMethod);
 		this.Q = makeCornerScores(ip);
 		this.corners = makeCorners();
 	}
