@@ -1,10 +1,14 @@
 package imagingbook.pub.corners.subpixel;
 
 import static imagingbook.lib.math.Arithmetic.EPSILON_DOUBLE;
-import static imagingbook.lib.math.Arithmetic.sqr;
 import static imagingbook.lib.math.Arithmetic.isZero;
+import static imagingbook.lib.math.Arithmetic.sqr;
+import static imagingbook.lib.math.Matrix.add;
+import static imagingbook.lib.math.Matrix.distL2;
+import static imagingbook.lib.math.Matrix.dotProduct;
+import static imagingbook.lib.math.Matrix.multiply;
+import static imagingbook.lib.math.Matrix.normL2;
 
-import imagingbook.lib.math.Matrix;
 import imagingbook.lib.util.choice.DeclareChoice;
 
 /**
@@ -37,7 +41,7 @@ public abstract class MaxLocator {
 	 * Enumeration of keys for {@link MaxLocator} methods.
 	 */
 	public enum Method {
-		QuadraticTaylor, QuadraticLeastSquares, Quartic, None;
+		QuadraticTaylor, QuadraticTaylor2, QuadraticLeastSquares, Quartic, None;
 	}
 	
 	/**
@@ -51,6 +55,8 @@ public abstract class MaxLocator {
 		switch(m) {
 		case QuadraticTaylor:
 			ml = new QuadraticTaylor(); break;
+		case QuadraticTaylor2:
+			ml = new QuadraticTaylor2(); break;
 		case QuadraticLeastSquares:
 			ml = new QuadraticLeastSquares(); break;
 		case Quartic:
@@ -98,6 +104,36 @@ public abstract class MaxLocator {
 			// max value:
 			float z = (float) (c[0] + c[1]*x + c[2]*y + c[3]*x*x + c[4]*y*y + c[5]*x*y);
 			return new float[] {x, y, z};
+		}
+	}
+	
+	// version 2 - actually looks more like Taylor expansion!
+	@DeclareChoice("Quadratic Taylor Interpolator 2")
+	public static class QuadraticTaylor2 extends MaxLocator {
+
+		@Override
+		public float[] getMax(float[] s) {
+			double[] g = { 							// the gradient
+					(s[1] - s[5]) / 2, 
+					(s[7] - s[3]) / 2};	
+			
+			double H00 = s[1] - 2*s[0] + s[5];		// elements of the Hessian matrix
+			double H11 = s[3] - 2*s[0] + s[7];
+			double H01 = (s[4] + s[8] - s[2] - s[6]) / 4;			
+			double d = H00 * H11 - sqr(H01);		// = det(H)
+			
+			if (d < EPSILON_DOUBLE || H00 >= 0) {	// not a maximum (minimum or saddle point)
+				return null;
+			}
+			
+			double[][] Hi = {			// inverse Hessian
+					{ H11 / d, -H01 / d}, 
+					{-H01 / d,  H00 / d}};	
+			
+			double[] delta = multiply(Hi, g);
+			double[] xy = multiply(-1, delta);				// maximum position
+			double q = s[0] - 0.5 * dotProduct(g, delta);	// maximum value
+			return new float[] {(float) xy[0], (float) xy[1], (float) q};
 		}
 	}
 	
@@ -195,7 +231,7 @@ public abstract class MaxLocator {
 			int n = 0;
 			double[] xCur = {0, 0};
 			double H00 = 0, H11 = 0, H01 = 0, d = 0;
-			while (!done && n < maxIterations && Matrix.normL2(xCur) < maxRad) {
+			while (!done && n < maxIterations && normL2(xCur) < maxRad) {
 				double[] g = this.getGradient(xCur);
 				double[][] H = this.getHessian(xCur);
 				H00 = H[0][0];
@@ -208,8 +244,8 @@ public abstract class MaxLocator {
 				double[][] Hi = {			// inverse Hessian
 						{ H11 / d, -H01 / d}, 
 						{-H01 / d,  H00 / d}};	
-				double[] xNext = Matrix.add(xCur, Matrix.multiply(Matrix.multiply(-1, Hi), g));
-				if (Matrix.distL2(xCur, xNext) < maxDelta) {
+				double[] xNext = add(xCur, multiply(multiply(-1, Hi), g));
+				if (distL2(xCur, xNext) < maxDelta) {
 					done = true;
 				}
 				else {
