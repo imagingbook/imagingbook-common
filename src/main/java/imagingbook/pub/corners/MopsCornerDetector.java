@@ -15,13 +15,14 @@ import ij.process.ImageProcessor;
 
 
 /**
- * This is an implementation of the Shi-Tomasi corner detector, as 
- * described in
+ * This is an implementation of the corner detector described in
  * <blockquote>
- *  J. Shi and C. Tomasi. Good features to track. In “Proceedings
- *  of IEEE Conference on Computer Vision and Pattern Recognition,
- *  CVPR’94”, pp. 593–600, Seattle, WA, USA (1994).
+ *  M. Brown, R. Szeliski, and S. Winder, Multi-image matching using multi-scale oriented
+ * patches, in Proc. of the IEEE Computer Society Conference on Computer Vision and Pattern Recognition
+ * (CVPR), 2005, pp. 510–517.
  * </blockquote>
+ * The corner score is defined as the harmonic mean of the local structure tensor's eigenvalues 
+ * lambda_1, lambda_2.
  * 
  * @author W. Burger
  * @version 2020/10/05

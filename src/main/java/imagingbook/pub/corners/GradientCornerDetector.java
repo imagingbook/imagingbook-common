@@ -234,7 +234,7 @@ public abstract class GradientCornerDetector {
 				if (s != null && s[0] > th && isLocalMax(s)) {
 					Corner c = makeCorner(u, v, s);
 					if (c != null) {
-						C.add(makeCorner(u, v, s));
+						C.add(c);
 					}
 				}
 			}
