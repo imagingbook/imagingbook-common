@@ -27,13 +27,15 @@ import ij.process.ImageProcessor;
  * @version 2020/10/02
  */
 public class HarrisCornerDetector extends GradientCornerDetector {
+	
+	public static double DEFAULT_THRESHOLD = 20000;
 
 	public static class Parameters extends GradientCornerDetector.Parameters {
 		/** Sensitivity parameter */
 		public double alpha = 0.05;
 		
 		public Parameters() {
-			scoreThreshold = 20000;	// individual default threshold
+			scoreThreshold = DEFAULT_THRESHOLD;	// individual default threshold
 		}
 	}
 

@@ -32,10 +32,12 @@ import ij.process.ImageProcessor;
  */
 public class MopsCornerDetector extends GradientCornerDetector {
 	
+	public static double DEFAULT_THRESHOLD = 90;
+	
 	public static class Parameters extends GradientCornerDetector.Parameters {
 		
 		public Parameters() {
-			scoreThreshold = 90;	// individual default threshold
+			scoreThreshold = DEFAULT_THRESHOLD;	// individual default threshold
 		}
 	}
 

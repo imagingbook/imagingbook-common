@@ -32,10 +32,12 @@ import ij.process.ImageProcessor;
  */
 public class ShiTomasiDetector extends GradientCornerDetector {
 	
+	public static double DEFAULT_THRESHOLD = 180;
+	
 	public static class Parameters extends GradientCornerDetector.Parameters {
 		
 		public Parameters() {
-			scoreThreshold = 180;	// individual default threshold
+			scoreThreshold = DEFAULT_THRESHOLD;	// individual default threshold
 		}
 	}
 	
