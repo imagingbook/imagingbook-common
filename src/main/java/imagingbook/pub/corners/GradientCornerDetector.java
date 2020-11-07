@@ -20,14 +20,16 @@ import ij.process.ImageProcessor;
 import imagingbook.lib.filters.GaussianFilter;
 import imagingbook.lib.image.Filter;
 import imagingbook.lib.image.ImageMath;
-import imagingbook.lib.util.choice.Choices;
 import imagingbook.pub.corners.subpixel.MaxLocator;
-//import imagingbook.pub.corners.subpixel.MaxLocator.Method;
 import imagingbook.pub.corners.subpixel.MaxLocator.Method;
 
 /**
  * Abstract super class for all corner detectors based on local 
  * structure tensor.
+ * This is the superclass for various concrete implementations:
+ * {@link HarrisCornerDetector},
+ * {@link ShiTomasiDetector},
+ * {@link MopsCornerDetector}.
  * 
  * TODO: replace 'border' by ROI rectangle
  * 
@@ -52,9 +54,8 @@ public abstract class GradientCornerDetector {
 		public double dmin = 10;
 		/** If/how to perform subpixel localization */
 		public Method maxLocatorMethod = Method.None;
-//		public Class<? extends MaxLocator> maxLocatorMethod = MaxLocator.QuadraticLeastSquares.class; //Method.None;
 		/** Corner response threshold */
-		public double scoreThreshold = 20000;
+		public double scoreThreshold = Double.NaN;
 	}
 	
 	protected static final float UndefinedScoreValue = 0;	// to be returned when corner score is undefined
@@ -82,9 +83,7 @@ public abstract class GradientCornerDetector {
 		this.M = ip.getWidth();
 		this.N = ip.getHeight();
 		this.params = params;
-//		this.maxLocator = MaxLocator.create(params.maxLocatorMethod);
 		this.maxLocator = MaxLocator.getInstance(params.maxLocatorMethod);
-//		this.maxLocator = Choices.getInstance(params.maxLocatorMethod);
 		this.Q = makeCornerScores(ip);
 		this.corners = makeCorners();
 	}
@@ -100,7 +99,7 @@ public abstract class GradientCornerDetector {
 	 * @param C = Ixy(u,v)
 	 * @return the corner score
 	 */
-	protected abstract float computeCornerScore(float A, float B, float C);
+	protected abstract float getCornerScore(float A, float B, float C);
 	
 	// -------------------------------------------------------------
 	
@@ -110,8 +109,8 @@ public abstract class GradientCornerDetector {
 		
 		// nothing really but a Sobel-like gradient:
 		if (params.doPreFilter) {
-			Filter.convolveY(Ix, hp);				// pre-filter Ix vertically
-			Filter.convolveX(Iy, hp);				// pre-filter Iy horizontally
+			Filter.convolveY(Ix, hp);			// pre-filter Ix vertically
+			Filter.convolveX(Iy, hp);			// Pare-filter Iy horizontally
 		}
 		
 		Filter.convolveX(Ix, hd);				// get first derivative in x
@@ -136,7 +135,7 @@ public abstract class GradientCornerDetector {
 		final float[] q = (float[]) Q.getPixels();
 		
 		for (int i = 0; i < M * N; i++) {
-			q[i] = computeCornerScore(A[i], B[i], C[i]);
+			q[i] = getCornerScore(A[i], B[i], C[i]);
 		}
 		
 //		(new ImagePlus("Ixx", Ixx)).show();

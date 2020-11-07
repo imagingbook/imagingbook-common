@@ -23,6 +23,9 @@ import ij.process.ImageProcessor;
  *  of IEEE Conference on Computer Vision and Pattern Recognition,
  *  CVPR’94”, pp. 593–600, Seattle, WA, USA (1994).
  * </blockquote>
+ * This class extends {@link GradientCornerDetector} (where most
+ * of the work is done) by defining a specific corner score function
+ * and associated threshold.
  * 
  * @author W. Burger
  * @version 2020/10/05
@@ -32,7 +35,7 @@ public class ShiTomasiDetector extends GradientCornerDetector {
 	public static class Parameters extends GradientCornerDetector.Parameters {
 		
 		public Parameters() {
-			scoreThreshold = 20000;	// individual default threshold
+			scoreThreshold = 180;	// individual default threshold
 		}
 	}
 	
@@ -43,13 +46,13 @@ public class ShiTomasiDetector extends GradientCornerDetector {
 	// --------------------------------------------------------------
 
 	@Override
-	protected float computeCornerScore(float A, float B, float C) {
+	protected float getCornerScore(float A, float B, float C) {
 		double rootExpr = sqr((A - B) / 2) + sqr(C);
 		if (rootExpr < 0) {
 			return UndefinedScoreValue;
 		}
 		double lambda2 = (A + B) / 2 - sqrt(rootExpr);
-		return (float) sqr(lambda2); 	// returns lambda_2^2
+		return (float) lambda2;
 	}
 
 }

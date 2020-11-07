@@ -13,13 +13,15 @@ import ij.process.ImageProcessor;
 
 
 /**
- * This is an implementation of the Harris corner detector, as described
- * in
+ * This is an implementation of the Harris corner detector, as described in
  * <blockquote>
  *  C. G. Harris and M. Stephens. A combined corner and edge
  *  detector. In C. J. Taylor, editor, “4th Alvey Vision Conference”,
  *  pp. 147–151, Manchester (1988).
  *  </blockquote>
+ * This class extends {@link GradientCornerDetector} (where most
+ * of the work is done) by defining a specific corner score function
+ * and associated threshold.
  *
  * @author W. Burger
  * @version 2020/10/02
@@ -44,7 +46,7 @@ public class HarrisCornerDetector extends GradientCornerDetector {
 	// ----------------------------------------------------------------------
 
 	@Override	// pass as a function object?
-	protected float computeCornerScore(float A, float B, float C) {
+	protected float getCornerScore(float A, float B, float C) {
 		float alpha = (float) ((Parameters) params).alpha;
 		float det = A * B - C * C;
 		float trace = A + B;
