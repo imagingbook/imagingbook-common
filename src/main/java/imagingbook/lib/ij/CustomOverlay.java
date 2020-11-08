@@ -5,7 +5,6 @@ import java.awt.geom.Rectangle2D;
 import java.util.List;
 
 import ij.IJ;
-import ij.gui.Line;
 import ij.gui.Overlay;
 import ij.gui.Roi;
 import ij.gui.ShapeRoi;
@@ -27,6 +26,8 @@ import ij.gui.ShapeRoi;
  * Note: ImageJ draws all ROI types except {@link ShapeRoi} with a half-pixel offset.
  * This class redefines the methods {@link Overlay#add(Roi)} 
  * to perform the half-pixel shift.
+ * <br>
+ * Note: This is experimental code - do NOT rely on it!
  * 
  * @author WB
  * @version 2020/10/04
@@ -44,9 +45,12 @@ public abstract class CustomOverlay<T> extends Overlay {
 	// -----------------------------------------------------------
 	
 	/**
-	 * This method, which must be implemented by any subclass,
+	 * This method, which must be implemented by any subclass
+	 * of {@link CustomOverlay},
 	 * defines how an instance of type {@link T} is 
 	 * converted to an {@link Roi} object.
+	 * Called by {@link #addItem(T)}.
+	 * 
 	 * @param item an instance of type {@link T} to be added to the overlay
 	 * @return the resulting {@link Roi} object
 	 */
@@ -130,6 +134,7 @@ public abstract class CustomOverlay<T> extends Overlay {
 	 * Adds an ImageJ {@link Roi} instance to this overlay.
 	 * Optionally, a half-pixel shift is applied if the passed ROI 
 	 * is not drawn with a half-pixel shift by ImageJ.
+	 * Does not apply the overlay's current stroke width and color settings.
 	 * This method should be used instead of {@link Overlay#add(Roi)}.
 	 * 
 	 * @param roi the ROI to be added 
@@ -173,6 +178,7 @@ public abstract class CustomOverlay<T> extends Overlay {
 	
 	/**
 	 * Adds a single item of type {@link T} to this overlay.
+	 * Applies the overlay's current stroke width and color settings.
 	 * @param item an instance of type {@link T}
 	 */
 	public void addItem(T item) {
