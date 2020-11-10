@@ -49,7 +49,7 @@ public abstract class CustomOverlay<T> extends Overlay {
 	 * of {@link CustomOverlay},
 	 * defines how an instance of type {@link T} is 
 	 * converted to an {@link Roi} object.
-	 * Called by {@link #addItem(T)}.
+	 * Called by {@link #addItem(Object)}.
 	 * 
 	 * @param item an instance of type {@link T} to be added to the overlay
 	 * @return the resulting {@link Roi} object

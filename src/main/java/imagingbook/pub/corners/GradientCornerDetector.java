@@ -20,8 +20,8 @@ import ij.process.ImageProcessor;
 import imagingbook.lib.filters.GaussianFilter;
 import imagingbook.lib.image.Filter;
 import imagingbook.lib.image.ImageMath;
-import imagingbook.pub.corners.subpixel.MaxLocator;
-import imagingbook.pub.corners.subpixel.MaxLocator.Method;
+import imagingbook.pub.corners.subpixel.SubpixelMaxInterpolator;
+import imagingbook.pub.corners.subpixel.SubpixelMaxInterpolator.Method;
 
 /**
  * Abstract super class for all corner detectors based on local 
@@ -69,7 +69,7 @@ public abstract class GradientCornerDetector {
 	protected final Parameters params;
 	protected final FloatProcessor Q;
 	
-	private final MaxLocator maxLocator;
+	private final SubpixelMaxInterpolator maxLocator;
 	private final List<Corner> corners;
 	
 	// retained mainly for debugging
@@ -83,7 +83,7 @@ public abstract class GradientCornerDetector {
 		this.M = ip.getWidth();
 		this.N = ip.getHeight();
 		this.params = params;
-		this.maxLocator = MaxLocator.getInstance(params.maxLocatorMethod);
+		this.maxLocator = SubpixelMaxInterpolator.getInstance(params.maxLocatorMethod);
 		this.Q = makeCornerScores(ip);
 		this.corners = makeCorners();
 	}

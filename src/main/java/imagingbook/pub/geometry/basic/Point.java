@@ -10,7 +10,7 @@ import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 /** 
  * Interface specifying the behavior of a simple 2D point.
  * It is used to accommodate different (legacy) point implementations 
- * a common API.
+ * in a common API.
  * This file also defines a nested default implementation class which
  * simply extends {@link Point2D.Double}.
  * 

@@ -32,7 +32,6 @@ imagingbook\pub\sift\KeyPoint.class
 imagingbook\pub\color\image\CieUtil.class
 imagingbook\lib\math\Matrix$NonsquareMatrixException.class
 imagingbook\pub\dft\ScalingMode$2.class
-imagingbook\pub\corners\subpixel\MaxLocator$QuadraticTaylor.class
 imagingbook\lib\image\ImageAccessor$Scalar.class
 imagingbook\pub\color\image\HsvConverter.class
 imagingbook\pub\color\quantize\KMeansClusteringQuantizerApache.class
@@ -48,7 +47,6 @@ imagingbook\pub\color\image\ColorStack$ColorStackType.class
 imagingbook\pub\dft\Dft1d$Float.class
 imagingbook\pub\edgepreservingfilters\BilateralFilter.class
 imagingbook\pub\dct\Dct1dDirect$1.class
-imagingbook\pub\corners\subpixel\MaxLocator$Quartic.class
 imagingbook\pub\histogram\Util.class
 imagingbook\pub\morphology\old\BinMorpher$1.class
 imagingbook\pub\geometry\delaunay\chew\TriangulationChew.class
@@ -192,7 +190,6 @@ imagingbook\pub\corners\MopsCornerDetector.class
 imagingbook\lib\image\ImageAccessor$Rgb.class
 imagingbook\lib\ij\LookupTables.class
 imagingbook\pub\histogram\HistogramMatcher.class
-imagingbook\pub\corners\subpixel\MaxLocator.class
 imagingbook\pub\sift\scalespace\DogOctave.class
 imagingbook\pub\edgepreservingfilters\NagaoMatsuyamaFilter$Parameters.class
 imagingbook\pub\morphology\old\BinMorpher.class
@@ -227,6 +224,7 @@ imagingbook\lib\image\ImageAccessor$Short.class
 imagingbook\pub\color\image\sRgbUtil.class
 imagingbook\pub\edgepreservingfilters\KuwaharaFilter.class
 imagingbook\pub\color\statistics\ColorHistogram$ColorNode.class
+imagingbook\pub\corners\subpixel\SubpixelMaxInterpolator$1.class
 imagingbook\pub\fd\FourierDescriptor$TargetFunction.class
 imagingbook\lib\filters\GenericFilter.class
 imagingbook\pub\threshold\global\MinErrorThresholder.class
@@ -252,7 +250,6 @@ imagingbook\pub\color\image\XYZscalingAdaptation.class
 imagingbook\pub\color\quantize\MedianCutQuantizer$Parameters.class
 imagingbook\pub\dct\Dct1dFast$Double.class
 imagingbook\pub\threshold\adaptive\BernsenThresholder.class
-imagingbook\pub\corners\subpixel\MaxLocator$1.class
 imagingbook\lib\image\ImageAccessor.class
 imagingbook\lib\math\VectorNorm$NormType$3.class
 imagingbook\pub\sift\SiftMatch.class
@@ -334,7 +331,6 @@ imagingbook\pub\corners\subpixel\MaxLocator_NOTSOOLD$1.class
 imagingbook\pub\color\image\HlsConverter.class
 imagingbook\pub\threshold\adaptive\NiblackThresholder.class
 imagingbook\lib\image\ImageExtractor.class
-imagingbook\pub\corners\subpixel\MaxLocator$QuadraticLeastSquares.class
 imagingbook\pub\color\edge\MonochromaticEdgeDetector$Parameters.class
 imagingbook\pub\lucaskanade\Mappings.class
 imagingbook\pub\dft\Dft1dDirect$Double.class
@@ -370,7 +366,6 @@ imagingbook\lib\math\VectorNorm$1.class
 imagingbook\pub\color\edge\DiZenzoCumaniEdgeDetector$Parameters.class
 imagingbook\pub\color\image\ColorStack$1.class
 imagingbook\lib\image\PixelIndexer$ExceptionIndexer.class
-imagingbook\pub\corners\subpixel\MaxLocator$Method.class
 imagingbook\lib\image\Statistics.class
 imagingbook\pub\dft\Dft2d$1.class
 imagingbook\pub\color\image\Illuminant.class

@@ -41,14 +41,6 @@ public class Corner implements Point, Comparable<Corner> {
 		return q;
 	}
 
-	// not needed, since already implemented by a static method in 'Point' 
-//	double dist2 (Corner c2){
-//		//returns the squared distance between this corner and corner c2
-//		float dx = this.x - c2.x;
-//		float dy = this.y - c2.y;
-//		return (dx * dx) + (dy * dy);	
-//	}
-
 	// used for sorting corners by corner strength q
 	@Override
 	public int compareTo (Corner c2) {
@@ -56,14 +48,6 @@ public class Corner implements Point, Comparable<Corner> {
 	}
 	
 	// ----------------------------------------------------------------
-	
-	// Moved to plugins to make class independent of ImageJ
-//	public void draw(ImageProcessor ip, int size) {
-//		int x = (int) Math.round(this.getX());
-//		int y = (int) Math.round(this.getY());
-//		ip.drawLine(x - size, y, x + size, y);
-//		ip.drawLine(x, y - size, x, y + size);
-//	}
 	
 	@Override
 	public String toString() {

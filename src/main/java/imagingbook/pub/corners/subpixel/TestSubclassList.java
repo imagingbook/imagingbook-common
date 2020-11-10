@@ -3,7 +3,7 @@ package imagingbook.pub.corners.subpixel;
 public class TestSubclassList {
 
 	public static void main(String[] args) {
-		Class<?> clazz = MaxLocator.class;
+		Class<?> clazz = SubpixelMaxInterpolator.class;
 		Class<?>[] subclazzes = clazz.getDeclaredClasses();
 		
 		for (Class<?> c : subclazzes) {

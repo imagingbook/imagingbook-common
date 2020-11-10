@@ -9,17 +9,18 @@ import static imagingbook.lib.math.Matrix.dotProduct;
 import static imagingbook.lib.math.Matrix.multiply;
 import static imagingbook.lib.math.Matrix.normL2;
 
+import imagingbook.lib.util.Enums.Description;
 import imagingbook.lib.util.choice.DeclareChoice;
 
 /**
  * The common interface for all sub-pixel locators in this package.
- * @see QuadraticTaylor
+ * @see QuadraticTaylorExtra
  * @see QuadraticLeastSquares
  * @see Quartic
  * @author WB
  * @version 2020/10/03
  */
-public abstract class MaxLocator {
+public abstract class SubpixelMaxInterpolator {
 	
 	/**
 	 * Tries to locate the sub-pixel maximum from the 9 discrete sample values
@@ -38,33 +39,34 @@ public abstract class MaxLocator {
 	public abstract float[] getMax(float[] s);
 	
 	/**
-	 * Enumeration of keys for {@link MaxLocator} methods.
+	 * Enumeration of keys for {@link SubpixelMaxInterpolator} methods.
 	 */
 	public enum Method {
-		QuadraticTaylor, QuadraticTaylor2, QuadraticLeastSquares, Quartic, None;
+		@Description("Quadratic Taylor Expansion") QuadraticTaylor,
+		@Description("Quadratic Least-Squares") QuadraticLeastSquares,
+		@Description("Quartic Interpolation") QuarticInterpolation,
+		@Description("No Interpolation") None;
 	}
 	
 	/**
-	 * Creates a specific {@link MaxLocator} instance based on the supplied
+	 * Creates a specific {@link SubpixelMaxInterpolator} instance based on the supplied
 	 * {@link Method} key.
 	 * @param m the method
-	 * @return a new {@link MaxLocator} instance
+	 * @return a new {@link SubpixelMaxInterpolator} instance
 	 */
-	public static MaxLocator getInstance(Method m) {
-		MaxLocator ml = null;
+	public static SubpixelMaxInterpolator getInstance(Method m) {
+		SubpixelMaxInterpolator instance = null;
 		switch(m) {
 		case QuadraticTaylor:
-			ml = new QuadraticTaylor(); break;
-		case QuadraticTaylor2:
-			ml = new QuadraticTaylor2(); break;
+			instance = new QuadraticTaylor(); break;
 		case QuadraticLeastSquares:
-			ml = new QuadraticLeastSquares(); break;
-		case Quartic:
-			ml = new Quartic(); break;
+			instance = new QuadraticLeastSquares(); break;
+		case QuarticInterpolation:
+			instance = new Quartic(); break;
 		case None:
 			break;
 		}
-		return ml;
+		return instance;
 	}
 	
 	// ------------------------------------------------------------------------------
@@ -76,10 +78,10 @@ public abstract class MaxLocator {
 	 * f(x,y) = c_0 + c_1 x + c_2 y + c_3 x^2 + c_4 y^2  + c_5 xy
 	 * <br>
 	 * to the supplied samples values.
-	 * @see MaxLocator#getMax(float[])
+	 * @see SubpixelMaxInterpolator#getMax(float[])
 	 */
 	@DeclareChoice("Quadratic Taylor Interpolator")
-	public static class QuadraticTaylor extends MaxLocator {
+	public static class QuadraticTaylorExtra extends SubpixelMaxInterpolator {
 		
 		private final double[] c = new double[6];	// polynomial coefficients
 
@@ -109,7 +111,7 @@ public abstract class MaxLocator {
 	
 	// version 2 - actually looks more like Taylor expansion!
 	@DeclareChoice("Quadratic Taylor Interpolator 2")
-	public static class QuadraticTaylor2 extends MaxLocator {
+	public static class QuadraticTaylor extends SubpixelMaxInterpolator {
 
 		@Override
 		public float[] getMax(float[] s) {
@@ -145,10 +147,10 @@ public abstract class MaxLocator {
 	 * f(x,y) = c_0 + c_1 x + c_2 y + c_3 x^2 + c_4 y^2  + c_5 xy
 	 * <br>
 	 * to the supplied sample values.
-	 * @see MaxLocator#getMax(float[])
+	 * @see SubpixelMaxInterpolator#getMax(float[])
 	 */
 	@DeclareChoice("Quadratic Least-Squares Interpolator")
-	public static class QuadraticLeastSquares extends MaxLocator {
+	public static class QuadraticLeastSquares extends SubpixelMaxInterpolator {
 		
 		private final double[] c = new double[6];	// polynomial coefficients
 
@@ -188,10 +190,10 @@ public abstract class MaxLocator {
 	 * to the supplied sample values. The interpolation function passes through
 	 * all sample values. The local maximum cannot be found in closed form but 
 	 * is found iteratively, which is not guaranteed to succeed.
-	 * @see MaxLocator#getMax(float[])
+	 * @see SubpixelMaxInterpolator#getMax(float[])
 	 */
 	@DeclareChoice("Quartic Interpolator")
-	public static class Quartic extends MaxLocator {
+	public static class Quartic extends SubpixelMaxInterpolator {
 		static int DefaultMaxIterations = 20;	// iteration limit
 		static double DefaulMaxDelta = 1e-6;	// smallest x/y move to continue search 
 		static double DefaultMaxRad = 1.0;		// x/y search boundary (-xyLimit, +xyLimit)

@@ -56,7 +56,7 @@ public class GenericDialogPlus extends GenericDialog {
 	 * @param defaultItem the menu item initially selected
 	 */
 	public <E extends Enum<E>> void addEnumChoice(String label, Enum<E> defaultItem) {
-		Class<E> clazz = defaultItem.getDeclaringClass();	
+		Class<E> clazz = defaultItem.getDeclaringClass();
 		String[] items = 
 				Arrays.stream(clazz.getEnumConstants()).map(Enum::name).toArray(String[]::new);
 		this.addChoice(label, items, defaultItem.name());
