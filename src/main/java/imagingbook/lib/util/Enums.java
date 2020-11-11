@@ -39,6 +39,7 @@ public abstract class Enums {
 	 * This returns the array 
 	 * <pre>{"A", "B", "C"}</pre>
 	 * 
+	 * @param <E> the generic enum type
 	 * @param enumclass enumeration class
 	 * @return array (possibly empty) of names defined for the specified enumeration class
 	 */
