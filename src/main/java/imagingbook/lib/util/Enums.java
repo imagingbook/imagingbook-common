@@ -145,7 +145,7 @@ public abstract class Enums {
 //			System.out.println(d);
 //		}
 //		
-//		enumClass = EnumWithAnnotations.class;
+//		enumClass = EnumWithAnnotationsExample.class;
 //		System.out.println("*** enumClass = " + enumClass.getSimpleName());
 //		for (String d : Enums.getEnumNames(enumClass)) {
 //			System.out.println(d);
