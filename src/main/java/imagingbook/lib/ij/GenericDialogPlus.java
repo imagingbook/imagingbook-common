@@ -1,8 +1,7 @@
 package imagingbook.lib.ij;
 
-import java.util.Arrays;
-
 import ij.gui.GenericDialog;
+import imagingbook.lib.util.Enums;
 
 /**
  * An extension to ImageJ's {@link GenericDialog} class which adds
@@ -45,21 +44,39 @@ public class GenericDialogPlus extends GenericDialog {
 	// ------------------------------------------------------------------------------------
 	
 	/**
-	 * Adds a sequence of choices to the dialog with menu items taken from the given 
-	 * <code>enum</code> class. Calls the original
-	 * {@link GenericDialog#addChoice(String, String[], String)} method.
-	 * Note that the menu items are retrieved from from the defaultItem's
-	 * enum type.
+	 * Convenience method for {@link #addEnumChoice(String, Enum, boolean)},
+	 * set up to show enum descriptions by default.
 	 * 
 	 * @param <E> the enum type containing the items to chose from
-	 * @param label the label shown on top of the dialog window
+	 * @param label the label displayed for this choice group
 	 * @param defaultItem the menu item initially selected
 	 */
 	public <E extends Enum<E>> void addEnumChoice(String label, Enum<E> defaultItem) {
-		Class<E> clazz = defaultItem.getDeclaringClass();
-		String[] items = 
-				Arrays.stream(clazz.getEnumConstants()).map(Enum::name).toArray(String[]::new);
-		this.addChoice(label, items, defaultItem.name());
+		addEnumChoice(label, defaultItem, true);
+	}
+	
+	/**
+	 * Adds a sequence of choices to the dialog with menu items taken from the
+	 * <code>enum</code> class of the specified default item (enum constant).
+	 * The default item is automatically set.
+	 * Optionally the descriptions of the enum constants are displayed
+	 * (if defined); see {@link Enums.Description} and {@link Enums#getEnumDescriptions(Class)}.
+	 * 
+	 * This method calls the original string-based
+	 * {@link GenericDialog#addChoice(String, String[], String)} method.
+	 * 
+	 * @param <E> the enum type containing the items to chose from
+	 * @param label the label displayed for this choice group
+	 * @param defaultItem the menu item initially selected
+	 * @param showEnumDescriptions if true, the descriptions of the enum constants are shown 
+	 */
+	public <E extends Enum<E>> void addEnumChoice(String label, Enum<E> defaultItem, boolean showEnumDescriptions) {
+		Class<E> enumClass = defaultItem.getDeclaringClass();
+		String[] items = showEnumDescriptions ?
+				Enums.getEnumDescriptions(enumClass) :
+				Enums.getEnumNames(enumClass); //Arrays.stream(clazz.getEnumConstants()).map(Enum::name).toArray(String[]::new);
+		String defaultDesc = items[defaultItem.ordinal()]; // defaultItem.name()
+		this.addChoice(label, items, defaultDesc);
 	}
 	
 	/**
@@ -72,8 +89,10 @@ public class GenericDialogPlus extends GenericDialog {
 	 * @return the selected item
 	 */
 	public <E extends Enum<E>> E getNextEnumChoice(Class<E> enumClass) {
-		String choiceString = this.getNextChoice();
-		return Enum.valueOf(enumClass, choiceString);
+		int k = this.getNextChoiceIndex();
+		return enumClass.getEnumConstants()[k];
+		//String choiceString = this.getNextChoice(); 
+		//return Enum.valueOf(enumClass, choiceString);
 	}
 }
 

@@ -20,11 +20,19 @@ import java.util.List;
 
 import imagingbook.pub.corners.subpixel.SubpixelMaxInterpolator;
 
+/**
+ * This class defines static methods for handling enum types.
+ * @author WB
+ *
+ */
+@SuppressWarnings("unused")
 public abstract class Enums {
 
 	/**
 	 * This static method returns an array of all constant names (strings) 
-	 * for a given enumeration class. Assume the enum definition: 
+	 * for a given enumeration class. 
+	 * Names are arranged in the same order as the enum constant definitions.
+	 * Assume the enum definition: 
 	 * <pre>enum MyEnum {A, B, C};</pre>
 	 * Usage: 
 	 * <pre>String[] names = getEnumNames(MyEnum.class);</pre>
@@ -34,22 +42,22 @@ public abstract class Enums {
 	 * @param enumclass enumeration class
 	 * @return array (possibly empty) of names defined for the specified enumeration class
 	 */
-//	public static <E extends Enum<E>> String[] getEnumNames(Class<E> enumclass) {
-//		E[] eConstants = enumclass.getEnumConstants();
-//		String[] eNames = new String[eConstants.length];
-//		for (int i = 0; i < eConstants.length; i++) {
-//			eNames[i] = eConstants[i].name();
-//		}
-//		return eNames;
-//	}
-	public static String[] getEnumNames(Class<? extends Enum<?>> enumclass) {
-		Enum<?>[] eConstants = enumclass.getEnumConstants();
+	public static <E extends Enum<E>> String[] getEnumNames(Class<E> enumclass) {
+		E[] eConstants = enumclass.getEnumConstants();
 		String[] eNames = new String[eConstants.length];
 		for (int i = 0; i < eConstants.length; i++) {
 			eNames[i] = eConstants[i].name();
 		}
 		return eNames;
 	}
+//	public static String[] getEnumNames(Class<? extends Enum<?>> enumclass) {
+//		Enum<?>[] eConstants = enumclass.getEnumConstants();
+//		String[] eNames = new String[eConstants.length];
+//		for (int i = 0; i < eConstants.length; i++) {
+//			eNames[i] = eConstants[i].name();
+//		}
+//		return eNames;
+//	}
 	
 	// ---------------------------------------------------------------
 	
@@ -68,6 +76,7 @@ public abstract class Enums {
 	 * attached as {@link Description} annotations to enum-constants
 	 * in the given enumeration class.
 	 * For non-annotated constants the constants name is used as a substitute.
+	 * Descriptions are arranged in the same order as the enum constant definitions.
 	 * Usage example:
 	 * <pre>
 	 * public enum EnumWithAnnotations {
@@ -99,6 +108,7 @@ public abstract class Enums {
 	 * associated descriptions (of type {@link String}) as the values.
 	 * Descriptions are specified by annotating enum fields (see {@link Description}).
 	 * For non-annotated constants the constants name is used as a substitute.
+	 * Keys and values are arranged in the same order as the enum constant definitions.
 	 * This is experimental code (currently unused).
 	 * 
 	 * @param <E> the generic enumeration type
@@ -118,12 +128,12 @@ public abstract class Enums {
 		}
 		return map;
 	}
+
 	
 	// ---------------------------------------------------------------
 	
 //	public static void main(String[] args) {
 //		Class<? extends Enum<?>> enumClass;
-//		
 //		
 //		enumClass = SubpixelMaxInterpolator.Method.class;
 //		System.out.println("*** enumClass = " + enumClass.getSimpleName());
@@ -150,6 +160,5 @@ public abstract class Enums {
 //			System.out.println(m.name() + " -> " + map.get(m));
 //		}
 //	}
-//	
-
+	
 }
