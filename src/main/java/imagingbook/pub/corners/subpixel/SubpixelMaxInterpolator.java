@@ -42,7 +42,7 @@ public abstract class SubpixelMaxInterpolator {
 	 * Enumeration of keys for {@link SubpixelMaxInterpolator} methods.
 	 */
 	public enum Method {
-		@Description("Quadratic Taylor Expansion") QuadraticTaylor,
+		@Description("Quadratic Taylor Expansion") Quadratic_Taylor,
 		@Description("Quadratic Least-Squares") QuadraticLeastSquares,
 		@Description("Quartic Interpolation") QuarticInterpolation,
 		@Description("No Interpolation") None;
@@ -57,7 +57,7 @@ public abstract class SubpixelMaxInterpolator {
 	public static SubpixelMaxInterpolator getInstance(Method m) {
 		SubpixelMaxInterpolator instance = null;
 		switch(m) {
-		case QuadraticTaylor:
+		case Quadratic_Taylor:
 			instance = new QuadraticTaylor(); break;
 		case QuadraticLeastSquares:
 			instance = new QuadraticLeastSquares(); break;

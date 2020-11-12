@@ -11,7 +11,6 @@ import imagingbook.lib.util.Enums;
  * <pre>
  * import ij.IJ;
  * import ij.plugin.PlugIn;
- * import imagingbook.lib.ij.GenericDialogPlus;
  * 
  * public class GenericDialogWithEnums_Example implements PlugIn {
  * 
@@ -91,8 +90,6 @@ public class GenericDialogPlus extends GenericDialog {
 	public <E extends Enum<E>> E getNextEnumChoice(Class<E> enumClass) {
 		int k = this.getNextChoiceIndex();
 		return enumClass.getEnumConstants()[k];
-		//String choiceString = this.getNextChoice(); 
-		//return Enum.valueOf(enumClass, choiceString);
 	}
 }
 
