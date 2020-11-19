@@ -14,6 +14,7 @@ import static imagingbook.lib.math.Arithmetic.sqr;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.util.Arrays;
 import java.util.Locale;
 
 import org.apache.commons.math3.linear.DecompositionSolver;
@@ -54,7 +55,7 @@ public abstract class Matrix {
 	/** Trailing delimiter used for lists of vector and matrix elements. */
 	public static char RightDelimitChar = '}';
 	
-	// Vector and matrix creation
+	// ----  Vector and matrix creation -----------------------------
 
 	public static double[] createDoubleVector(int length) {
 		return new double[length];
@@ -187,6 +188,17 @@ public abstract class Matrix {
 		return B;
 	}
 	
+	// ----- double <-> float conversions -----------------
+	
+	public static float[] toFloat(final double[] A) {
+		final int m = A.length;
+		final float[] B = new float[m];
+		for (int i = 0; i < m; i++) {
+			B[i] = (float) A[i];
+		}
+		return B;
+	}
+	
 	public static float[][] toFloat(final double[][] A) {
 		final int m = A.length;
 		final int n = A[0].length;
@@ -195,6 +207,15 @@ public abstract class Matrix {
 			for (int j = 0; j < n; j++) {
 				B[i][j] = (float) A[i][j];
 			}
+		}
+		return B;
+	}
+	
+	public static double[] toDouble(final float[] A) {
+		final int m = A.length;
+		final double[] B = new double[m];
+		for (int i = 0; i < m; i++) {
+			B[i] = A[i];
 		}
 		return B;
 	}
@@ -211,9 +232,31 @@ public abstract class Matrix {
 		return B;
 	}
 	
+	// ----------- fill operations (destructive) ------------------------
+	
+	public static void fillD(final float[] A, float val) {
+		Arrays.fill(A, val);
+	}
+	
+	public static void fillD(final float[][] A, float val) {
+		for (int i = 0; i < A.length; i++) { 
+			Arrays.fill(A[i], val);
+		}
+	}
+	
+	public static void fillD(final double[] A, double val) {
+		Arrays.fill(A, val);
+	}
+	
+	public static void fillD(final double[][] A, double val) {
+		for (int i = 0; i < A.length; i++) { 
+			Arrays.fill(A[i], val);
+		}
+	}
+	
 	// Element-wise arithmetic -------------------------------
 	
-	public static double[] add(double[] a, double[] b) {
+	public static double[] add(final double[] a, final double[] b) {
 		if (!sameSize(a, b))
 			throw new IncompatibleDimensionsException();
 		final int n = a.length;
@@ -224,7 +267,7 @@ public abstract class Matrix {
 		return c;
 	}
 
-	public static double[][] add(double[][] A, double[][] B) {
+	public static double[][] add(final double[][] A, final double[][] B) {
 		if (!sameSize(A, B))
 			throw new IncompatibleDimensionsException();
 		final int m = A.length;
@@ -238,7 +281,7 @@ public abstract class Matrix {
 		return C;
 	}
 	
-	public static double[] subtract(double[] a, double[] b) {
+	public static double[] subtract(final double[] a, final double[] b) {
 		if (!sameSize(a, b))
 			throw new IncompatibleDimensionsException();
 		final int n = a.length;
