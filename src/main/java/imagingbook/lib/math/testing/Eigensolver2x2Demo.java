@@ -1,5 +1,7 @@
-package imagingbook.lib.math;
+package imagingbook.lib.math.testing;
 
+import imagingbook.lib.math.Eigensolver2x2;
+import imagingbook.lib.math.Matrix;
 //import imagingbook.lib.math.Eigensolver2x2;
 //import imagingbook.lib.math.Matrix;
 import imagingbook.lib.settings.PrintPrecision;
@@ -47,3 +49,21 @@ public class Eigensolver2x2Demo {
 
 	}
 }
+
+/*
+M =
+{{3.000000, -2.000000}, 
+{-4.000000, 1.000000}}
+
+eigenvalues/eigenvectors: check if M*x = λ*x 
+
+λ_1  = 5.000000
+x_1 = {4.000000, -4.000000}
+Check: λ_1 * x_1 = {20.000000, -20.000000}
+Check:   M * x_1 = {20.000000, -20.000000}
+
+λ_2  = -1.000000
+x_2 = {-2.000000, -4.000000}
+Check: λ_2 * x_2 = {2.000000, 4.000000}
+Check:   M * x_2 = {2.000000, 4.000000}
+*/

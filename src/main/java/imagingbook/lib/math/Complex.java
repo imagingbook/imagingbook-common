@@ -9,6 +9,8 @@
 
 package imagingbook.lib.math;
 
+import java.util.Locale;
+
 /**
  * This class represents complex numbers. Instances are immutable.
  * Methods are mostly defined to be compatible with 
@@ -18,7 +20,7 @@ package imagingbook.lib.math;
  * Apache implementation.
  * 
  * @author W. Burger
- * @version 2018/03/18
+ * @version 2020/11/20
  */
 public class Complex {
 	
@@ -110,7 +112,7 @@ public class Complex {
 	/**
 	 * Rotates this complex number by the angle {@code phi} and returns
 	 * a new complex number.
-	 * @param phi the angle
+	 * @param phi the angle (in radians)
 	 * @return the rotated complex value
 	 */
 	public Complex rotate(double phi) {
@@ -119,7 +121,7 @@ public class Complex {
 
 	@Override
     public String toString() {
-        return "(" + this.re + ", " + this.im + ")";
+        return String.format(Locale.US, "(%.9f, %.9f)", re, im);
     }
 	
     /**
@@ -128,14 +130,14 @@ public class Complex {
      * @return true if {@code NaN}, otherwise false
      */
 	public boolean isNaN() {
-		return Double.isNaN(this.getReal()) || Double.isNaN(this.getImaginary());
+		return Double.isNaN(this.getRe()) || Double.isNaN(this.getIm());
 	}
 	
 	/**
 	 * Returns the real part of this complex number.
 	 * @return the real part
 	 */
-	public double getReal() {
+	public double getRe() {
 		return this.re;
 	}
 	
@@ -143,7 +145,7 @@ public class Complex {
 	 * Returns the imaginary part of this complex number.
 	 * @return the imaginary part
 	 */
-	public double getImaginary() {
+	public double getIm() {
 		return this.im;
 	}
 
@@ -184,18 +186,42 @@ public class Complex {
 		}
 		return prod;
 	}
+	
+	/**
+	 * Returns a 2-element array with the real and imaginary part of this
+	 * complex number.
+	 * @return (re, im)
+	 */
+	public double[] toArray() {
+		return new double[] {this.re, this.im};
+	}
 
 	//------------ TESTING only ------------------------------
 
-	public static void main(String[] args) {
-		Complex z1 = new Complex(0.3, 0.6);
-		Complex z2 = new Complex(-1, 0.2);
-		System.out.println("z1 = " + z1);
-		System.out.println("z2 = " + z2);
-		Complex z3 = z1.multiply(z2);
-		System.out.println("z3 = " + z3);
-		Complex z4 = z2.multiply(z1);
-		System.out.println("z4 = " + z4);
-	}
+//	public static void main(String[] args) {
+//		Complex z1 = new Complex(0.3, 0.6);
+//		Complex z2 = new Complex(-1, 0.2);
+//		
+//		System.out.println("z1 + z2 = " + z1.add(z2));
+//		System.out.println("z2 + z1 = " + z2.add(z1));
+//		
+//		
+//		System.out.println("z1 = " + z1);
+//		System.out.println("z2 = " + z2);
+//		Complex z3 = z1.multiply(z2);
+//		System.out.println("z1 * z2 = " + z3);
+//		Complex z4 = z2.multiply(z1);
+//		System.out.println("z2 * z1 = " + z4);
+//		
+//		System.out.println("z1.pow(5) = " + z1.pow(5));
+//		
+//		System.out.println("z1.rotate(0.1) = " + z1.rotate(0.1));
+//	}
 
 }
+/*
+z1 = (0.3, 0.6)
+z2 = (-1.0, 0.2)
+z3 = (-0.42, -0.54)
+z4 = (-0.42, -0.54)
+*/

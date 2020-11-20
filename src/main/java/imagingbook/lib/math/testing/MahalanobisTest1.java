@@ -1,9 +1,13 @@
-package imagingbook.lib.math;
+package imagingbook.lib.math.testing;
 
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
 
-class MahalanobisTest1 {
+import imagingbook.lib.math.MahalanobisDistance;
+import imagingbook.lib.math.Matrix;
+import imagingbook.lib.math.VectorNorm;
+
+public class MahalanobisTest1 {
 
 	public static void main(String[] args) {
 		/*

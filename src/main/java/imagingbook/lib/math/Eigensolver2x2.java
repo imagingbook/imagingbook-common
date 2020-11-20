@@ -59,10 +59,10 @@ public class Eigensolver2x2 {
 	 * @param D matrix element M[1,1]
 	 */
 	public Eigensolver2x2(double A, double B, double C, double D) {
-		this.isReal = makeEigenvectors(A, B, C, D);
+		isReal = solve(A, B, C, D);
 	}
 	
-	private boolean makeEigenvectors(double A, double B, double C, double D) {
+	private boolean solve(double A, double B, double C, double D) {
 		final double R = (A + D) / 2;
 		final double S = (A - D) / 2;
 		final double rho = S * S + B * C;
@@ -92,12 +92,12 @@ public class Eigensolver2x2 {
 				eVecs[1] = new double[] {-sBC, C};
 			}
 			else if (aB > aC) { 					// |B| > |C|
-				eVecs[0] = new double[] { B, sBC};
+				eVecs[0] = new double[] { B,  sBC};
 				eVecs[1] = new double[] { B, -sBC};
 			}
 			else {									// |B| == |C|
 				eVecs[0] = new double[] { C, C};
-				eVecs[1] = new double[] { -C, C};
+				eVecs[1] = new double[] {-C, C};
 			}
 		}
 		return true;

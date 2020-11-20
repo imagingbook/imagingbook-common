@@ -1,11 +1,15 @@
-package imagingbook.lib.math;
+package imagingbook.lib.math.testing;
 
 import java.util.Random;
 
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
 
-class MahalanobisTest2 {
+import imagingbook.lib.math.MahalanobisDistance;
+import imagingbook.lib.math.Matrix;
+import imagingbook.lib.math.Statistics;
+
+public class MahalanobisTest2 {
 		
 	static final int N = 1000;
 	static final double[] Sigma = {2, 5, 3};
