@@ -79,6 +79,10 @@ public abstract class Arithmetic {
 		return Math.abs(x) < EPSILON_FLOAT;
 	}
 	
+	public static boolean isZero(float x, float tolerance) {
+		return Math.abs(x) < tolerance;
+	}
+	
 	/**
 	 * Test for zero (double version).
 	 * Returns true if the argument's absolute value
@@ -90,6 +94,9 @@ public abstract class Arithmetic {
 		return Math.abs(x) < EPSILON_DOUBLE;
 	}
 	
+	public static boolean isZero(double x, double tolerance) {
+		return Math.abs(x) < tolerance;
+	}
 	
 	/**
 	 * Test for numerical equality (double version).
