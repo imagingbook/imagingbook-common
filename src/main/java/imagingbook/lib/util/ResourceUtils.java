@@ -78,14 +78,14 @@ public class ResourceUtils {
 			try {
 				uri = new URI(compPath);
 			} catch (URISyntaxException e) {
-				throw new RuntimeException("getResourceURI: " + e.toString());
+				// throw new RuntimeException("getResourceURI: " + e.toString());
 			}	
 		}
 		else {	// regular file path
 			try {
 				uri = clazz.getResource(relPath).toURI();
 			} catch (Exception e) {
-				throw new RuntimeException("getResourceURI: " + e.toString());
+				//do nothing, just return null - was: throw new RuntimeException("getResourceURI: " + e.toString());
 			}
 		}
 		return uri;
@@ -95,10 +95,11 @@ public class ResourceUtils {
 	 * Find the path to a resource relative to the location of class c.
 	 * Example: Assume class C was loaded from file someLocation/C.class
 	 * and there is a subfolder someLocation/resources/ that contains 
-	 * an image 'lenna.jpg'. Then the absolute path to this image
+	 * an image 'lenna.jpg'. Then the complete path to this image
 	 * is obtained by 
-	 * String path = getResourcePath(C.class, "resources/lenna.jpg");
-	 * 
+	 * <pre>
+	 * Path path = getResourcePath(C.class, "resources/lenna.jpg");
+	 * </pre>
 	 * 2016-06-03: modified to return proper path to resource inside 
 	 * a JAR file.
 	 * 
@@ -106,7 +107,7 @@ public class ResourceUtils {
 	 * @param relPath the path of the resource to be found (relative to the location of the anchor class)
 	 * @return the path to the specified resource
 	 */
-	public static Path getResourcePath(Class<?> clazz, String  relPath) {
+	public static Path getResourcePath(Class<?> clazz, String relPath) {
 		URI uri = getResourceUri(clazz, relPath);
 		if (uri != null) {
 			return uriToPath(uri);
@@ -159,9 +160,8 @@ public class ResourceUtils {
 		return path;
 	}
 	
-	
-	public static Path[] listResources(URI uri) {
-		return listResources(uriToPath(uri));
+	public static Path[] getResourcePaths(URI uri) {
+		return getResourcePaths(uriToPath(uri));
 	}
 	
 	
@@ -174,7 +174,7 @@ public class ResourceUtils {
 	 * @return a sequence of paths or {@code null} if the specified path 
 	 * is not a directory
 	 */
-	public static Path[] listResources(Path path) {
+	public static Path[] getResourcePaths(Path path) {
 		// with help from http://stackoverflow.com/questions/1429172/how-do-i-list-the-files-inside-a-jar-file, #10
 		if (!Files.isDirectory(path)) {
 			throw new IllegalArgumentException("path is not a directory: " + path.toString());
@@ -208,7 +208,7 @@ public class ResourceUtils {
 	 * @return a sequence of paths or {@code null} if the specified path is not a directory
 	 */
 	public static Path[] listResources(Class<?> clazz, String relPath) {
-		return listResources(getResourceUri(clazz, relPath));
+		return getResourcePaths(getResourceUri(clazz, relPath));
 	}
 	
 	
@@ -251,7 +251,6 @@ public class ResourceUtils {
 				throw new RuntimeException("Could not create temporary file");
 			}
 						
-			//IJ.log("copying to tmp file: " + tmpFile.getPath());
 			String relPath = resDir + resName;
 			InputStream inStrm = clazz.getResourceAsStream(relPath);
 			

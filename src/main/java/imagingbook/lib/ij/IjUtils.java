@@ -13,9 +13,11 @@ import ij.ImagePlus;
 import ij.WindowManager;
 import ij.gui.GenericDialog;
 import ij.io.OpenDialog;
+import ij.process.ByteProcessor;
 import ij.process.ColorProcessor;
 import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
+import ij.process.ShortProcessor;
 
 import java.util.Arrays;
 import java.util.Comparator;
@@ -252,6 +254,61 @@ public abstract class IjUtils {
 			}
 		}
 		return new FloatProcessor(width, height, fPixels);
+	}
+	
+	// Comparing images --------------------------------------
+	
+	public static boolean sameType(ImageProcessor ip1, ImageProcessor ip2) {
+		return ip1.getClass().equals(ip2.getClass());
+	}
+	
+	public static boolean sameSize(ImageProcessor ip1, ImageProcessor ip2) {
+		return ip1.getWidth() == ip2.getWidth() && ip1.getHeight() == ip2.getHeight();
+	}
+	
+	public static boolean match(ImageProcessor ip1, ImageProcessor ip2) {
+		return match(ip1, ip2, 1E-6);
+	}
+	
+	public static boolean match(ImageProcessor ip1, ImageProcessor ip2, double tolerance) {
+		if (!sameType(ip1, ip2)) {
+			return false;
+		}
+		if (!sameSize(ip1, ip2)) {
+			return false;
+		}
+		
+		if (ip1 instanceof ByteProcessor) {
+			byte[] p1 = (byte[]) ip1.getPixels();
+			byte[] p2 = (byte[]) ip2.getPixels();
+			return Arrays.equals(p1, p2);
+		}
+		else if (ip1 instanceof ShortProcessor) {
+			short[] p1 = (short[]) ip1.getPixels();
+			short[] p2 = (short[]) ip2.getPixels();
+			return Arrays.equals(p1, p2);
+		}
+		else if (ip1 instanceof ColorProcessor) {
+			int[] p1 = (int[]) ip1.getPixels();
+			int[] p2 = (int[]) ip2.getPixels();
+			return Arrays.equals(p1, p2);
+		}
+		
+		else if (ip1 instanceof FloatProcessor) {
+			float[] p1 = (float[]) ip1.getPixels();
+			float[] p2 = (float[]) ip2.getPixels();
+			boolean same = true;
+			final float toleranceF = (float) tolerance;
+			for (int i = 0; i < p1.length; i++) {
+				if (Math.abs(p1[i] - p2[i]) > toleranceF) {
+					same = false;
+					break;
+				}
+			}
+			return same;
+		}
+
+		throw new IllegalArgumentException("unknown processor type " + ip1.getClass().getSimpleName());
 	}
 
 }
