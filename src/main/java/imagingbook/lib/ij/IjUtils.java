@@ -13,16 +13,19 @@ import ij.ImagePlus;
 import ij.WindowManager;
 import ij.gui.GenericDialog;
 import ij.io.OpenDialog;
+import ij.io.Opener;
 import ij.process.ByteProcessor;
 import ij.process.ColorProcessor;
 import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
 import ij.process.ShortProcessor;
 
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 
 /**
@@ -254,6 +257,20 @@ public abstract class IjUtils {
 			}
 		}
 		return new FloatProcessor(width, height, fPixels);
+	}
+	
+	// Open image from path (used with resources)
+	
+	/**
+	 * Opens the image from the specified path and returns it
+	 * as a {@link ImagePlus} instance.
+	 * 
+	 * @param name The simple name of the image file (including extension)
+	 * @return A new {@link ImagePlus} instance or {@code null} if not found
+	 */
+	public static ImagePlus openImage(Path path) {
+		Objects.requireNonNull(path);
+		return new Opener().openImage(path.toString());
 	}
 	
 	// Comparing images --------------------------------------

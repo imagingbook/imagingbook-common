@@ -26,7 +26,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Stream;
 
-import ij.IJ;
 import ij.ImagePlus;
 import ij.io.Opener;
 
@@ -35,13 +34,15 @@ import ij.io.Opener;
  * What makes things somewhat complex is the requirement that
  * we want to retrieve resources located in the file system or
  * contained inside a JAR file.
- *  
+ * <br>
  * A typical URI for a JAR-embedded file:
  * "jar:file:/C:/PROJEC~2/parent/IM1D84~1/ImageJ/jars/jarWithResources.jar!/jarWithResouces/resources/clown.jpg"
+ * <br>
+ * This class has been deprecated - use {@link ResourceDirectory} instead!
  *
  * @author W. Burger
  * @version 2016/06/04
- *
+ * @deprecated
  */
 public class ResourceUtils {
 	
@@ -207,7 +208,7 @@ public class ResourceUtils {
 	 * @param relPath path relative to the root
 	 * @return a sequence of paths or {@code null} if the specified path is not a directory
 	 */
-	public static Path[] listResources(Class<?> clazz, String relPath) {
+	public static Path[] getResourcePaths(Class<?> clazz, String relPath) {
 		return getResourcePaths(getResourceUri(clazz, relPath));
 	}
 	
@@ -226,7 +227,7 @@ public class ResourceUtils {
 	public static ImagePlus openImageFromResource(Class<?> clazz, String resDir, String resName) {
 		URI uri = getResourceUri(clazz, resDir + resName);
 		if (uri == null) {
-			IJ.error("resource not found: " + clazz.getName() + " | " + resDir  + " | " + resName);
+			//IJ.error("resource not found: " + clazz.getName() + " | " + resDir  + " | " + resName);
 			return null;
 		}
 		
@@ -259,6 +260,7 @@ public class ResourceUtils {
 			} catch (IOException e) {
 				throw new RuntimeException("Could not copy stream to temporary file");
 			}
+			
 			im = new Opener().openImage(tmpFile.getPath());
 			if (im != null) {
 				im.setTitle(resName);
