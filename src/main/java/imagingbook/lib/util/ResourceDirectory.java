@@ -24,16 +24,16 @@ import java.util.stream.Stream;
  * this class (the class name is arbitrary). 
  * This is to make sure that every resource directory
  * is also a Java package known to exist at compile time.
- * For example, in file {@code imagingbook.data.images.DataDir.java}:
+ * For example, in file {@code imagingbook.data.images.Resources.java}:
  * <pre>
  * package imagingbook.data.images;
- * public class DataDir extends ResourceDirectory { }
+ * public class Resources extends ResourceDirectory { }
  * </pre>
  * All resources are assumed to be local in the SAME directory ONLY,
  * thereby avoiding the use of strings to specify sub-directories.
  * Example how to access the associated resources from some other class:
  * <pre>
- * ResourceDirectory rd = new imagingbook.data.images.DataDir();
+ * ResourceDirectory rd = new imagingbook.data.images.Resources();
  * Path path = rd.getResourcePath("boats.tif");
  * </pre>
  * Specifically, an image can be opened as follows:
@@ -43,17 +43,32 @@ import java.util.stream.Stream;
  * ImageProcessor ip = im.getProcessor();
  * ...
  * </pre>
+ * Note that under the canonical Maven project structure, the associated file 
+ * locations (package structure) are:
+ * <pre>
+ * src/main/java/imagingbook/data/images/Resources.java (the marker class extending {@link ResourceDirectory})
+ * src/main/resources/imagingbook/data/images/boats.tif ... (the actual resource files)
+ * </pre>
+ * or (if resources are used for testing only)
+ * <pre>
+ * src/test/java/imagingbook/data/images/Resources.java (the marker class extending {@link ResourceDirectory})
+ * src/test/resources/imagingbook/data/images/boats.tif ... (the actual resource files)
+ * </pre>
  * 
  * @author WB
  * @version 2020/11/22
  */
 public abstract class ResourceDirectory {
 	
-	private final Class<?> clazz = this.getClass();
+	private final Class<? extends ResourceDirectory> clazz;
+	
+	protected ResourceDirectory() {
+		this.clazz = this.getClass();
+	}
 
 	/**
 	 * Determines if this class was loaded from
-	 * a JAR file or a .class file in the file system.
+	 * a JAR file or from the file system.
 	 * 
 	 * @return true if contained in a JAR file, false otherwise
 	 */
@@ -63,6 +78,63 @@ public abstract class ResourceDirectory {
 		File file = new File(path);
 		return file.isFile();
 	}
+	
+	/**
+	 * Returns the path to the file location of this class.
+	 * @return The path to this class.
+	 */
+	public Path getResourcePath() {
+		return getResourcePath("");
+	}
+	
+	/**
+	 * Returns the path to a resource relative to the location of this class.
+	 *  
+	 * @param resourceName The resource's simple name (including file extension)
+	 * @return The path to the specified resource or {@code null} if not found
+	 */
+	public Path getResourcePath(String resourceName) {
+		URI uri = getURI(resourceName);
+		return (uri == null) ? null : uriToPath(uri);
+	}
+	
+	/**
+	 * Returns the specified resource as an {@link InputStream}.
+	 * 
+	 * @see Class#getResourceAsStream(String)
+	 * @param resourceName The resource's simple name (including file extension)
+	 * @return A stream or {@code null} if the resource is not found.
+	 */
+	public InputStream getResourceAsStream(String resourceName) {
+		return clazz.getResourceAsStream(resourceName);
+	}
+	
+	/**
+	 * Returns the simple names of all resources within this class's directory
+	 * (excluding the class file itself).
+	 * This should work in an ordinary file system as well as a (possibly nested) 
+	 * JAR file.
+	 * 
+	 * @return A sorted array of names (possibly empty)
+	 */
+	public String[] getResourceNames() {
+		final String className = clazz.getSimpleName();
+		Path[] paths = getResourcePaths(getResourcePath(""));
+		List<String> nameList = new ArrayList<>(paths.length);
+		for (Path p : paths) {
+			String name = p.getFileName().toString();
+			// exclude .java and .class files of THIS class
+			String nameOnly = FileUtils.stripFileExtension(name);
+			if (!nameOnly.equals(className)) {
+				nameList.add(name);
+			}
+		}
+		String[] sa = nameList.toArray(new String[0]);
+		Arrays.sort(sa);
+		return sa;
+	}
+	
+	// ----------------------------------------------------------------------
 	
 	/**
 	 * Finds the URI for a resource relative to (in the directory/package of) this class.
@@ -95,25 +167,6 @@ public abstract class ResourceDirectory {
 			}
 		}
 		return uri;
-	}
-	
-	/**
-	 * Returns the path to the file location of this class.
-	 * @return The path to this class.
-	 */
-	public Path getResourcePath() {
-		return getResourcePath("");
-	}
-	
-	/**
-	 * Returns the path to a resource relative to the location of this class.
-	 *  
-	 * @param resourceName The resource's simple name (including file extension)
-	 * @return The path to the specified resource or {@code null} if not found
-	 */
-	public Path getResourcePath(String resourceName) {
-		URI uri = getURI(resourceName);
-		return (uri == null) ? null : uriToPath(uri);
 	}
 	
 	/**
@@ -160,31 +213,6 @@ public abstract class ResourceDirectory {
 	}
 	
 	/**
-	 * Returns the simple names of all resources within this class's directory
-	 * (excluding the class file itself).
-	 * This should work in an ordinary file system as well as a (possibly nested) 
-	 * JAR file.
-	 * 
-	 * @return A sorted array of names (possibly empty)
-	 */
-	public String[] getResourceNames() {
-		final String className = clazz.getSimpleName();
-		Path[] paths = getResourcePaths(getResourcePath(""));
-		List<String> nameList = new ArrayList<>(paths.length);
-		for (Path p : paths) {
-			String name = p.getFileName().toString();
-			// exclude .java and .class files of THIS class
-			String nameOnly = FileUtils.stripFileExtension(name);
-			if (!nameOnly.equals(className)) {
-				nameList.add(name);
-			}
-		}
-		String[] sa = nameList.toArray(new String[0]);
-		Arrays.sort(sa);
-		return sa;
-	}
-	
-	/**
 	 * Returns the paths to all files in a directory specified
 	 * by a path. This should work in an ordinary file system
 	 * as well as a (possibly nested) JAR file.
@@ -217,8 +245,4 @@ public abstract class ResourceDirectory {
 		return pathList.toArray(new Path[0]);
 	}
 	
-	public InputStream getResourceAsStream(String resourceName) {
-		return clazz.getResourceAsStream(resourceName);
-	}
-
 }

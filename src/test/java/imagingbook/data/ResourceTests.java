@@ -14,11 +14,9 @@ import ij.process.ByteProcessor;
 import ij.process.ImageProcessor;
 import imagingbook.lib.ij.IjUtils;
 import imagingbook.lib.util.ResourceDirectory;
-//import imagingbook.lib.util.ResourceUtils;
 
 
-
-public class DataTest {
+public class ResourceTests {
 	
 	@Test
 	public void testResourcesBasic() {
