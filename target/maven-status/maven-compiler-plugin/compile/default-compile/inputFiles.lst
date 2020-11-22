@@ -13,6 +13,7 @@ D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\s
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\lib\interpolation\PixelInterpolator.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\color\quantize\ColorQuantizer.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\corners\subpixel\SubpixelMaxInterpolator.java
+D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\lib\util\ResourceLocation.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\geometry\basic\Point.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\lib\ij\CallbackSender.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\lib\interpolation\SplineInterpolator.java
@@ -43,7 +44,6 @@ D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\s
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\lib\color\iccProfiles\Resources.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\geometry\delaunay\guibas\package-info.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\lib\image\ImageAccessor.java
-D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\lib\util\ResourceDirectory.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\sift\scalespace\HierarchicalScaleSpace.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\pub\color\statistics\ColorHistogram.java
 D:\GITHUB\IMAGINGBOOK\imagingbook-parent\imagingbook-public\imagingbook-common\src\main\java\imagingbook\lib\math\testing\MahalanobisTest2.java

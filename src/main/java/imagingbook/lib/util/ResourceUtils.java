@@ -38,7 +38,7 @@ import ij.io.Opener;
  * A typical URI for a JAR-embedded file:
  * "jar:file:/C:/PROJEC~2/parent/IM1D84~1/ImageJ/jars/jarWithResources.jar!/jarWithResouces/resources/clown.jpg"
  * <br>
- * This class has been deprecated - use {@link ResourceDirectory} instead!
+ * This class has been deprecated - use {@link ResourceLocation} instead!
  *
  * @author W. Burger
  * @version 2016/06/04

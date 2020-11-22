@@ -27,13 +27,13 @@ import java.util.stream.Stream;
  * For example, in file {@code imagingbook.data.images.Resources.java}:
  * <pre>
  * package imagingbook.data.images;
- * public class Resources extends ResourceDirectory { }
+ * public class Resources extends ResourceLocation { }
  * </pre>
  * All resources are assumed to be local in the SAME directory ONLY,
  * thereby avoiding the use of strings to specify sub-directories.
  * Example how to access the associated resources from some other class:
  * <pre>
- * ResourceDirectory rd = new imagingbook.data.images.Resources();
+ * ResourceLocation rd = new imagingbook.data.images.Resources();
  * Path path = rd.getResourcePath("boats.tif");
  * </pre>
  * Specifically, an image can be opened as follows:
@@ -46,23 +46,23 @@ import java.util.stream.Stream;
  * Note that under the canonical Maven project structure, the associated file 
  * locations (package structure) are:
  * <pre>
- * src/main/java/imagingbook/data/images/Resources.java (the marker class extending {@link ResourceDirectory})
+ * src/main/java/imagingbook/data/images/Resources.java (the marker class extending {@link ResourceLocation})
  * src/main/resources/imagingbook/data/images/boats.tif ... (the actual resource files)
  * </pre>
  * or (if resources are used for testing only)
  * <pre>
- * src/test/java/imagingbook/data/images/Resources.java (the marker class extending {@link ResourceDirectory})
+ * src/test/java/imagingbook/data/images/Resources.java (the marker class extending {@link ResourceLocation})
  * src/test/resources/imagingbook/data/images/boats.tif ... (the actual resource files)
  * </pre>
  * 
  * @author WB
  * @version 2020/11/22
  */
-public abstract class ResourceDirectory {
+public abstract class ResourceLocation {
 	
-	private final Class<? extends ResourceDirectory> clazz;
+	private final Class<? extends ResourceLocation> clazz;
 	
-	protected ResourceDirectory() {
+	protected ResourceLocation() {
 		this.clazz = this.getClass();
 	}
 
@@ -100,8 +100,8 @@ public abstract class ResourceDirectory {
 	
 	/**
 	 * Returns the specified resource as an {@link InputStream}.
+	 * This is essentially a wrapper to {@link Class#getResourceAsStream(String)}.
 	 * 
-	 * @see Class#getResourceAsStream(String)
 	 * @param resourceName The resource's simple name (including file extension)
 	 * @return A stream or {@code null} if the resource is not found.
 	 */

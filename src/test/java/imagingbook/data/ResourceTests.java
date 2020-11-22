@@ -13,7 +13,7 @@ import ij.ImagePlus;
 import ij.process.ByteProcessor;
 import ij.process.ImageProcessor;
 import imagingbook.lib.ij.IjUtils;
-import imagingbook.lib.util.ResourceDirectory;
+import imagingbook.lib.util.ResourceLocation;
 
 
 public class ResourceTests {
@@ -23,7 +23,7 @@ public class ResourceTests {
 		String name = "boats.tif";
 		Path path = null;
 		
-		ResourceDirectory rd = new imagingbook.data.images.Resources();
+		ResourceLocation rd = new imagingbook.data.images.Resources();
 		
 		path = rd.getResourcePath(name);
 		assertNotNull("existing resource not found" + name, path);
@@ -42,7 +42,7 @@ public class ResourceTests {
 	public void openBoatsImage() {
 		String name = "boats.tif";
 		
-		ResourceDirectory rd = new imagingbook.data.images.Resources();
+		ResourceLocation rd = new imagingbook.data.images.Resources();
 		Path path = rd.getResourcePath(name);
 		assertNotNull("image resource not found" + name, path);
 		
@@ -58,7 +58,7 @@ public class ResourceTests {
 	
 //	@Test
 //	public void fooTest() {
-//		ResourceDirectory rd = new imagingbook.data.images.DataDir();
+//		ResourceLocation rd = new imagingbook.data.images.DataDir();
 //		Path path = rd.getResourcePath("DataDir.class");
 //		System.out.println(path);
 //		String[] names = rd.getResourceNames();
