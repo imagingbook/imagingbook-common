@@ -20,40 +20,40 @@ import java.util.List;
 import java.util.stream.Stream;
 
 /**
- * Any resource directory is supposed to contain a class extending
- * this class (the class name is arbitrary). 
- * This is to make sure that every resource directory
+ * Any resource directory is supposed to contain a "marker" class 
+ * (any legal class name is OK) extending this class ({@link ResourceLocation}).
+ * This is to make sure that every resource location
  * is also a Java package known to exist at compile time.
- * For example, in file {@code imagingbook.data.images.Resources.java}:
+ * For example, a marker class is defined in file {@code imagingbook.data.images.Resources.java} 
+ * as follows:
  * <pre>
  * package imagingbook.data.images;
- * public class Resources extends ResourceLocation { }
- * </pre>
+ * public class Resources extends ResourceLocation { }</pre>
+ * 
  * All resources are assumed to be local in the SAME directory ONLY,
  * thereby avoiding the use of strings to specify sub-directories.
- * Example how to access the associated resources from some other class:
+ * Here is an example how to access the associated resources from some other class:
  * <pre>
  * ResourceLocation rd = new imagingbook.data.images.Resources();
- * Path path = rd.getResourcePath("boats.tif");
- * </pre>
+ * Path path = rd.getResourcePath("boats.tif");</pre>
+ * 
  * Specifically, an image can be opened as follows:
  * <pre>
  * Path path = rd.getResourcePath("boats.tif");
  * ImagePlus im = IjUtils.openImage(path);
  * ImageProcessor ip = im.getProcessor();
- * ...
- * </pre>
+ * ...</pre>
+ * 
  * Note that under the canonical Maven project structure, the associated file 
  * locations (package structure) are:
  * <pre>
  * src/main/java/imagingbook/data/images/Resources.java (the marker class extending {@link ResourceLocation})
- * src/main/resources/imagingbook/data/images/boats.tif ... (the actual resource files)
- * </pre>
+ * src/main/resources/imagingbook/data/images/boats.tif ... (the actual resource files)</pre>
+ * 
  * or (if resources are used for testing only)
  * <pre>
  * src/test/java/imagingbook/data/images/Resources.java (the marker class extending {@link ResourceLocation})
- * src/test/resources/imagingbook/data/images/boats.tif ... (the actual resource files)
- * </pre>
+ * src/test/resources/imagingbook/data/images/boats.tif ... (the actual resource files)</pre>
  * 
  * @author WB
  * @version 2020/11/22
@@ -79,22 +79,24 @@ public abstract class ResourceLocation {
 		return file.isFile();
 	}
 	
-	/**
-	 * Returns the path to the file location of this class.
-	 * @return The path to this class.
-	 */
-	public Path getResourcePath() {
-		return getResourcePath("");
-	}
+//	/**
+//	 * Returns the path to the file location of this class.
+//	 * @return The path to this class.
+//	 */
+//	public Path getResourcePath() {
+//		return getResourcePath("");
+//	}
 	
 	/**
-	 * Returns the path to a resource relative to the location of this class.
+	 * Returns the path to specified resource in this resource location.
 	 *  
-	 * @param resourceName The resource's simple name (including file extension)
+	 * @param resourceName The resource's simple name (including the file extension).
+	 * If empty or {@code null}, the path to the resource container location (directory)
+	 * is returned.
 	 * @return The path to the specified resource or {@code null} if not found
 	 */
 	public Path getResourcePath(String resourceName) {
-		URI uri = getURI(resourceName);
+		URI uri = (resourceName == null) ? getURI("") : getURI(resourceName);
 		return (uri == null) ? null : uriToPath(uri);
 	}
 	
