@@ -69,10 +69,10 @@
 <span class="sourceLineNo">059</span><a id="line.59">         * @param D matrix element M[1,1]</a>
 <span class="sourceLineNo">060</span><a id="line.60">         */</a>
 <span class="sourceLineNo">061</span><a id="line.61">        public Eigensolver2x2(double A, double B, double C, double D) {</a>
-<span class="sourceLineNo">062</span><a id="line.62">                this.isReal = makeEigenvectors(A, B, C, D);</a>
+<span class="sourceLineNo">062</span><a id="line.62">                isReal = solve(A, B, C, D);</a>
 <span class="sourceLineNo">063</span><a id="line.63">        }</a>
 <span class="sourceLineNo">064</span><a id="line.64">        </a>
-<span class="sourceLineNo">065</span><a id="line.65">        private boolean makeEigenvectors(double A, double B, double C, double D) {</a>
+<span class="sourceLineNo">065</span><a id="line.65">        private boolean solve(double A, double B, double C, double D) {</a>
 <span class="sourceLineNo">066</span><a id="line.66">                final double R = (A + D) / 2;</a>
 <span class="sourceLineNo">067</span><a id="line.67">                final double S = (A - D) / 2;</a>
 <span class="sourceLineNo">068</span><a id="line.68">                final double rho = S * S + B * C;</a>
@@ -102,12 +102,12 @@
 <span class="sourceLineNo">092</span><a id="line.92">                                eVecs[1] = new double[] {-sBC, C};</a>
 <span class="sourceLineNo">093</span><a id="line.93">                        }</a>
 <span class="sourceLineNo">094</span><a id="line.94">                        else if (aB &gt; aC) {                                     // |B| &gt; |C|</a>
-<span class="sourceLineNo">095</span><a id="line.95">                                eVecs[0] = new double[] { B, sBC};</a>
+<span class="sourceLineNo">095</span><a id="line.95">                                eVecs[0] = new double[] { B,  sBC};</a>
 <span class="sourceLineNo">096</span><a id="line.96">                                eVecs[1] = new double[] { B, -sBC};</a>
 <span class="sourceLineNo">097</span><a id="line.97">                        }</a>
 <span class="sourceLineNo">098</span><a id="line.98">                        else {                                                                  // |B| == |C|</a>
 <span class="sourceLineNo">099</span><a id="line.99">                                eVecs[0] = new double[] { C, C};</a>
-<span class="sourceLineNo">100</span><a id="line.100">                                eVecs[1] = new double[] { -C, C};</a>
+<span class="sourceLineNo">100</span><a id="line.100">                                eVecs[1] = new double[] {-C, C};</a>
 <span class="sourceLineNo">101</span><a id="line.101">                        }</a>
 <span class="sourceLineNo">102</span><a id="line.102">                }</a>
 <span class="sourceLineNo">103</span><a id="line.103">                return true;</a>

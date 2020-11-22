@@ -52,7 +52,7 @@
 <span class="sourceLineNo">042</span><a id="line.42">         * Enumeration of keys for {@link SubpixelMaxInterpolator} methods.</a>
 <span class="sourceLineNo">043</span><a id="line.43">         */</a>
 <span class="sourceLineNo">044</span><a id="line.44">        public enum Method {</a>
-<span class="sourceLineNo">045</span><a id="line.45">                @Description("Quadratic Taylor Expansion") QuadraticTaylor,</a>
+<span class="sourceLineNo">045</span><a id="line.45">                @Description("Quadratic Taylor Expansion") Quadratic_Taylor,</a>
 <span class="sourceLineNo">046</span><a id="line.46">                @Description("Quadratic Least-Squares") QuadraticLeastSquares,</a>
 <span class="sourceLineNo">047</span><a id="line.47">                @Description("Quartic Interpolation") QuarticInterpolation,</a>
 <span class="sourceLineNo">048</span><a id="line.48">                @Description("No Interpolation") None;</a>
@@ -67,7 +67,7 @@
 <span class="sourceLineNo">057</span><a id="line.57">        public static SubpixelMaxInterpolator getInstance(Method m) {</a>
 <span class="sourceLineNo">058</span><a id="line.58">                SubpixelMaxInterpolator instance = null;</a>
 <span class="sourceLineNo">059</span><a id="line.59">                switch(m) {</a>
-<span class="sourceLineNo">060</span><a id="line.60">                case QuadraticTaylor:</a>
+<span class="sourceLineNo">060</span><a id="line.60">                case Quadratic_Taylor:</a>
 <span class="sourceLineNo">061</span><a id="line.61">                        instance = new QuadraticTaylor(); break;</a>
 <span class="sourceLineNo">062</span><a id="line.62">                case QuadraticLeastSquares:</a>
 <span class="sourceLineNo">063</span><a id="line.63">                        instance = new QuadraticLeastSquares(); break;</a>

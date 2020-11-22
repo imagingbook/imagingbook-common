@@ -89,69 +89,76 @@
 <span class="sourceLineNo">079</span><a id="line.79">                return Math.abs(x) &lt; EPSILON_FLOAT;</a>
 <span class="sourceLineNo">080</span><a id="line.80">        }</a>
 <span class="sourceLineNo">081</span><a id="line.81">        </a>
-<span class="sourceLineNo">082</span><a id="line.82">        /**</a>
-<span class="sourceLineNo">083</span><a id="line.83">         * Test for zero (double version).</a>
-<span class="sourceLineNo">084</span><a id="line.84">         * Returns true if the argument's absolute value</a>
-<span class="sourceLineNo">085</span><a id="line.85">         * is less than {@link EPSILON_DOUBLE}.</a>
-<span class="sourceLineNo">086</span><a id="line.86">         * @param x quantity to be tested</a>
-<span class="sourceLineNo">087</span><a id="line.87">         * @return true if argument is close to zero</a>
-<span class="sourceLineNo">088</span><a id="line.88">         */</a>
-<span class="sourceLineNo">089</span><a id="line.89">        public static boolean isZero(double x) {</a>
-<span class="sourceLineNo">090</span><a id="line.90">                return Math.abs(x) &lt; EPSILON_DOUBLE;</a>
-<span class="sourceLineNo">091</span><a id="line.91">        }</a>
-<span class="sourceLineNo">092</span><a id="line.92">        </a>
-<span class="sourceLineNo">093</span><a id="line.93">        </a>
-<span class="sourceLineNo">094</span><a id="line.94">        /**</a>
-<span class="sourceLineNo">095</span><a id="line.95">         * Test for numerical equality (double version).</a>
-<span class="sourceLineNo">096</span><a id="line.96">         * Returns true if the absolute difference of the arguments</a>
-<span class="sourceLineNo">097</span><a id="line.97">         * is less than {@link EPSILON_DOUBLE}.</a>
-<span class="sourceLineNo">098</span><a id="line.98">         * @param x first argument</a>
-<span class="sourceLineNo">099</span><a id="line.99">         * @param y second argument</a>
-<span class="sourceLineNo">100</span><a id="line.100">         * @return true if both arguments are numerically the same.</a>
-<span class="sourceLineNo">101</span><a id="line.101">         */</a>
-<span class="sourceLineNo">102</span><a id="line.102">        public static boolean equals(double x, double y) {</a>
-<span class="sourceLineNo">103</span><a id="line.103">                return Arithmetic.isZero(x - y);</a>
-<span class="sourceLineNo">104</span><a id="line.104">        }</a>
-<span class="sourceLineNo">105</span><a id="line.105">        </a>
-<span class="sourceLineNo">106</span><a id="line.106">        /**</a>
-<span class="sourceLineNo">107</span><a id="line.107">         * Test for numerical equality (float version).</a>
-<span class="sourceLineNo">108</span><a id="line.108">         * Returns true if the absolute difference of the arguments</a>
-<span class="sourceLineNo">109</span><a id="line.109">         * is less than {@link EPSILON_FLOAT}.</a>
-<span class="sourceLineNo">110</span><a id="line.110">         * @param x first argument</a>
-<span class="sourceLineNo">111</span><a id="line.111">         * @param y second argument</a>
-<span class="sourceLineNo">112</span><a id="line.112">         * @return true if both arguments are numerically the same.</a>
-<span class="sourceLineNo">113</span><a id="line.113">         */</a>
-<span class="sourceLineNo">114</span><a id="line.114">        public static boolean equals(float x, float y) {</a>
-<span class="sourceLineNo">115</span><a id="line.115">                return Arithmetic.isZero(x - y);</a>
-<span class="sourceLineNo">116</span><a id="line.116">        }</a>
-<span class="sourceLineNo">117</span><a id="line.117">        </a>
-<span class="sourceLineNo">118</span><a id="line.118">        //--------------------------------------------------------------------------</a>
-<span class="sourceLineNo">119</span><a id="line.119">        </a>
-<span class="sourceLineNo">120</span><a id="line.120">        public static class DivideByZeroException extends ArithmeticException {</a>
-<span class="sourceLineNo">121</span><a id="line.121">                private static final long serialVersionUID = 1L;</a>
-<span class="sourceLineNo">122</span><a id="line.122">                private static String DefaultMessage = "zero denominator in division";</a>
-<span class="sourceLineNo">123</span><a id="line.123">                </a>
-<span class="sourceLineNo">124</span><a id="line.124">                public DivideByZeroException() {</a>
-<span class="sourceLineNo">125</span><a id="line.125">                        super(DefaultMessage);</a>
-<span class="sourceLineNo">126</span><a id="line.126">                }</a>
-<span class="sourceLineNo">127</span><a id="line.127">        }</a>
-<span class="sourceLineNo">128</span><a id="line.128">        </a>
-<span class="sourceLineNo">129</span><a id="line.129">        // -------------------------------------</a>
-<span class="sourceLineNo">130</span><a id="line.130">        </a>
-<span class="sourceLineNo">131</span><a id="line.131">        public static void main(String[] args) {</a>
-<span class="sourceLineNo">132</span><a id="line.132">                System.out.println(Arithmetic.mod(13, 4));</a>
-<span class="sourceLineNo">133</span><a id="line.133">                System.out.println(Arithmetic.mod(13, -4));</a>
-<span class="sourceLineNo">134</span><a id="line.134">                System.out.println(Arithmetic.mod(-13, 4));</a>
-<span class="sourceLineNo">135</span><a id="line.135">                System.out.println(Arithmetic.mod(-13, -4));</a>
-<span class="sourceLineNo">136</span><a id="line.136">                </a>
-<span class="sourceLineNo">137</span><a id="line.137">                int b = 7;</a>
-<span class="sourceLineNo">138</span><a id="line.138">                System.out.format("   i  -&gt; floor |  mod\n");</a>
-<span class="sourceLineNo">139</span><a id="line.139">                for (int i = -25; i &lt; 25; i++) {</a>
-<span class="sourceLineNo">140</span><a id="line.140">                        System.out.format("%4d  -&gt; %4d  | %4d \n", i, Math.floorMod(i, b), Arithmetic.mod(i, b));</a>
-<span class="sourceLineNo">141</span><a id="line.141">                }</a>
-<span class="sourceLineNo">142</span><a id="line.142">        }</a>
-<span class="sourceLineNo">143</span><a id="line.143"></a>
-<span class="sourceLineNo">144</span><a id="line.144">}</a>
+<span class="sourceLineNo">082</span><a id="line.82">        public static boolean isZero(float x, float tolerance) {</a>
+<span class="sourceLineNo">083</span><a id="line.83">                return Math.abs(x) &lt; tolerance;</a>
+<span class="sourceLineNo">084</span><a id="line.84">        }</a>
+<span class="sourceLineNo">085</span><a id="line.85">        </a>
+<span class="sourceLineNo">086</span><a id="line.86">        /**</a>
+<span class="sourceLineNo">087</span><a id="line.87">         * Test for zero (double version).</a>
+<span class="sourceLineNo">088</span><a id="line.88">         * Returns true if the argument's absolute value</a>
+<span class="sourceLineNo">089</span><a id="line.89">         * is less than {@link EPSILON_DOUBLE}.</a>
+<span class="sourceLineNo">090</span><a id="line.90">         * @param x quantity to be tested</a>
+<span class="sourceLineNo">091</span><a id="line.91">         * @return true if argument is close to zero</a>
+<span class="sourceLineNo">092</span><a id="line.92">         */</a>
+<span class="sourceLineNo">093</span><a id="line.93">        public static boolean isZero(double x) {</a>
+<span class="sourceLineNo">094</span><a id="line.94">                return Math.abs(x) &lt; EPSILON_DOUBLE;</a>
+<span class="sourceLineNo">095</span><a id="line.95">        }</a>
+<span class="sourceLineNo">096</span><a id="line.96">        </a>
+<span class="sourceLineNo">097</span><a id="line.97">        public static boolean isZero(double x, double tolerance) {</a>
+<span class="sourceLineNo">098</span><a id="line.98">                return Math.abs(x) &lt; tolerance;</a>
+<span class="sourceLineNo">099</span><a id="line.99">        }</a>
+<span class="sourceLineNo">100</span><a id="line.100">        </a>
+<span class="sourceLineNo">101</span><a id="line.101">        /**</a>
+<span class="sourceLineNo">102</span><a id="line.102">         * Test for numerical equality (double version).</a>
+<span class="sourceLineNo">103</span><a id="line.103">         * Returns true if the absolute difference of the arguments</a>
+<span class="sourceLineNo">104</span><a id="line.104">         * is less than {@link EPSILON_DOUBLE}.</a>
+<span class="sourceLineNo">105</span><a id="line.105">         * @param x first argument</a>
+<span class="sourceLineNo">106</span><a id="line.106">         * @param y second argument</a>
+<span class="sourceLineNo">107</span><a id="line.107">         * @return true if both arguments are numerically the same.</a>
+<span class="sourceLineNo">108</span><a id="line.108">         */</a>
+<span class="sourceLineNo">109</span><a id="line.109">        public static boolean equals(double x, double y) {</a>
+<span class="sourceLineNo">110</span><a id="line.110">                return Arithmetic.isZero(x - y);</a>
+<span class="sourceLineNo">111</span><a id="line.111">        }</a>
+<span class="sourceLineNo">112</span><a id="line.112">        </a>
+<span class="sourceLineNo">113</span><a id="line.113">        /**</a>
+<span class="sourceLineNo">114</span><a id="line.114">         * Test for numerical equality (float version).</a>
+<span class="sourceLineNo">115</span><a id="line.115">         * Returns true if the absolute difference of the arguments</a>
+<span class="sourceLineNo">116</span><a id="line.116">         * is less than {@link EPSILON_FLOAT}.</a>
+<span class="sourceLineNo">117</span><a id="line.117">         * @param x first argument</a>
+<span class="sourceLineNo">118</span><a id="line.118">         * @param y second argument</a>
+<span class="sourceLineNo">119</span><a id="line.119">         * @return true if both arguments are numerically the same.</a>
+<span class="sourceLineNo">120</span><a id="line.120">         */</a>
+<span class="sourceLineNo">121</span><a id="line.121">        public static boolean equals(float x, float y) {</a>
+<span class="sourceLineNo">122</span><a id="line.122">                return Arithmetic.isZero(x - y);</a>
+<span class="sourceLineNo">123</span><a id="line.123">        }</a>
+<span class="sourceLineNo">124</span><a id="line.124">        </a>
+<span class="sourceLineNo">125</span><a id="line.125">        //--------------------------------------------------------------------------</a>
+<span class="sourceLineNo">126</span><a id="line.126">        </a>
+<span class="sourceLineNo">127</span><a id="line.127">        public static class DivideByZeroException extends ArithmeticException {</a>
+<span class="sourceLineNo">128</span><a id="line.128">                private static final long serialVersionUID = 1L;</a>
+<span class="sourceLineNo">129</span><a id="line.129">                private static String DefaultMessage = "zero denominator in division";</a>
+<span class="sourceLineNo">130</span><a id="line.130">                </a>
+<span class="sourceLineNo">131</span><a id="line.131">                public DivideByZeroException() {</a>
+<span class="sourceLineNo">132</span><a id="line.132">                        super(DefaultMessage);</a>
+<span class="sourceLineNo">133</span><a id="line.133">                }</a>
+<span class="sourceLineNo">134</span><a id="line.134">        }</a>
+<span class="sourceLineNo">135</span><a id="line.135">        </a>
+<span class="sourceLineNo">136</span><a id="line.136">        // -------------------------------------</a>
+<span class="sourceLineNo">137</span><a id="line.137">        </a>
+<span class="sourceLineNo">138</span><a id="line.138">        public static void main(String[] args) {</a>
+<span class="sourceLineNo">139</span><a id="line.139">                System.out.println(Arithmetic.mod(13, 4));</a>
+<span class="sourceLineNo">140</span><a id="line.140">                System.out.println(Arithmetic.mod(13, -4));</a>
+<span class="sourceLineNo">141</span><a id="line.141">                System.out.println(Arithmetic.mod(-13, 4));</a>
+<span class="sourceLineNo">142</span><a id="line.142">                System.out.println(Arithmetic.mod(-13, -4));</a>
+<span class="sourceLineNo">143</span><a id="line.143">                </a>
+<span class="sourceLineNo">144</span><a id="line.144">                int b = 7;</a>
+<span class="sourceLineNo">145</span><a id="line.145">                System.out.format("   i  -&gt; floor |  mod\n");</a>
+<span class="sourceLineNo">146</span><a id="line.146">                for (int i = -25; i &lt; 25; i++) {</a>
+<span class="sourceLineNo">147</span><a id="line.147">                        System.out.format("%4d  -&gt; %4d  | %4d \n", i, Math.floorMod(i, b), Arithmetic.mod(i, b));</a>
+<span class="sourceLineNo">148</span><a id="line.148">                }</a>
+<span class="sourceLineNo">149</span><a id="line.149">        }</a>
+<span class="sourceLineNo">150</span><a id="line.150"></a>
+<span class="sourceLineNo">151</span><a id="line.151">}</a>
 
 
 

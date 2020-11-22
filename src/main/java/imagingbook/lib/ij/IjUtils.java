@@ -268,9 +268,9 @@ public abstract class IjUtils {
 	 * @param name The simple name of the image file (including extension)
 	 * @return A new {@link ImagePlus} instance or {@code null} if not found
 	 */
-	public static ImagePlus openImage(Path path) {
-		Objects.requireNonNull(path);
-		return new Opener().openImage(path.toString());
+	public static ImagePlus openImage(Path name) {
+		Objects.requireNonNull(name);
+		return new Opener().openImage(name.toString());
 	}
 	
 	// Comparing images --------------------------------------
