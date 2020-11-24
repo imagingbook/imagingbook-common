@@ -24,17 +24,17 @@ import java.util.stream.Stream;
  * (any legal class name is OK) extending this class ({@link ResourceLocation}).
  * This is to make sure that every resource location
  * is also a Java package known to exist at compile time.
- * For example, a marker class is defined in file {@code imagingbook.data.images.Resources.java} 
+ * For example, a marker class is defined in file {@code imagingbook.DATA.images.Resources.java} 
  * as follows:
  * <pre>
- * package imagingbook.data.images;
+ * package imagingbook.DATA.images;
  * public class Resources extends ResourceLocation { }</pre>
  * 
  * All resources are assumed to be local in the SAME directory ONLY,
  * thereby avoiding the use of strings to specify sub-directories.
  * Here is an example how to access the associated resources from some other class:
  * <pre>
- * ResourceLocation rd = new imagingbook.data.images.Resources();
+ * ResourceLocation rd = new imagingbook.DATA.images.Resources();
  * Path path = rd.getResourcePath("boats.tif");</pre>
  * 
  * Specifically, an image can be opened as follows:
@@ -47,13 +47,27 @@ import java.util.stream.Stream;
  * Note that under the canonical Maven project structure, the associated file 
  * locations (package structure) are:
  * <pre>
- * src/main/java/imagingbook/data/images/Resources.java (the marker class extending {@link ResourceLocation})
- * src/main/resources/imagingbook/data/images/boats.tif ... (the actual resource files)</pre>
+ * src/main/java/imagingbook/DATA/images/Resources.java (the marker class extending {@link ResourceLocation})
+ * src/main/resources/imagingbook/DATA/images/boats.tif ... (the actual resource files)</pre>
  * 
  * or (if resources are used for testing only)
  * <pre>
- * src/test/java/imagingbook/data/images/Resources.java (the marker class extending {@link ResourceLocation})
- * src/test/resources/imagingbook/data/images/boats.tif ... (the actual resource files)</pre>
+ * src/test/java/imagingbook/DATA/images/Resources.java (the marker class extending {@link ResourceLocation})
+ * src/test/resources/imagingbook/DATA/images/boats.tif ... (the actual resource files)</pre>
+ * 
+ * <p>
+ * Note: To avoid marker classes showing up in the JavaDoc documentation,
+ * we use the following (internal) "convention":
+ * </p>
+ * <ul>
+ * <li>All root resource packages/directories are named {@code DATA} (deliberately
+ * upper-case to mark them as special packages, since Java package names are generally lower-case).</li>
+ * <li>The {@code pom.xml} file contains the following entry in the configuration
+ * of the {@code maven-javadoc-plugin}:<br>
+ * {@code <excludePackageNames>*.DATA.*</excludePackageNames>}
+ * </ul>
+ * Of course these packages could be named differently and excluded individually.
+ * 
  * 
  * @author WB
  * @version 2020/11/22

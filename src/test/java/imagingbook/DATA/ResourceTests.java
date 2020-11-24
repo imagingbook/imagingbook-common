@@ -1,4 +1,4 @@
-package imagingbook.data;
+package imagingbook.DATA;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -23,7 +23,7 @@ public class ResourceTests {
 		String name = "boats.tif";
 		Path path = null;
 		
-		ResourceLocation rd = new imagingbook.data.images.Resources();
+		ResourceLocation rd = new imagingbook.DATA.images.Resources();
 		
 		path = rd.getResourcePath(name);
 		assertNotNull("existing resource not found" + name, path);
@@ -42,7 +42,7 @@ public class ResourceTests {
 	public void openBoatsImage() {
 		String name = "boats.tif";
 		
-		ResourceLocation rd = new imagingbook.data.images.Resources();
+		ResourceLocation rd = new imagingbook.DATA.images.Resources();
 		Path path = rd.getResourcePath(name);
 		assertNotNull("image resource not found" + name, path);
 		

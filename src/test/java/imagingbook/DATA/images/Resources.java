@@ -1,4 +1,4 @@
-package imagingbook.data.images;
+package imagingbook.DATA.images;
 
 import imagingbook.lib.util.ResourceLocation;
 

@@ -1,4 +1,4 @@
-package imagingbook.lib.color.iccProfiles;
+package imagingbook.lib.color.DATA.iccProfiles;
 
 import imagingbook.lib.util.ResourceLocation;
 

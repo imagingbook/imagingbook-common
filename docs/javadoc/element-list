@@ -1,7 +1,6 @@
 imagingbook
 imagingbook.lib
 imagingbook.lib.color
-imagingbook.lib.color.iccProfiles
 imagingbook.lib.filters
 imagingbook.lib.ij
 imagingbook.lib.image
