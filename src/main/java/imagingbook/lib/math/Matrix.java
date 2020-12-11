@@ -9,7 +9,6 @@
 
 package imagingbook.lib.math;
 
-import static imagingbook.lib.math.Arithmetic.isZero;
 import static imagingbook.lib.math.Arithmetic.sqr;
 
 import java.io.ByteArrayOutputStream;
@@ -36,7 +35,7 @@ import imagingbook.lib.settings.PrintPrecision;
  * Only arrays of type {@code float} and {@code double} are supported.
  * All matrices are assumed to be rectangular (i.e., all rows are of equal length).</p>
  * 
- * <p>Methods named with a trailing 'D' (e.g., {@code multiplyD}) operate destructively,
+ * <p>Methods named with a trailing 'D' (e.g., {@code multiplyD()}) operate destructively,
  * i.e., modify one of the passed arguments.</p>
  * 
  * <p>Most methods are self-explanatory and are therefore left undocumented.</p>
@@ -256,7 +255,7 @@ public abstract class Matrix {
 	
 	// Element-wise arithmetic -------------------------------
 	
-	public static double[] add(final double[] a, final double[] b) {
+	public static double[] add(final double[] a, final double[] b) throws IncompatibleDimensionsException {
 		if (!sameSize(a, b))
 			throw new IncompatibleDimensionsException();
 		final int n = a.length;
@@ -267,7 +266,7 @@ public abstract class Matrix {
 		return c;
 	}
 
-	public static double[][] add(final double[][] A, final double[][] B) {
+	public static double[][] add(final double[][] A, final double[][] B) throws IncompatibleDimensionsException {
 		if (!sameSize(A, B))
 			throw new IncompatibleDimensionsException();
 		final int m = A.length;
@@ -281,7 +280,7 @@ public abstract class Matrix {
 		return C;
 	}
 	
-	public static double[] subtract(final double[] a, final double[] b) {
+	public static double[] subtract(final double[] a, final double[] b) throws IncompatibleDimensionsException {
 		if (!sameSize(a, b))
 			throw new IncompatibleDimensionsException();
 		final int n = a.length;
@@ -375,7 +374,7 @@ public abstract class Matrix {
 	 * @param A matrix of size (m,n)
 	 * @param y a (row) vector of length n
 	 */
-	public static void multiplyD(final double[] x, final double[][] A, double[] y) {
+	public static void multiplyD(final double[] x, final double[][] A, double[] y) throws SameSourceTargetException {
 		if (x == y) 
 			throw new SameSourceTargetException();
 		final int m = getNumberOfRows(A);
@@ -410,7 +409,7 @@ public abstract class Matrix {
 	 * @param x a (column) vector of length n
 	 * @param y a (column) vector of length m
 	 */
-	public static void multiplyD(final double[][] A, final double[] x, double[] y) {
+	public static void multiplyD(final double[][] A, final double[] x, double[] y) throws SameSourceTargetException, IncompatibleDimensionsException {
 		if (x == y) 
 			throw new SameSourceTargetException();
 		final int m = getNumberOfRows(A);
@@ -445,7 +444,7 @@ public abstract class Matrix {
 	 * @param x a (column) vector of length n
 	 * @param y a (column) vector of length m
 	 */
-	public static void multiplyD(final float[][] A, final float[] x, float[] y) {
+	public static void multiplyD(final float[][] A, final float[] x, float[] y) throws SameSourceTargetException, IncompatibleDimensionsException {
 		if (x == y) 
 			throw new SameSourceTargetException();
 		final int m = getNumberOfRows(A);
@@ -475,7 +474,7 @@ public abstract class Matrix {
 	}
 	
 	// A * B -> C (destructive)
-	public static void multiplyD(final double[][] A, final double[][] B, final double[][] C) {
+	public static void multiplyD(final double[][] A, final double[][] B, final double[][] C) throws SameSourceTargetException, IncompatibleDimensionsException {
 		if (A == C || B == C) 
 			throw new SameSourceTargetException();
 		final int mA = getNumberOfRows(A);
@@ -506,7 +505,7 @@ public abstract class Matrix {
 	}
 
 	// A * B -> C (destructive)
-	public static void multiplyD(final float[][] A, final float[][] B, final float[][] C) {
+	public static void multiplyD(final float[][] A, final float[][] B, final float[][] C) throws SameSourceTargetException, IncompatibleDimensionsException {
 		if (A == C || B == C) 
 			throw new SameSourceTargetException();
 		final int mA = getNumberOfRows(A);
@@ -535,7 +534,7 @@ public abstract class Matrix {
 	 * @param y second vector
 	 * @return the dot product
 	 */
-	public static double dotProduct(final double[] x, final double[] y) {
+	public static double dotProduct(final double[] x, final double[] y) throws IncompatibleDimensionsException {
 		if (!sameSize(x, y))
 			throw new IncompatibleDimensionsException();
 		double sum = 0;
@@ -883,7 +882,7 @@ public abstract class Matrix {
 	
 	// min/max of vectors ------------------------
 	
-	public static float min(final float[] x) {
+	public static float min(final float[] x) throws ZeroLengthVectorException {
 		if (x.length == 0)
 			throw new ZeroLengthVectorException();
 		float minval = Float.POSITIVE_INFINITY;
@@ -895,7 +894,7 @@ public abstract class Matrix {
 		return minval;
 	}
 	
-	public static double min(final double[] x) {
+	public static double min(final double[] x) throws ZeroLengthVectorException {
 		if (x.length == 0)
 			throw new ZeroLengthVectorException();
 		double minval = Double.POSITIVE_INFINITY;
@@ -907,7 +906,7 @@ public abstract class Matrix {
 		return minval;
 	}
 	
-	public static float max(final float[] x) {
+	public static float max(final float[] x) throws ZeroLengthVectorException {
 		if (x.length == 0)
 			throw new ZeroLengthVectorException();
 		float maxval = Float.NEGATIVE_INFINITY;
@@ -919,7 +918,7 @@ public abstract class Matrix {
 		return maxval;
 	}
 	
-	public static double max(final double[] x) {
+	public static double max(final double[] x) throws ZeroLengthVectorException {
 		if (x.length == 0)
 			throw new ZeroLengthVectorException();
 		double maxval = Double.NEGATIVE_INFINITY;
@@ -1022,10 +1021,10 @@ public abstract class Matrix {
 	 * @param xh a homogeneous vector
 	 * @return the equivalent Cartesian vector
 	 */
-	public static double[] toCartesian(double[] xh) {
+	public static double[] toCartesian(double[] xh) throws DivideByZeroException {
 		double[] xc = new double[xh.length - 1];
 		final double s = 1 / xh[xh.length - 1];
-		if (isZero(s))
+		if (!Double.isFinite(s))	// isZero(s)
 			throw new DivideByZeroException();
 		for (int i = 0; i < xh.length - 1; i++) {
 			xc[i] = s * xh[i];
@@ -1035,19 +1034,19 @@ public abstract class Matrix {
 	
 	// Determinants --------------------------------------------
 	
-	public static float determinant2x2(final float[][] A) {
+	public static float determinant2x2(final float[][] A) throws IncompatibleDimensionsException {
 		if (A.length != 2 || A[0].length != 2)
 			throw new IncompatibleDimensionsException();
 		return A[0][0] * A[1][1] - A[0][1] * A[1][0];
 	}
 	
-	public static double determinant2x2(final double[][] A) {
+	public static double determinant2x2(final double[][] A) throws IncompatibleDimensionsException {
 		if (A.length != 2 || A[0].length != 2)
 			throw new IncompatibleDimensionsException();
 		return A[0][0] * A[1][1] - A[0][1] * A[1][0];
 	}
 	
-	public static float determinant3x3(final float[][] A) {
+	public static float determinant3x3(final float[][] A) throws IncompatibleDimensionsException {
 		if (A.length != 3 || A[0].length != 3)
 			throw new IncompatibleDimensionsException();
 		return
@@ -1059,7 +1058,7 @@ public abstract class Matrix {
 				A[2][2] * A[1][0] * A[0][1] ;
 	}
 
-	public static double determinant3x3(final double[][] A) {
+	public static double determinant3x3(final double[][] A) throws IncompatibleDimensionsException {
 		if (A.length != 3 || A[0].length != 3)
 			throw new IncompatibleDimensionsException();
 		return 
@@ -1071,7 +1070,7 @@ public abstract class Matrix {
 			A[2][2] * A[1][0] * A[0][1] ;
 	}
 	
-	public static double determinant(final double[][] A) {
+	public static double determinant(final double[][] A) throws NonsquareMatrixException {
 		if (!isSquare(A))
 			throw new NonsquareMatrixException();
 		RealMatrix M = MatrixUtils.createRealMatrix(A);
@@ -1080,7 +1079,7 @@ public abstract class Matrix {
 	
 	// Matrix trace ---------------------------------------
 	
-	public static double trace(final double[][] A) {
+	public static double trace(final double[][] A) throws NonsquareMatrixException {
 		final int m = getNumberOfRows(A);
 		final int n = getNumberOfColumns(A);
 		if (m != n) 
@@ -1122,12 +1121,12 @@ public abstract class Matrix {
 	
 	/**
 	 * Calculates and returns the inverse of the given matrix, which
-	 * must be square. Exceptions are thrown if the supplied matrix is
+	 * must be square. Exceptions are n if the supplied matrix is
 	 * not square or ill-conditioned (singular).
 	 * @param A a square matrix
 	 * @return the inverse matrix
 	 */
-	public static double[][] inverse(final double[][] A) {
+	public static double[][] inverse(final double[][] A) throws NonsquareMatrixException {
 		if (!isSquare(A))
 			throw new NonsquareMatrixException();
 		RealMatrix M = MatrixUtils.createRealMatrix(A);
@@ -1141,7 +1140,7 @@ public abstract class Matrix {
 	 * @param A a square matrix
 	 * @return the inverse matrix
 	 */
-	public static float[][] inverse(final float[][] A) {
+	public static float[][] inverse(final float[][] A) throws NonsquareMatrixException {
 		if (!isSquare(A))
 			throw new NonsquareMatrixException();
 		double[][] Ad = toDouble(A);
@@ -1269,97 +1268,34 @@ public abstract class Matrix {
 	
 	public static class IncompatibleDimensionsException extends RuntimeException {
 		private static final long serialVersionUID = 1L;
-		private static String DefaultMessage = "incompatible matrix-vector dimensions";
 		
 		public IncompatibleDimensionsException() {
-			super(DefaultMessage);
+			super("incompatible matrix-vector dimensions");
 		}
 	}
 	
 	public static class NonsquareMatrixException extends RuntimeException {
 		private static final long serialVersionUID = 1L;
-		private static String DefaultMessage = "square matrix expected";
 		
 		public NonsquareMatrixException() {
-			super(DefaultMessage);
+			super("square matrix expected");
 		}
 	}
 	
 	public static class SameSourceTargetException extends RuntimeException {
 		private static final long serialVersionUID = 1L;
-		private static String DefaultMessage = "source and target must not be the same";
 		
 		public SameSourceTargetException() {
-			super(DefaultMessage);
+			super("source and target must not be the same");
 		}
 	}
 	
 	public static class ZeroLengthVectorException extends RuntimeException {
 		private static final long serialVersionUID = 1L;
-		private static String DefaultMessage = "vector length must be greater that 0";
 		
 		public ZeroLengthVectorException() {
-			super(DefaultMessage);
+			super("vector length must be greater that 0");
 		}
 	}
-	
-	//--------------------------------------------------------------------------
-	
-	/**
-	 * For testing only.
-	 * @param args ignored
-	 */
-	public static void main(String[] args) {
-		float[][] A = {
-				{ -1, 2, 3 }, 
-				{  4, 5, 6 }, 
-				{  7, 8, 9 }};
-
-		System.out.println("A = \n" + toString(A));
-		System.out.println("A rows = " + getNumberOfRows(A));
-		System.out.println("A columns = " + getNumberOfColumns(A));
-		
-		int row = 1;
-		int column = 2;
-		System.out.println("A[1][2] = " + A[row][column]);
-
-		System.out.println("det=" + determinant3x3(A));
-		float[][] Ai = inverse(A);
-		toString(Ai);
-
-		double[][] B = {
-				{ -1, 2, 3 }, 
-				{ 4, 5, 6 }};
-		System.out.println("B = \n" + toString(B));
-		System.out.println("B rows = " + getNumberOfRows(B));
-		System.out.println("B columns = " + getNumberOfColumns(B));
-		
-		double[] colsSum = sumColumns(B);
-		System.out.println("B sum of columns = " + toString(colsSum));
-		double[] rowsSum = sumRows(B);
-		System.out.println("B sum of rows = " + toString(rowsSum));
-		
-		PrintPrecision.set(5);
-
-		double[][] C = new double[2][3];
-		System.out.println("C rows = " + getNumberOfRows(C));
-		System.out.println("C columns = " + getNumberOfColumns(C));
-
-		RealMatrix Ba = MatrixUtils.createRealMatrix(B);
-		System.out.println("Ba = " + Ba.toString());
-		
-		float[] v1 = {1,2,3};
-		float[] v2 = {4,5,6,7};
-		float[] v3 = {};
-		float[] v4 = {8};
-		float[] v123 = join(v1, v2, v3, v4);
-		System.out.println("v123 = \n" + toString(v123));
-		
-		System.out.println("mind1 = " + Matrix.min(new double[] {-20,30,60,-40, 0}));
-		System.out.println("maxd2 = " + Matrix.max(new double[] {-20,30,60,-40, 0}));
-		System.out.println("minf1 = " + Matrix.min(new float[] {-20,30,60,-40, 0}));
-		System.out.println("maxf2 = " + Matrix.max(new float[] {-20,30,60,-40, 0}));
-	}
-	
 
 }
