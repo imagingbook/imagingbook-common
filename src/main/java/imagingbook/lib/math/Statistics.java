@@ -9,7 +9,6 @@
 
 package imagingbook.lib.math;
 
-import org.apache.commons.math3.linear.MatrixUtils;
 //import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.stat.correlation.Covariance;
 
@@ -46,41 +45,41 @@ public abstract class Statistics {
 		return cov.getCovarianceMatrix().getData();
 	}
 	
-	/** 
-	 * example from UTICS-C Appendix:
-	 * N = 4 samples
-	 * K = 3 dimensions
-	 * @param args ignored
-	 */
-	public static void main(String[] args) {
-		
-		boolean BIAS_CORRECT = false;
-		
-		// example: n = 4 samples of dimension m = 3:
-		// samples[i][j], i = column (sample index), j = row (dimension index).
-		double[][] samples = { 
-				{75, 37, 12},	// i = 0
-				{41, 27, 20},	// i = 1
-				{93, 81, 11},	// i = 2
-				{12, 48, 52}	// i = 3
-		};
-		
-		// covariance matrix Cov (3x3)
-		double[][] cov = covarianceMatrix(samples, BIAS_CORRECT);
-		System.out.println("cov = \n" + Matrix.toString(cov));
-		
-		System.out.println();
-		
-		double[][] icov = Matrix.inverse(cov);
-		System.out.println("icov = \n" + Matrix.toString(icov));
-		
-		System.out.println();
-		
-		double trace = MatrixUtils.createRealMatrix(cov).getTrace();
-		System.out.println("trace(cov) = " + trace);
-		double Fnorm = MatrixUtils.createRealMatrix(cov).getFrobeniusNorm();
-		System.out.println("Fnorm(cov) = " + Fnorm);
-	}
+//	/** 
+//	 * example from UTICS-C Appendix:
+//	 * N = 4 samples
+//	 * K = 3 dimensions
+//	 * @param args ignored
+//	 */
+//	public static void main(String[] args) {
+//		
+//		boolean BIAS_CORRECT = false;
+//		
+//		// example: n = 4 samples of dimension m = 3:
+//		// samples[i][j], i = column (sample index), j = row (dimension index).
+//		double[][] samples = { 
+//				{75, 37, 12},	// i = 0
+//				{41, 27, 20},	// i = 1
+//				{93, 81, 11},	// i = 2
+//				{12, 48, 52}	// i = 3
+//		};
+//		
+//		// covariance matrix Cov (3x3)
+//		double[][] cov = covarianceMatrix(samples, BIAS_CORRECT);
+//		System.out.println("cov = \n" + Matrix.toString(cov));
+//		
+//		System.out.println();
+//		
+//		double[][] icov = Matrix.inverse(cov);
+//		System.out.println("icov = \n" + Matrix.toString(icov));
+//		
+//		System.out.println();
+//		
+//		double trace = MatrixUtils.createRealMatrix(cov).getTrace();
+//		System.out.println("trace(cov) = " + trace);
+//		double Fnorm = MatrixUtils.createRealMatrix(cov).getFrobeniusNorm();
+//		System.out.println("Fnorm(cov) = " + Fnorm);
+//	}
 	
 /* Results (bias-corrected):
 cov = 

@@ -14,6 +14,11 @@ import java.util.jar.Manifest;
 
 import imagingbook.lib.util.FileUtils;
 
+/**
+ * This class provides version information for this library.
+ * @author WB
+ *
+ */
 public abstract class Info {
 	
 	/**
@@ -21,7 +26,7 @@ public abstract class Info {
 	 * which this class was loaded. 
 	 * 
 	 * @return A string with the version information. 
-	 * The string "UNKNOWN" is returned if the class was not loaded from a JAR file or if 
+	 * "UNKNOWN" is returned if the library was not loaded from a JAR file or if 
 	 * the version information could not be determined.
 	 */
 	public static String getVersionInfo() {
@@ -39,26 +44,5 @@ public abstract class Info {
 		} catch (IllegalArgumentException e) { }
 		return version + " (" + buildTime + ")";
 	}
-	
-	
-	/**
-	 * Defined {@literal public} to show in JavaDoc.
-	 * Obsolete (reset to {@literal private} again). 
-	 * @deprecated
-	 */
-	private static final int VERSION = 99999999;	
-	
-	/**
-	 * This method is deprecated, version dates are not maintained any longer. Use
-	 * the method {@link getVersionInfo} to retrieve the Maven build version instead.
-	 * 
-	 * @return The current version of the 'imagingbook' library as an 8-digit integer,
-	 * eg 20130721 (in YYYYMMDD-format).
-	 * @deprecated
-	 */
-	public static int getVersion() {
-		return VERSION;
-	}
-
 
 }
