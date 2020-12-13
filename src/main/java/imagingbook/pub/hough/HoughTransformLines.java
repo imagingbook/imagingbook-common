@@ -31,7 +31,7 @@ import imagingbook.pub.hough.lines.HoughLine;
  * TODO: add bias correction
  * 
  * @author W. Burger
- * @version 2018/12/04
+ * @version 2020/12/13
  */
 public class HoughTransformLines {
 
@@ -152,17 +152,17 @@ public class HoughTransformLines {
 	}
 	
 	/**
-	 * @return The reference point used by this Hough transform.
-	 * @deprecated
+	 * Returns the reference points x-coordinate.
+	 * @return as described.
 	 */
-	public Point2D getReferencePoint() {
-		return new Point2D.Double(xRef, yRef);
-	}
-	
 	public double getXref() {
 		return xRef;
 	}
 	
+	/**
+	 * Returns the reference points y-coordinate.
+	 * @return as described.
+	 */
 	public double getYref() {
 		return yRef;
 	}

@@ -8,15 +8,17 @@
  *******************************************************************************/
 package imagingbook.pub.geometry.lines;
 
+import static imagingbook.lib.math.Arithmetic.sqr;
+
 import java.util.Locale;
 
 import ij.process.ImageProcessor;
+import imagingbook.lib.math.Arithmetic;
 import imagingbook.pub.geometry.basic.Point;
 
 /**
  * This class represents an algebraic line of the form a * x + b * y + c = 0.
- * All instances are normalized such that ||(a,b)|| = 1.
- * Instances of this class are immutable.
+ * Instances are immutable and normalized such that ||(a,b)|| = 1.
  * @author WB
  *
  */
@@ -27,7 +29,10 @@ public class AlgebraicLine {
 	// static factory methods ----------------------------------------
 	
 	public static AlgebraicLine create(double a, double b, double c) {
-		double norm = Math.sqrt(a * a + b * b);
+		double norm = Math.sqrt(sqr(a) + sqr(b));
+		if (Arithmetic.isZero(norm)) {
+			throw new IllegalArgumentException("a and b may not both be zero");
+		}
 		return new AlgebraicLine(a / norm, b / norm , c / norm);
 	}
 	
@@ -44,6 +49,10 @@ public class AlgebraicLine {
 		this.a = a;
 		this.b = b;
 		this.c = c;
+	}
+	
+	protected AlgebraicLine(AlgebraicLine al) {
+		this(al.a, al.b, al.c);
 	}
 	
 	// getter/setter methods ------------------------------------------
@@ -66,16 +75,15 @@ public class AlgebraicLine {
 	 * Returns the perpendicular distance between this line and the point (x, y).
 	 * The result may be positive or negative, depending on which side of the line
 	 * (x, y) is located. It is assumed that the line is normalized, i.e.,
-	 * sqrt(a * a + b * b) == 1.
+	 * ||(a,b)|| = 1.
 	 * 
 	 * @param x x-coordinate of point position.
 	 * @param y y-coordinate of point position.
 	 * @return The perpendicular distance between this line and the point (x, y).
 	 */
 	public double getDistance(double x, double y) {
-		return (a * x + b * y + c); // / Math.sqrt(a * a + b * b);
+		return (a * x + b * y + c);
 	}
-	
 	
 	/**
 	 * Returns the perpendicular distance between this line and the point p. The
@@ -95,6 +103,9 @@ public class AlgebraicLine {
 				this.getClass().getSimpleName(), a, b, c);
 	}
 	
+	
+	// --------------------------------------------------------------------------------
+	
 	/**
 	 * This is a brute-force drawing method which simply marks all image pixels that
 	 * are sufficiently close to the HoughLine hl. The drawing color for ip must be
@@ -102,6 +113,7 @@ public class AlgebraicLine {
 	 * 
 	 * @param ip        the {@link ImageProcessor} instance to draw to.
 	 * @param thickness the thickness of the lines to be drawn.
+	 * @deprecated Use {@link Utils#draw(AlgebraicLine, ImageProcessor, double)} instead!
 	 */
 	public void draw(ImageProcessor ip, double thickness) {
 		final int w = ip.getWidth();
@@ -118,22 +130,4 @@ public class AlgebraicLine {
 		}
 	}
 	
-	// ------------------------------------------------------------------------------
-	
-//	public static void main(String[] args) {
-//		Point p1 = Point.create(30, 10);
-//		Point p2 = Point.create(200, 100);
-//		
-//		AlgebraicLine L = AlgebraicLine.create(p1, p2);
-//		System.out.println(L.toString());
-//		
-//		System.out.println("d1 = " + L.getDistance(p1));
-//		System.out.println("d2 = " + L.getDistance(p2));
-//		System.out.println("d3 = " + L.getDistance(Point.create(0, 0)));	
-//	}
-	
-//	AlgebraicLine <a = -0.468, b = 0.884, c = 5.199>
-//	d1 = 0.0
-//	d2 = -5.329070518200751E-15
-//	d3 = 5.198752449100363
 }

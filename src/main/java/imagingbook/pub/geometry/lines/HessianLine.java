@@ -8,13 +8,17 @@
  *******************************************************************************/
 package imagingbook.pub.geometry.lines;
 
+import static imagingbook.lib.math.Arithmetic.sqr;
+
 import java.util.Locale;
 
 import imagingbook.pub.geometry.basic.Point;
 
 /**
- * This class represents a straight line in Hessian normal form, i.e., x *
- * cos(angle) + y * sin(angle) = radius.
+ * This class represents a straight line in Hessian normal form, i.e., 
+ * x * cos(angle) + y * sin(angle) = radius.
+ * It is a specialization (subclass) of {@link AlgebraicLine}.
+ * Instances are immutable.
  */
 public class HessianLine extends AlgebraicLine {
 	protected final double angle;
@@ -26,21 +30,26 @@ public class HessianLine extends AlgebraicLine {
 		return new HessianLine(AlgebraicLine.create(p1, p2));
 	}
 	
+	public static HessianLine create(double angle, double radius) {
+		return new HessianLine(angle, radius);
+	}
+	
 	// constructors --------------------------------------------------
 
-	public HessianLine(double angle, double radius) {
+	protected HessianLine(double angle, double radius) {
 		super(Math.cos(angle), Math.sin(angle), -radius);	
 		this.angle = angle;
 		this.radius = radius;
 	}
 	
-	public HessianLine(AlgebraicLine line) {
-		super(line.a, line.b, line.c);
-		this.angle = Math.atan2(line.b, line.a);
-		this.radius = -line.c / Math.sqrt(line.a * line.a + line.b * line.b);
+	// assumes that al is normalized
+	protected HessianLine(AlgebraicLine al) {
+		super(al);
+		this.angle = Math.atan2(al.b, al.a);
+		this.radius = -al.c / Math.sqrt(sqr(al.a) + sqr(al.b));
 	}
 	
-	// getter/setter methods ------------------------------------------
+	// getter methods ------------------------------------------
 	
 	public double getAngle() {
 		return angle;
@@ -58,22 +67,4 @@ public class HessianLine extends AlgebraicLine {
 				this.getClass().getSimpleName(), angle, radius);
 	}
 
-	// ------------------------------------------------------------------------------
-	
-//	public static void main(String[] args) {
-//		Point p1 = Point.create(30, 10);
-//		Point p2 = Point.create(200, 100);
-//		
-//		HessianLine L = HessianLine.create(p1, p2);
-//		System.out.println(L.toString());
-//		
-//		System.out.println("d1 = " + L.getDistance(p1));
-//		System.out.println("d2 = " + L.getDistance(p2));
-//		System.out.println("d3 = " + L.getDistance(Point.create(0, 0)));	
-//	}
-	
-//	HessianLine <angle = 2.058, radius = -5.199>
-//	d1 = 0.0
-//	d2 = -5.329070518200751E-15
-//	d3 = 5.198752449100363
 }
