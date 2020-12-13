@@ -9,6 +9,7 @@
 
 package imagingbook.lib.ij;
 
+import ij.IJ;
 import ij.ImagePlus;
 import ij.WindowManager;
 import ij.gui.GenericDialog;
@@ -273,7 +274,8 @@ public abstract class IjUtils {
 		return new Opener().openImage(name.toString());
 	}
 	
-	// Comparing images --------------------------------------
+	
+	// Methods for checking/comparing images (primarily used for testing)  ---------------------
 	
 	public static boolean sameType(ImageProcessor ip1, ImageProcessor ip2) {
 		return ip1.getClass().equals(ip2.getClass());
@@ -283,8 +285,45 @@ public abstract class IjUtils {
 		return ip1.getWidth() == ip2.getWidth() && ip1.getHeight() == ip2.getHeight();
 	}
 	
+	/**
+	 * Checks if the given image is possibly a binary image. This requires that
+	 * the image contains at most two different pixel values, one of which
+	 * must be zero. All pixels are checked.
+	 * This should work for all image types.
+	 * More efficient implementations are certainly possible.
+	 * 
+	 * @param ip
+	 * @return true if the image is binary
+	 */
+	public static boolean isBinary(ImageProcessor ip) {
+		final int width = ip.getWidth();
+		final int height = ip.getHeight();
+		int fgVal = 0;
+		boolean binary = true;
+		
+		outer:
+		for (int v = 0; v < height; v++) {
+			for (int u = 0; u < width; u++) {
+				int val = 0x007FFFFF & ip.get(u, v); // = mantissa in case of float
+				if (val != 0) {
+					if (fgVal == 0) {	// first non-zero value
+						fgVal = val;
+					}
+					else if (val != fgVal) {	// found another non-zero value
+						binary = false;
+						break outer;
+					}
+				}
+			}
+		}
+		
+		return binary;
+	}
+	
+	static final double DefaultMatchTolerance = 1E-6;
+	
 	public static boolean match(ImageProcessor ip1, ImageProcessor ip2) {
-		return match(ip1, ip2, 1E-6);
+		return match(ip1, ip2, DefaultMatchTolerance);
 	}
 	
 	public static boolean match(ImageProcessor ip1, ImageProcessor ip2, double tolerance) {

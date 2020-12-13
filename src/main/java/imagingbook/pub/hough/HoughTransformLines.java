@@ -76,7 +76,7 @@ public class HoughTransformLines {
 	 */
 	public HoughTransformLines(ImageProcessor I, Parameters params) {
 		this(I.getWidth(), I.getHeight(), params);
-		process(I, accumulator);
+		this.process(I, accumulator);
 	}
 
 	/**
@@ -92,7 +92,7 @@ public class HoughTransformLines {
 	 */
 	public HoughTransformLines(Point2D[] points, int width, int height, Parameters params) {
 		this(width, height, params);
-		process(points, accumulator);
+		this.process(points, accumulator);
 	}
 
 	// Non-public constructor used by public constructors (to set up all final

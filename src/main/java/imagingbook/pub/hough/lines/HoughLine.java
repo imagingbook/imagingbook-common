@@ -20,17 +20,17 @@ import imagingbook.pub.geometry.lines.HessianLine;
  * x * cos(angle) + y * sin(angle) = radius. 
  */
 public class HoughLine extends HessianLine implements Comparable<HoughLine> {
-	private final int count;
-	private final double xRef;
-	private final double yRef;
+	private final int count;			// pixel votes for this line
+	private final double xRef, yRef;	// reference point
+
 
 	/**
-	 * Public constructor
+	 * Constructor.
 	 * @param angle the line's normal angle
 	 * @param radius the line's radius (distance to reference point)
 	 * @param xRef reference point x-coordinate
 	 * @param yRef reference point y-coordinate
-	 * @param count count
+	 * @param count pixel votes for this line
 	 */
 	public HoughLine(double angle, double radius, double xRef, double yRef, int count) {
 		super(angle, radius);
