@@ -9,9 +9,6 @@
 
 package imagingbook.pub.histogram;
 
-import imagingbook.pub.histogram.PiecewiseLinearCdf;
-import imagingbook.pub.histogram.Util;
-
 public class HistogramMatcher {
 	
 	public HistogramMatcher() {

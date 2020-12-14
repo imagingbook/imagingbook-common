@@ -9,8 +9,6 @@
 
 package imagingbook.pub.threshold.global;
 
-import imagingbook.pub.threshold.global.GlobalThresholder;
-
 public class MeanThresholder extends GlobalThresholder {
 	
 	public MeanThresholder() {

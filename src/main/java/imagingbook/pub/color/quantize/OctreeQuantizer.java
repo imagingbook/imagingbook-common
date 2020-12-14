@@ -80,7 +80,7 @@ public class OctreeQuantizer extends ColorQuantizer {
 		this.maxColors = this.params.maxColors;
 		this.root = new Node(null, 0);
 		this.depth = Math.min(Math.max(log2(maxColors) - 1, 2), MAX_TREE_DEPTH);// 2 <= depth <= maxTreeDepth	
-		int initColorCnt = addPixels(pixels);
+//		int initColorCnt = addPixels(pixels);
 //		this.nColors = reduceTree(initColorCnt, pixels.length);
 		this.colormap = makeColorMap();
 	}
@@ -91,6 +91,7 @@ public class OctreeQuantizer extends ColorQuantizer {
 	
 	// -------------------------------------------------------------------------
 	
+	@SuppressWarnings("unused")
 	private int addPixels(int[] pixels) {
 		for (int p : pixels) {
 			addPixel(p);
@@ -142,6 +143,7 @@ public class OctreeQuantizer extends ColorQuantizer {
 	 * 		The total number of color samples used for creating the tree.
 	 * @return
 	 */
+	@SuppressWarnings("unused")
 	private int reduceTree(int initColorCnt, int nSamples) {
 		int minPixelCnt = Math.max(1,  nSamples / (maxColors * 8));
 		colorCnt = initColorCnt;

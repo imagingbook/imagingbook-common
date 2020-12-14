@@ -9,7 +9,13 @@
 
 package imagingbook.lib.ij;
 
-import ij.IJ;
+import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
+
 import ij.ImagePlus;
 import ij.WindowManager;
 import ij.gui.GenericDialog;
@@ -20,13 +26,6 @@ import ij.process.ColorProcessor;
 import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
 import ij.process.ShortProcessor;
-
-import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
 
 
 /**
@@ -292,7 +291,7 @@ public abstract class IjUtils {
 	 * This should work for all image types.
 	 * More efficient implementations are certainly possible.
 	 * 
-	 * @param ip
+	 * @param ip the image ({@link ImageProcessor}) to be checked
 	 * @return true if the image is binary
 	 */
 	public static boolean isBinary(ImageProcessor ip) {

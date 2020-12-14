@@ -116,6 +116,7 @@ public class SiftDetector {
 	 * @param keypoints the sequence of original key points
 	 * @return a sequence of enhanced key points
 	 */
+	@SuppressWarnings("unused")
 	private  List<KeyPoint> makeRichKeypoints(List<KeyPoint> keypoints) {
 		if (params.DEBUG) {IJ.log("makeSiftDescriptors...");}
 		//int cnt = 0;
@@ -448,6 +449,7 @@ public class SiftDetector {
 		return hess;
 	}
 
+	@SuppressWarnings("unused")
 	private void printMatrix3x3(float[][] A) {
 		IJ.log(String.format(Locale.US, "{{%.6f, %.6f, %.6f},", A[0][0], A[0][1], A[0][2]));
 		IJ.log(String.format(Locale.US, " {%.6f, %.6f, %.6f},", A[1][0], A[1][1], A[1][2]));

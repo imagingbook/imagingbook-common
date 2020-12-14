@@ -34,11 +34,6 @@ public class HoughLine extends HessianLine implements Comparable<HoughLine> {
 	// static factory methods -------------------------------
 	
 	public static HoughLine fromPoints(Point p1, Point p2, Point pRef, int count) {
-//		double xRef = pRef.getX();
-//		double yRef = pRef.getY();
-//		Point p1r = Point.create(p1.getX() - xRef, p1.getY() - yRef);
-//		Point p2r = Point.create(p2.getX() - xRef, p2.getY() - yRef);
-//		return new HoughLine(HessianLine.fromPoints(p1r, p2r), xRef, yRef, count);
 		return new HoughLine(AlgebraicLine.fromPoints(p1, p2), pRef.getX(), pRef.getY(), count);
 	}
 	
@@ -60,6 +55,7 @@ public class HoughLine extends HessianLine implements Comparable<HoughLine> {
 	}
 	
 	/**
+	 * Constructor. 
 	 * Creates a new {@link HoughLine} instance from a given
 	 * {@link AlgebraicLine} (or any subclass) instance.
 	 * The line parameters are adjusted to the specified reference point
@@ -68,15 +64,14 @@ public class HoughLine extends HessianLine implements Comparable<HoughLine> {
 	 * The two lines are equivalent, i.e., contain the same points (x,y).
 	 * Thus the distance from a given point (x,y) is the same from the original
 	 * line and the new line.
-	 * @param L1
-	 * @param xRef
-	 * @param yRef
-	 * @param count
+	 * @param L1 an existing line ({@link AlgebraicLine} or subclass)
+	 * @param xRef reference point x-coordinate
+	 * @param yRef reference point y-coordinate
+	 * @param count pixel votes for this line
 	 */
 	public HoughLine(AlgebraicLine L1, double xRef, double yRef, int count) {
-		//this(hl.getAngle(), hl.getRadius(), xRef, yRef, count);
-		super(L1.getA(), 
-			  L1.getB(), 
+		super(L1.getA(),
+			  L1.getB(),
 			  L1.getC() + L1.getA()*(xRef-L1.getXref()) + L1.getB()*(yRef-L1.getYref())); // = a', b', c'
 		this.xRef = xRef;
 		this.yRef = yRef;
@@ -147,31 +142,7 @@ public class HoughLine extends HessianLine implements Comparable<HoughLine> {
 	
 	// ------------------------------------------------------------------------------
 	
-	
-//	/**
-//	 * This is a brute-force drawing method which simply marks all image pixels that
-//	 * are sufficiently close to the HoughLine hl. The drawing color for ip must be
-//	 * previously set.
-//	 * 
-//	 * @param ip        the {@link ImageProcessor} instance to draw to.
-//	 * @param thickness the thickness of the lines to be drawn.
-//	 */
-//	@Override
-//	public void draw(ImageProcessor ip, double thickness) {
-//		final int w = ip.getWidth();
-//		final int h = ip.getHeight();
-//		final double dmax = 0.5 * thickness;
-//		for (int u = 0; u < w; u++) {
-//			for (int v = 0; v < h; v++) {
-//				// get the distance between (u,v) and the line hl:
-//				double d = Math.abs(this.getDistance(u, v));
-//				if (d <= dmax) {
-//					ip.drawPixel(u, v);
-//				}
-//			}
-//		}
-//	}
-	
+
 	/**
 	 * Creates a vector line to be used an element in an ImageJ graphic overlay
 	 * (see {@link ij.gui.Overlay}). The length of the displayed line 
@@ -210,17 +181,5 @@ public class HoughLine extends HessianLine implements Comparable<HoughLine> {
 		float[] ypoints = { y1, y2 };
 		return new PolygonRoi(xpoints, ypoints, Roi.POLYLINE);
 	}
-	
-	
-	// ------------------------------------------------------------------------------
-	
-//	public static void main(String[] args) {
-//		Point p1 = Point.create(30, 10);
-//		Point p2 = Point.create(200, 100);
-//		
-//		HoughLine L = HoughLine.create(p1, p2, 90, 60, 0);
-//		System.out.println(L.toString());
-//	}
-	
-	// HoughLine <angle = 2.058, radius = -16.116, xRef = 90.000, yRef = 60.000, count = 0>
+
 }

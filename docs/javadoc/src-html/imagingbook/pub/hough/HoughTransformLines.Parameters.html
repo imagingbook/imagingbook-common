@@ -41,7 +41,7 @@
 <span class="sourceLineNo">031</span><a id="line.31"> * TODO: add bias correction</a>
 <span class="sourceLineNo">032</span><a id="line.32"> * </a>
 <span class="sourceLineNo">033</span><a id="line.33"> * @author W. Burger</a>
-<span class="sourceLineNo">034</span><a id="line.34"> * @version 2018/12/04</a>
+<span class="sourceLineNo">034</span><a id="line.34"> * @version 2020/12/13</a>
 <span class="sourceLineNo">035</span><a id="line.35"> */</a>
 <span class="sourceLineNo">036</span><a id="line.36">public class HoughTransformLines {</a>
 <span class="sourceLineNo">037</span><a id="line.37"></a>
@@ -86,7 +86,7 @@
 <span class="sourceLineNo">076</span><a id="line.76">         */</a>
 <span class="sourceLineNo">077</span><a id="line.77">        public HoughTransformLines(ImageProcessor I, Parameters params) {</a>
 <span class="sourceLineNo">078</span><a id="line.78">                this(I.getWidth(), I.getHeight(), params);</a>
-<span class="sourceLineNo">079</span><a id="line.79">                process(I, accumulator);</a>
+<span class="sourceLineNo">079</span><a id="line.79">                this.process(I, accumulator);</a>
 <span class="sourceLineNo">080</span><a id="line.80">        }</a>
 <span class="sourceLineNo">081</span><a id="line.81"></a>
 <span class="sourceLineNo">082</span><a id="line.82">        /**</a>
@@ -102,7 +102,7 @@
 <span class="sourceLineNo">092</span><a id="line.92">         */</a>
 <span class="sourceLineNo">093</span><a id="line.93">        public HoughTransformLines(Point2D[] points, int width, int height, Parameters params) {</a>
 <span class="sourceLineNo">094</span><a id="line.94">                this(width, height, params);</a>
-<span class="sourceLineNo">095</span><a id="line.95">                process(points, accumulator);</a>
+<span class="sourceLineNo">095</span><a id="line.95">                this.process(points, accumulator);</a>
 <span class="sourceLineNo">096</span><a id="line.96">        }</a>
 <span class="sourceLineNo">097</span><a id="line.97"></a>
 <span class="sourceLineNo">098</span><a id="line.98">        // Non-public constructor used by public constructors (to set up all final</a>
@@ -162,17 +162,17 @@
 <span class="sourceLineNo">152</span><a id="line.152">        }</a>
 <span class="sourceLineNo">153</span><a id="line.153">        </a>
 <span class="sourceLineNo">154</span><a id="line.154">        /**</a>
-<span class="sourceLineNo">155</span><a id="line.155">         * @return The reference point used by this Hough transform.</a>
-<span class="sourceLineNo">156</span><a id="line.156">         * @deprecated</a>
+<span class="sourceLineNo">155</span><a id="line.155">         * Returns the reference points x-coordinate.</a>
+<span class="sourceLineNo">156</span><a id="line.156">         * @return as described.</a>
 <span class="sourceLineNo">157</span><a id="line.157">         */</a>
-<span class="sourceLineNo">158</span><a id="line.158">        public Point2D getReferencePoint() {</a>
-<span class="sourceLineNo">159</span><a id="line.159">                return new Point2D.Double(xRef, yRef);</a>
+<span class="sourceLineNo">158</span><a id="line.158">        public double getXref() {</a>
+<span class="sourceLineNo">159</span><a id="line.159">                return xRef;</a>
 <span class="sourceLineNo">160</span><a id="line.160">        }</a>
 <span class="sourceLineNo">161</span><a id="line.161">        </a>
-<span class="sourceLineNo">162</span><a id="line.162">        public double getXref() {</a>
-<span class="sourceLineNo">163</span><a id="line.163">                return xRef;</a>
-<span class="sourceLineNo">164</span><a id="line.164">        }</a>
-<span class="sourceLineNo">165</span><a id="line.165">        </a>
+<span class="sourceLineNo">162</span><a id="line.162">        /**</a>
+<span class="sourceLineNo">163</span><a id="line.163">         * Returns the reference points y-coordinate.</a>
+<span class="sourceLineNo">164</span><a id="line.164">         * @return as described.</a>
+<span class="sourceLineNo">165</span><a id="line.165">         */</a>
 <span class="sourceLineNo">166</span><a id="line.166">        public double getYref() {</a>
 <span class="sourceLineNo">167</span><a id="line.167">                return yRef;</a>
 <span class="sourceLineNo">168</span><a id="line.168">        }</a>

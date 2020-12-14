@@ -9,8 +9,6 @@
 
 package imagingbook.pub.morphology.old;
 
-import imagingbook.pub.morphology.old.BinMorpher;
-
 /**
  * This class is obsolete (replaced by {@link imagingbook.pub.morphology.BinaryMorphologyFilter}).
  *

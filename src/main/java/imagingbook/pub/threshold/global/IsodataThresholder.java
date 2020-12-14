@@ -9,8 +9,6 @@
 
 package imagingbook.pub.threshold.global;
 
-import imagingbook.pub.threshold.global.GlobalThresholder;
-
 /**
  * This thresholder implements the algorithm proposed by Ridler and Calvard (1978),
  * T.W. Ridler, S. Calvard, Picture thresholding using an iterative selection method,

@@ -13,7 +13,6 @@ import ij.plugin.filter.RankFilters;
 import ij.process.ByteProcessor;
 import ij.process.FloatProcessor;
 import imagingbook.pub.threshold.BackgroundMode;
-import imagingbook.pub.threshold.adaptive.AdaptiveThresholder;
 
 /**
  * Adaptive thresholder as proposed in J. Sauvola and M. Pietikäinen, 

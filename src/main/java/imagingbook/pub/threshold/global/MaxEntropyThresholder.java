@@ -9,8 +9,6 @@
 
 package imagingbook.pub.threshold.global;
 
-import imagingbook.pub.threshold.global.GlobalThresholder;
-
 /**
  * Maximum entropy thresholder modeled after Kapur et al. (1985).
  */

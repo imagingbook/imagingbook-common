@@ -465,20 +465,21 @@
 <span class="sourceLineNo">455</span><a id="line.455">                        double sumDist2 = 0;</a>
 <span class="sourceLineNo">456</span><a id="line.456">                        double maxDist2 = Double.NEGATIVE_INFINITY;</a>
 <span class="sourceLineNo">457</span><a id="line.457">                        for (int i = 0; i &lt; pntsA.length; i++) {</a>
-<span class="sourceLineNo">458</span><a id="line.458">                                Point a = pntsA[i];</a>
-<span class="sourceLineNo">459</span><a id="line.459">                                Point b = pntsB[i];</a>
-<span class="sourceLineNo">460</span><a id="line.460">                                Point c = pntsC[i];</a>
-<span class="sourceLineNo">461</span><a id="line.461">                                double dist2 = b.distance2(c);</a>
-<span class="sourceLineNo">462</span><a id="line.462">                                sumDist2 += dist2;</a>
-<span class="sourceLineNo">463</span><a id="line.463">                                maxDist2 = Math.max(maxDist2, dist2);</a>
-<span class="sourceLineNo">464</span><a id="line.464">                                //                              System.out.format("(%.3f, %.3f) -&gt; (%.3f, %.3f) d=%.4f\n", a.getX(), a.getY(), c.getX(), c.getY(), dist2);</a>
-<span class="sourceLineNo">465</span><a id="line.465">                        }</a>
-<span class="sourceLineNo">466</span><a id="line.466">                        System.out.format("\nTotal error = %.2f\n", Math.sqrt(sumDist2));</a>
-<span class="sourceLineNo">467</span><a id="line.467">                        System.out.format("Max. dist = %.2f\n", Math.sqrt(maxDist2));   </a>
-<span class="sourceLineNo">468</span><a id="line.468">                }</a>
-<span class="sourceLineNo">469</span><a id="line.469">        }</a>
-<span class="sourceLineNo">470</span><a id="line.470"></a>
-<span class="sourceLineNo">471</span><a id="line.471">}</a>
+<span class="sourceLineNo">458</span><a id="line.458">                                @SuppressWarnings("unused")</a>
+<span class="sourceLineNo">459</span><a id="line.459">                                Point a = pntsA[i];</a>
+<span class="sourceLineNo">460</span><a id="line.460">                                Point b = pntsB[i];</a>
+<span class="sourceLineNo">461</span><a id="line.461">                                Point c = pntsC[i];</a>
+<span class="sourceLineNo">462</span><a id="line.462">                                double dist2 = b.distance2(c);</a>
+<span class="sourceLineNo">463</span><a id="line.463">                                sumDist2 += dist2;</a>
+<span class="sourceLineNo">464</span><a id="line.464">                                maxDist2 = Math.max(maxDist2, dist2);</a>
+<span class="sourceLineNo">465</span><a id="line.465">                                //                              System.out.format("(%.3f, %.3f) -&gt; (%.3f, %.3f) d=%.4f\n", a.getX(), a.getY(), c.getX(), c.getY(), dist2);</a>
+<span class="sourceLineNo">466</span><a id="line.466">                        }</a>
+<span class="sourceLineNo">467</span><a id="line.467">                        System.out.format("\nTotal error = %.2f\n", Math.sqrt(sumDist2));</a>
+<span class="sourceLineNo">468</span><a id="line.468">                        System.out.format("Max. dist = %.2f\n", Math.sqrt(maxDist2));   </a>
+<span class="sourceLineNo">469</span><a id="line.469">                }</a>
+<span class="sourceLineNo">470</span><a id="line.470">        }</a>
+<span class="sourceLineNo">471</span><a id="line.471"></a>
+<span class="sourceLineNo">472</span><a id="line.472">}</a>
 
 
 

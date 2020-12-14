@@ -12,9 +12,6 @@ package imagingbook.pub.histogram;
 import ij.ImagePlus;
 import ij.gui.NewImage;
 import ij.process.ImageProcessor;
-import imagingbook.pub.histogram.HistogramPlot;
-import imagingbook.pub.histogram.PiecewiseLinearCdf;
-import imagingbook.pub.histogram.Util;
 
 public class HistogramPlot {
 	// TODO: make HistogramPlot extend ImagePlus

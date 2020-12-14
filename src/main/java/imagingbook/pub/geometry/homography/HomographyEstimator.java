@@ -455,6 +455,7 @@ public class HomographyEstimator {
 			double sumDist2 = 0;
 			double maxDist2 = Double.NEGATIVE_INFINITY;
 			for (int i = 0; i < pntsA.length; i++) {
+				@SuppressWarnings("unused")
 				Point a = pntsA[i];
 				Point b = pntsB[i];
 				Point c = pntsC[i];

@@ -26,6 +26,7 @@ public class QuarticInterpolator2D implements PolynomialInterpolator2D {
 	private final double minMove = 1e-6;	// smallest move to continue search 
 	private final double searchWindow = 0.6;		// x/y search boundary (-xyLimit, +xyLimit)
 	
+	@SuppressWarnings("unused")
 	private final float[] s;	// TODO: for testing only - remove!
 	
 	public QuarticInterpolator2D(float[] s, int maxIterations) {

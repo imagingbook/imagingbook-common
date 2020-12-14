@@ -9,8 +9,6 @@
 
 package imagingbook.pub.threshold.global;
 
-import imagingbook.pub.threshold.global.GlobalThresholder;
-
 /**
  * Minimum Error thresholder after Kittler and Illingworth (1986).
  */

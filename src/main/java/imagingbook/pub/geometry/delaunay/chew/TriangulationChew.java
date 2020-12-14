@@ -22,7 +22,6 @@ package imagingbook.pub.geometry.delaunay.chew;
 
 import java.util.AbstractSet;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -33,7 +32,6 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import ij.process.ImageProcessor;
 import imagingbook.pub.geometry.basic.Point;
 import imagingbook.pub.geometry.delaunay.DelaunayTriangulation;
 import imagingbook.pub.geometry.delaunay.Triangle;
