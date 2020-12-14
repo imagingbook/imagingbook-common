@@ -12,15 +12,13 @@ import static imagingbook.lib.math.Arithmetic.sqr;
 
 import java.util.Locale;
 
-import ij.gui.PolygonRoi;
-import ij.gui.Roi;
 import imagingbook.pub.geometry.basic.Point;
 import imagingbook.pub.geometry.lines.AlgebraicLine;
 import imagingbook.pub.geometry.lines.HessianLine;
 
 /**
- * This class represents a straight line used in the Hough transform
- * for straight lines (see {@link imagingbook.pub.hough.HoughTransformLines}).
+ * This class represents a straight line used by the Hough transform
+ * (see {@link imagingbook.pub.hough.HoughTransformLines}).
  * It inherits from {@link HessianLine} which is, in turn, a subclass of 
  * {@link AlgebraicLine}.
  * Unlike a {@link HessianLine} the reference point is not necessarily at
@@ -64,15 +62,15 @@ public class HoughLine extends HessianLine implements Comparable<HoughLine> {
 	 * The two lines are equivalent, i.e., contain the same points (x,y).
 	 * Thus the distance from a given point (x,y) is the same from the original
 	 * line and the new line.
-	 * @param L1 an existing line ({@link AlgebraicLine} or subclass)
+	 * @param line an existing line ({@link AlgebraicLine} or subclass)
 	 * @param xRef reference point x-coordinate
 	 * @param yRef reference point y-coordinate
 	 * @param count pixel votes for this line
 	 */
-	public HoughLine(AlgebraicLine L1, double xRef, double yRef, int count) {
-		super(L1.getA(),
-			  L1.getB(),
-			  L1.getC() + L1.getA()*(xRef-L1.getXref()) + L1.getB()*(yRef-L1.getYref())); // = a', b', c'
+	public HoughLine(AlgebraicLine line, double xRef, double yRef, int count) {
+		super(line.getA(),
+			  line.getB(),
+			  line.getC() + line.getA()*(xRef-line.getXref()) + line.getB()*(yRef-line.getYref())); // = a', b', c'
 		this.xRef = xRef;
 		this.yRef = yRef;
 		this.count = count;
@@ -143,43 +141,43 @@ public class HoughLine extends HessianLine implements Comparable<HoughLine> {
 	// ------------------------------------------------------------------------------
 	
 
-	/**
-	 * Creates a vector line to be used an element in an ImageJ graphic overlay
-	 * (see {@link ij.gui.Overlay}). The length of the displayed line 
-	 * is equivalent to the distance of the reference point (typically the
-	 * image center) to the coordinate origin.
-	 * @return the new line
-	 * @deprecated
-	 */
-	public PolygonRoi makeLineRoi() {
-		double length = Math.sqrt(xRef * xRef + yRef * yRef);
-		return this.makeLineRoi(length);
-	}
+//	/**
+//	 * Creates a vector line to be used an element in an ImageJ graphic overlay
+//	 * (see {@link ij.gui.Overlay}). The length of the displayed line 
+//	 * is equivalent to the distance of the reference point (typically the
+//	 * image center) to the coordinate origin.
+//	 * @return the new line
+//	 * @deprecated
+//	 */
+//	public PolygonRoi makeLineRoi() {
+//		double length = Math.sqrt(xRef * xRef + yRef * yRef);
+//		return this.makeLineRoi(length);
+//	}
 	
-	/**
-	 * Creates a vector line to be used an element in an ImageJ graphic overlay
-	 * (see {@link ij.gui.Overlay}). The length of the displayed line 
-	 * is measured from its center point (the point closest to the reference
-	 * point) in both directions.
-	 * 
-	 * @param length the length of the line
-	 * @return the new line
-	 */
-	public PolygonRoi makeLineRoi(double length) {
-		// unit vector perpendicular to the line
-		double dx = Math.cos(angle);	
-		double dy = Math.sin(angle);
-		// calculate the line's center point (closest to the reference point)
-		double x0 = xRef + radius * dx;
-		double y0 = yRef + radius * dy;
-		// calculate the line end points (using normal vectors)
-		float x1 = (float) (x0 + dy * length);
-		float y1 = (float) (y0 - dx * length);
-		float x2 = (float) (x0 - dy * length);
-		float y2 = (float) (y0 + dx * length);
-		float[] xpoints = { x1, x2 };
-		float[] ypoints = { y1, y2 };
-		return new PolygonRoi(xpoints, ypoints, Roi.POLYLINE);
-	}
+//	/**
+//	 * Creates a vector line to be used an element in an ImageJ graphic overlay
+//	 * (see {@link ij.gui.Overlay}). The length of the displayed line 
+//	 * is measured from its center point (the point closest to the reference
+//	 * point) in both directions.
+//	 * 
+//	 * @param length the length of the line
+//	 * @return the new line
+//	 */
+//	public PolygonRoi makeLineRoi(double length) {
+//		// unit vector perpendicular to the line
+//		double dx = Math.cos(angle);	
+//		double dy = Math.sin(angle);
+//		// calculate the line's center point (closest to the reference point)
+//		double x0 = xRef + radius * dx;
+//		double y0 = yRef + radius * dy;
+//		// calculate the line end points (using normal vectors)
+//		float x1 = (float) (x0 + dy * length);
+//		float y1 = (float) (y0 - dx * length);
+//		float x2 = (float) (x0 - dy * length);
+//		float y2 = (float) (y0 + dx * length);
+//		float[] xpoints = { x1, x2 };
+//		float[] ypoints = { y1, y2 };
+//		return new PolygonRoi(xpoints, ypoints, Roi.POLYLINE);
+//	}
 
 }
