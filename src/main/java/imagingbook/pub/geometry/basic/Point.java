@@ -4,6 +4,7 @@ import static imagingbook.lib.math.Arithmetic.sqr;
 
 import java.awt.geom.Point2D;
 import java.util.Collection;
+import java.util.Locale;
 
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 
@@ -79,7 +80,8 @@ public interface Point {
 		
 		@Override
 		public String toString() {
-			return String.format("Point[%.3f, %.3f]", this.getX(), this.getY());
+			return String.format(Locale.US, "%s[%.3f, %.3f]", 
+					Point.class.getSimpleName(), this.getX(), this.getY());
 		}
 	}
 

@@ -8,7 +8,7 @@
  *******************************************************************************/
 package imagingbook.pub.geometry.lines;
 
-import static imagingbook.lib.math.Arithmetic.sqr;
+//import static imagingbook.lib.math.Arithmetic.sqr;
 
 import java.util.Locale;
 
@@ -21,32 +21,30 @@ import imagingbook.pub.geometry.basic.Point;
  * Instances are immutable.
  */
 public class HessianLine extends AlgebraicLine {
+	
 	protected final double angle;
 	protected final double radius;
 	
 	// static factory methods ----------------------------------------
 	
-	public static HessianLine create(Point p1, Point p2) {
-		return new HessianLine(AlgebraicLine.create(p1, p2));
-	}
-	
-	public static HessianLine create(double angle, double radius) {
-		return new HessianLine(angle, radius);
+	public static HessianLine fromPoints(Point p1, Point p2) {
+		return new HessianLine(AlgebraicLine.fromPoints(p1, p2));
 	}
 	
 	// constructors --------------------------------------------------
 
-	protected HessianLine(double angle, double radius) {
-		super(Math.cos(angle), Math.sin(angle), -radius);	
-		this.angle = angle;
-		this.radius = radius;
+	public HessianLine(double angle, double radius) {
+		this(Math.cos(angle), Math.sin(angle), -radius);	// = a, b, c
 	}
 	
-	// assumes that al is normalized
-	protected HessianLine(AlgebraicLine al) {
-		super(al);
-		this.angle = Math.atan2(al.b, al.a);
-		this.radius = -al.c / Math.sqrt(sqr(al.a) + sqr(al.b));
+	public HessianLine(double a, double b, double c) {
+		super(a, b, c);	// creates a normalized line
+		this.angle = Math.atan2(this.b, this.a);
+		this.radius = -this.c; // ... / Math.sqrt(sqr(this.a) + sqr(this.b)); 
+	}
+	
+	public HessianLine(AlgebraicLine L) {
+		this(L.a, L.b, L.c);
 	}
 	
 	// getter methods ------------------------------------------

@@ -6,14 +6,15 @@ import org.junit.Test;
 import imagingbook.pub.geometry.basic.Point;
 
 public class HessianLineTest {
+	
+	static Point p1 = Point.create(30, 10);
+	static Point p2 = Point.create(200, 100);
+	static Point p3 = Point.create(90, 40);
 
 	@Test
 	public void test1() {
-		Point p1 = Point.create(30, 10);
-		Point p2 = Point.create(200, 100);
-		
-		HessianLine l12 = HessianLine.create(p1, p2);		
-		HessianLine l21 = HessianLine.create(p2, p1);
+		HessianLine l12 = HessianLine.fromPoints(p1, p2);		
+		HessianLine l21 = HessianLine.fromPoints(p2, p1);
 		
 		Assert.assertEquals(0.0, l12.getDistance(p1), 1E-6);
 		Assert.assertEquals(0.0, l12.getDistance(p2), 1E-6);
@@ -26,10 +27,18 @@ public class HessianLineTest {
 	public void test2() {
 		double angle = 0.2;
 		double radius = 80;
-		HessianLine hl1 = HessianLine.create(angle, radius);
+		HessianLine hl1 = new HessianLine(angle, radius);
 		HessianLine hl2 = new HessianLine(hl1);
 		Assert.assertEquals(angle, hl2.getAngle(), 1E-6);
 		Assert.assertEquals(radius, hl2.getRadius(), 1E-6);
+	}
+	
+	@Test
+	public void test3() {
+		HessianLine l12 = HessianLine.fromPoints(p1, p2);
+		Point x0 = l12.getClosestLinePoint(p3);
+		Assert.assertEquals(0.0, l12.getDistance(x0), 1E-6);						// x0 is actually ON the line
+		Assert.assertEquals(p3.distance(x0), Math.abs(l12.getDistance(p3)), 1E-6);	// distance (p3,x0) is shortest 
 	}
 
 }

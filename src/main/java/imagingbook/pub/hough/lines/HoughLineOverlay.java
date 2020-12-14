@@ -68,7 +68,7 @@ public class HoughLineOverlay extends CustomOverlay<HoughLine> {
 		return roi;
 	}
 	
-	public void markReferencePoint(double xc, double yc, Color color) {
+	public void markPoint(double xc, double yc, Color color) {
 		double markerSize = 2.0;
 		Path2D path = new Path2D.Double();
 		path.moveTo(xc - markerSize, yc);
