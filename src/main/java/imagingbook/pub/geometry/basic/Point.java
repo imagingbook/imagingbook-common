@@ -17,6 +17,9 @@ import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
  * 
  */
 public interface Point {
+	
+	public static final Point ZERO = Point.create(0, 0);
+	
 	double getX();
 	double getY();
 	

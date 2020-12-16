@@ -14,6 +14,17 @@ public class HoughLineTest {
 	static Point p3 = Point.create(90, 40);
 	
 	static Point pRef = Point.create(70, 50);
+	
+	@Test
+	public void test0() {
+		// example from CV lecture notes
+		Point xRef = Point.create(90, 60);
+		AlgebraicLine h12 = AlgebraicLine.fromPoints(p1, p2);
+	
+		HoughLine L12 = new HoughLine(h12, xRef.getX(), xRef.getY(), 0);
+		Assert.assertEquals(0.0, L12.getDistance(p1), 1E-6);
+		Assert.assertEquals(0.0, L12.getDistance(p2), 1E-6);
+	}
 
 	@Test
 	public void test1() {
@@ -77,6 +88,22 @@ public class HoughLineTest {
 		// check if the two points are on this line too
 		Assert.assertEquals(0.0, L4.getDistance(p1), 1E-6);
 		Assert.assertEquals(0.0, L4.getDistance(p2), 1E-6);
+	}
+	
+	@Test
+	public void test5() { // Example is used in CV lecture notes
+		// create L1 (zero-referenced):
+		double a1 = -90, b1 = 170, c1 = 1000;
+		AlgebraicLine L1 = new AlgebraicLine(a1, b1, c1);
+		
+		// create L2 (with specific reference point):
+		double xR = 10, yR = 50;
+		double a2 = a1, b2 = b1, c2 = c1 + a1 * xR + b1 * yR;
+		HoughLine L2 = new HoughLine(a2, b2, c2, xR, yR, 0);
+		
+		// make sure both are "equivalent" (contain the same points (x,y))
+		Assert.assertTrue(L1.equals(L2));
+		Assert.assertTrue(L2.equals(L1));
 	}
 
 }

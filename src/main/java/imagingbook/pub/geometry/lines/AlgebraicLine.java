@@ -9,10 +9,11 @@
 package imagingbook.pub.geometry.lines;
 
 import static imagingbook.lib.math.Arithmetic.sqr;
+import static imagingbook.lib.math.Arithmetic.isZero;
 
 import java.util.Locale;
 
-import imagingbook.lib.math.Arithmetic;
+//import imagingbook.lib.math.Arithmetic;
 import imagingbook.pub.geometry.basic.Point;
 
 /**
@@ -38,7 +39,7 @@ public class AlgebraicLine {
 
 	public AlgebraicLine(double a, double b, double c) {
 		double norm = Math.sqrt(sqr(a) + sqr(b));
-		if (Arithmetic.isZero(norm)) {
+		if (isZero(norm)) {
 			throw new IllegalArgumentException("a and b may not both be zero");
 		}
 		this.a = a / norm;
@@ -71,7 +72,7 @@ public class AlgebraicLine {
 	public double getYref() {
 		return 0.0;
 	}
-
+	
 	// other methods ------------------------------------------
 	
 	/**
@@ -85,7 +86,7 @@ public class AlgebraicLine {
 	 * @return The perpendicular distance between this line and the point (x, y).
 	 */
 	public double getDistance(double x, double y) {
-		return (a * x + b * y + c);
+		return (a * (x - this.getXref()) + b * (y - this.getYref()) + c);
 	}
 	
 	/**
@@ -108,15 +109,54 @@ public class AlgebraicLine {
 	 * @return the closest line point
 	 */
 	public Point getClosestLinePoint(Point p) {
-		double s = 1.0; // 1.0 / (sqr(a) + sqr(b)); // assumed to be normalized
-		double x = p.getX();
-		double y = p.getY();
-		double x0 = s * (sqr(b) * x - a * b * y - a * c);
-		double y0 = s * (sqr(a) * y - a * b * x - b * c);
+		final double s = 1.0; // 1.0 / (sqr(a) + sqr(b)); // assumed to be normalized
+		final double xr = this.getXref();
+		final double yr = this.getYref();
+		double xx = p.getX() - xr;
+		double yy = p.getY() - yr;
+		double x0 = xr + s * (sqr(b) * xx - a * b * yy - a * c);
+		double y0 = yr + s * (sqr(a) * yy - a * b * xx - b * c);
 		return Point.create(x0, y0);
 	}
 	
+//	@Override
+//	public Point getClosestLinePoint(Point p) {
+//		double s = 1.0; // 1.0 / (sqr(a) + sqr(b)); // assumed to be normalized
+//		double xx = p.getX() - xRef;
+//		double yy = p.getY() - yRef;
+//		double x0 = xRef + s * (sqr(b) * xx - a * b * yy - a * c);
+//		double y0 = yRef + s * (sqr(a) * yy - a * b * xx - b * c);
+//		return Point.create(x0, y0);
+//	}
+	
+//	/**
+//	 * Returns the point on the line that is closest to the orgin.
+//	 * This is equivalent to {@code getClosestLinePoint(Point.create(0, 0))}.
+//	 * See also {@link #getClosestLinePoint(Point)}.
+//	 * @return the closest line point
+//	 */
+//	public Point getClosestLinePoint() {
+//		return getClosestLinePoint(Point.ZERO);
+//	}
+	
 	// -------------------------------------------------------------------
+	
+	@Override
+	public boolean equals(Object other) {
+		if (other instanceof AlgebraicLine) {
+			AlgebraicLine L1 = this;
+			AlgebraicLine L2 = (AlgebraicLine) other;
+			double delta = 1E-6;
+			// get two different points on L1:
+			Point xA = L1.getClosestLinePoint(Point.ZERO);
+			Point xB = Point.create(xA.getX() - L1.b, xA.getY() + L1.a);
+			// check if both points are L2 too:
+			return (isZero(L2.getDistance(xA), delta) && isZero(L2.getDistance(xB), delta));
+		}
+		else {
+			return false;
+		}
+	}
 	
 	@Override
 	public String toString() {

@@ -13,14 +13,25 @@ public class HessianLineTest {
 
 	@Test
 	public void test1() {
-		HessianLine l12 = HessianLine.fromPoints(p1, p2);		
-		HessianLine l21 = HessianLine.fromPoints(p2, p1);
+		// example from CV lecture notes
+		HessianLine h12 = HessianLine.fromPoints(p1, p2);
 		
-		Assert.assertEquals(0.0, l12.getDistance(p1), 1E-6);
-		Assert.assertEquals(0.0, l12.getDistance(p2), 1E-6);
+		Assert.assertEquals(0.0, h12.getDistance(p1), 1E-6);						// x1 is actually ON the line
+		Assert.assertEquals(0.0, h12.getDistance(p2), 1E-6);						// x1 is actually ON the line
 		
-		Assert.assertEquals(0.0, l21.getDistance(p1), 1E-6);
-		Assert.assertEquals(0.0, l21.getDistance(p2), 1E-6);
+		Assert.assertEquals(-0.4678877204190327, h12.getA(), 1E-6);
+		Assert.assertEquals(0.8837879163470618, h12.getB(), 1E-6);
+		Assert.assertEquals(5.198752449100363, h12.getC(), 1E-6);
+		
+		Assert.assertEquals(2.0576955586061656, h12.getAngle(), 1E-6);
+		Assert.assertEquals(-5.198752449100363, h12.getRadius(), 1E-6);
+		
+//		System.out.println("h12 = " + h12.toString());
+//		System.out.println("a = " + h12.getA());
+//		System.out.println("b = " + h12.getB());
+//		System.out.println("c = " + h12.getC());
+//		System.out.println("alpha = " + h12.getAngle());
+//		System.out.println("rad = " + h12.getRadius());
 	}
 	
 	@Test

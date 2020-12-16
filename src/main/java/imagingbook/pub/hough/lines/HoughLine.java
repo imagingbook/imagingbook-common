@@ -21,10 +21,10 @@ import imagingbook.pub.geometry.lines.HessianLine;
  * (see {@link imagingbook.pub.hough.HoughTransformLines}).
  * It inherits from {@link HessianLine} which is, in turn, a subclass of 
  * {@link AlgebraicLine}.
- * Unlike a {@link HessianLine} the reference point is not necessarily at
- * the coordinate origin but is arbitrary.
+ * It adds an arbitrary reference point and a counter for pixel votes.
  */
 public class HoughLine extends HessianLine implements Comparable<HoughLine> {
+	
 	private final int count;			// pixel votes for this line
 	private final double xRef, yRef;	// reference point
 	
@@ -36,6 +36,14 @@ public class HoughLine extends HessianLine implements Comparable<HoughLine> {
 	}
 	
 	// constructors -----------------------------------------
+	
+	public HoughLine(double a, double b, double c, double xR, double yR, int count) {
+		super(a, b, c);
+//		super(a, b, c + a * xR + b * yR);
+		this.xRef = xR;
+		this.yRef = yR;
+		this.count = count;
+	}
 
 	/**
 	 * Constructor.
@@ -63,16 +71,16 @@ public class HoughLine extends HessianLine implements Comparable<HoughLine> {
 	 * Thus the distance from a given point (x,y) is the same from the original
 	 * line and the new line.
 	 * @param line an existing line ({@link AlgebraicLine} or subclass)
-	 * @param xRef reference point x-coordinate
-	 * @param yRef reference point y-coordinate
+	 * @param xR reference point x-coordinate
+	 * @param yR reference point y-coordinate
 	 * @param count pixel votes for this line
 	 */
-	public HoughLine(AlgebraicLine line, double xRef, double yRef, int count) {
+	public HoughLine(AlgebraicLine line, double xR, double yR, int count) {
 		super(line.getA(),
 			  line.getB(),
-			  line.getC() + line.getA()*(xRef-line.getXref()) + line.getB()*(yRef-line.getYref())); // = a', b', c'
-		this.xRef = xRef;
-		this.yRef = yRef;
+			  line.getC() + line.getA()*(xR-line.getXref()) + line.getB()*(yR-line.getYref())); // = a', b', c'
+		this.xRef = xR;
+		this.yRef = yR;
 		this.count = count;
 	}
 	
@@ -97,29 +105,29 @@ public class HoughLine extends HessianLine implements Comparable<HoughLine> {
 	
 	// other methods ------------------------------------------
 	
-	/**
-	 * Returns the perpendicular distance between this line and the point (x, y).
-	 * The result may be positive or negative, depending on which side of the line
-	 * (x, y) is located.
-	 * 
-	 * @param x x-coordinate of point position.
-	 * @param y y-coordinate of point position.
-	 * @return The perpendicular distance between this line and the point (x, y).
-	 */
-	@Override
-	public double getDistance(double x, double y) {
-		return super.getDistance(x - xRef, y - yRef);
-	}
+//	/**
+//	 * Returns the perpendicular distance between this line and the point (x, y).
+//	 * The result may be positive or negative, depending on which side of the line
+//	 * (x, y) is located.
+//	 * 
+//	 * @param x x-coordinate of point position.
+//	 * @param y y-coordinate of point position.
+//	 * @return The perpendicular distance between this line and the point (x, y).
+//	 */
+//	@Override
+//	public double getDistance(double x, double y) {
+//		return super.getDistance(x - xRef, y - yRef);
+//	}
 	
-	@Override
-	public Point getClosestLinePoint(Point p) {
-		double s = 1.0; // 1.0 / (sqr(a) + sqr(b)); // assumed to be normalized
-		double x = p.getX() - xRef;
-		double y = p.getY() - yRef;
-		double x0 = s * (sqr(b) * x - a * b * y - a * c);
-		double y0 = s * (sqr(a) * y - a * b * x - b * c);
-		return Point.create(x0 + xRef, y0 + yRef);
-	}
+//	@Override
+//	public Point getClosestLinePoint(Point p) {
+//		double s = 1.0; // 1.0 / (sqr(a) + sqr(b)); // assumed to be normalized
+//		double xx = p.getX() - xRef;
+//		double yy = p.getY() - yRef;
+//		double x0 = xRef + s * (sqr(b) * xx - a * b * yy - a * c);
+//		double y0 = yRef + s * (sqr(a) * yy - a * b * xx - b * c);
+//		return Point.create(x0, y0);
+//	}
 	
 	/**
 	 * Required by the {@link Comparable} interface, used for sorting lines by their
@@ -136,7 +144,6 @@ public class HoughLine extends HessianLine implements Comparable<HoughLine> {
 		return String.format(Locale.US, "%s <angle = %.3f, radius = %.3f, xRef = %.3f, yRef = %.3f, count = %d>",
 				this.getClass().getSimpleName(), getAngle(), getRadius(), getXref(), getYref(), count);
 	}
-	
 	
 	// ------------------------------------------------------------------------------
 	
