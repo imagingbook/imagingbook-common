@@ -9,6 +9,7 @@
 
 package imagingbook.pub.regions;
 
+import ij.IJ;
 import ij.process.ByteProcessor;
 
 /**
@@ -16,7 +17,7 @@ import ij.process.ByteProcessor;
  * algorithm. 
  * 
  * @author WB
- * @version 2020/04/01
+ * @version 2020/12/17
  */
 public class RecursiveLabeling extends RegionLabeling {
 
@@ -33,19 +34,24 @@ public class RecursiveLabeling extends RegionLabeling {
 	@Override
 	void applyLabeling() {
 		resetLabel();
-		for (int v = 0; v < height; v++) {
-			for (int u = 0; u < width; u++) {
-				if (getLabel(u, v) >= START_LABEL) {
-					// start a new region
-					int label = getNextLabel();
-					floodFill(u, v, label);
+		try{
+			for (int v = 0; v < height; v++) {
+				for (int u = 0; u < width; u++) {
+					if (getLabel(u, v) == FOREGROUND) {	// = unlabeled foreground
+						// start a new region
+						int label = getNextLabel();
+						floodFill(u, v, label);
+					}
 				}
 			}
+		} catch(StackOverflowError e) { 
+			IJ.error(RecursiveLabeling.class.getSimpleName(), 
+					"A StackOverflowError occurred!\n" + "Result is not valid!");
 		}
 	}
 
 	private void floodFill(int up, int vp, int label) {
-		if ((up>=0) && (up<width) && (vp>=0) && (vp<height) && getLabel(up, vp)>=START_LABEL) {
+		if ((up >= 0) && (up < width) && (vp >= 0) && (vp < height) && getLabel(up, vp) == FOREGROUND) {
 			setLabel(up, vp, label);
 			floodFill(up + 1, vp, label);
 			floodFill(up, vp + 1, label);

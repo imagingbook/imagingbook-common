@@ -18,8 +18,9 @@ import java.awt.Color;
 import java.awt.Shape;
 import java.util.List;
 
-
 /**
+ * A special overlay for showing binary region contours.
+ * 
  * @version 2020/04/01
  */
 public class ContourOverlay extends Overlay {

@@ -8,8 +8,6 @@
  *******************************************************************************/
 package imagingbook.pub.hough.lines;
 
-import static imagingbook.lib.math.Arithmetic.sqr;
-
 import java.util.Locale;
 
 import imagingbook.pub.geometry.basic.Point;
@@ -39,7 +37,6 @@ public class HoughLine extends HessianLine implements Comparable<HoughLine> {
 	
 	public HoughLine(double a, double b, double c, double xR, double yR, int count) {
 		super(a, b, c);
-//		super(a, b, c + a * xR + b * yR);
 		this.xRef = xR;
 		this.yRef = yR;
 		this.count = count;
@@ -104,30 +101,6 @@ public class HoughLine extends HessianLine implements Comparable<HoughLine> {
 	}
 	
 	// other methods ------------------------------------------
-	
-//	/**
-//	 * Returns the perpendicular distance between this line and the point (x, y).
-//	 * The result may be positive or negative, depending on which side of the line
-//	 * (x, y) is located.
-//	 * 
-//	 * @param x x-coordinate of point position.
-//	 * @param y y-coordinate of point position.
-//	 * @return The perpendicular distance between this line and the point (x, y).
-//	 */
-//	@Override
-//	public double getDistance(double x, double y) {
-//		return super.getDistance(x - xRef, y - yRef);
-//	}
-	
-//	@Override
-//	public Point getClosestLinePoint(Point p) {
-//		double s = 1.0; // 1.0 / (sqr(a) + sqr(b)); // assumed to be normalized
-//		double xx = p.getX() - xRef;
-//		double yy = p.getY() - yRef;
-//		double x0 = xRef + s * (sqr(b) * xx - a * b * yy - a * c);
-//		double y0 = yRef + s * (sqr(a) * yy - a * b * xx - b * c);
-//		return Point.create(x0, y0);
-//	}
 	
 	/**
 	 * Required by the {@link Comparable} interface, used for sorting lines by their

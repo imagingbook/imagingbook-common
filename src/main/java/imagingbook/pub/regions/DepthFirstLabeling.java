@@ -25,7 +25,7 @@ import imagingbook.pub.geometry.basic.Point;
 public class DepthFirstLabeling extends RegionLabeling {
 	
 	/**
-	 * Creates a new region labeling.
+	 * Creates a new depth-first region labeling.
 	 * 
 	 * @param ip the binary input image with 0 values for background pixels and values &gt; 0
 	 * for foreground pixels.
@@ -55,8 +55,7 @@ public class DepthFirstLabeling extends RegionLabeling {
 			Point p = S.pop();
 			int x = (int) p.getX();
 			int y = (int) p.getY();
-			if ((x >= 0) && (x < width) && (y >= 0) && (y < height)
-					&& getLabel(x, y) == FOREGROUND) {
+			if ((x >= 0) && (x < width) && (y >= 0) && (y < height)	&& getLabel(x, y) == FOREGROUND) {
 				setLabel(x, y, label);
 				S.push(Point.create(x + 1, y));
 				S.push(Point.create(x, y + 1));
