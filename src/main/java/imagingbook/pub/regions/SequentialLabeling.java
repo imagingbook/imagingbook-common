@@ -28,6 +28,7 @@ public class SequentialLabeling extends RegionLabeling {
 
 	/**
 	 * Creates a new region labeling.
+	 * TODO: needs REVISION!
 	 * 
 	 * @param ip the binary input image with 0 values for background pixels and values &gt; 0
 	 * for foreground pixels.
@@ -37,7 +38,7 @@ public class SequentialLabeling extends RegionLabeling {
 	}
 
 	@Override
-	protected void applyLabeling() {
+	protected boolean applyLabeling() {
 		if (IJ.debugMode) IJ.log("Sequential region labeling - Step 1");
 		collisionMap = new HashMap<LabelCollision,LabelCollision>(1000);
 		
@@ -58,6 +59,7 @@ public class SequentialLabeling extends RegionLabeling {
 		// Step 3: relabel the image
 		applyReplacementTable(replacementTable);
 		//showLabelArray();
+		return true;
 	}
 
 	private int makeLabel(int u, int v) {
@@ -250,10 +252,11 @@ public class SequentialLabeling extends RegionLabeling {
 			return a * b;
 		}
 
-		public boolean equals(Object obj) {
-			if (obj instanceof LabelCollision) {
-				LabelCollision c = (LabelCollision) obj;
-				return (this.a == c.a && this.b == c.b);
+		@Override
+		public boolean equals(Object other) {
+			if (other instanceof LabelCollision) {
+				LabelCollision coll = (LabelCollision) other;
+				return (this.a == coll.a && this.b == coll.b);
 			} else
 				return false;
 		}

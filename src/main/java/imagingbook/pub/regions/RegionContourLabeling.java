@@ -81,7 +81,7 @@ public class RegionContourLabeling extends RegionLabeling implements ContourTrac
 	}
 	
 	@Override
-	protected void applyLabeling() {
+	protected boolean applyLabeling() {
 		resetLabel();
 		// scan top to bottom, left to right
 		for (int v = 0; v < height; v++) {
@@ -113,6 +113,7 @@ public class RegionContourLabeling extends RegionLabeling implements ContourTrac
 				}
 			}
 		}
+		return true;
 	}
 	
 	@Override

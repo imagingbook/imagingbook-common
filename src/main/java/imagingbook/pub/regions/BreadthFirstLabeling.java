@@ -27,7 +27,7 @@ import imagingbook.pub.geometry.basic.Point;
 public class BreadthFirstLabeling extends RegionLabeling {
 	
 	/**
-	 * Creates a new region labeling.
+	 * Creates a new breadth-first (flood-fill) region labeling.
 	 * 
 	 * @param ip the binary input image with 0 values for background pixels and values &gt; 0
 	 * for foreground pixels.
@@ -37,7 +37,7 @@ public class BreadthFirstLabeling extends RegionLabeling {
 	}
 	
 	@Override
-	protected void applyLabeling() {
+	protected boolean applyLabeling() {
 		resetLabel();
 		for (int v = 0; v < height; v++) {
 			for (int u = 0; u < width; u++) {
@@ -49,6 +49,7 @@ public class BreadthFirstLabeling extends RegionLabeling {
 				}
 			}
 		}
+		return true;
 	}
 
 	private void floodFill(int u, int v, int label) {
@@ -58,13 +59,18 @@ public class BreadthFirstLabeling extends RegionLabeling {
 			Point p = Q.remove();	// get the next point to process
 			int x = (int) p.getX();
 			int y = (int) p.getY();
-			if ((x >= 0) && (x < width) && (y >= 0) && (y < height)
-					&& getLabel(x, y) == FOREGROUND) {
+			if ((x >= 0) && (x < width) && (y >= 0) && (y < height) && getLabel(x, y) == FOREGROUND) {
 				setLabel(x, y, label);
 				Q.add(Point.create(x + 1, y));
 				Q.add(Point.create(x, y + 1));
 				Q.add(Point.create(x, y - 1));
 				Q.add(Point.create(x - 1, y));
+				if (neighborhood == Neighborhood.eight) {
+					Q.add(Point.create(x + 1, y + 1));
+					Q.add(Point.create(x - 1, y + 1));
+					Q.add(Point.create(x + 1, y - 1));
+					Q.add(Point.create(x - 1, y - 1));
+				}
 			}
 		}
 	}

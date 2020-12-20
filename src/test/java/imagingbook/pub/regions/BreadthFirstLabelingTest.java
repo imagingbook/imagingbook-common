@@ -24,15 +24,19 @@ public class BreadthFirstLabelingTest {
 		RegionLabeling labeling = null;
 		
 		labeling = new BreadthFirstLabeling((ByteProcessor) ip);
+		Assert.assertTrue(labeling.segment());
 		Assert.assertEquals(imgRegionCount, labeling.getRegions().size());
 		
 		labeling = new DepthFirstLabeling((ByteProcessor) ip);
+		Assert.assertTrue(labeling.segment());
 		Assert.assertEquals(imgRegionCount, labeling.getRegions().size());
 		
 //		labeling = new RegionContourLabeling((ByteProcessor) ip);
+//		Assert.assertTrue(labeling.segment());
 //		Assert.assertEquals(imgRegionCount, labeling.getRegions().size());
 		
 //		labeling = new RecursiveLabeling((ByteProcessor) ip);
+//		Assert.assertTrue(labeling.segment());
 //		Assert.assertEquals(imgRegionCount, labeling.getRegions().size());
 	}
 

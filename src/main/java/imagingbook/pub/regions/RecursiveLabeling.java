@@ -11,6 +11,7 @@ package imagingbook.pub.regions;
 
 import ij.IJ;
 import ij.process.ByteProcessor;
+import imagingbook.pub.geometry.basic.Point;
 
 /**
  * Binary region labeler based on a recursive flood filling
@@ -32,7 +33,7 @@ public class RecursiveLabeling extends RegionLabeling {
 	}
 	
 	@Override
-	protected void applyLabeling() {
+	protected boolean applyLabeling() {
 		resetLabel();
 		try{
 			for (int v = 0; v < height; v++) {
@@ -47,16 +48,24 @@ public class RecursiveLabeling extends RegionLabeling {
 		} catch(StackOverflowError e) { 
 			IJ.error(RecursiveLabeling.class.getSimpleName(), 
 					"A StackOverflowError occurred!\n" + "Result is not valid!");
+			return false;
 		}
+		return true;
 	}
 
-	private void floodFill(int up, int vp, int label) {
-		if ((up >= 0) && (up < width) && (vp >= 0) && (vp < height) && getLabel(up, vp) == FOREGROUND) {
-			setLabel(up, vp, label);
-			floodFill(up + 1, vp, label);
-			floodFill(up, vp + 1, label);
-			floodFill(up, vp - 1, label);
-			floodFill(up - 1, vp, label);
+	private void floodFill(int x, int y, int label) {
+		if ((x >= 0) && (x < width) && (y >= 0) && (y < height) && getLabel(x, y) == FOREGROUND) {
+			setLabel(x, y, label);
+			floodFill(x + 1, y, label);
+			floodFill(x, y + 1, label);
+			floodFill(x, y - 1, label);
+			floodFill(x - 1, y, label);
+			if (neighborhood == Neighborhood.eight) {
+				floodFill(x + 1, y + 1, label);
+				floodFill(x - 1, y + 1, label);
+				floodFill(x + 1, y - 1, label);
+				floodFill(x - 1, y - 1, label);
+			}
 		}
 	}
 

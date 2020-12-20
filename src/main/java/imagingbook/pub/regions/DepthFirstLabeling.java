@@ -36,7 +36,7 @@ public class DepthFirstLabeling extends RegionLabeling {
 	}
 	
 	@Override
-	protected void applyLabeling() {
+	protected boolean applyLabeling() {
 		resetLabel();
 		for (int v = 0; v < height; v++) {
 			for (int u = 0; u < width; u++) {
@@ -48,6 +48,7 @@ public class DepthFirstLabeling extends RegionLabeling {
 				}
 			}
 		}
+		return true;
 	}
 
 	private void floodFill(int u, int v, int label) {
@@ -63,6 +64,12 @@ public class DepthFirstLabeling extends RegionLabeling {
 				S.push(Point.create(x, y + 1));
 				S.push(Point.create(x, y - 1));
 				S.push(Point.create(x - 1, y));
+				if (neighborhood == Neighborhood.eight) {
+					S.push(Point.create(x + 1, y + 1));
+					S.push(Point.create(x - 1, y + 1));
+					S.push(Point.create(x + 1, y - 1));
+					S.push(Point.create(x - 1, y - 1));
+				}
 			}
 		}
 	}

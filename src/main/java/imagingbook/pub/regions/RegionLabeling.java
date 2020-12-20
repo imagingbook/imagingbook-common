@@ -37,10 +37,14 @@ public abstract class RegionLabeling {
 	public static final int BACKGROUND = 0;
 	public static final int FOREGROUND = 1;
 	public static final int START_LABEL = 2;
+	
+	static Neighborhood DEFAULT_NEIGHBORHOOD = Neighborhood.four;
 
 	protected final ImageProcessor ip;
 	protected final int width;
 	protected final int height;
+	
+	public Neighborhood neighborhood = Neighborhood.four;	// TODO: hide!!
 	
 	protected final int[][] labelArray;
 	// label values in labelArray can be:
@@ -48,20 +52,22 @@ public abstract class RegionLabeling {
 	// -1 ... previously visited background pixel
 	// >0 ... valid label
 	
+	private boolean isSegmented = false;
 	private int currentLabel;
-	protected int maxLabel;	// the maximum label in the labels array
+	protected int maxLabel = -1;	// the maximum label in the labels array
 	
-	protected List<BinaryRegion> regions;
+	protected List<BinaryRegion> regions = null;
 	
 	// -------------------------------------------------------------------------
 	
 	protected RegionLabeling(ByteProcessor ip) {
 		this.ip = ip;
+		//this.neighborhood = Neighborhood.four;
 		width  = ip.getWidth();
 		height = ip.getHeight();
 		labelArray = makeLabelArray();
-		applyLabeling();
-		collectRegions();
+		//applyLabeling();
+		//collectRegions();
 	}
 	
 	protected int[][] makeLabelArray() {
@@ -77,6 +83,19 @@ public abstract class RegionLabeling {
 	
 	// -------------------------------------------------------------------------
 	
+	// This method must be implemented by any real sub-class:
+	protected abstract boolean applyLabeling();
+	
+	public boolean segment() {
+		if (!isSegmented) {
+			isSegmented = true;
+			return applyLabeling();
+		}
+		else {
+			throw new IllegalStateException("Method segment() may only be called once!");
+		}
+	}
+	
 	public int getWidth() {
 		return this.width;
 	}
@@ -88,8 +107,6 @@ public abstract class RegionLabeling {
 	public int getMaxLabel() {
 		return maxLabel;
 	}
-	
-	// -------------------------------------------------------------------------
 	
 	/**
 	 * Get an unsorted list of all regions associated with this region labeling.
@@ -105,19 +122,21 @@ public abstract class RegionLabeling {
 	 * @return the list of regions.
 	 */
 	public List<BinaryRegion> getRegions(boolean sort) {
-		if (regions == null) 
-			return Collections.emptyList();
-		else {
-			List<BinaryRegion> rns = new ArrayList<BinaryRegion>(regions);
-			if (sort) {
-				Collections.sort(rns);
-			}
-			return rns;
+		if (!isSegmented) {
+			throw new IllegalStateException("Method segment() must be called before this!");
 		}
+		if (regions == null) {
+			collectRegions();
+		}
+			
+		List<BinaryRegion> rns = new ArrayList<BinaryRegion>(regions); // TODO: don't like this!
+		if (sort) {
+			Collections.sort(rns);
+		}
+		return rns;
 	}
 	
-	// This method must be implemented by any real sub-class:
-	protected abstract void applyLabeling();
+	// -------------------------------------------------------------------------
 	
 	// creates a container of BinaryRegion objects
 	// collects the region pixels from the label image
