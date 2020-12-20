@@ -9,25 +9,24 @@
 
 package imagingbook.pub.regions;
 
+import java.util.HashSet;
+
 import ij.IJ;
 import ij.process.ByteProcessor;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Binary region labeler based on a sequential labeling
  * algorithm. 
  * 
  * @author WB
- * @version 2016-11-08
+ * @version 2020/12/20
  */
 public class SequentialLabeling extends RegionLabeling {
 
-	private Map<LabelCollision,LabelCollision> collisionMap = null;
+	private HashSet<LabelCollision> collisionMap = null;
 
 	/**
-	 * Creates a new region labeling.
+	 * Creates a new sequential region labeling.
 	 * TODO: needs REVISION!
 	 * 
 	 * @param ip the binary input image with 0 values for background pixels and values &gt; 0
@@ -40,7 +39,7 @@ public class SequentialLabeling extends RegionLabeling {
 	@Override
 	protected boolean applyLabeling() {
 		IJ.log("Sequential region labeling - Step 1");
-		collisionMap = new HashMap<LabelCollision,LabelCollision>(1000);
+		collisionMap = new HashSet<>();
 		
 		// Step 1: assign initial labels:
 		resetLabel();
@@ -107,26 +106,16 @@ public class SequentialLabeling extends RegionLabeling {
 	}
 
 	private void registerCollision(int a, int b) {
-//		if (collisionMap == null){
-//			throw new Error("registerCollision(): no collission map!");
-//		}
 		if (a != b) {
 			LabelCollision c;
 			if (a < b)
 				c = new LabelCollision(a, b);
 			else
 				c = new LabelCollision(b, a);
-			if (!collisionMap.containsKey(c))
-				collisionMap.put(c, c);
+			if (!collisionMap.contains(c))
+				collisionMap.add(c);
 		}
 	}
-	
-//	private void listCollisions() {
-//		IJ.log("Listing collisions********* " + collisionMap.size());
-//		for (LabelCollision c: collisionMap.keySet()) {
-//			IJ.log("  ---next----" + c.a + "/" + c.b + "=" + c);
-//		}
-//	}
 	
 	//---------------------------------------------------------------------------
 
@@ -162,7 +151,7 @@ public class SequentialLabeling extends RegionLabeling {
 		}
 
 		// Inspect all collisions c=(a,b) one by one [note that a<b]
-		for (LabelCollision c: collisionMap.keySet()) {
+		for (LabelCollision c: collisionMap) {	// collisionMap.keySet()
 			int A = setNumber[c.a]; //element a is currently in set A
 			int B = setNumber[c.b]; //element b is currently in set B
 			//Merge sets A and B (unless they are the same) by
@@ -251,7 +240,7 @@ public class SequentialLabeling extends RegionLabeling {
 		// compared. It makes sure that the key is directly related to the values of a,b. 
 		// Otherwise the key would be derived from the address of the Collision object.
 		public int hashCode() {
-			return a * b;
+			return a * b;	// TODO: change to 'long'?
 		}
 
 		@Override

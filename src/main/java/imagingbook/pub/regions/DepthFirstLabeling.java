@@ -64,7 +64,7 @@ public class DepthFirstLabeling extends RegionLabeling {
 				S.push(Point.create(x, y + 1));
 				S.push(Point.create(x, y - 1));
 				S.push(Point.create(x - 1, y));
-				if (neighborhood == Neighborhood.eight) {
+				if (neighborhood == NeighborhoodType.N8) {
 					S.push(Point.create(x + 1, y + 1));
 					S.push(Point.create(x - 1, y + 1));
 					S.push(Point.create(x + 1, y - 1));

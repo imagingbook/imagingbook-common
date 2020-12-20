@@ -60,7 +60,7 @@ public class RecursiveLabeling extends RegionLabeling {
 			floodFill(x, y + 1, label);
 			floodFill(x, y - 1, label);
 			floodFill(x - 1, y, label);
-			if (neighborhood == Neighborhood.eight) {
+			if (neighborhood == NeighborhoodType.N8) {
 				floodFill(x + 1, y + 1, label);
 				floodFill(x - 1, y + 1, label);
 				floodFill(x + 1, y - 1, label);

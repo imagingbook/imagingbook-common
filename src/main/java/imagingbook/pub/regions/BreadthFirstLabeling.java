@@ -65,7 +65,7 @@ public class BreadthFirstLabeling extends RegionLabeling {
 				Q.add(Point.create(x, y + 1));
 				Q.add(Point.create(x, y - 1));
 				Q.add(Point.create(x - 1, y));
-				if (neighborhood == Neighborhood.eight) {
+				if (neighborhood == NeighborhoodType.N8) {
 					Q.add(Point.create(x + 1, y + 1));
 					Q.add(Point.create(x - 1, y + 1));
 					Q.add(Point.create(x + 1, y - 1));

@@ -38,13 +38,13 @@ public abstract class RegionLabeling {
 	public static final int FOREGROUND = 1;
 	public static final int START_LABEL = 2;
 	
-	static Neighborhood DEFAULT_NEIGHBORHOOD = Neighborhood.four;
+	static NeighborhoodType DEFAULT_NEIGHBORHOOD = NeighborhoodType.N4;
 
 	protected final ImageProcessor ip;
 	protected final int width;
 	protected final int height;
 	
-	public Neighborhood neighborhood = Neighborhood.four;	// TODO: hide!!
+	public NeighborhoodType neighborhood = NeighborhoodType.N4;	// TODO: hide!!
 	
 	protected final int[][] labelArray;
 	// label values in labelArray can be:
@@ -230,8 +230,6 @@ public abstract class RegionLabeling {
 		int label = getLabel(u, v);
 		return findRegion(label);
 	}
-	
-
 		
 	// --------- Iteration over region pixels -----------------------------------
 	
