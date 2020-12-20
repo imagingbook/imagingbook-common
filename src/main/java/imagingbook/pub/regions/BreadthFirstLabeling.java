@@ -12,7 +12,6 @@ package imagingbook.pub.regions;
 import java.util.LinkedList;
 import java.util.Queue;
 
-import ij.IJ;
 import ij.process.ByteProcessor;
 import imagingbook.pub.geometry.basic.Point;
 
