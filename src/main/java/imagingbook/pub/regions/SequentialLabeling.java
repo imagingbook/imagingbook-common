@@ -39,21 +39,23 @@ public class SequentialLabeling extends RegionLabeling {
 
 	@Override
 	protected boolean applyLabeling() {
-		if (IJ.debugMode) IJ.log("Sequential region labeling - Step 1");
+		IJ.log("Sequential region labeling - Step 1");
 		collisionMap = new HashMap<LabelCollision,LabelCollision>(1000);
 		
 		// Step 1: assign initial labels:
 		resetLabel();
 		for (int v = 0; v < height; v++) {
 			for (int u = 0; u < width; u++) {
-				if (getLabel(u, v) >= START_LABEL) {
-					setLabel(u, v, makeLabel(u, v));
+				if (getLabel(u, v) == FOREGROUND) {
+					int label = makeLabel(u, v);
+					//IJ.log(String.format("assigning label %d at (%d,%d), maxLabel=%d", label, u, v, maxLabel));
+					setLabel(u, v, label);
 				}
 			}
 		}
 		
 		// Step 2: resolve label collisions
-		if (IJ.debugMode) IJ.log("Sequential region labeling - Step 2");
+		IJ.log("Sequential region labeling - Step 2");
 		int[] replacementTable = makeReplacementTable(getMaxLabel() + 1);
 		
 		// Step 3: relabel the image
@@ -70,11 +72,11 @@ public class SequentialLabeling extends RegionLabeling {
 		// [0][x]
 		//
 		int[] n = new int[4];
-		n[0] = getLabel(u-1, v);
-		//gives 0 if no label is set or outside borders
-		n[1] = getLabel(u-1, v-1);
-		n[2] = getLabel(u, v-1);
-		n[3] = getLabel(u+1, v-1);
+		n[0] = getLabel(u - 1, v);
+		// gives 0 if no label is set or outside borders
+		n[1] = getLabel(u - 1, v - 1);
+		n[2] = getLabel(u, v - 1);
+		n[3] = getLabel(u + 1, v - 1);
 
 		if (   n[0] == BACKGROUND
 			&& n[1] == BACKGROUND
@@ -105,9 +107,9 @@ public class SequentialLabeling extends RegionLabeling {
 	}
 
 	private void registerCollision(int a, int b) {
-		if (collisionMap == null){
-			throw new Error("registerCollision(): no collission map!");
-		}
+//		if (collisionMap == null){
+//			throw new Error("registerCollision(): no collission map!");
+//		}
 		if (a != b) {
 			LabelCollision c;
 			if (a < b)
