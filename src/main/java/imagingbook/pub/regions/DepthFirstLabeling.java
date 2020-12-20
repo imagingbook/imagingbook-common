@@ -12,6 +12,7 @@ package imagingbook.pub.regions;
 import java.util.Deque;
 import java.util.LinkedList;
 
+import ij.IJ;
 import ij.process.ByteProcessor;
 import imagingbook.pub.geometry.basic.Point;
 
@@ -35,13 +36,14 @@ public class DepthFirstLabeling extends RegionLabeling {
 	}
 	
 	@Override
-	void applyLabeling() {
+	protected void applyLabeling() {
 		resetLabel();
 		for (int v = 0; v < height; v++) {
 			for (int u = 0; u < width; u++) {
 				if (getLabel(u, v) == FOREGROUND) {
 					// start a new region
 					int label = getNextLabel();
+					//IJ.log(String.format("assigning label %d at (%d,%d), maxLabel=%d", label, u, v, maxLabel));
 					floodFill(u, v, label);
 				}
 			}

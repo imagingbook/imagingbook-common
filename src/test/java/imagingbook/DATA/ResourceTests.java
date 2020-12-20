@@ -23,18 +23,18 @@ public class ResourceTests {
 		String name = "boats.tif";
 		Path path = null;
 		
-		ResourceLocation rd = new imagingbook.DATA.images.Resources();
+		ResourceLocation loc = new imagingbook.DATA.images.Resources();
 		
-		path = rd.getResourcePath(name);
+		path = loc.getResourcePath(name);
 		assertNotNull("existing resource not found" + name, path);
 		
-		path = rd.getResourcePath("nonexistant");
+		path = loc.getResourcePath("nonexistant");
 		assertNull("nonexisting resource found: " + name, path);
 		
 		// check if all listed resource names really exist
-		String[] names = rd.getResourceNames();
+		String[] names = loc.getResourceNames();
 		for (String n : names) {
-			assertNotNull("listed resource not found: " + name, rd.getResourcePath(n));
+			assertNotNull("listed resource not found: " + name, loc.getResourcePath(n));
 		}
 	}
 	
@@ -42,8 +42,8 @@ public class ResourceTests {
 	public void openBoatsImage() {
 		String name = "boats.tif";
 		
-		ResourceLocation rd = new imagingbook.DATA.images.Resources();
-		Path path = rd.getResourcePath(name);
+		ResourceLocation loc = new imagingbook.DATA.images.Resources();
+		Path path = loc.getResourcePath(name);
 		assertNotNull("image resource not found" + name, path);
 		
 		ImagePlus im = IjUtils.openImage(path);

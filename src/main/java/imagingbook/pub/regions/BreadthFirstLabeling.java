@@ -12,12 +12,14 @@ package imagingbook.pub.regions;
 import java.util.LinkedList;
 import java.util.Queue;
 
+import ij.IJ;
 import ij.process.ByteProcessor;
 import imagingbook.pub.geometry.basic.Point;
 
 /**
  * Binary region labeler based on a breadth-first flood filling
- * algorithm. 
+ * algorithm using a stack.
+ * Detected regions are 8-connected.
  * 
  * @author WB
  * @version 2020/04/01
@@ -35,13 +37,14 @@ public class BreadthFirstLabeling extends RegionLabeling {
 	}
 	
 	@Override
-	void applyLabeling() {
+	protected void applyLabeling() {
 		resetLabel();
 		for (int v = 0; v < height; v++) {
 			for (int u = 0; u < width; u++) {
 				if (getLabel(u, v) == FOREGROUND) {
 					// start a new region
 					int label = getNextLabel();
+					//IJ.log(String.format("assigning label %d at (%d,%d), maxLabel=%d", label, u, v, maxLabel));
 					floodFill(u, v, label);
 				}
 			}

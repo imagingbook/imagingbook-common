@@ -32,7 +32,7 @@ public class RecursiveLabeling extends RegionLabeling {
 	}
 	
 	@Override
-	void applyLabeling() {
+	protected void applyLabeling() {
 		resetLabel();
 		try{
 			for (int v = 0; v < height; v++) {

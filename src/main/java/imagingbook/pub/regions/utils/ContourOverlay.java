@@ -7,11 +7,13 @@
  * Visit http://imagingbook.com for additional details.
  *******************************************************************************/
 
-package imagingbook.pub.regions;
+package imagingbook.pub.regions.utils;
 
 import ij.gui.Overlay;
 import ij.gui.Roi;
 import ij.gui.ShapeRoi;
+import imagingbook.pub.regions.Contour;
+import imagingbook.pub.regions.ContourTracer;
 
 import java.awt.BasicStroke;
 import java.awt.Color;

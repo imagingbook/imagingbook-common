@@ -9,7 +9,6 @@
 
 package imagingbook.pub.regions;
 
-import java.awt.Color;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -23,9 +22,7 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 
 import ij.process.ByteProcessor;
-import ij.process.ColorProcessor;
 import ij.process.ImageProcessor;
-import ij.process.ShortProcessor;
 import imagingbook.pub.geometry.basic.Point;
 
 /**
@@ -33,13 +30,13 @@ import imagingbook.pub.geometry.basic.Point;
  * It is abstract, because the implementation of some parts depends
  * on the region labeling algorithm being used.
  * 
- * @version 2020/04/01
+ * @version 2020/12/20
  */
 public abstract class RegionLabeling {
 	
-	static final int BACKGROUND = 0;
-	static final int FOREGROUND = 1;
-	static final int START_LABEL = 2;
+	public static final int BACKGROUND = 0;
+	public static final int FOREGROUND = 1;
+	public static final int START_LABEL = 2;
 
 	protected final ImageProcessor ip;
 	protected final int width;
@@ -51,20 +48,23 @@ public abstract class RegionLabeling {
 	// -1 ... previously visited background pixel
 	// >0 ... valid label
 	
-	protected int currentLabel;
+	private int currentLabel;
 	protected int maxLabel;	// the maximum label in the labels array
+	
 	protected List<BinaryRegion> regions;
+	
+	// -------------------------------------------------------------------------
 	
 	protected RegionLabeling(ByteProcessor ip) {
 		this.ip = ip;
 		width  = ip.getWidth();
 		height = ip.getHeight();
-		labelArray = initialize();
+		labelArray = makeLabelArray();
 		applyLabeling();
 		collectRegions();
 	}
 	
-	protected int[][]  initialize() {
+	protected int[][] makeLabelArray() {
 		int[][] lA = new int[width][height];	// label array
 		// set all pixels to either FOREGROUND or BACKGROUND (by thresholding)
 		for (int v = 0; v < height; v++) {
@@ -74,6 +74,22 @@ public abstract class RegionLabeling {
 		}
 		return lA;
 	}
+	
+	// -------------------------------------------------------------------------
+	
+	public int getWidth() {
+		return this.width;
+	}
+	
+	public int getHeight() {
+		return this.height;
+	}
+	
+	public int getMaxLabel() {
+		return maxLabel;
+	}
+	
+	// -------------------------------------------------------------------------
 	
 	/**
 	 * Get an unsorted list of all regions associated with this region labeling.
@@ -101,12 +117,12 @@ public abstract class RegionLabeling {
 	}
 	
 	// This method must be implemented by any real sub-class:
-	abstract void applyLabeling();
+	protected abstract void applyLabeling();
 	
 	// creates a container of BinaryRegion objects
 	// collects the region pixels from the label image
 	// and computes the statistics for each region
-	void collectRegions() {
+	protected void collectRegions() {
 		BinaryRegion[] regionArray = new BinaryRegion[maxLabel + 1];
 		for (int i = START_LABEL; i <= maxLabel; i++) {
 			regionArray[i] = new BinaryRegion(i);
@@ -153,7 +169,7 @@ public abstract class RegionLabeling {
 		maxLabel = -1;
 	}
 	
-	int getNextLabel() {
+	protected int getNextLabel() {
 		if (currentLabel < 1)
 			currentLabel = START_LABEL;
 		else
@@ -161,54 +177,9 @@ public abstract class RegionLabeling {
 		maxLabel = currentLabel;
 		return currentLabel;
 	}
-	
-	int getMaxLabel() {
-		return maxLabel;
-	}
+
 	
 	// --------------------------------------------------
-	
-	/**
-	 * Utility method that creates an image of the internal
-	 * label array.
-	 * 
-	 * @param color set {@code false} to get a 16-bit grayscale image,
-	 * {@code true} for an RGB (24-bit) color image.
-	 * @return an image of the label array.
-	 */
-	public ImageProcessor makeLabelImage(boolean color) {
-		return (color) ?  makeLabelImageColor() : makeLabelImageGray();
-	}
-
-	private ColorProcessor makeLabelImageColor() {
-		int[] colorLUT = new int[maxLabel+1];
-		for (int i = START_LABEL; i <= maxLabel; i++) {
-			colorLUT[i] = makeRandomColor();
-		}
-		ColorProcessor cp = new ColorProcessor(width, height);
-		for (int v = 0; v < height; v++) {
-			for (int u = 0; u < width; u++) {
-				int lb = getLabel(u, v);
-				if (lb >= 0 && lb < colorLUT.length) {
-					cp.putPixel(u, v, colorLUT[lb]);
-				}
-			}
-		}
-		return cp;
-	}
-	
-	private ShortProcessor makeLabelImageGray() {
-		ShortProcessor sp = new ShortProcessor(width, height);
-		for (int v = 0; v < height; v++) {
-			for (int u = 0; u < width; u++) {
-				int lb = getLabel(u, v);
-				sp.set(u, v, (lb >= 0) ? lb : 0);
-			}
-		}
-		sp.resetMinAndMax();
-		return sp;
-	}
-	
 
 	/**
 	 * Find the region associated to the given label.
@@ -241,40 +212,9 @@ public abstract class RegionLabeling {
 		return findRegion(label);
 	}
 	
-	protected int makeRandomColor() {
-		double saturation = 0.2;
-		double brightness = 0.2;
-		float h = (float) Math.random();
-		float s = (float) (saturation * Math.random() + 1 - saturation);
-		float b = (float) (brightness * Math.random() + 1 - brightness);
-		return Color.HSBtoRGB(h, s, b);
-	}
-	
-//	private void printSummary() {
-//		if (regions != null) {
-//			IJ.log("Number of regions detected: " + regions.size());
-//			for (BinaryRegion r : regions) {
-//				IJ.log(r.toString());
-//			}
-//		} else
-//			IJ.log("No regions found.");
-//	}
-	
-	
+
+		
 	// --------- Iteration over region pixels -----------------------------------
-	
-//	/**
-//	 * @deprecated
-//	 * This method is not supported any longer.
-//	 * Instead use {@code Iterable<Point>} capability of {@link BinaryRegion}
-//	 * to iterate directly over region points.
-//	 * 
-//	 * @param r the binary region.
-//	 * @return an {@link Iterable} to iterate over all region points.
-//	 */
-//	public Iterable<Point> getRegionPoints(final BinaryRegion r) {
-//		return r.getRegionPoints();
-//	}
 	
 	/**
 	 * Instances of this class are returned by {@link BinaryRegion#iterator()},

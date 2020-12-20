@@ -12,6 +12,14 @@ package imagingbook.lib.color;
 import java.awt.Color;
 import java.util.Random;
 
+/**
+ * Instances of this class create a sequence of random colors.
+ * TODO: Improve randomness (currently not too good, much red ...), modify saturation?. 
+ * TODO: Add color type/saturation/pastel ...
+ * 
+ * @author WB
+ *
+ */
 public class RandomColorGenerator {
 	
 	private float h = 0.0f;
@@ -20,7 +28,7 @@ public class RandomColorGenerator {
 	Random rnd; 
 
 	public RandomColorGenerator() {
-		rnd = new Random(1);
+		rnd = new Random();
 	}
 	
 	public RandomColorGenerator(int seed) {
@@ -30,7 +38,7 @@ public class RandomColorGenerator {
 	public Color nextColor() {
 		//h = (h + 0.8f + 0.3f * (float)rnd.nextGaussian()) % 1.0f;
 		//h = (float) (h + rnd.nextGaussian()) % 1.0f;
-		h = (float) (h + 0.1 + 0.8f * rnd.nextFloat()) % 1.0f;
+		h = (h + 0.1f + 0.8f * rnd.nextFloat()) % 1.0f;
 		return Color.getHSBColor(h, s, b); 
 	}
 	

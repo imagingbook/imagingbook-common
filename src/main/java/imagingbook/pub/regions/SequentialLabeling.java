@@ -37,7 +37,7 @@ public class SequentialLabeling extends RegionLabeling {
 	}
 
 	@Override
-	void applyLabeling() {
+	protected void applyLabeling() {
 		if (IJ.debugMode) IJ.log("Sequential region labeling - Step 1");
 		collisionMap = new HashMap<LabelCollision,LabelCollision>(1000);
 		
