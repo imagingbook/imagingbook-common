@@ -23,7 +23,7 @@ import imagingbook.pub.geometry.basic.Point;
  * @author WB
  * @version 2020/04/01
  */
-public class BreadthFirstLabeling extends RegionLabeling {
+public class SegmentationBreadthFirst extends BinaryRegionSegmentation {
 	
 	/**
 	 * Creates a new breadth-first (flood-fill) region labeling.
@@ -31,12 +31,16 @@ public class BreadthFirstLabeling extends RegionLabeling {
 	 * @param ip the binary input image with 0 values for background pixels and values &gt; 0
 	 * for foreground pixels.
 	 */
-	public BreadthFirstLabeling(ByteProcessor ip) {
-		super(ip);
+	public SegmentationBreadthFirst(ByteProcessor ip) {
+		this(ip, DEFAULT_NEIGHBORHOOD);
+	}
+	
+	public SegmentationBreadthFirst(ByteProcessor ip, NeighborhoodType nh) {
+		super(ip, nh);
 	}
 	
 	@Override
-	protected boolean applyLabeling() {
+	protected boolean applySegmentation() {
 		resetLabel();
 		for (int v = 0; v < height; v++) {
 			for (int u = 0; u < width; u++) {

@@ -10,6 +10,8 @@ import ij.process.ImageProcessor;
 import imagingbook.DATA.images.Resources;
 import imagingbook.lib.ij.IjUtils;
 
+import static imagingbook.pub.regions.NeighborhoodType.*;
+
 public class RegionLabelingTest {
 	
 	static String ImgName = "marker-test-01a-bin.png";
@@ -29,20 +31,20 @@ public class RegionLabelingTest {
 
 	@Test
 	public void testBreadthFirstLabeling() {
-		run(new BreadthFirstLabeling(bp), NeighborhoodType.N4, RegionCount_N4);
-		run(new BreadthFirstLabeling(bp), NeighborhoodType.N8, RegionCount_N8);
+		run(new SegmentationBreadthFirst(bp, N4), RegionCount_N4);
+		run(new SegmentationBreadthFirst(bp, N8), RegionCount_N8);
 	}
 	
 	@Test
 	public void testDepthFirstLabeling() {
-		run(new DepthFirstLabeling(bp), NeighborhoodType.N4, RegionCount_N4);
-		run(new DepthFirstLabeling(bp), NeighborhoodType.N8, RegionCount_N8);
+		run(new SegmentationDepthFirst(bp, N4), RegionCount_N4);
+		run(new SegmentationDepthFirst(bp, N8), RegionCount_N8);
 	}
 	
 	@Test
 	public void testSequentialLabeling() {
-		run(new SequentialLabeling(bp), NeighborhoodType.N4, RegionCount_N4);
-		run(new SequentialLabeling(bp), NeighborhoodType.N8, RegionCount_N8);
+		run(new SegmentationSequential(bp, N4), RegionCount_N4);
+		run(new SegmentationSequential(bp, N8), RegionCount_N8);
 	}
 	
 		
@@ -50,10 +52,9 @@ public class RegionLabelingTest {
 //		labeling = new RecursiveLabeling((ByteProcessor) ip);
 
 	
-	private void run(RegionLabeling labeling, NeighborhoodType nht, int rc) {
-		labeling.neighborhood = nht;
-		Assert.assertTrue(labeling.segment());
-		Assert.assertEquals(rc, labeling.getRegions().size());
+	private void run(BinaryRegionSegmentation labeling, int rc) {
+		//Assert.assertTrue(labeling.segment());
+		Assert.assertEquals(rc, labeling.getRegions(true).size());
 	}
 
 }

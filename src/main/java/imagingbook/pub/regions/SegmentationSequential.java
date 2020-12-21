@@ -20,7 +20,7 @@ import ij.process.ByteProcessor;
  * @author WB
  * @version 2020/12/20
  */
-public class SequentialLabeling extends RegionLabeling {
+public class SegmentationSequential extends BinaryRegionSegmentation {
 
 	private HashSet<LabelCollision> collisionMap = null;
 
@@ -31,12 +31,16 @@ public class SequentialLabeling extends RegionLabeling {
 	 * @param ip the binary input image with 0 values for background pixels and values &gt; 0
 	 * for foreground pixels.
 	 */
-	public SequentialLabeling(ByteProcessor ip) {
-		super(ip);
+	public SegmentationSequential(ByteProcessor ip) {
+		this(ip, DEFAULT_NEIGHBORHOOD);
+	}
+	
+	public SegmentationSequential(ByteProcessor ip, NeighborhoodType nh) {
+		super(ip, nh);
 	}
 
 	@Override
-	protected boolean applyLabeling() {
+	protected boolean applySegmentation() {
 		//IJ.log("Sequential region labeling - Step 1 + neighborhood=" + neighborhood);
 		collisionMap = new HashSet<>();
 		

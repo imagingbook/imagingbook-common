@@ -1,12 +1,10 @@
 package imagingbook.pub.regions.utils;
 
-import java.awt.Color;
-
 import ij.process.ColorProcessor;
 import ij.process.ImageProcessor;
 import ij.process.ShortProcessor;
 import imagingbook.lib.color.RandomColorGenerator;
-import imagingbook.pub.regions.RegionLabeling;
+import imagingbook.pub.regions.BinaryRegionSegmentation;
 
 public abstract class Images {
 	
@@ -18,16 +16,16 @@ public abstract class Images {
 	 * {@code true} for an RGB (24-bit) color image.
 	 * @return an image of the label array.
 	 */
-	public static ImageProcessor makeLabelImage(RegionLabeling labeling, boolean color) {
+	public static ImageProcessor makeLabelImage(BinaryRegionSegmentation labeling, boolean color) {
 		return (color) ?  makeLabelImageColor(labeling) : makeLabelImageGray(labeling);
 	}
 
-	private static ColorProcessor makeLabelImageColor(RegionLabeling labeling) {
+	private static ColorProcessor makeLabelImageColor(BinaryRegionSegmentation labeling) {
 		int maxLabel = labeling.getMaxLabel();
 		int[] colorLUT = new int[maxLabel+1];
 		RandomColorGenerator rcg = new RandomColorGenerator();
 		
-		for (int i = RegionLabeling.START_LABEL; i <= maxLabel; i++) {
+		for (int i = BinaryRegionSegmentation.START_LABEL; i <= maxLabel; i++) {
 			colorLUT[i] = rcg.nextColor().getRGB(); //makeRandomColor();
 		}
 		
@@ -46,7 +44,7 @@ public abstract class Images {
 		return cp;
 	}
 	
-	private static ShortProcessor makeLabelImageGray(RegionLabeling labeling) {
+	private static ShortProcessor makeLabelImageGray(BinaryRegionSegmentation labeling) {
 		int width = labeling.getWidth();
 		int height = labeling.getHeight();
 		ShortProcessor sp = new ShortProcessor(width, height);

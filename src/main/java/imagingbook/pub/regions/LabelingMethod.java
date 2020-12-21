@@ -5,7 +5,7 @@ import ij.process.ByteProcessor;
 /**
  * TODO: This is temporary and will change!
  * @author WB
- *
+ * @deprecated
  */
 public enum LabelingMethod {
 	
@@ -15,14 +15,14 @@ public enum LabelingMethod {
 	RegionAndContours,
 	Sequential;
 	
-	public static RegionLabeling getInstance(LabelingMethod method, ByteProcessor bp) {
-		RegionLabeling segmenter = null;
+	public static BinaryRegionSegmentation getInstance(LabelingMethod method, ByteProcessor bp, NeighborhoodType nht) {
+		BinaryRegionSegmentation segmenter = null;
 		switch (method) {
-			case BreadthFirst:		segmenter = new BreadthFirstLabeling(bp); break;
-			case DepthFirst:		segmenter = new DepthFirstLabeling(bp); break;
-			case Recursive:			segmenter = new RecursiveLabeling(bp); break; 
-			case RegionAndContours:	segmenter = new RegionContourLabeling(bp); break;
-			case Sequential:		segmenter = new SequentialLabeling(bp); break;
+			case BreadthFirst:		segmenter = new SegmentationBreadthFirst(bp, nht); break;
+			case DepthFirst:		segmenter = new SegmentationDepthFirst(bp, nht); break;
+			case Recursive:			segmenter = new SegmentationRecursive(bp, nht); break; 
+			case RegionAndContours:	segmenter = new SegmentationRegionContour(bp, nht); break;
+			case Sequential:		segmenter = new SegmentationSequential(bp, nht); break;
 		}
 		return segmenter;
 	}

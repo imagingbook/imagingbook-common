@@ -37,6 +37,7 @@ public class Contour implements Comparable<Contour>, Iterable<Point> {
 	
 	private final int label;
 	private final List<Point> points;
+	// TODO: distinguish outer/inner contour?
 	
 	/**
 	 * Creates a new (empty) contour with the given region label.

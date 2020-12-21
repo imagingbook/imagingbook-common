@@ -11,7 +11,6 @@ package imagingbook.pub.regions;
 
 import ij.IJ;
 import ij.process.ByteProcessor;
-import imagingbook.pub.geometry.basic.Point;
 
 /**
  * Binary region labeler based on a recursive flood filling
@@ -20,7 +19,7 @@ import imagingbook.pub.geometry.basic.Point;
  * @author WB
  * @version 2020/12/17
  */
-public class RecursiveLabeling extends RegionLabeling {
+public class SegmentationRecursive extends BinaryRegionSegmentation {
 
 	/**
 	 * Creates a new region labeling.
@@ -28,12 +27,16 @@ public class RecursiveLabeling extends RegionLabeling {
 	 * @param ip the binary input image with 0 values for background pixels and values &gt; 0
 	 * for foreground pixels.
 	 */
-	public RecursiveLabeling(ByteProcessor ip) {
-		super(ip);
+	public SegmentationRecursive(ByteProcessor ip) {
+		this(ip, DEFAULT_NEIGHBORHOOD);
+	}
+	
+	public SegmentationRecursive(ByteProcessor ip, NeighborhoodType nh) {
+		super(ip, nh);
 	}
 	
 	@Override
-	protected boolean applyLabeling() {
+	protected boolean applySegmentation() {
 		resetLabel();
 		try{
 			for (int v = 0; v < height; v++) {
@@ -46,7 +49,7 @@ public class RecursiveLabeling extends RegionLabeling {
 				}
 			}
 		} catch(StackOverflowError e) { 
-			IJ.error(RecursiveLabeling.class.getSimpleName(), 
+			IJ.error(SegmentationRecursive.class.getSimpleName(), 
 					"A StackOverflowError occurred!\n" + "Result is not valid!");
 			return false;
 		}

@@ -12,18 +12,17 @@ package imagingbook.pub.regions;
 import java.util.Deque;
 import java.util.LinkedList;
 
-import ij.IJ;
 import ij.process.ByteProcessor;
 import imagingbook.pub.geometry.basic.Point;
 
 /**
  * Binary region labeler based on a depth-first flood filling
- * algorithm. 
+ * algorithm (using a queue).
  * 
  * @author WB
  * @version 2020/04/01
  */
-public class DepthFirstLabeling extends RegionLabeling {
+public class SegmentationDepthFirst extends BinaryRegionSegmentation {
 	
 	/**
 	 * Creates a new depth-first region labeling.
@@ -31,12 +30,16 @@ public class DepthFirstLabeling extends RegionLabeling {
 	 * @param ip the binary input image with 0 values for background pixels and values &gt; 0
 	 * for foreground pixels.
 	 */
-	public DepthFirstLabeling(ByteProcessor ip) {
-		super(ip);
+	public SegmentationDepthFirst(ByteProcessor ip) {
+		this(ip, DEFAULT_NEIGHBORHOOD);
+	}
+	
+	public SegmentationDepthFirst(ByteProcessor ip, NeighborhoodType nh) {
+		super(ip, nh);
 	}
 	
 	@Override
-	protected boolean applyLabeling() {
+	protected boolean applySegmentation() {
 		resetLabel();
 		for (int v = 0; v < height; v++) {
 			for (int u = 0; u < width; u++) {

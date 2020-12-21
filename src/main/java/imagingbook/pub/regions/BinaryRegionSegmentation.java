@@ -9,8 +9,11 @@
 
 package imagingbook.pub.regions;
 
+import static imagingbook.pub.regions.NeighborhoodType.N4;
+
 import java.awt.Rectangle;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Formatter;
 import java.util.HashMap;
@@ -26,48 +29,57 @@ import ij.process.ImageProcessor;
 import imagingbook.pub.geometry.basic.Point;
 
 /**
- * This class does the complete region labeling for a given image.
- * It is abstract, because the implementation of some parts depends
- * on the region labeling algorithm being used.
+ * Performs region segmentation on a given binary image.
+ * This class is abstract, since the implementation depends
+ * on the concrete region segmentation algorithm being used.
+ * Concrete implementations (subclasses of this class) are 
+ * {@link SegmentationBreadthFirst},
+ * {@link SegmentationDepthFirst},
+ * {@link SegmentationRecursive},
+ * {@link SegmentationSequential},
+ * {@link SegmentationRegionContour}.
  * 
- * @version 2020/12/20
+ * All work is done by the constructor(s).
+ * If the segmentation has failed for some reason,
+ * {@link #getRegions()} returns {@code null}.
+ * 
+ * @version 2020/12/21
  */
-public abstract class RegionLabeling {
+public abstract class BinaryRegionSegmentation {
 	
+	public static final NeighborhoodType DEFAULT_NEIGHBORHOOD = N4;
 	public static final int BACKGROUND = 0;
 	public static final int FOREGROUND = 1;
-	public static final int START_LABEL = 2;
 	
-	static NeighborhoodType DEFAULT_NEIGHBORHOOD = NeighborhoodType.N4;
-
+	public static final int START_LABEL = 2;	// TODO: public for image generation only! check!
+	
 	protected final ImageProcessor ip;
 	protected final int width;
 	protected final int height;	
-	protected NeighborhoodType neighborhood = NeighborhoodType.N4;	// TODO: hide!!
+	protected final NeighborhoodType neighborhood;
 	
 	protected final int[][] labelArray;
 	// label values in labelArray can be:
 	//  0 ... unlabeled
 	// -1 ... previously visited background pixel
 	// >0 ... valid label
+	protected final List<BinaryRegion> regions;
 	
 	private boolean isSegmented = false;
 	private int currentLabel;
 	protected int maxLabel = -1;	// the maximum label in the labels array
 	
-	protected List<BinaryRegion> regions = null;
 	
 	// -------------------------------------------------------------------------
 	
-	protected RegionLabeling(ByteProcessor ip, NeighborhoodType nh) {
+	protected BinaryRegionSegmentation(ByteProcessor ip, NeighborhoodType nh) {
 		this.ip = ip;
 		this.neighborhood = nh;
-		//this.neighborhood = Neighborhood.four;
-		width  = ip.getWidth();
-		height = ip.getHeight();
-		labelArray = makeLabelArray();
-		//applyLabeling();
-		//collectRegions();
+		this.width  = ip.getWidth();
+		this.height = ip.getHeight();
+		this.labelArray = makeLabelArray();
+		applySegmentation();
+		this.regions = collectRegions();
 	}
 	
 	protected int[][] makeLabelArray() {
@@ -84,17 +96,17 @@ public abstract class RegionLabeling {
 	// -------------------------------------------------------------------------
 	
 	// This method must be implemented by any real sub-class:
-	protected abstract boolean applyLabeling();
+	protected abstract boolean applySegmentation();
 	
-	public boolean segment() {
-		if (!isSegmented) {
-			isSegmented = true;
-			return applyLabeling();
-		}
-		else {
-			throw new IllegalStateException("Method segment() may only be called once!");
-		}
-	}
+//	public boolean segment() {
+//		if (!isSegmented) {
+//			isSegmented = true;
+//			return applySegmentation();
+//		}
+//		else {
+//			throw new IllegalStateException("Method segment() may only be called once!");
+//		}
+//	}
 	
 	public int getWidth() {
 		return this.width;
@@ -110,30 +122,29 @@ public abstract class RegionLabeling {
 	
 	/**
 	 * Get an unsorted list of all regions associated with this region labeling.
-	 * @return the list of regions.
+	 * See also {@link #getRegions(boolean)}.
+	 * @return A (unsorted) list of regions or {@code null} if the segmentation has failed.
 	 */
 	public List<BinaryRegion> getRegions() {
 		return getRegions(false);	// unsorted
 	}
 	
 	/**
-	 * Get a possibly sorted list of all regions associated with this region labeling.
-	 * @param sort set {@code true} to sort regions by decreasing size.
-	 * @return the list of regions.
+	 * Get a (optionally sorted) list of all regions associated with this region labeling.
+	 * @param sort Set {@code true} to sort regions by size (largest regions first).
+	 * @return The list of regions or {@code null} if the segmentation has failed.
 	 */
 	public List<BinaryRegion> getRegions(boolean sort) {
-		if (!isSegmented) {
-			throw new IllegalStateException("Method segment() must be called before this!");
-		}
 		if (regions == null) {
-			collectRegions();
+			return null;
 		}
-			
-		List<BinaryRegion> rns = new ArrayList<BinaryRegion>(regions); // TODO: don't like this!
-		if (sort) {
-			Collections.sort(rns);
+		else {
+			BinaryRegion[] ra = regions.toArray(new BinaryRegion[0]);
+			if (sort) {
+				Arrays.sort(ra);
+			}
+			return Arrays.asList(ra);
 		}
-		return rns;
 	}
 	
 	// -------------------------------------------------------------------------
@@ -141,7 +152,7 @@ public abstract class RegionLabeling {
 	// creates a container of BinaryRegion objects
 	// collects the region pixels from the label image
 	// and computes the statistics for each region
-	protected void collectRegions() {
+	protected List<BinaryRegion> collectRegions() {
 		BinaryRegion[] regionArray = new BinaryRegion[maxLabel + 1];
 		for (int i = START_LABEL; i <= maxLabel; i++) {
 			regionArray[i] = new BinaryRegion(i);
@@ -162,7 +173,8 @@ public abstract class RegionLabeling {
 				regionList.add(r);
 			}
 		}
-		regions = regionList;
+		//regions = regionList;
+		return regionList;
 	}
 	
 	/**
@@ -208,14 +220,14 @@ public abstract class RegionLabeling {
 	 */
 	public BinaryRegion findRegion(int label) {
 		if (label <= 0 || regions == null) return null;
-		BinaryRegion regn = null;
-		for (BinaryRegion r : regions) {
+		BinaryRegion region = null;
+		for (BinaryRegion r : regions) {	// TODO: inefficient, consider different data structure for regions!
 			if (r.getLabel() == label) {
-				regn = r;
+				region = r;
 				break;
 			}
 		}
-		return regn;
+		return region;
 	}
 	
 	/**
@@ -224,7 +236,7 @@ public abstract class RegionLabeling {
 	 * @param u the horizontal position.
 	 * @param v the vertical position.
 	 * @return The associated {@link BinaryRegion} object or null if
-	 * this {@link RegionLabeling} has no region at the given position.
+	 * this {@link BinaryRegionSegmentation} has no region at the given position.
 	 */
 	public BinaryRegion getRegion(int u, int v) {
 		int label = getLabel(u, v);
@@ -320,13 +332,13 @@ public abstract class RegionLabeling {
 	
 	
 	/**
-	 * This class of {@link RegionLabeling} represents a connected 
+	 * This class of {@link BinaryRegionSegmentation} represents a connected 
 	 * component or binary region. 
-	 * It is implemented as an inner class to {@link RegionLabeling} because
+	 * It is implemented as an inner class to {@link BinaryRegionSegmentation} because
 	 * it references common region labeling data.
 	 * A {@link BinaryRegion} instance does not have its own list or array of 
 	 * contained pixel coordinates but refers to the region label-array of the
-	 * enclosing {@link RegionLabeling} instance.
+	 * enclosing {@link BinaryRegionSegmentation} instance.
 	 * Instances of this class support iteration over the contained pixel
 	 * coordinates of type {@link Point}, e.g., by
 	 * <pre>
@@ -609,7 +621,7 @@ public abstract class RegionLabeling {
 		 * @return true if (u,v) is contained in this region
 		 */
 		public boolean contains(int u, int v) {
-			return RegionLabeling.this.getLabel(u, v) == this.label;
+			return BinaryRegionSegmentation.this.getLabel(u, v) == this.label;
 		}
 		
 		// ------------------------------------------------------------

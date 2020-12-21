@@ -28,7 +28,7 @@ import imagingbook.pub.geometry.basic.Point;
  * @author WB
  * @version 2020/04/01
  */
-public class RegionContourLabeling extends RegionLabeling implements ContourTracer { 
+public class SegmentationRegionContour extends BinaryRegionSegmentation implements ContourTracer { 
 	
 	static private final int VISITED = -1;
 	
@@ -41,8 +41,14 @@ public class RegionContourLabeling extends RegionLabeling implements ContourTrac
 	 * @param ip the binary input image with 0 values for background pixels and values &gt; 0
 	 * for foreground pixels.
 	 */
-	public RegionContourLabeling (ByteProcessor ip) {
-		super(ip);	// all work is done by the constructor of the superclass
+	public SegmentationRegionContour(ByteProcessor ip) {
+		this(ip, DEFAULT_NEIGHBORHOOD);
+	}
+	
+	public SegmentationRegionContour(ByteProcessor ip, NeighborhoodType nh) {
+		super(ip, nh);
+		attachOuterContours();	// attach each outer contours to the corresponding region
+		attachInnerContours();	// attach all inner contours to the corresponding regions
 	}
 	
 	// public methods required by interface ContourTracer (others are in inherited from super-class)
@@ -81,7 +87,7 @@ public class RegionContourLabeling extends RegionLabeling implements ContourTrac
 	}
 	
 	@Override
-	protected boolean applyLabeling() {
+	protected boolean applySegmentation() {
 		resetLabel();
 		// scan top to bottom, left to right
 		for (int v = 0; v < height; v++) {
@@ -116,12 +122,13 @@ public class RegionContourLabeling extends RegionLabeling implements ContourTrac
 		return true;
 	}
 	
-	@Override
-	protected void collectRegions() {
-		super.collectRegions();	// collect region pixels and calculate statistics
-		attachOuterContours();	// attach each outer contours to the corresponding region
-		attachInnerContours();	// attach all inner contours to the corresponding regions
-	}
+//	@Override
+//	protected List<BinaryRegion> collectRegions() {
+//		List<BinaryRegion> rgns = super.collectRegions();	// collect region pixels and calculate statistics
+//		attachOuterContours();	// attach each outer contours to the corresponding region
+//		attachInnerContours();	// attach all inner contours to the corresponding regions
+//		return rgns;
+//	}
 	
 	// Trace one contour starting at (xS,yS) 
 	// in direction dS with label label
@@ -206,12 +213,12 @@ public class RegionContourLabeling extends RegionLabeling implements ContourTrac
 	private void attachOuterContours() {
 		for (Contour c : outerContours) {
 			int label = c.getLabel();
-			BinaryRegion r = findRegion(label);
-			if (r == null) {
+			BinaryRegion reg = findRegion(label);
+			if (reg == null) {
 				IJ.log("Error: Could not associate outer contour with label " + label);
 			}
 			else {
-				r.setOuterContour(c);
+				reg.setOuterContour(c);
 			}
 		}
 	}
@@ -222,12 +229,12 @@ public class RegionContourLabeling extends RegionLabeling implements ContourTrac
 		}
 		for (Contour c : innerContours) {
 			int label = c.getLabel();
-			BinaryRegion r = findRegion(label);
-			if (r == null) {
+			BinaryRegion reg = findRegion(label);
+			if (reg == null) {
 				IJ.log("Error: Could not associate inner contour with label " + label);
 			}
 			else {
-				r.addInnerContour(c);
+				reg.addInnerContour(c);
 			}
 		}
 	}
