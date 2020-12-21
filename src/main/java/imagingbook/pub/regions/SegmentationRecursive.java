@@ -37,7 +37,6 @@ public class SegmentationRecursive extends BinaryRegionSegmentation {
 	
 	@Override
 	protected boolean applySegmentation() {
-		resetLabel();
 		try{
 			for (int v = 0; v < height; v++) {
 				for (int u = 0; u < width; u++) {
@@ -49,8 +48,8 @@ public class SegmentationRecursive extends BinaryRegionSegmentation {
 				}
 			}
 		} catch(StackOverflowError e) { 
-			IJ.error(SegmentationRecursive.class.getSimpleName(), 
-					"A StackOverflowError occurred!\n" + "Result is not valid!");
+//			IJ.error(SegmentationRecursive.class.getSimpleName(), 
+//					"A StackOverflowError occurred!\n" + "Result is not valid!");
 			return false;
 		}
 		return true;

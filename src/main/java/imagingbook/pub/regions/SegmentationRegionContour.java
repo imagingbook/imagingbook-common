@@ -88,7 +88,6 @@ public class SegmentationRegionContour extends BinaryRegionSegmentation implemen
 	
 	@Override
 	protected boolean applySegmentation() {
-		resetLabel();
 		// scan top to bottom, left to right
 		for (int v = 0; v < height; v++) {
 			int label = 0;	// reset label, scan through horiz. line:

@@ -40,7 +40,6 @@ public class SegmentationDepthFirst extends BinaryRegionSegmentation {
 	
 	@Override
 	protected boolean applySegmentation() {
-		resetLabel();
 		for (int v = 0; v < height; v++) {
 			for (int u = 0; u < width; u++) {
 				if (getLabel(u, v) == FOREGROUND) {

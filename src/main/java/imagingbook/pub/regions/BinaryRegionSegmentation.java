@@ -65,8 +65,8 @@ public abstract class BinaryRegionSegmentation {
 	// >0 ... valid label
 	protected final List<BinaryRegion> regions;
 	
-	private boolean isSegmented = false;
-	private int currentLabel;
+	private final boolean isSegmented;
+	private int currentLabel = -1;
 	protected int maxLabel = -1;	// the maximum label in the labels array
 	
 	
@@ -78,8 +78,8 @@ public abstract class BinaryRegionSegmentation {
 		this.width  = ip.getWidth();
 		this.height = ip.getHeight();
 		this.labelArray = makeLabelArray();
-		applySegmentation();
-		this.regions = collectRegions();
+		this.isSegmented = applySegmentation();
+		this.regions = (isSegmented) ? collectRegions() : null;
 	}
 	
 	protected int[][] makeLabelArray() {
@@ -195,10 +195,6 @@ public abstract class BinaryRegionSegmentation {
 			labelArray[u][v] = label;
 	}
 	
-	protected void resetLabel() {
-		currentLabel = -1;
-		maxLabel = -1;
-	}
 	
 	protected int getNextLabel() {
 		if (currentLabel < 1)

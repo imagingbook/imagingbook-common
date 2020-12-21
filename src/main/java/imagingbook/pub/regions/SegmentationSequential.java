@@ -22,7 +22,7 @@ import ij.process.ByteProcessor;
  */
 public class SegmentationSequential extends BinaryRegionSegmentation {
 
-	private HashSet<LabelCollision> collisionMap = null;
+	private HashSet<LabelCollision> collisionMap;
 
 	/**
 	 * Creates a new sequential region labeling.
@@ -45,7 +45,6 @@ public class SegmentationSequential extends BinaryRegionSegmentation {
 		collisionMap = new HashSet<>();
 		
 		// Step 1: assign initial labels:
-		resetLabel();
 		for (int v = 0; v < height; v++) {
 			for (int u = 0; u < width; u++) {
 				if (getLabel(u, v) == FOREGROUND) {
@@ -58,12 +57,10 @@ public class SegmentationSequential extends BinaryRegionSegmentation {
 		}
 		
 		// Step 2: resolve label collisions
-		//IJ.log("Sequential region labeling - Step 2");
 		int[] replacementTable = makeReplacementTable(getMaxLabel() + 1);
 		
 		// Step 3: relabel the image
 		applyReplacementTable(replacementTable);
-		//showLabelArray();
 		return true;
 	}
 	
@@ -123,83 +120,6 @@ public class SegmentationSequential extends BinaryRegionSegmentation {
 		}
 		return true;
 	}
-
-//	private int makeLabel8(int u, int v) {
-//		int newLabel = 0;
-//		//assemble the neighborhood n:
-//		//
-//		// [1][2][3]
-//		// [0][x]
-//		//
-//		int[] nh = new int[4];
-//		nh[0] = getLabel(u - 1, v);  // gives 0 if no label is set or outside borders
-//		nh[1] = getLabel(u - 1, v - 1);
-//		nh[2] = getLabel(u, v - 1);
-//		nh[3] = getLabel(u + 1, v - 1);
-//
-//		if (   nh[0] == BACKGROUND
-//			&& nh[1] == BACKGROUND
-//			&& nh[2] == BACKGROUND
-//			&& nh[3] == BACKGROUND) {
-//			//all neighbors in n[] are empty, assign a new label:
-//			newLabel = this.getNextLabel(); 		
-//		} 
-//		else {	//at least one label in n[] is not BACKGROUND
-//				//find minimum region label among neighbors
-//			int min = Integer.MAX_VALUE;
-//			for (int i = 0; i < nh.length; i++) {
-//				int ni = nh[i];
-//				if (ni >= START_LABEL && ni < min)
-//					min = ni;
-//			}
-//			newLabel = min;
-//
-//			//register label equivalence (collision)
-//			for (int i = 0; i < nh.length; i++) {
-//				int ni = nh[i];
-//				if (ni >= START_LABEL && ni != newLabel) {
-//					registerCollision(ni, newLabel);
-//				}
-//			}
-//		}
-//		return newLabel;
-//	}
-	
-//	private int makeLabel4(int u, int v) {
-//		int newLabel = 0;
-//		//assemble the neighborhood n:
-//		//
-//		//    [1]
-//		// [0][x]
-//		//
-//		int[] nh = new int[2];
-//		nh[0] = getLabel(u - 1, v);  // gives 0 if no label is set or outside borders
-//		nh[1] = getLabel(u, v - 1);
-//
-//		if (nh[0] == BACKGROUND && nh[1] == BACKGROUND) {
-//			//all neighbors in n[] are empty, assign a new label:
-//			newLabel = this.getNextLabel(); 		
-//		} 
-//		else {	//at least one label in n[] is not BACKGROUND
-//				//find minimum region label among neighbors
-//			int min = Integer.MAX_VALUE;
-//			for (int i = 0; i < nh.length; i++) {
-//				int ni = nh[i];
-//				if (ni >= START_LABEL && ni < min)
-//					min = ni;
-//			}
-//			newLabel = min;
-//
-//			//register label equivalence (collision)
-//			for (int i = 0; i < nh.length; i++) {
-//				int ni = nh[i];
-//				if (ni >= START_LABEL && ni != newLabel) {
-//					registerCollision(ni, newLabel);
-//				}
-//			}
-//		}
-//		return newLabel;
-//	}
 
 	private void registerCollision(int a, int b) {
 		if (a != b) {
