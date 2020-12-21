@@ -9,6 +9,9 @@
 
 package imagingbook.pub.regions;
 
+import static imagingbook.pub.regions.NeighborhoodType.N4;
+import static imagingbook.pub.regions.NeighborhoodType.N8;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -73,8 +76,7 @@ public class SegmentationRegionContour extends BinaryRegionSegmentation implemen
 		return copyContours(innerContours, sort);
 	}
 	
-
-	// non-public methods
+	// non-public methods ------------------------------------------------------------------
 	
 	@Override
 	protected int[][] makeLabelArray() {
@@ -90,30 +92,32 @@ public class SegmentationRegionContour extends BinaryRegionSegmentation implemen
 	protected boolean applySegmentation() {
 		// scan top to bottom, left to right
 		for (int v = 0; v < height; v++) {
-			int label = 0;	// reset label, scan through horiz. line:
+			int curLabel = 0;	// reset label, scan through horiz. line:
 			for (int u = 0; u < width; u++) {
-				if (ip.getPixel(u, v) > 0) {	// unlabeled FOREGROUND pixel
-					if (label != 0) { // keep using the same label
-						setLabel(u, v, label);
+				if (ip.getPixel(u, v) > 0) {	// hit an unlabeled FOREGROUND pixel
+					if (curLabel != 0) { // keep using the same label
+						setLabel(u, v, curLabel);
 					}
-					else {	// label == zero
-						label = getLabel(u, v);
-						if (label == 0) {	// new (unlabeled) region is hit
-							label = getNextLabel(); // assign a new region label
+					else {	// label == 0
+						curLabel = getLabel(u, v);
+						if (curLabel == 0) {	// new (unlabeled) region is hit
+							curLabel = getNextLabel(); // assign a new region label
 							//IJ.log(String.format("assigning label %d at (%d,%d), maxLabel=%d", label, u, v, maxLabel));
-							Contour oc = traceContour(u, v, 0, label);
+							int dS = 0;
+							Contour oc = traceContour(u, v, dS, curLabel);
 							outerContours.add(oc);
-							setLabel(u, v, label);
+							setLabel(u, v, curLabel);
 						}
 					}
 				} 
-				else {	// BACKGROUND pixel
-					if (label != 0) { // exiting a region
+				else {	// hit a BACKGROUND pixel
+					if (curLabel != 0) { // exiting a region
 						if (getLabel(u, v) == BACKGROUND) { // unlabeled - new inner contour
-							Contour ic = traceContour(u - 1, v, 1, label);
+							int dS = (neighborhood == N8) ? 1 : 2;
+							Contour ic = traceContour(u - 1, v, dS, curLabel);
 							innerContours.add(ic);
 						}
-						label = 0;
+						curLabel = 0;
 					}
 				}
 			}
@@ -121,26 +125,14 @@ public class SegmentationRegionContour extends BinaryRegionSegmentation implemen
 		return true;
 	}
 	
-//	@Override
-//	protected List<BinaryRegion> collectRegions() {
-//		List<BinaryRegion> rgns = super.collectRegions();	// collect region pixels and calculate statistics
-//		attachOuterContours();	// attach each outer contours to the corresponding region
-//		attachInnerContours();	// attach all inner contours to the corresponding regions
-//		return rgns;
-//	}
-	
-	// Trace one contour starting at (xS,yS) 
-	// in direction dS with label label
-	// trace one contour starting at (xS,yS) in direction dS	
+	// Trace one contour starting at (xS,yS) in direction dS	
 	private Contour traceContour(int xS, int yS, int dS, int label) {
 		Contour contr = new Contour(label);
 		int xT, yT; // T = successor of starting point (xS,yS)
 		int xP, yP; // P = previous contour point
 		int xC, yC; // C = current contour point
-//		Point pt = Point.create(xS, yS); 
-		int[] pt = {xS, yS};
-		int dNext = findNextPoint(pt, dS);
-//		contr.addPoint(pt); 
+		int[] pt = {xS, yS};  // start point
+		int dNext = findNextContourPoint(pt, dS);
 		contr.addPoint(Point.create(pt[0], pt[1]));
 		xP = xS; yP = yS;
 		xC = xT = pt[0];
@@ -149,10 +141,9 @@ public class SegmentationRegionContour extends BinaryRegionSegmentation implemen
 		boolean done = (xS == xT && yS == yT);  // true if isolated pixel
 		while (!done) {
 			setLabel(xC, yC, label);
-//			pt = Point.create(xC, yC);
 			int[] pn = {xC, yC};
 			int dSearch = (dNext + 6) % 8;
-			dNext = findNextPoint(pn, dSearch);
+			dNext = findNextContourPoint(pn, dSearch);
 			xP = xC;  yP = yC;	
 			xC = pn[0]; 
 			yC = pn[1]; 
@@ -169,36 +160,17 @@ public class SegmentationRegionContour extends BinaryRegionSegmentation implemen
 			{ 1,0}, { 1, 1}, {0, 1}, {-1, 1}, 
 			{-1,0}, {-1,-1}, {0,-1}, { 1,-1}};
 	
-//	private int findNextPoint (Point pt, int dir) { 	// TODO: PROBLEM!!
-//		// Starts at Point pt in direction dir,
-//		// returns the resulting tracing direction
-//		// and modifies pt.
-//		for (int i = 0; i < 7; i++) {
-//			int x = (int) pt.getX() + delta[dir][0];
-//			int y = (int) pt.getY() + delta[dir][1];
-//			if (ip.getPixel(x, y) == BACKGROUND) {
-//				setLabel(x, y, VISITED);	// mark surrounding background pixels
-//				dir = (dir + 1) % 8;
-//			} 
-//			else {	// found a non-background pixel (next pixel to follow)
-//				pt.x = x; 
-//				pt.y = y; 
-//				break;
-//			}
-//		}
-//		return dir;
-//	}
-	
-	private int findNextPoint (int[] pos, int dir) { 	// TODO: PROBLEM!!
+	private int findNextContourPoint(int[] pos, int dir) {
 		// Starts at point pos in direction dir,
 		// returns the resulting tracing direction
 		// and modifies pt.
-		for (int i = 0; i < 7; i++) {
+		final int step = (neighborhood == N8) ? 1 : 2;
+		for (int i = 0; i < 7; i += step) {
 			int x = pos[0] + delta[dir][0];
 			int y = pos[1] + delta[dir][1];
 			if (ip.getPixel(x, y) == BACKGROUND) {
 				setLabel(x, y, VISITED);	// mark surrounding background pixels
-				dir = (dir + 1) % 8;
+				dir = (dir + step) % 8;
 			} 
 			else {	// found a non-background pixel (next pixel to follow)
 				pos[0] = x; 
