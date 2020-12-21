@@ -22,29 +22,37 @@
 <span class="sourceLineNo">012</span><a id="line.12">import java.awt.Color;</a>
 <span class="sourceLineNo">013</span><a id="line.13">import java.util.Random;</a>
 <span class="sourceLineNo">014</span><a id="line.14"></a>
-<span class="sourceLineNo">015</span><a id="line.15">public class RandomColorGenerator {</a>
-<span class="sourceLineNo">016</span><a id="line.16">        </a>
-<span class="sourceLineNo">017</span><a id="line.17">        private float h = 0.0f;</a>
-<span class="sourceLineNo">018</span><a id="line.18">        private float s = 0.9f;</a>
-<span class="sourceLineNo">019</span><a id="line.19">        private float b = 0.9f;</a>
-<span class="sourceLineNo">020</span><a id="line.20">        Random rnd; </a>
-<span class="sourceLineNo">021</span><a id="line.21"></a>
-<span class="sourceLineNo">022</span><a id="line.22">        public RandomColorGenerator() {</a>
-<span class="sourceLineNo">023</span><a id="line.23">                rnd = new Random(1);</a>
-<span class="sourceLineNo">024</span><a id="line.24">        }</a>
-<span class="sourceLineNo">025</span><a id="line.25">        </a>
-<span class="sourceLineNo">026</span><a id="line.26">        public RandomColorGenerator(int seed) {</a>
-<span class="sourceLineNo">027</span><a id="line.27">                rnd = new Random(seed);</a>
-<span class="sourceLineNo">028</span><a id="line.28">        }</a>
-<span class="sourceLineNo">029</span><a id="line.29">        </a>
-<span class="sourceLineNo">030</span><a id="line.30">        public Color nextColor() {</a>
-<span class="sourceLineNo">031</span><a id="line.31">                //h = (h + 0.8f + 0.3f * (float)rnd.nextGaussian()) % 1.0f;</a>
-<span class="sourceLineNo">032</span><a id="line.32">                //h = (float) (h + rnd.nextGaussian()) % 1.0f;</a>
-<span class="sourceLineNo">033</span><a id="line.33">                h = (float) (h + 0.1 + 0.8f * rnd.nextFloat()) % 1.0f;</a>
-<span class="sourceLineNo">034</span><a id="line.34">                return Color.getHSBColor(h, s, b); </a>
-<span class="sourceLineNo">035</span><a id="line.35">        }</a>
-<span class="sourceLineNo">036</span><a id="line.36">        </a>
-<span class="sourceLineNo">037</span><a id="line.37">}</a>
+<span class="sourceLineNo">015</span><a id="line.15">/**</a>
+<span class="sourceLineNo">016</span><a id="line.16"> * Instances of this class create a sequence of random colors.</a>
+<span class="sourceLineNo">017</span><a id="line.17"> * TODO: Improve randomness (currently not too good, much red ...), modify saturation?. </a>
+<span class="sourceLineNo">018</span><a id="line.18"> * TODO: Add color type/saturation/pastel ...</a>
+<span class="sourceLineNo">019</span><a id="line.19"> * </a>
+<span class="sourceLineNo">020</span><a id="line.20"> * @author WB</a>
+<span class="sourceLineNo">021</span><a id="line.21"> *</a>
+<span class="sourceLineNo">022</span><a id="line.22"> */</a>
+<span class="sourceLineNo">023</span><a id="line.23">public class RandomColorGenerator {</a>
+<span class="sourceLineNo">024</span><a id="line.24">        </a>
+<span class="sourceLineNo">025</span><a id="line.25">        private float h = 0.0f;</a>
+<span class="sourceLineNo">026</span><a id="line.26">        private float s = 0.9f;</a>
+<span class="sourceLineNo">027</span><a id="line.27">        private float b = 0.9f;</a>
+<span class="sourceLineNo">028</span><a id="line.28">        Random rnd; </a>
+<span class="sourceLineNo">029</span><a id="line.29"></a>
+<span class="sourceLineNo">030</span><a id="line.30">        public RandomColorGenerator() {</a>
+<span class="sourceLineNo">031</span><a id="line.31">                rnd = new Random();</a>
+<span class="sourceLineNo">032</span><a id="line.32">        }</a>
+<span class="sourceLineNo">033</span><a id="line.33">        </a>
+<span class="sourceLineNo">034</span><a id="line.34">        public RandomColorGenerator(int seed) {</a>
+<span class="sourceLineNo">035</span><a id="line.35">                rnd = new Random(seed);</a>
+<span class="sourceLineNo">036</span><a id="line.36">        }</a>
+<span class="sourceLineNo">037</span><a id="line.37">        </a>
+<span class="sourceLineNo">038</span><a id="line.38">        public Color nextColor() {</a>
+<span class="sourceLineNo">039</span><a id="line.39">                //h = (h + 0.8f + 0.3f * (float)rnd.nextGaussian()) % 1.0f;</a>
+<span class="sourceLineNo">040</span><a id="line.40">                //h = (float) (h + rnd.nextGaussian()) % 1.0f;</a>
+<span class="sourceLineNo">041</span><a id="line.41">                h = (h + 0.1f + 0.8f * rnd.nextFloat()) % 1.0f;</a>
+<span class="sourceLineNo">042</span><a id="line.42">                return Color.getHSBColor(h, s, b); </a>
+<span class="sourceLineNo">043</span><a id="line.43">        }</a>
+<span class="sourceLineNo">044</span><a id="line.44">        </a>
+<span class="sourceLineNo">045</span><a id="line.45">}</a>
 
 
 

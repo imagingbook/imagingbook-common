@@ -46,6 +46,7 @@ imagingbook.pub.morphology
 imagingbook.pub.noise.hashing
 imagingbook.pub.noise.perlin
 imagingbook.pub.regions
+imagingbook.pub.regions.utils
 imagingbook.pub.sift
 imagingbook.pub.sift.scalespace
 imagingbook.pub.sift.util
