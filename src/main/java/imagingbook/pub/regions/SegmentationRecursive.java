@@ -9,7 +9,6 @@
 
 package imagingbook.pub.regions;
 
-import ij.IJ;
 import ij.process.ByteProcessor;
 
 /**
@@ -17,14 +16,14 @@ import ij.process.ByteProcessor;
  * algorithm. 
  * 
  * @author WB
- * @version 2020/12/17
+ * @version 2020/12/21
  */
 public class SegmentationRecursive extends BinaryRegionSegmentation {
 
 	/**
-	 * Creates a new region labeling.
+	 * Constructor. Creates a new recursive binary region segmenter.
 	 * 
-	 * @param ip the binary input image with 0 values for background pixels and values &gt; 0
+	 * @param ip A binary input image with 0 values for background pixels and values &gt; 0
 	 * for foreground pixels.
 	 */
 	public SegmentationRecursive(ByteProcessor ip) {
@@ -47,9 +46,7 @@ public class SegmentationRecursive extends BinaryRegionSegmentation {
 					}
 				}
 			}
-		} catch(StackOverflowError e) { 
-//			IJ.error(SegmentationRecursive.class.getSimpleName(), 
-//					"A StackOverflowError occurred!\n" + "Result is not valid!");
+		} catch(StackOverflowError e) {
 			return false;
 		}
 		return true;

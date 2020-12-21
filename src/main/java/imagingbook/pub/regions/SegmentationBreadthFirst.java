@@ -26,9 +26,9 @@ import imagingbook.pub.geometry.basic.Point;
 public class SegmentationBreadthFirst extends BinaryRegionSegmentation {
 	
 	/**
-	 * Creates a new breadth-first (flood-fill) region labeling.
+	 * Constructor. Creates a new breadth-first (flood-fill) binary region segmenter.
 	 * 
-	 * @param ip the binary input image with 0 values for background pixels and values &gt; 0
+	 * @param ip A binary input image with 0 values for background pixels and values &gt; 0
 	 * for foreground pixels.
 	 */
 	public SegmentationBreadthFirst(ByteProcessor ip) {

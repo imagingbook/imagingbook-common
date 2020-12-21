@@ -25,9 +25,9 @@ import imagingbook.pub.geometry.basic.Point;
 public class SegmentationDepthFirst extends BinaryRegionSegmentation {
 	
 	/**
-	 * Creates a new depth-first region labeling.
+	 * Constructor. Creates a new depth-first binary region segmenter.
 	 * 
-	 * @param ip the binary input image with 0 values for background pixels and values &gt; 0
+	 * @param ip A binary input image with 0 values for background pixels and values &gt; 0
 	 * for foreground pixels.
 	 */
 	public SegmentationDepthFirst(ByteProcessor ip) {

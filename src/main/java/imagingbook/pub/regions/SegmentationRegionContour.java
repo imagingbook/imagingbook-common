@@ -9,11 +9,10 @@
 
 package imagingbook.pub.regions;
 
-import static imagingbook.pub.regions.NeighborhoodType.N4;
 import static imagingbook.pub.regions.NeighborhoodType.N8;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
 
 import ij.IJ;
@@ -21,7 +20,7 @@ import ij.process.ByteProcessor;
 import imagingbook.pub.geometry.basic.Point;
 
 /**
- * Binary region labeler based on a combined region labeling
+ * Binary region segmenter based on a combined region labeling
  * and contour tracing algorithm:
  * F. Chang, C. J. Chen, and C. J. Lu. A linear-time component labeling
  * algorithm using contour tracing technique. Computer Vision, Graphics,
@@ -35,13 +34,12 @@ public class SegmentationRegionContour extends BinaryRegionSegmentation implemen
 	
 	static private final int VISITED = -1;
 	
-	private List<Contour> outerContours;
-	private List<Contour> innerContours;
+	private List<Contour.Outer> outerContours;
+	private List<Contour.Inner> innerContours;
 	
 	/**
-	 * Creates a new region labeling.
-	 * 
-	 * @param ip the binary input image with 0 values for background pixels and values &gt; 0
+	 * Constructor. Creates a combined region and contour segmenter.
+	 * @param ip A binary image with 0 values for background pixels and values &gt; 0
 	 * for foreground pixels.
 	 */
 	public SegmentationRegionContour(ByteProcessor ip) {
@@ -54,26 +52,34 @@ public class SegmentationRegionContour extends BinaryRegionSegmentation implemen
 		attachInnerContours();	// attach all inner contours to the corresponding regions
 	}
 	
-	// public methods required by interface ContourTracer (others are in inherited from super-class)
+	// public methods required by interface ContourTracer (others are in inherited from super-class):
 	
 	@Override
-	public List<Contour> getOuterContours() {
-		return copyContours(outerContours, false);
+	public List<Contour.Outer> getOuterContours() {
+		return getOuterContours(false);
 	}
 	
 	@Override
-	public List<Contour> getOuterContours(boolean sort) {
-		return copyContours(outerContours, sort);
+	public List<Contour.Outer> getOuterContours(boolean sort) {
+		Contour.Outer[] oca = outerContours.toArray(new Contour.Outer[0]);
+		if (sort) {
+			Arrays.sort(oca);
+		}
+		return Arrays.asList(oca);
 	}
 	
 	@Override
-	public List<Contour> getInnerContours() {
-		return copyContours(innerContours, false);
+	public List<Contour.Inner> getInnerContours() {
+		return getInnerContours(false);
 	}
 	
 	@Override
-	public List<Contour> getInnerContours(boolean sort) {
-		return copyContours(innerContours, sort);
+	public List<Contour.Inner> getInnerContours(boolean sort) {
+		Contour.Inner[] ica = innerContours.toArray(new Contour.Inner[0]);
+		if (sort) {
+			Arrays.sort(ica);
+		}
+		return Arrays.asList(ica);
 	}
 	
 	// non-public methods ------------------------------------------------------------------
@@ -83,8 +89,8 @@ public class SegmentationRegionContour extends BinaryRegionSegmentation implemen
 		// Create a label array which is "padded" by 1 pixel, i.e., 
 		// 2 rows and 2 columns larger than the image:
 		int[][] lA = new int[width+2][height+2];	// label array, initialized to zero
-		outerContours = new ArrayList<Contour>();
-		innerContours = new ArrayList<Contour>();
+		outerContours = new ArrayList<>();
+		innerContours = new ArrayList<>();
 		return lA;
 	}
 	
@@ -104,7 +110,7 @@ public class SegmentationRegionContour extends BinaryRegionSegmentation implemen
 							curLabel = getNextLabel(); // assign a new region label
 							//IJ.log(String.format("assigning label %d at (%d,%d), maxLabel=%d", label, u, v, maxLabel));
 							int dS = 0;
-							Contour oc = traceContour(u, v, dS, curLabel);
+							Contour.Outer oc = traceContour(u, v, dS, new Contour.Outer(curLabel));
 							outerContours.add(oc);
 							setLabel(u, v, curLabel);
 						}
@@ -114,7 +120,7 @@ public class SegmentationRegionContour extends BinaryRegionSegmentation implemen
 					if (curLabel != 0) { // exiting a region
 						if (getLabel(u, v) == BACKGROUND) { // unlabeled - new inner contour
 							int dS = (neighborhood == N8) ? 1 : 2;
-							Contour ic = traceContour(u - 1, v, dS, curLabel);
+							Contour.Inner ic = traceContour(u - 1, v, dS, new Contour.Inner(curLabel));
 							innerContours.add(ic);
 						}
 						curLabel = 0;
@@ -126,8 +132,8 @@ public class SegmentationRegionContour extends BinaryRegionSegmentation implemen
 	}
 	
 	// Trace one contour starting at (xS,yS) in direction dS	
-	private Contour traceContour(int xS, int yS, int dS, int label) {
-		Contour contr = new Contour(label);
+	private <T extends Contour> T traceContour(int xS, int yS, int dS, T contr) {
+		int label = contr.getLabel();
 		int xT, yT; // T = successor of starting point (xS,yS)
 		int xP, yP; // P = previous contour point
 		int xC, yC; // C = current contour point
@@ -227,16 +233,16 @@ public class SegmentationRegionContour extends BinaryRegionSegmentation implemen
 		}
 	}
 	
-	private List<Contour> copyContours(List<Contour> cntrs, boolean sort) {
-		if (cntrs == null)
-			return Collections.emptyList(); 
-		else {
-			List<Contour> cc = new ArrayList<Contour>(cntrs);
-			if (sort) {
-				Collections.sort(cc);
-			}
-			return cc;
-		}
-	}
+//	private List<Contour> copyContours(List<Contour> cntrs, boolean sort) {
+//		if (cntrs == null)
+//			return Collections.emptyList(); 
+//		else {
+//			List<Contour> cc = new ArrayList<Contour>(cntrs);
+//			if (sort) {
+//				Collections.sort(cc);
+//			}
+//			return cc;
+//		}
+//	}
 	
 }

@@ -9,11 +9,10 @@ import imagingbook.pub.regions.BinaryRegionSegmentation;
 public abstract class Images {
 	
 	/**
-	 * Utility method that creates an image of the internal
-	 * label array.
+	 * Utility method that creates an image to display a binary segmentation.
 	 * 
-	 * @param color set {@code false} to get a 16-bit grayscale image,
-	 * {@code true} for an RGB (24-bit) color image.
+	 * @param labeling The region segmentation.
+	 * @param color Set {@code true} to color the detected regions.
 	 * @return an image of the label array.
 	 */
 	public static ImageProcessor makeLabelImage(BinaryRegionSegmentation labeling, boolean color) {

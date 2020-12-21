@@ -25,10 +25,9 @@ public class SegmentationSequential extends BinaryRegionSegmentation {
 	private HashSet<LabelCollision> collisionMap;
 
 	/**
-	 * Creates a new sequential region labeling.
-	 * TODO: needs REVISION!
+	 * Constructor. Creates a new sequential binary region segmenter.
 	 * 
-	 * @param ip the binary input image with 0 values for background pixels and values &gt; 0
+	 * @param ip A binary image with 0 values for background pixels and values &gt; 0
 	 * for foreground pixels.
 	 */
 	public SegmentationSequential(ByteProcessor ip) {

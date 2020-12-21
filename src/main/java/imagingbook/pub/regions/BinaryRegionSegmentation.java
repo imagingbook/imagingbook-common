@@ -12,9 +12,7 @@ package imagingbook.pub.regions;
 import static imagingbook.pub.regions.NeighborhoodType.N4;
 
 import java.awt.Rectangle;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Formatter;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -95,18 +93,11 @@ public abstract class BinaryRegionSegmentation {
 	
 	// -------------------------------------------------------------------------
 	
-	// This method must be implemented by any real sub-class:
+	/**
+	 * This method must be implemented by any concrete sub-class.
+	 * @return true if successful.
+	 */
 	protected abstract boolean applySegmentation();
-	
-//	public boolean segment() {
-//		if (!isSegmented) {
-//			isSegmented = true;
-//			return applySegmentation();
-//		}
-//		else {
-//			throw new IllegalStateException("Method segment() may only be called once!");
-//		}
-//	}
 	
 	public int getWidth() {
 		return this.width;
@@ -377,7 +368,7 @@ public abstract class BinaryRegionSegmentation {
 		}
 		
 		/**
-		 * Obsolete - use {@link #getCenterPoint()} instead!
+		 * Obsolete - use {@link #getCentroid()} instead!
 		 * Get the x-value of the region's centroid.
 		 * @return the x-value of the region's centroid.
 		 * @deprecated
@@ -387,7 +378,7 @@ public abstract class BinaryRegionSegmentation {
 		}
 
 		/**
-		 * Obsolete - use {@link #getCenterPoint()} instead!
+		 * Obsolete - use {@link #getCentroid()} instead!
 		 * Get the y-value of the region's centroid.
 		 * @return the y-value of the region's centroid.
 		 * @deprecated
@@ -475,19 +466,7 @@ public abstract class BinaryRegionSegmentation {
 			else
 				return new Rectangle(left, top, right-left + 1, bottom - top + 1);
 		}
-		
-//		/**
-//		 * @deprecated
-//		 * Returns the centroid of this region as a 2D point.
-//		 * Use {@link getCenterPoint} instead.
-//		 * @return the centroid of this region.
-//		 */
-//		public Point getCenter() {
-//			if (Double.isNaN(xc))
-//				return null;
-//			else
-//				return Point.create(xc, yc);
-//		}
+	
 		
 		/**
 		 * Returns the centroid of this region as a 2D point.
@@ -495,7 +474,7 @@ public abstract class BinaryRegionSegmentation {
 		 * 
 		 * @return the centroid of this region.
 		 */
-		public Point getCenterPoint() {
+		public Point getCentroid() {
 			if (Double.isNaN(xc))
 				return null;
 			else
@@ -508,20 +487,6 @@ public abstract class BinaryRegionSegmentation {
 		public Iterator<Point> iterator() {
 			return new RegionPixelIterator(this);
 		}
-		
-//		/**
-//		 * @deprecated
-//		 * Replaced by BinaryRegion implementing {@code Iterable<Point>}.
-//		 * @return iterator to be used in a for-loop. 
-//		 */
-//		public Iterable<Point> getRegionPoints() {
-//			//return RegionLabeling.this.getRegionPoints(this);
-//			return new Iterable<Point>() {	// anonymous class!
-//				public Iterator<Point> iterator() {
-//					return new RegionPixelIterator(BinaryRegion.this);
-//				}
-//			};
-//		}
 		
 		/**
 		 * Use this method to add a single pixel to this region. Updates summation

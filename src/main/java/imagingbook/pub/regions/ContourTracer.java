@@ -24,26 +24,26 @@ public interface ContourTracer {
 	 * Retrieves all inner contours of the associated region labeling.
 	 * @return the list of inner contours.
 	 */
-	public List<Contour> getInnerContours();
+	public List<? extends Contour> getInnerContours();
 	
 	/**
 	 * Retrieves all inner contours of the associated region labeling.
 	 * @param sort set true to sort contours by (descending) length.
 	 * @return the list of inner contours.
 	 */
-	public List<Contour> getInnerContours(boolean sort);
+	public List<? extends Contour> getInnerContours(boolean sort);
 	
 	/**
 	 * Retrieves all outer contours of the associated region labeling.
 	 * @return the list of outer contours.
 	 */
-	public List<Contour> getOuterContours();
+	public List<? extends Contour> getOuterContours();
 	
 	/**
 	 * Retrieves all outer contours of the associated region labeling.
 	 * @param sort set true to sort contours by (descending) length.
 	 * @return the list of outer contours.
 	 */
-	public List<Contour> getOuterContours(boolean sort);
+	public List<? extends Contour> getOuterContours(boolean sort);
 	
 }

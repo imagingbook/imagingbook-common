@@ -12,6 +12,7 @@ package imagingbook.pub.regions.utils;
 import ij.gui.Overlay;
 import ij.gui.Roi;
 import ij.gui.ShapeRoi;
+import imagingbook.lib.ij.CustomOverlay;
 import imagingbook.pub.regions.Contour;
 import imagingbook.pub.regions.ContourTracer;
 
@@ -22,6 +23,7 @@ import java.util.List;
 
 /**
  * A special overlay for showing binary region contours.
+ * TODO: convert to {@link CustomOverlay}
  * 
  * @version 2020/04/01
  */
@@ -44,13 +46,13 @@ public class ContourOverlay extends Overlay {
 	public ContourOverlay(ContourTracer tracer, 
 			double strokeWidth, Color outerColor, Color innerColor) {
 		
-		List<Contour> outerContours = tracer.getOuterContours();
-		List<Contour> innerContours = tracer.getInnerContours();
+		List<? extends Contour> outerContours = tracer.getOuterContours();
+		List<? extends Contour> innerContours = tracer.getInnerContours();
 		addContours(outerContours, outerColor, strokeWidth);
 		addContours(innerContours, innerColor, strokeWidth);
 	}
 	
-	public void addContours(List<Contour> contours, Color color, double strokeWidth) {
+	public void addContours(List<? extends Contour> contours, Color color, double strokeWidth) {
 		BasicStroke stroke = new BasicStroke((float)strokeWidth);
 		for (Contour c : contours) {
 			Shape s = c.getPolygonPath();

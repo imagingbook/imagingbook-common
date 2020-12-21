@@ -29,7 +29,7 @@ import imagingbook.pub.geometry.basic.Point;
  * }
  * </pre>
  * 
- * @version 2020/04/01
+ * @version 2020/12/21
  */
 public class Contour implements Comparable<Contour>, Iterable<Point> {
 	
@@ -37,7 +37,6 @@ public class Contour implements Comparable<Contour>, Iterable<Point> {
 	
 	private final int label;
 	private final List<Point> points;
-	// TODO: distinguish outer/inner contour?
 	
 	/**
 	 * Creates a new (empty) contour with the given region label.
@@ -89,12 +88,6 @@ public class Contour implements Comparable<Contour>, Iterable<Point> {
 	}
 	
 	//--------------------- debug methods ------------------
-	
-//	private void printPoints () {
-//		for (Point pt: points) {
-//			IJ.log(pt.toString());
-//		}
-//	}
 	
 	@Override
 	public String toString(){
@@ -151,5 +144,20 @@ public class Contour implements Comparable<Contour>, Iterable<Point> {
 	public Iterator<Point> iterator() {
 		return points.iterator();
 	}
+	
+	// -----------------------------------------------------------------------------------
+	
+	public static class Outer extends Contour {
+		public Outer(int label) {
+			super(label);
+		}
+	}
+	
+	public static class Inner extends Contour {
+		public Inner(int label) {
+			super(label);
+		}
+	}
+	
 
 }
