@@ -42,9 +42,8 @@ public abstract class RegionLabeling {
 
 	protected final ImageProcessor ip;
 	protected final int width;
-	protected final int height;
-	
-	public NeighborhoodType neighborhood = NeighborhoodType.N4;	// TODO: hide!!
+	protected final int height;	
+	protected NeighborhoodType neighborhood = NeighborhoodType.N4;	// TODO: hide!!
 	
 	protected final int[][] labelArray;
 	// label values in labelArray can be:
@@ -60,8 +59,9 @@ public abstract class RegionLabeling {
 	
 	// -------------------------------------------------------------------------
 	
-	protected RegionLabeling(ByteProcessor ip) {
+	protected RegionLabeling(ByteProcessor ip, NeighborhoodType nh) {
 		this.ip = ip;
+		this.neighborhood = nh;
 		//this.neighborhood = Neighborhood.four;
 		width  = ip.getWidth();
 		height = ip.getHeight();
