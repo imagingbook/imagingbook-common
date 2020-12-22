@@ -66,8 +66,8 @@ public abstract class BinaryRegionSegmentation {
 	private final boolean isSegmented;
 	
 	private final int minLabel = 2;
-	private int currentLabel = -1;
-	private int maxLabel = -1;	// the maximum label in the labels array
+	private int currentLabel = -1;	// the maximum label assigned sofar
+	private int maxLabel = -1;		// the maximum label assigned total
 	
 	// -------------------------------------------------------------------------
 	
