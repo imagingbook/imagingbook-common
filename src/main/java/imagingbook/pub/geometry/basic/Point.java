@@ -3,18 +3,18 @@ package imagingbook.pub.geometry.basic;
 import static imagingbook.lib.math.Arithmetic.sqr;
 
 import java.awt.geom.Point2D;
-import java.util.Collection;
 import java.util.Locale;
 
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 
 /** 
- * Interface specifying the behavior of a simple 2D point.
+ * Interface specifying the behavior of a simple 2D point with 
+ * floating-point coordinates.
  * It is used to accommodate different (legacy) point implementations 
  * in a common API.
- * This file also defines a nested default implementation class which
- * simply extends {@link Point2D.Double}.
- * 
+ * Use {@link Point#create(double, double)} or similar to 
+ * create new point instances using the default implementation class 
+ * {@link Point.Imp}.
  */
 public interface Point {
 	
@@ -23,68 +23,92 @@ public interface Point {
 	double getX();
 	double getY();
 	
-	static Point create(double x, double y) {
+	public static Point create(double x, double y) {
 		return new Imp(x, y);
 	}
 	
-	static Point create(double[] xy) {
+	public static Point create(double[] xy) {
 		return new Imp(xy[0], xy[1]);
 	}
 	
-	static Point create(Point p) {
+	public static Point create(int[] xy) {
+		return new Imp(xy[0], xy[1]);
+	}
+	
+	public static Point create(Point p) {
 		return new Imp(p.getX(), p.getY());
 	}
 	
-	static Point create(Point2D p) {
+	public static Point create(Point2D p) {
 		return new Imp(p.getX(), p.getY());
 	}
 	
-	static Point create(Vector2D vec) {
+	public static Point create(Vector2D vec) {
 		return new Imp(vec.getX(), vec.getY());
 	}
 	
 	// ----------------------------------------------------------
 	
-	default double[] toArray() {
+	public default double[] toArray() {
 		return new double[] {this.getX(), this.getY()};
 	}
 	
-	static Point[] toArray(Collection<Point> points) {
-		return points.toArray(new Point[0]);
+	public default Point2D toPoint2D() {
+		return new Point2D.Double(getX(), getY());
 	}
 	
-	static double distance(Point p, Point q) {
+	public default Vector2D toVector2D() {
+		return new Vector2D(getX(), getY());
+	}
+	
+//	public static Point[] toArray(Collection<Point> points) {
+//		return points.toArray(new Point[0]);
+//	}
+	
+	// ----------------------------------------------------------
+	
+	public static double distance(Point p, Point q) {
 		return Math.sqrt(distance2(p, q));
 	}
 	
-	static double distance2(Point p, Point q) {
+	public static double distance2(Point p, Point q) {
 		return sqr(q.getX() - p.getX()) + sqr(q.getY() - p.getY());
 	}
 	
-	default double distance2(Point other) {
+	public default double distance2(Point other) {
 		return distance2(this, other);
 	}
 	
-	default double distance(Point other) {
+	public default double distance(Point other) {
 		return distance(this, other);
 	}
 	
-	
 	/**
 	 * Simple fallback implementation of the {@link Point} interface.
-	 * If dependency on AWT is to be avoided, just implement your own.
+	 * Use {@link Point#create(double, double)} or similar to instantiate.
 	 */
-	class Imp extends java.awt.geom.Point2D.Double implements Point {
-		private static final long serialVersionUID = 1L;
+	public class Imp implements Point {
+		private final double x, y;
 
-		public Imp(double x, double y) {
-			super(x, y);
+		private Imp(double x, double y) {
+			this.x = x;
+			this.y = y;
 		}
 		
 		@Override
 		public String toString() {
 			return String.format(Locale.US, "%s[%.3f, %.3f]", 
-					Point.class.getSimpleName(), this.getX(), this.getY());
+					getClass().getSimpleName(), getX(), getY());
+		}
+
+		@Override
+		public double getX() {
+			return x;
+		}
+
+		@Override
+		public double getY() {
+			return y;
 		}
 	}
 
