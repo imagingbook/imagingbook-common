@@ -41,7 +41,7 @@ import imagingbook.pub.geometry.basic.Point;
  * If the segmentation has failed for some reason,
  * {@link #getRegions()} returns {@code null}.
  * 
- * @version 2020/12/21
+ * @version 2020/12/22
  */
 public abstract class BinaryRegionSegmentation {
 	
@@ -49,9 +49,9 @@ public abstract class BinaryRegionSegmentation {
 	public static final int BACKGROUND = 0;
 	public static final int FOREGROUND = 1;
 	
-	public static final int START_LABEL = 2;	// TODO: public for image generation only! check!
+	protected static final int START_LABEL = 2;	// TODO: public for image generation only! check!
 	
-	protected final ImageProcessor ip;
+	protected ImageProcessor ip = null;
 	protected final int width;
 	protected final int height;	
 	protected final NeighborhoodType neighborhood;
@@ -65,8 +65,7 @@ public abstract class BinaryRegionSegmentation {
 	
 	private final boolean isSegmented;
 	private int currentLabel = -1;
-	protected int maxLabel = -1;	// the maximum label in the labels array
-	
+	private int maxLabel = -1;	// the maximum label in the labels array
 	
 	// -------------------------------------------------------------------------
 	
@@ -78,6 +77,7 @@ public abstract class BinaryRegionSegmentation {
 		this.labelArray = makeLabelArray();
 		this.isSegmented = applySegmentation();
 		this.regions = (isSegmented) ? collectRegions() : null;
+		this.ip = null;	// release image
 	}
 	
 	protected int[][] makeLabelArray() {
@@ -105,6 +105,10 @@ public abstract class BinaryRegionSegmentation {
 	
 	public int getHeight() {
 		return this.height;
+	}
+	
+	public int getMinLabel() {
+		return START_LABEL;
 	}
 	
 	public int getMaxLabel() {
@@ -186,7 +190,6 @@ public abstract class BinaryRegionSegmentation {
 			labelArray[u][v] = label;
 	}
 	
-	
 	protected int getNextLabel() {
 		if (currentLabel < 1)
 			currentLabel = START_LABEL;
@@ -196,7 +199,6 @@ public abstract class BinaryRegionSegmentation {
 		return currentLabel;
 	}
 
-	
 	// --------------------------------------------------
 
 	/**
@@ -340,6 +342,7 @@ public abstract class BinaryRegionSegmentation {
 	 * creation of (possibly large) arrays of pixel coordinates.
 	 */
 	public class BinaryRegion implements Comparable<BinaryRegion>, Iterable<Point> {
+		
 		private final int label;				// the label of THIS region
 		private int size = 0;
 		private double xc = Double.NaN;
@@ -349,8 +352,8 @@ public abstract class BinaryRegionSegmentation {
 		private int top = Integer.MAX_VALUE;
 		private int bottom = -1;
 		
-		private Contour outerContour;
-		private List<Contour> innerContours;
+		private Contour.Outer outerContour = null;
+		private List<Contour.Inner> innerContours = null;
 		
 		// summation variables used for various statistics
 		private long x1Sum = 0;
@@ -363,8 +366,6 @@ public abstract class BinaryRegionSegmentation {
 		
 		private BinaryRegion(int label) {
 			this.label = label;
-			this.outerContour = null;
-			this.innerContours = null;
 		}
 		
 		/**
@@ -526,11 +527,11 @@ public abstract class BinaryRegionSegmentation {
 		 * order.
 		 * @return the outer contour.
 		 */
-		public Contour getOuterContour() {
+		public Contour.Outer getOuterContour() {
 			return outerContour;
 		}
 		
-		protected void setOuterContour(Contour contr) {
+		protected void setOuterContour(Contour.Outer contr) {
 			outerContour = contr;
 		}
 		
@@ -540,18 +541,21 @@ public abstract class BinaryRegionSegmentation {
 		 * order.
 		 * @return the list of inner contours.
 		 */
-		public List<Contour> getInnerContours() {
+		public List<Contour.Inner> getInnerContours() {
 			return innerContours;
 		}
 		
-		protected void makeInnerContours() {
-			if (innerContours == null) {
-				innerContours = new LinkedList<Contour>();
-			}
-		}
+//		protected void makeInnerContours() {
+//			if (innerContours == null) {
+//				innerContours = new LinkedList<>();
+//			}
+//		}
 		
-		protected void addInnerContour(Contour contr) {
-			makeInnerContours();
+		protected void addInnerContour(Contour.Inner contr) {
+			//makeInnerContours();
+			if (innerContours == null) {
+				innerContours = new LinkedList<>();
+			}
 			innerContours.add(contr);
 		}
 		

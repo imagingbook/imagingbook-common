@@ -19,22 +19,23 @@ public abstract class Images {
 		return (color) ?  makeLabelImageColor(labeling) : makeLabelImageGray(labeling);
 	}
 
-	private static ColorProcessor makeLabelImageColor(BinaryRegionSegmentation labeling) {
-		int maxLabel = labeling.getMaxLabel();
+	private static ColorProcessor makeLabelImageColor(BinaryRegionSegmentation segmentation) {
+		int minLabel = segmentation.getMinLabel();
+		int maxLabel = segmentation.getMaxLabel();
 		int[] colorLUT = new int[maxLabel+1];
 		RandomColorGenerator rcg = new RandomColorGenerator();
 		
-		for (int i = BinaryRegionSegmentation.START_LABEL; i <= maxLabel; i++) {
+		for (int i = minLabel; i <= maxLabel; i++) {
 			colorLUT[i] = rcg.nextColor().getRGB(); //makeRandomColor();
 		}
 		
-		int width = labeling.getWidth();
-		int height = labeling.getHeight();
+		int width = segmentation.getWidth();
+		int height = segmentation.getHeight();
 		
 		ColorProcessor cp = new ColorProcessor(width, height);
 		for (int v = 0; v < height; v++) {
 			for (int u = 0; u < width; u++) {
-				int lb = labeling.getLabel(u, v);
+				int lb = segmentation.getLabel(u, v);
 				if (lb >= 0 && lb < colorLUT.length) {
 					cp.putPixel(u, v, colorLUT[lb]);
 				}

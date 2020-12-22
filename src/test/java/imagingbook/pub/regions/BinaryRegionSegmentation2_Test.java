@@ -20,16 +20,16 @@ import imagingbook.pub.regions.BinaryRegionSegmentation.BinaryRegion;
  * 
  * @author WB
  */
-public class BinaryRegionSegmentationTest1 {
+public class BinaryRegionSegmentation2_Test {
 	
-	static String ImgName = "segmentation-small.png";
-	static int RegionCount_N4 = 26;
-	static int RegionCount_N8 = 9;
+	static String ImgName = "cat-skeleton.png";
+	static int RegionCount_N4 = 46;
+	static int RegionCount_N8 = 1;
 	
 	final Path path;
 	final ByteProcessor bp;
 	
-	public BinaryRegionSegmentationTest1() {
+	public BinaryRegionSegmentation2_Test() {
 		path = new Resources().getResourcePath(ImgName);
 		bp = (ByteProcessor) IjUtils.openImage(path).getProcessor();
 		Assert.assertNotNull(bp);
@@ -64,6 +64,7 @@ public class BinaryRegionSegmentationTest1 {
 		run(new SegmentationRecursive(bp, N4), RegionCount_N4);
 		run(new SegmentationRecursive(bp, N8), RegionCount_N8);
 	}
+	
 	
 	// ---------------------------------------------------------------
 	

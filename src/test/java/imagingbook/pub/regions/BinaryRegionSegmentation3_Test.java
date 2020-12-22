@@ -20,7 +20,7 @@ import imagingbook.pub.regions.BinaryRegionSegmentation.BinaryRegion;
  * 
  * @author WB
  */
-public class BinaryRegionSegmentationTest3 {
+public class BinaryRegionSegmentation3_Test {
 	
 	static String ImgName = "segmentation-med.png";
 	static int RegionCount_N4 = 88;
@@ -29,7 +29,7 @@ public class BinaryRegionSegmentationTest3 {
 	final Path path;
 	final ByteProcessor bp;
 	
-	public BinaryRegionSegmentationTest3() {
+	public BinaryRegionSegmentation3_Test() {
 		path = new Resources().getResourcePath(ImgName);
 		bp = (ByteProcessor) IjUtils.openImage(path).getProcessor();
 		Assert.assertNotNull(bp);

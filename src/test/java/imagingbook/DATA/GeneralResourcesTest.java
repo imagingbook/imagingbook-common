@@ -16,7 +16,7 @@ import imagingbook.lib.ij.IjUtils;
 import imagingbook.lib.util.ResourceLocation;
 
 
-public class ResourceTests {
+public class GeneralResourcesTest {
 	
 	@Test
 	public void testResourcesBasic() {
@@ -55,17 +55,6 @@ public class ResourceTests {
 		
 		im.flush();
 	}
-	
-//	@Test
-//	public void fooTest() {
-//		ResourceLocation rd = new imagingbook.data.images.DataDir();
-//		Path path = rd.getResourcePath("DataDir.class");
-//		System.out.println(path);
-//		String[] names = rd.getResourceNames();
-//		for (String p : names) {
-//			System.out.println(p);
-//		}
-//		System.out.println(rd.getResourcePath(names[0]));
-//	}
+
 
 }

@@ -188,7 +188,7 @@ public class SegmentationRegionContour extends BinaryRegionSegmentation implemen
 	}
 	
 	private void attachOuterContours() {
-		for (Contour c : outerContours) {
+		for (Contour.Outer c : outerContours) {
 			int label = c.getLabel();
 			BinaryRegion reg = findRegion(label);
 			if (reg == null) {
@@ -201,10 +201,10 @@ public class SegmentationRegionContour extends BinaryRegionSegmentation implemen
 	}
 	
 	private void attachInnerContours() {
-		for (BinaryRegion r : regions) {
-			r.makeInnerContours();	// ensure that every region has a (empty) list of inner contours
-		}
-		for (Contour c : innerContours) {
+//		for (BinaryRegion r : regions) {
+//			r.makeInnerContours();	// ensure that every region has a (empty) list of inner contours
+//		}
+		for (Contour.Inner c : innerContours) {
 			int label = c.getLabel();
 			BinaryRegion reg = findRegion(label);
 			if (reg == null) {
