@@ -149,11 +149,12 @@ public abstract class BinaryRegionSegmentation {
 	// -------------------------------------------------------------------------
 	
 	/**
-	 * Creates a container of {@link BinaryRegion} objects,
+	 * Creates a (map) container of {@link BinaryRegion} objects,
 	 * collects the region pixels from the label image
 	 * and calls {@link BinaryRegion#update()} to computes 
 	 * the statistics for each region.
-	 * @return
+	 * Region label numbers serve as map keys.
+	 * @return a map of {@link BinaryRegion} instances.
 	 */
 	protected Map<Integer, BinaryRegion> collectRegions() {
 		BinaryRegion[] regionArray = new BinaryRegion[maxLabel + 1];

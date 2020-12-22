@@ -198,9 +198,9 @@
 <span class="sourceLineNo">188</span><a id="line.188">        }</a>
 <span class="sourceLineNo">189</span><a id="line.189">        </a>
 <span class="sourceLineNo">190</span><a id="line.190">        private void attachOuterContours() {</a>
-<span class="sourceLineNo">191</span><a id="line.191">                for (Contour c : outerContours) {</a>
+<span class="sourceLineNo">191</span><a id="line.191">                for (Contour.Outer c : outerContours) {</a>
 <span class="sourceLineNo">192</span><a id="line.192">                        int label = c.getLabel();</a>
-<span class="sourceLineNo">193</span><a id="line.193">                        BinaryRegion reg = findRegion(label);</a>
+<span class="sourceLineNo">193</span><a id="line.193">                        BinaryRegion reg = getRegion(label);</a>
 <span class="sourceLineNo">194</span><a id="line.194">                        if (reg == null) {</a>
 <span class="sourceLineNo">195</span><a id="line.195">                                IJ.log("Error: Could not associate outer contour with label " + label);</a>
 <span class="sourceLineNo">196</span><a id="line.196">                        }</a>
@@ -211,12 +211,12 @@
 <span class="sourceLineNo">201</span><a id="line.201">        }</a>
 <span class="sourceLineNo">202</span><a id="line.202">        </a>
 <span class="sourceLineNo">203</span><a id="line.203">        private void attachInnerContours() {</a>
-<span class="sourceLineNo">204</span><a id="line.204">                for (BinaryRegion r : regions) {</a>
-<span class="sourceLineNo">205</span><a id="line.205">                        r.makeInnerContours();  // ensure that every region has a (empty) list of inner contours</a>
-<span class="sourceLineNo">206</span><a id="line.206">                }</a>
-<span class="sourceLineNo">207</span><a id="line.207">                for (Contour c : innerContours) {</a>
+<span class="sourceLineNo">204</span><a id="line.204">//              for (BinaryRegion r : regions) {</a>
+<span class="sourceLineNo">205</span><a id="line.205">//                      r.makeInnerContours();  // ensure that every region has a (empty) list of inner contours</a>
+<span class="sourceLineNo">206</span><a id="line.206">//              }</a>
+<span class="sourceLineNo">207</span><a id="line.207">                for (Contour.Inner c : innerContours) {</a>
 <span class="sourceLineNo">208</span><a id="line.208">                        int label = c.getLabel();</a>
-<span class="sourceLineNo">209</span><a id="line.209">                        BinaryRegion reg = findRegion(label);</a>
+<span class="sourceLineNo">209</span><a id="line.209">                        BinaryRegion reg = getRegion(label);</a>
 <span class="sourceLineNo">210</span><a id="line.210">                        if (reg == null) {</a>
 <span class="sourceLineNo">211</span><a id="line.211">                                IJ.log("Error: Could not associate inner contour with label " + label);</a>
 <span class="sourceLineNo">212</span><a id="line.212">                        }</a>
