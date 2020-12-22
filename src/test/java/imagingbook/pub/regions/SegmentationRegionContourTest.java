@@ -14,7 +14,7 @@ import imagingbook.DATA.images.Resources;
 import imagingbook.lib.ij.IjUtils;
 import imagingbook.pub.regions.BinaryRegionSegmentation.BinaryRegion;
 
-public class SegmentationRegionContourN4Test {
+public class SegmentationRegionContourTest {
 	
 	@Test
 	public void testSmallN4() {

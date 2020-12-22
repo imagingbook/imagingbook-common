@@ -190,7 +190,7 @@ public class SegmentationRegionContour extends BinaryRegionSegmentation implemen
 	private void attachOuterContours() {
 		for (Contour.Outer c : outerContours) {
 			int label = c.getLabel();
-			BinaryRegion reg = findRegion(label);
+			BinaryRegion reg = getRegion(label);
 			if (reg == null) {
 				IJ.log("Error: Could not associate outer contour with label " + label);
 			}
@@ -206,7 +206,7 @@ public class SegmentationRegionContour extends BinaryRegionSegmentation implemen
 //		}
 		for (Contour.Inner c : innerContours) {
 			int label = c.getLabel();
-			BinaryRegion reg = findRegion(label);
+			BinaryRegion reg = getRegion(label);
 			if (reg == null) {
 				IJ.log("Error: Could not associate inner contour with label " + label);
 			}

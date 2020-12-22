@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.Formatter;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -37,8 +38,8 @@ import imagingbook.pub.geometry.basic.Point;
  * {@link SegmentationSequential},
  * {@link SegmentationRegionContour}.
  * 
- * All work is done by the constructor(s).
- * If the segmentation has failed for some reason,
+ * Practically all work is done by the constructor(s).
+ * If the segmentation has failed for some reason
  * {@link #getRegions()} returns {@code null}.
  * 
  * @version 2020/12/22
@@ -46,10 +47,9 @@ import imagingbook.pub.geometry.basic.Point;
 public abstract class BinaryRegionSegmentation {
 	
 	public static final NeighborhoodType DEFAULT_NEIGHBORHOOD = N4;
+	
 	public static final int BACKGROUND = 0;
 	public static final int FOREGROUND = 1;
-	
-	protected static final int START_LABEL = 2;	// TODO: public for image generation only! check!
 	
 	protected ImageProcessor ip = null;
 	protected final int width;
@@ -61,9 +61,11 @@ public abstract class BinaryRegionSegmentation {
 	//  0 ... unlabeled
 	// -1 ... previously visited background pixel
 	// >0 ... valid label
-	protected final List<BinaryRegion> regions;
 	
+	private final Map<Integer, BinaryRegion> regions;
 	private final boolean isSegmented;
+	
+	private final int minLabel = 2;
 	private int currentLabel = -1;
 	private int maxLabel = -1;	// the maximum label in the labels array
 	
@@ -108,7 +110,7 @@ public abstract class BinaryRegionSegmentation {
 	}
 	
 	public int getMinLabel() {
-		return START_LABEL;
+		return minLabel;
 	}
 	
 	public int getMaxLabel() {
@@ -116,25 +118,27 @@ public abstract class BinaryRegionSegmentation {
 	}
 	
 	/**
-	 * Get an unsorted list of all regions associated with this region labeling.
+	 * Returns an unsorted list of all regions associated with this region labeling.
+	 * The returned list is empty if no regions were detected.
 	 * See also {@link #getRegions(boolean)}.
-	 * @return A (unsorted) list of regions or {@code null} if the segmentation has failed.
+	 * @return the list of detected regions or {@code null} if the segmentation has failed.
 	 */
 	public List<BinaryRegion> getRegions() {
 		return getRegions(false);	// unsorted
 	}
 	
 	/**
-	 * Get a (optionally sorted) list of all regions associated with this region labeling.
-	 * @param sort Set {@code true} to sort regions by size (largest regions first).
-	 * @return The list of regions or {@code null} if the segmentation has failed.
+	 * Returns a (optionally sorted) list of all regions associated with this region labeling.
+	 * The returned list is empty if no regions were detected.
+	 * @param sort set {@code true} to sort regions by size (largest regions first).
+	 * @return the list of detected regions or {@code null} if the segmentation has failed.
 	 */
 	public List<BinaryRegion> getRegions(boolean sort) {
 		if (regions == null) {
 			return null;
 		}
 		else {
-			BinaryRegion[] ra = regions.toArray(new BinaryRegion[0]);
+			BinaryRegion[] ra = regions.values().toArray(new BinaryRegion[0]);
 			if (sort) {
 				Arrays.sort(ra);
 			}
@@ -144,32 +148,35 @@ public abstract class BinaryRegionSegmentation {
 	
 	// -------------------------------------------------------------------------
 	
-	// creates a container of BinaryRegion objects
-	// collects the region pixels from the label image
-	// and computes the statistics for each region
-	protected List<BinaryRegion> collectRegions() {
+	/**
+	 * Creates a container of {@link BinaryRegion} objects,
+	 * collects the region pixels from the label image
+	 * and calls {@link BinaryRegion#update()} to computes 
+	 * the statistics for each region.
+	 * @return
+	 */
+	protected Map<Integer, BinaryRegion> collectRegions() {
 		BinaryRegion[] regionArray = new BinaryRegion[maxLabel + 1];
-		for (int i = START_LABEL; i <= maxLabel; i++) {
-			regionArray[i] = new BinaryRegion(i);
+		for (int label = minLabel; label <= maxLabel; label++) {
+			regionArray[label] = new BinaryRegion(label);
 		}
 		for (int v = 0; v < height; v++) {
 			for (int u = 0; u < width; u++) {
 				int label = getLabel(u, v);
-				if (label >= START_LABEL && label <= maxLabel && regionArray[label] != null) {
+				if (label >= minLabel && label <= maxLabel && regionArray[label] != null) {
 					regionArray[label].addPixel(u, v);
 				}
 			}
 		}
 		// create a list of regions to return, collect nonempty regions
-		List<BinaryRegion> regionList = new LinkedList<BinaryRegion>();
+		Map<Integer, BinaryRegion> regionMap = new LinkedHashMap<>();
 		for (BinaryRegion r: regionArray) {
 			if (r != null && r.getSize() > 0) {
 				r.update();	// compute the statistics for this region
-				regionList.add(r);
+				regionMap.put(r.label, r); //add(r);
 			}
 		}
-		//regions = regionList;
-		return regionList;
+		return regionMap;
 	}
 	
 	/**
@@ -179,10 +186,7 @@ public abstract class BinaryRegionSegmentation {
 	 * @return the label number for the given position.
 	 */
 	public int getLabel(int u, int v) {
-		if (u >= 0 && u < width && v >= 0 && v < height)
-			return labelArray[u][v];
-		else
-			return BACKGROUND;
+		return (u >= 0 && u < width && v >= 0 && v < height) ? labelArray[u][v] : -1;
 	}
 	
 	protected void setLabel(int u, int v, int label) {
@@ -191,10 +195,7 @@ public abstract class BinaryRegionSegmentation {
 	}
 	
 	protected int getNextLabel() {
-		if (currentLabel < 1)
-			currentLabel = START_LABEL;
-		else
-			currentLabel = currentLabel + 1;
+		currentLabel = (currentLabel < 1) ? minLabel : currentLabel + 1;
 		maxLabel = currentLabel;
 		return currentLabel;
 	}
@@ -202,21 +203,13 @@ public abstract class BinaryRegionSegmentation {
 	// --------------------------------------------------
 
 	/**
-	 * Find the region associated to the given label.
-	 * @param label the label number.
+	 * Finds the region associated to the given label.
+	 * @param label the region's label number.
 	 * @return the region object associated with the given label
 	 * 		or {@code null} if it does not exist.
 	 */
-	public BinaryRegion findRegion(int label) {
-		if (label <= 0 || regions == null) return null;
-		BinaryRegion region = null;
-		for (BinaryRegion r : regions) {	// TODO: inefficient, consider different data structure for regions!
-			if (r.getLabel() == label) {
-				region = r;
-				break;
-			}
-		}
-		return region;
+	public BinaryRegion getRegion(int label) {
+		return (label < minLabel || label > maxLabel) ? null : regions.get(label);
 	}
 	
 	/**
@@ -225,108 +218,20 @@ public abstract class BinaryRegionSegmentation {
 	 * @param u the horizontal position.
 	 * @param v the vertical position.
 	 * @return The associated {@link BinaryRegion} object or null if
-	 * this {@link BinaryRegionSegmentation} has no region at the given position.
+	 * 		this {@link BinaryRegionSegmentation} has no region at the given position.
 	 */
 	public BinaryRegion getRegion(int u, int v) {
-		int label = getLabel(u, v);
-		return findRegion(label);
+		return getRegion(getLabel(u, v));
 	}
 		
-	// --------- Iteration over region pixels -----------------------------------
+	// --------------------------------------------------------------------------
 	
 	/**
-	 * Instances of this class are returned by {@link BinaryRegion#iterator()},
-	 * which implements  {@link Iterable} for instances of class {@link Point}.
-	 */
-	private class RegionPixelIterator implements Iterator<Point> {
-		private final int label;					// the corresponding region's label
-		private final int uMin, uMax, vMin, vMax;	// coordinates of region's bounding box
-		int uCur, vCur;								// current pixel position
-		private Point pNext;						// coordinates of the next region pixel
-		private boolean first;						// control flag
-
-		RegionPixelIterator(BinaryRegion R) {
-			label = R.getLabel();
-			first = true;
-			Rectangle bb = R.getBoundingBox();
-			uMin = bb.x;
-			uMax = bb.x + bb.width;
-			vMin = bb.y;
-			vMax = bb.y + bb.height;
-			uCur = uMin;
-			vCur = vMin;
-			pNext = null;
-		}
-
-		/** 
-		 * Search from position (uCur, vCur) for the next valid region pixel.
-		 * Return the next position as a Point or null if no such point can be found.
-		 * Don't assume that (uCur, vCur) is a valid region pixel!
-		 * 
-		 * @return the next point
-		 */
-		private Point findNext() {
-			// start search for next region pixel at (u,v):
-			int u = (first) ? uCur : uCur + 1;
-			int v = vCur;
-			first = false;
-			while (v <= vMax) {
-				while (u <= uMax) {
-					if (getLabel(u, v) == label) { // next pixel found (uses surrounding labeling)
-						uCur = u;
-						vCur = v;
-						return Point.create(uCur, vCur);
-					}
-					u++;
-				}
-				v++;
-				u = uMin;
-			}
-			uCur = uMax + 1;	// just to make sure we'll never enter the loop again
-			vCur = vMax + 1;
-			return null;		// no next pixel found
-		}
-
-		@Override
-		public boolean hasNext() {
-			if (pNext != null) {	// next element has been queried before but not consumed
-				return true;
-			}
-			else {
-				pNext = findNext();	// keep next pixel coordinates in pNext
-				return (pNext != null);
-			}
-		}
-
-		// Returns: the next element in the iteration
-		// Throws: NoSuchElementException - if the iteration has no more elements.
-		@Override
-		public Point next() {
-			if (pNext != null || hasNext()) {
-				Point pn = pNext;
-				pNext = null;		// "consume" pNext
-				return pn;
-			}
-			else {
-				throw new NoSuchElementException();
-			}
-		}
-
-		@Override
-		public void remove() {
-			throw new UnsupportedOperationException();
-		}
-
-	} // end of RegionPixelIterator
-	
-	
-	/**
-	 * This class of {@link BinaryRegionSegmentation} represents a connected 
-	 * component or binary region. 
+	 * This class represents a connected component or binary region. 
 	 * It is implemented as an inner class to {@link BinaryRegionSegmentation} because
 	 * it references common region labeling data.
 	 * A {@link BinaryRegion} instance does not have its own list or array of 
-	 * contained pixel coordinates but refers to the region label-array of the
+	 * contained pixel coordinates but refers to the label array of the
 	 * enclosing {@link BinaryRegionSegmentation} instance.
 	 * Instances of this class support iteration over the contained pixel
 	 * coordinates of type {@link Point}, e.g., by
@@ -336,8 +241,7 @@ public abstract class BinaryRegionSegmentation {
 	 * BinaryRegion R = ...;
 	 * for (Point p : R) {
 	 *    // process point p ...
-	 * }
-	 * </pre>
+	 * }</pre>
 	 * The advantage of providing iteration only is that it avoids the
 	 * creation of (possibly large) arrays of pixel coordinates.
 	 */
@@ -482,15 +386,13 @@ public abstract class BinaryRegionSegmentation {
 				return Point.create(xc, yc);
 		}
 		
-		// iteration --------------------------------------
-		
 		@Override
 		public Iterator<Point> iterator() {
 			return new RegionPixelIterator(this);
 		}
 		
 		/**
-		 * Use this method to add a single pixel to this region. Updates summation
+		 * Adds a single pixel to this region and updates summation
 		 * and boundary variables used to calculate various region statistics.
 		 * 
 		 * @param u x-position
@@ -510,7 +412,7 @@ public abstract class BinaryRegionSegmentation {
 		}
 		
 		/**
-		 * Call this method to update the region's statistics. For now only the
+		 * Updates the region's statistics. For now only the
 		 * center coordinates (xc, yc) are updated. Add additional statements as
 		 * needed to update your own region statistics.
 		 */
@@ -537,22 +439,14 @@ public abstract class BinaryRegionSegmentation {
 		
 		/**
 		 * Get all inner contours of this region.
-		 * Points on inner contours are arranged in counter-clockwise
-		 * order.
+		 * Points on inner contours are arranged in counter-clockwise order.
 		 * @return the list of inner contours.
 		 */
 		public List<Contour.Inner> getInnerContours() {
 			return innerContours;
 		}
 		
-//		protected void makeInnerContours() {
-//			if (innerContours == null) {
-//				innerContours = new LinkedList<>();
-//			}
-//		}
-		
 		protected void addInnerContour(Contour.Inner contr) {
-			//makeInnerContours();
 			if (innerContours == null) {
 				innerContours = new LinkedList<>();
 			}
@@ -641,6 +535,93 @@ public abstract class BinaryRegionSegmentation {
 			properties.clear();
 		}
 
-	}
+	} // end of class BinaryRegion
+	
+	// --------- Iteration over region pixels -----------------------------------
+	
+	/**
+	 * Instances of this class are returned by {@link BinaryRegion#iterator()},
+	 * which implements  {@link Iterable} for instances of class {@link Point}.
+	 */
+	private class RegionPixelIterator implements Iterator<Point> {
+		private final int label;					// the corresponding region's label
+		private final int uMin, uMax, vMin, vMax;	// coordinates of region's bounding box
+		int uCur, vCur;								// current pixel position
+		private Point pNext;						// coordinates of the next region pixel
+		private boolean first;						// control flag
+
+		RegionPixelIterator(BinaryRegion R) {
+			label = R.getLabel();
+			first = true;
+			Rectangle bb = R.getBoundingBox();
+			uMin = bb.x;
+			uMax = bb.x + bb.width;
+			vMin = bb.y;
+			vMax = bb.y + bb.height;
+			uCur = uMin;
+			vCur = vMin;
+			pNext = null;
+		}
+
+		/** 
+		 * Search from position (uCur, vCur) for the next valid region pixel.
+		 * Return the next position as a Point or null if no such point can be found.
+		 * Don't assume that (uCur, vCur) is a valid region pixel!
+		 * 
+		 * @return the next point
+		 */
+		private Point findNext() {
+			// start search for next region pixel at (u,v):
+			int u = (first) ? uCur : uCur + 1;
+			int v = vCur;
+			first = false;
+			while (v <= vMax) {
+				while (u <= uMax) {
+					if (getLabel(u, v) == label) { // next pixel found (uses surrounding labeling)
+						uCur = u;
+						vCur = v;
+						return Point.create(uCur, vCur);
+					}
+					u++;
+				}
+				v++;
+				u = uMin;
+			}
+			uCur = uMax + 1;	// just to make sure we'll never enter the loop again
+			vCur = vMax + 1;
+			return null;		// no next pixel found
+		}
+
+		@Override
+		public boolean hasNext() {
+			if (pNext != null) {	// next element has been queried before but not consumed
+				return true;
+			}
+			else {
+				pNext = findNext();	// keep next pixel coordinates in pNext
+				return (pNext != null);
+			}
+		}
+
+		// Returns: the next element in the iteration
+		// Throws: NoSuchElementException - if the iteration has no more elements.
+		@Override
+		public Point next() {
+			if (pNext != null || hasNext()) {
+				Point pn = pNext;
+				pNext = null;		// "consume" pNext
+				return pn;
+			}
+			else {
+				throw new NoSuchElementException();
+			}
+		}
+
+		@Override
+		public void remove() {
+			throw new UnsupportedOperationException();
+		}
+
+	} // end of class RegionPixelIterator
 
 }

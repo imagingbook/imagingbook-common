@@ -91,7 +91,7 @@ public class SegmentationSequential extends BinaryRegionSegmentation {
 			int min = Integer.MAX_VALUE;
 			for (int i = 0; i < nh.length; i++) {
 				int ni = nh[i];
-				if (ni >= START_LABEL && ni < min)
+				if (ni >= this.getMinLabel() && ni < min)
 					min = ni;
 			}
 			newLabel = min;
@@ -99,7 +99,7 @@ public class SegmentationSequential extends BinaryRegionSegmentation {
 			// Register label equivalence (collision):
 			for (int i = 0; i < nh.length; i++) {
 				int ni = nh[i];
-				if (ni >= START_LABEL && ni != newLabel) {
+				if (ni >= this.getMinLabel() && ni != newLabel) {
 					registerCollision(ni, newLabel);
 				}
 			}
@@ -197,10 +197,10 @@ public class SegmentationSequential extends BinaryRegionSegmentation {
 		//    i =  0 1 2 3 4 5 6 7 8 9
 		
 		// Now we assign new, contiguous labels in mark:
-		int newLabel = START_LABEL;
+		int newLabel = this.getMinLabel();
 		mark[BACKGROUND] = BACKGROUND;
 		mark[FOREGROUND] = FOREGROUND;
-		for (int i = START_LABEL; i < table.length; i++) {
+		for (int i = this.getMinLabel(); i < table.length; i++) {
 			if (mark[i] > 0) {
 				mark[i] = newLabel;
 				newLabel = newLabel + 1;
@@ -229,7 +229,7 @@ public class SegmentationSequential extends BinaryRegionSegmentation {
 			for (int v = 0; v < height; v++) {
 				for (int u = 0; u < width; u++) {
 					int oldLb = getLabel(u, v);
-					if (oldLb >= START_LABEL && oldLb < replacementTable.length){	
+					if (oldLb >= this.getMinLabel() && oldLb < replacementTable.length){	
 						setLabel(u, v, replacementTable[oldLb]);
 					}
 				}
