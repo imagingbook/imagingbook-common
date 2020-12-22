@@ -6,7 +6,7 @@ import ij.process.ShortProcessor;
 import imagingbook.lib.color.RandomColorGenerator;
 import imagingbook.pub.regions.BinaryRegionSegmentation;
 
-public abstract class Images {
+public abstract class Display {
 	
 	/**
 	 * Utility method that creates an image to display a binary segmentation.
