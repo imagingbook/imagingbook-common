@@ -9,6 +9,7 @@
 
 package imagingbook.pub.regions;
 
+import static imagingbook.pub.regions.NeighborhoodType.N4;
 import static imagingbook.pub.regions.NeighborhoodType.N8;
 
 import java.util.ArrayList;
@@ -98,32 +99,33 @@ public class SegmentationRegionContour extends BinaryRegionSegmentation implemen
 	protected boolean applySegmentation() {
 		// scan top to bottom, left to right
 		for (int v = 0; v < height; v++) {
-			int curLabel = 0;	// reset label, scan through horiz. line:
+			int label = 0;	// reset label, scan through horiz. line:
 			for (int u = 0; u < width; u++) {
 				if (ip.getPixel(u, v) > 0) {	// hit an unlabeled FOREGROUND pixel
-					if (curLabel != 0) { // keep using the same label
-						setLabel(u, v, curLabel);
+					if (label != 0) { // keep using the same label
+						setLabel(u, v, label);
 					}
 					else {	// label == 0
-						curLabel = getLabel(u, v);
-						if (curLabel == 0) {	// new (unlabeled) region is hit
-							curLabel = getNextLabel(); // assign a new region label
-							//IJ.log(String.format("assigning label %d at (%d,%d), maxLabel=%d", label, u, v, maxLabel));
-							int dS = 0;
-							Contour.Outer oc = traceContour(u, v, dS, new Contour.Outer(curLabel));
+						label = getLabel(u, v);
+						if (label == 0) {	// new (unlabeled) region is hit
+							label = getNextLabel(); // assign a new region label
+							// TODO: Point xs = <u,v> ... pass to traceContour instead!
+							// TODO: pass label instead of new contour!
+							Contour.Outer oc = traceContour(u, v, 0, new Contour.Outer(label));
 							outerContours.add(oc);
-							setLabel(u, v, curLabel);
+							setLabel(u, v, label);
 						}
 					}
 				} 
 				else {	// hit a BACKGROUND pixel
-					if (curLabel != 0) { // exiting a region
+					if (label != 0) { // exiting a region
 						if (getLabel(u, v) == BACKGROUND) { // unlabeled - new inner contour
-							int dS = (neighborType == N8) ? 1 : 2;
-							Contour.Inner ic = traceContour(u - 1, v, dS, new Contour.Inner(curLabel));
+							int dS = (neighborType == N4) ? 2 : 1;
+							// TODO: pass label instead of new contour!
+							Contour.Inner ic = traceContour(u - 1, v, dS, new Contour.Inner(label));
 							innerContours.add(ic);
 						}
-						curLabel = 0;
+						label = 0;
 					}
 				}
 			}
@@ -131,60 +133,127 @@ public class SegmentationRegionContour extends BinaryRegionSegmentation implemen
 		return true;
 	}
 	
-	// Trace one contour starting at (xS,yS) in direction dS	
-	private <T extends Contour> T traceContour(int xS, int yS, int dS, T contr) {
-		int label = contr.getLabel();
-		int xT, yT; // T = successor of starting point (xS,yS)
-		int xP, yP; // P = previous contour point
-		int xC, yC; // C = current contour point
-		int[] pt = {xS, yS};  // start point
-		int dNext = findNextContourPoint(pt, dS);
-		contr.addPoint(Point.create(pt[0], pt[1]));
-		xP = xS; yP = yS;
-		xC = xT = pt[0];
-		yC = yT = pt[1];
+	// Trace one contour starting at (xs,ys) in direction ds	
+	private <T extends Contour> T traceContour(final int xs, final int ys, final int ds, T C) {
+		final int label = C.getLabel();	// C ist the (empty) contour
 		
-		boolean done = (xS == xT && yS == yT);  // true if isolated pixel
+		int[] X = {xs, ys};  						// start position
+		int d = findNextContourPoint(X, ds);	// X is modified!
+		C.addPoint(Point.create(X));
+		
+//		int xp = xs; int yp = ys; 		// Xp = previous contour point
+		int xt = X[0]; int yt = X[1];	// Xt = successor of starting point (xs,ys)
+		int u = X[0]; int v = X[1];		// X = (u,v) = current contour point
+		
+		boolean done = (xs == xt && ys == yt);  // true if single-pixel contour
+		
+//		while (!done) {
+//			setLabel(u, v, label);
+//			int[] Xn = {u, v};
+//			int xp = u; //X[0];  	// keep Xp = previous contour point
+//			int yp = v; //X[1];	
+//			int dNext = (d + 6) % 8;
+//			d = findNextContourPoint(Xn, dNext);
+//			u = Xn[0]; 
+//			v = Xn[1]; 
+//			// are we back at the starting position?
+//			done = (xp==xs && yp==ys && u==xt && v==yt);
+//			if (!done) {
+//				C.addPoint(Point.create(Xn[0], Xn[1]));
+//			}
+//		}
+		
 		while (!done) {
-			setLabel(xC, yC, label);
-			int[] pn = {xC, yC};
-			int dSearch = (dNext + 6) % 8;
-			dNext = findNextContourPoint(pn, dSearch);
-			xP = xC;  yP = yC;	
-			xC = pn[0]; 
-			yC = pn[1]; 
+			setLabel(X[0], X[1], label);
+			int xp = X[0], yp = X[1];  	// keep Xp = previous contour point	
+			int dNext = (d + 6) % 8;
+			d = findNextContourPoint(X, dNext);
 			// are we back at the starting position?
-			done = (xP==xS && yP==yS && xC==xT && yC==yT);
+			done = (xp==xs && yp==ys && X[0]==xt && X[1]==yt); // back at start pos.
 			if (!done) {
-				contr.addPoint(Point.create(pn[0], pn[1]));
+				C.addPoint(Point.create(X));
 			}
 		}
-		return contr;
+		
+		return C;
 	}
 	
-	static final int[][] delta = {
+	private static final int[][] delta = {
 			{ 1,0}, { 1, 1}, {0, 1}, {-1, 1}, 
 			{-1,0}, {-1,-1}, {0,-1}, { 1,-1}};
-	
-	private int findNextContourPoint(int[] pos, int dir) {
+
+	private int findNextContourPoint(int[] X, int d0) {	// VERSION 3
 		// Starts at point pos in direction dir,
 		// returns the resulting tracing direction
 		// and modifies pt.
-		final int step = (neighborType == N8) ? 1 : 2;
-		for (int i = 0; i < 7; i += step) {
-			int x = pos[0] + delta[dir][0];
-			int y = pos[1] + delta[dir][1];
+//		int d = d0;
+		int dd = d0;
+		final int step = (neighborType == N4) ? 2 : 1;
+		final int steps = (neighborType == N4) ? 3 : 7;
+//		for (int i = 0, j = 0; i < 7; i += step, j++) {
+		for (int i = 0; i < steps; i++) {
+			dd = (d0 + i * step) % 8;
+//			System.out.format("d=%d dd=%d (step=%d, j=%d)\n", d, dd, step, j);
+			int x = X[0] + delta[dd][0];
+			int y = X[1] + delta[dd][1];
 			if (ip.getPixel(x, y) == BACKGROUND) {
 				setLabel(x, y, VISITED);	// mark surrounding background pixels
-				dir = (dir + step) % 8;
+//				d = (d + step) % 8;
 			} 
 			else {	// found a non-background pixel (next pixel to follow)
-				pos[0] = x; 
-				pos[1] = y; 
+				X[0] = x; X[1] = y;
 				break;
 			}
 		}
-		return dir;
+		return dd;
+	}	
+	
+	private int findNextContourPoint_2(int[] X, int d0) {	// VERSION 2
+		// Starts at point pos in direction dir,
+		// returns the resulting tracing direction
+		// and modifies pt.
+//		int d = d0;
+		int dd = d0;
+		final int step = (neighborType == N4) ? 2 : 1;
+		final int steps = (neighborType == N4) ? 3 : 7;
+//		for (int i = 0, j = 0; i < 7; i += step, j++) {
+		for (int i = 0; i < steps; i++) {
+			dd = (d0 + i * step) % 8;
+//			System.out.format("d=%d dd=%d (step=%d, j=%d)\n", d, dd, step, j);
+			int x = X[0] + delta[dd][0];
+			int y = X[1] + delta[dd][1];
+			if (ip.getPixel(x, y) == BACKGROUND) {
+				setLabel(x, y, VISITED);	// mark surrounding background pixels
+//				d = (d + step) % 8;
+			} 
+			else {	// found a non-background pixel (next pixel to follow)
+				X[0] = x; X[1] = y;
+				break;
+			}
+		}
+		return dd;
+	}
+	
+	private int findNextContourPoint_1(int[] X, int d0) {
+		// Starts at point pos in direction dir,
+		// returns the resulting tracing direction
+		// and modifies pt.
+		int d = d0;
+		final int step = (neighborType == N4) ? 2 : 1;
+		for (int i = 0; i < 7; i += step) {
+			int x = X[0] + delta[d][0];
+			int y = X[1] + delta[d][1];
+			if (ip.getPixel(x, y) == BACKGROUND) {
+				setLabel(x, y, VISITED);	// mark surrounding background pixels
+				d = (d + step) % 8;
+			} 
+			else {	// found a non-background pixel (next pixel to follow)
+				X[0] = x; 
+				X[1] = y; 
+				break;
+			}
+		}
+		return d;
 	}
 	
 	private void attachOuterContours() {
