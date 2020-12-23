@@ -59,7 +59,7 @@ public class SegmentationRecursive extends BinaryRegionSegmentation {
 			floodFill(x, y + 1, label);
 			floodFill(x, y - 1, label);
 			floodFill(x - 1, y, label);
-			if (neighborhood == NeighborhoodType.N8) {
+			if (neighborType == NeighborhoodType.N8) {
 				floodFill(x + 1, y + 1, label);
 				floodFill(x - 1, y + 1, label);
 				floodFill(x + 1, y - 1, label);

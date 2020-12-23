@@ -54,7 +54,7 @@ public abstract class BinaryRegionSegmentation {
 	protected ImageProcessor ip = null;
 	protected final int width;
 	protected final int height;	
-	protected final NeighborhoodType neighborhood;
+	protected final NeighborhoodType neighborType;
 	
 	protected final int[][] labelArray;
 	// label values in labelArray can be:
@@ -73,7 +73,7 @@ public abstract class BinaryRegionSegmentation {
 	
 	protected BinaryRegionSegmentation(ByteProcessor ip, NeighborhoodType nh) {
 		this.ip = ip;
-		this.neighborhood = nh;
+		this.neighborType = nh;
 		this.width  = ip.getWidth();
 		this.height = ip.getHeight();
 		this.labelArray = makeLabelArray();

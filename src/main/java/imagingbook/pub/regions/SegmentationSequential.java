@@ -41,18 +41,18 @@ public class SegmentationSequential extends BinaryRegionSegmentation {
 	@Override
 	protected boolean applySegmentation() {
 		collisions = new HashSet<>();
+		int[] nh = null;
 		
 		// Step 1: assign initial labels:
-		final int[] nh = new int[(neighborhood == N4) ? 4 : 8];
 		for (int v = 0; v < height; v++) {
 			for (int u = 0; u < width; u++) {
 				if (getLabel(u, v) == FOREGROUND) {
-					getNeighborhood(nh, u, v);
+					nh = getNeighborhood(nh, u, v);
 					int a = max(nh);
 					if (!isLabel(a)) { // a = 0 or 1,  i.e., (u,v) is isolated and not connected to any labeled pixel
 						setLabel(u, v, getNextLabel()); // new region with a new label
 					}
-					else {					// at least one label in nh[] is an assigned label			
+					else {					// at least one label in nh[] is an assigned label		
 						setLabel(u, v, a);	// connect to the existing region with the largest label among neighbors
 						for (int b : nh) {	// register label collisions between a and all b
 							if (isLabel(b) && a != b) {
@@ -69,7 +69,10 @@ public class SegmentationSequential extends BinaryRegionSegmentation {
 		return true;
 	}
 	
-	private void getNeighborhood(int[] nh, int u, int v) {
+	private int[] getNeighborhood(int[] nh, int u, int v) {
+		if (nh == null) {
+			nh = new int[(neighborType == N4) ? 4 : 8];
+		}
 		//assemble the neighborhood nh (x is current position u,v):
 				// 4-neighborhood:
 				//       [1]
@@ -77,8 +80,7 @@ public class SegmentationSequential extends BinaryRegionSegmentation {
 				// 8-neighborhood:
 				//    [1][2][3]
 				//    [0][x]
-		//int[] nh;
-		if (nh.length == 4) { //(neighborhood == N4)
+		if (neighborType == N4) {
 			nh[0] = getLabel(u - 1, v);
 			nh[1] = getLabel(u, v - 1);
 		}
@@ -88,13 +90,13 @@ public class SegmentationSequential extends BinaryRegionSegmentation {
 			nh[2] = getLabel(u, v - 1);
 			nh[3] = getLabel(u + 1, v - 1);
 		}
+		return nh;
 	}
 	
 	private int max(int[] nh) {
 		int nMax = Integer.MIN_VALUE;
 		for (int n : nh) {
-			if (n > nMax) //(n >= getMinLabel() && n > nMax) 
-			{
+			if (n > nMax) {
 				nMax = n;
 			}
 		}

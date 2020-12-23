@@ -66,7 +66,7 @@ public class SegmentationDepthFirst extends BinaryRegionSegmentation {
 				S.push(Point.create(x, y + 1));
 				S.push(Point.create(x, y - 1));
 				S.push(Point.create(x - 1, y));
-				if (neighborhood == NeighborhoodType.N8) {
+				if (neighborType == NeighborhoodType.N8) {
 					S.push(Point.create(x + 1, y + 1));
 					S.push(Point.create(x - 1, y + 1));
 					S.push(Point.create(x + 1, y - 1));

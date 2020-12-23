@@ -119,7 +119,7 @@ public class SegmentationRegionContour extends BinaryRegionSegmentation implemen
 				else {	// hit a BACKGROUND pixel
 					if (curLabel != 0) { // exiting a region
 						if (getLabel(u, v) == BACKGROUND) { // unlabeled - new inner contour
-							int dS = (neighborhood == N8) ? 1 : 2;
+							int dS = (neighborType == N8) ? 1 : 2;
 							Contour.Inner ic = traceContour(u - 1, v, dS, new Contour.Inner(curLabel));
 							innerContours.add(ic);
 						}
@@ -170,7 +170,7 @@ public class SegmentationRegionContour extends BinaryRegionSegmentation implemen
 		// Starts at point pos in direction dir,
 		// returns the resulting tracing direction
 		// and modifies pt.
-		final int step = (neighborhood == N8) ? 1 : 2;
+		final int step = (neighborType == N8) ? 1 : 2;
 		for (int i = 0; i < 7; i += step) {
 			int x = pos[0] + delta[dir][0];
 			int y = pos[1] + delta[dir][1];
