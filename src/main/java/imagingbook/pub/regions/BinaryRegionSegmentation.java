@@ -200,6 +200,10 @@ public abstract class BinaryRegionSegmentation {
 		maxLabel = currentLabel;
 		return currentLabel;
 	}
+	
+	protected boolean isLabel(int i) {
+		return (i >= minLabel);
+	}
 
 	// --------------------------------------------------
 

@@ -9,6 +9,7 @@
 
 package imagingbook.pub.regions;
 
+import static imagingbook.pub.regions.NeighborhoodType.N4;
 import java.util.HashSet;
 
 import ij.process.ByteProcessor;
@@ -22,12 +23,11 @@ import ij.process.ByteProcessor;
  */
 public class SegmentationSequential extends BinaryRegionSegmentation {
 
-	private HashSet<LabelCollision> collisionMap;
+	private HashSet<LabelCollision> collisions;
 
 	/**
 	 * Constructor. Creates a new sequential binary region segmenter.
-	 * 
-	 * @param ip A binary image with 0 values for background pixels and values &gt; 0
+	 * @param ip a binary image with 0 values for background pixels and values &gt; 0
 	 * for foreground pixels.
 	 */
 	public SegmentationSequential(ByteProcessor ip) {
@@ -40,54 +40,36 @@ public class SegmentationSequential extends BinaryRegionSegmentation {
 
 	@Override
 	protected boolean applySegmentation() {
-		collisionMap = new HashSet<>();
+		collisions = new HashSet<>();
 		
 		// Step 1: assign initial labels:
+		final int[] nh = new int[(neighborhood == N4) ? 4 : 8];
 		for (int v = 0; v < height; v++) {
 			for (int u = 0; u < width; u++) {
 				if (getLabel(u, v) == FOREGROUND) {
-					int label = makeNewLabel(u, v);	// TODO: replace by code below, expand method here!
-					setLabel(u, v, label);
+					getNeighborhood(nh, u, v);
+					int a = max(nh);
+					if (!isLabel(a)) { // a = 0 or 1,  i.e., (u,v) is isolated and not connected to any labeled pixel
+						setLabel(u, v, getNextLabel()); // new region with a new label
+					}
+					else {					// at least one label in nh[] is an assigned label			
+						setLabel(u, v, a);	// connect to the existing region with the largest label among neighbors
+						for (int b : nh) {	// register label collisions between a and all b
+							if (isLabel(b) && a != b) {
+								registerCollision(a, b);	// we know that a <= b
+							}
+						}
+					}
 				}
 			}
 		}
 		
-		// Step 2: resolve label collisions:
-		int[] replacementTable = resolveCollisions(getMaxLabel() + 1);
-		cleanupReplacementTable(replacementTable);
-		
-		// Step 3: relabel the image:
-		applyReplacementTable(replacementTable);
+		int[] replacementTable = resolveCollisions(); 	// Step 2: resolve label collisions
+		relabelImage(replacementTable); 				// Step 3: relabel the image
 		return true;
 	}
 	
-	private int makeNewLabel(int u, int v) {
-		int newLabel = 0;
-		int[] nh = getNeighbors(u, v);
-		
-		if (allBackground(nh)) { // all neighbors in nh[] are BACKGROUND
-			newLabel = this.getNextLabel(); // new region, assign a new label
-		} 
-		else {	//at least one label in nh[] is not BACKGROUND
-			// Find smallest assigned region label among neighbors nh:
-			int a = Integer.MAX_VALUE;
-			for (int n : nh) {
-				if (n >= getMinLabel() && n < a) {
-					a = n;
-				}
-			}
-			newLabel = a;
-			// Register label equivalence (collision):
-			for (int b : nh) {
-				if (b >= getMinLabel() && a != b) {
-					registerCollision(a, b);
-				}
-			}
-		}
-		return newLabel;
-	}
-	
-	private int[] getNeighbors(int u, int v) {
+	private void getNeighborhood(int[] nh, int u, int v) {
 		//assemble the neighborhood nh (x is current position u,v):
 				// 4-neighborhood:
 				//       [1]
@@ -95,36 +77,35 @@ public class SegmentationSequential extends BinaryRegionSegmentation {
 				// 8-neighborhood:
 				//    [1][2][3]
 				//    [0][x]
-		int[] nh;
-		if (neighborhood == NeighborhoodType.N4) {
-			nh = new int[2];
+		//int[] nh;
+		if (nh.length == 4) { //(neighborhood == N4)
 			nh[0] = getLabel(u - 1, v);
 			nh[1] = getLabel(u, v - 1);
 		}
 		else {	// neighborhood == NeighborhoodType.N8
-			nh = new int[4];
 			nh[0] = getLabel(u - 1, v);
 			nh[1] = getLabel(u - 1, v - 1);
 			nh[2] = getLabel(u, v - 1);
 			nh[3] = getLabel(u + 1, v - 1);
 		}
-		return nh;
 	}
 	
-	private boolean allBackground(int[] nh) {
-		for (int i = 0; i < nh.length; i++) {
-			if (nh[i] != BACKGROUND) {
-				return false;
+	private int max(int[] nh) {
+		int nMax = Integer.MIN_VALUE;
+		for (int n : nh) {
+			if (n > nMax) //(n >= getMinLabel() && n > nMax) 
+			{
+				nMax = n;
 			}
 		}
-		return true;
+		return nMax;
 	}
 
 	private void registerCollision(int a, int b) {
 		if (a != b) {
 			LabelCollision c = (a < b) ? new LabelCollision(a, b) : new LabelCollision(b, a);
 			//if (!collisionMap.contains(c))	// not needed, add() does check for existing instance
-			collisionMap.add(c);
+			collisions.add(c);
 		}
 	}
 	
@@ -145,36 +126,38 @@ public class SegmentationSequential extends BinaryRegionSegmentation {
 	 *  @param size size of the label set
 	 *  @return replacement table
 	 */
-	private int[] resolveCollisions(int size) {
-		
-		// The table setIndex[i] indicates to which set the element i belongs:
-		// setIndex[i] == K means that element i is in set K
-		int[] R = new int[size];
+	private int[] resolveCollisions() {
+		final int N = getMaxLabel() + 1;
+		// R[k] is the index of the set in which element k is contained:
+		int[] R = new int[N];
 
 		// Initially, each element i is in its own (one-element) set:
-		for (int i = 0; i < size; i++) {
+		for (int i = 0; i < N; i++) {
 			R[i] = i;
 		}
 
 		// Inspect all collisions <a,b> one by one (note that a < b):
-		for (LabelCollision coll : collisionMap) {
-			int Ra = R[coll.a]; // set Ra contains label a
+		for (LabelCollision coll : collisions) {
+			int Ra = R[coll.a];		// set Ra contains label a
 			int Rb = R[coll.b]; 	// set Rb contains label b
 			// Merge sets Ra and Rb (unless they are the same) by
-			// moving all elements of set Rb into set Ra
+			// moving all elements of set Rb into set Ra:
 			if (Ra != Rb) {
-				for (int i = 0; i < size; i++) {
-					if (R[i] == Rb)
+				for (int i = 0; i < N; i++) {
+					if (R[i] == Rb) {
 						R[i] = Ra;
+					}
 				}
 			}
 			// otherwise a,b are already in the same set (i.e., known to be equivalent)
 		}
+		
+		cleanup(R);
 		return R;
 	}
 
-	private void cleanupReplacementTable(int[] table) {
-		if (table.length <= this.getMinLabel()) {	// case of empty image, nothing to clean
+	private void cleanup(int[] table) {
+		if (table.length <= getMinLabel()) {	// case of empty image, nothing to clean
 			//return table; 
 			return; 
 		}
@@ -198,11 +181,11 @@ public class SegmentationSequential extends BinaryRegionSegmentation {
 		//    i =  0 1 2 3 4 5 6 7 8 9
 		
 		// Now we assign new, contiguous labels in mark array:
-		int newLabel = this.getMinLabel();
-		for (int i = 0; i < this.getMinLabel(); i++) {
+		int newLabel = getMinLabel();
+		for (int i = 0; i < getMinLabel(); i++) {
 			mark[i] = i;	// keep labels 0,..., minLabel-1
 		}
-		for (int i = this.getMinLabel(); i < table.length; i++) {
+		for (int i = getMinLabel(); i < table.length; i++) {
 			if (mark[i] > 0) {	// this one's marked
 				mark[i] = newLabel;
 				newLabel = newLabel + 1;
@@ -226,7 +209,7 @@ public class SegmentationSequential extends BinaryRegionSegmentation {
 	}
 
 	// Replace image labels in labelArray
-	private void applyReplacementTable(int[] replacementTable){
+	private void relabelImage(int[] replacementTable){
 		for (int v = 0; v < height; v++) {
 			for (int u = 0; u < width; u++) {
 				int oldLb = getLabel(u, v);
