@@ -86,7 +86,7 @@ public class Pnt implements Point {
     public int hashCode () {
         int hash = 0;
         for (double c: this.coordinates) {
-            long bits = Double.doubleToLongBits(c);
+            long bits = java.lang.Double.doubleToLongBits(c);
             hash = (31*hash) ^ (int)(bits ^ (bits >> 32));
         }
         return hash;

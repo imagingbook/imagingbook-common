@@ -575,7 +575,7 @@ public abstract class BinaryRegionSegmentation {
 		 * 
 		 * @return the next point
 		 */
-		private Point findNext() {
+		private Point.Int findNext() {
 			// start search for next region pixel at (u,v):
 			int u = (first) ? uCur : uCur + 1;
 			int v = vCur;

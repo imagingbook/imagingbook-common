@@ -13,6 +13,7 @@ import java.util.Locale;
 
 import imagingbook.pub.geometry.basic.Point;
 
+
 /**
  * This class represents a 2D corner.
  * A corner is essentially a {@link Point} plus a scalar quantity
@@ -44,7 +45,7 @@ public class Corner implements Point, Comparable<Corner> {
 	// used for sorting corners by corner strength q
 	@Override
 	public int compareTo (Corner c2) {
-		return Double.compare(c2.q, this.q);
+		return java.lang.Double.compare(c2.q, this.q);
 	}
 	
 	// ----------------------------------------------------------------

@@ -16,7 +16,10 @@ import imagingbook.lib.math.Arithmetic;
  * in a common API.
  * Use {@link Point#create(double, double)} or similar to 
  * create new point instances using the default implementation class 
- * {@link Point.Imp}.
+ * {@link Point.Double}.
+ * 
+ * TODO: finish 'Int'-implementation
+ * TODO: avoid 'Double', may be confused
  */
 public interface Point {
 	
@@ -24,39 +27,52 @@ public interface Point {
 	
 	double getX();
 	double getY();
+//	Point duplicate();
 	
 	public static Point create(double x, double y) {
-		return new Imp(x, y);
+		return new Double(x, y);
 	}
 	
 	public static Point create(double[] xy) {
-		return new Imp(xy[0], xy[1]);
+		return new Double(xy[0], xy[1]);
 	}
 	
 	public static Point create(int[] xy) {
-		return new Imp(xy[0], xy[1]);
+		return new Double(xy[0], xy[1]);
 	}
 	
 	public static Point create(Point p) {
-		return new Imp(p.getX(), p.getY());
+		return p.duplicate();
 	}
 	
 	public static Point create(Point2D p) {
-		return new Imp(p.getX(), p.getY());
+		return new Double(p.getX(), p.getY());
 	}
 	
 	public static Point create(Vector2D vec) {
-		return new Imp(vec.getX(), vec.getY());
+		return new Double(vec.getX(), vec.getY());
+	}
+	
+	public static Point.Int create(int x, int y) {
+		return new Int(x, y);
+	}
+	
+	public static Point.Int create(java.awt.Point p) {
+		return new Int(p.x, p.y);
 	}
 	
 	// ----------------------------------------------------------
+	
+	public default Point duplicate() {
+		throw new UnsupportedOperationException();
+	}
 	
 	public default double[] toArray() {
 		return new double[] {this.getX(), this.getY()};
 	}
 	
 	public default Point2D toPoint2D() {
-		return new Point2D.Double(getX(), getY());
+		return new Point2D.Double(this.getX(), this.getY());
 	}
 	
 	public default Vector2D toVector2D() {
@@ -88,23 +104,54 @@ public interface Point {
 	public default boolean equals(Point a, Point b) {
 		return Arithmetic.isZero(distance2(a, b), 1E-6);
 	}
+
+	// ----------------------------------------------------------
 	
 	/**
 	 * Simple fallback implementation of the {@link Point} interface.
 	 * Use {@link Point#create(double, double)} or similar to instantiate.
+	 * TODO: naming is prelimiary!!
 	 */
-	public class Imp implements Point {
+	public class Double implements Point {
+
 		private final double x, y;
 
-		private Imp(double x, double y) {
+		private Double(double x, double y) {
 			this.x = x;
 			this.y = y;
 		}
 		
 		@Override
+		public double getX() {
+			return x;
+		}
+
+		@Override
+		public double getY() {
+			return y;
+		}
+		
+		@Override
 		public String toString() {
 			return String.format(Locale.US, "%s[%.3f, %.3f]", 
-					getClass().getSimpleName(), getX(), getY());
+					getClass().getSimpleName(), x, y);
+		}
+
+		@Override
+		public Point.Double duplicate() {
+			return new Double(x, y);
+		}
+	}
+	
+	// ----------------------------------------------------------
+	
+	public class Int implements Point {
+		
+		private final int x, y;
+		
+		public Int(int x, int y) {
+			this.x = x;
+			this.y = y;
 		}
 
 		@Override
@@ -116,6 +163,20 @@ public interface Point {
 		public double getY() {
 			return y;
 		}
+		
+		@Override
+		public String toString() {
+			return String.format(Locale.US, "%s[%d, %d]", 
+					getClass().getSimpleName(), x, y);
+		}
+
+		@Override
+		public Point.Int duplicate() {
+			return new Int(x, y);
+		}
+		
 	}
+	
+	
 
 }

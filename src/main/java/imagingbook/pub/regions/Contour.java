@@ -15,7 +15,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import imagingbook.pub.geometry.basic.Point;
-import imagingbook.pub.regions.NeighborhoodType;
 
 
 /**
