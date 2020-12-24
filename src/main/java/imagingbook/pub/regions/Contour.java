@@ -15,6 +15,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import imagingbook.pub.geometry.basic.Point;
+import imagingbook.pub.regions.NeighborhoodType;
+
 
 /**
  * This class represents a closed contour as a sequence of
@@ -132,6 +134,51 @@ public class Contour implements Comparable<Contour>, Iterable<Point> {
 		}
 		return path;
 	}
+	
+	/**
+	 * Returns the number of successive duplicates in this contour.
+	 * The result should be zero.
+	 * @param contour the contour to be checked.
+	 * @return as described.
+	 */
+	public int countDuplicatePoints() {
+		Point[] pnts = this.getPointArray();
+		if (pnts.length <= 1) {
+			return 0;
+		}
+		int cnt = 0;
+		for (int i = 0; i < pnts.length; i++) {
+			int j = (i + 1) % pnts.length;
+			if (pnts[i].getX() == pnts[j].getX() && pnts[i].getY() == pnts[j].getY()) {
+				cnt++;
+			}
+		}
+		return cnt;
+	}
+	
+	/**
+	 * Checks if this contour is closed w.r.t. the specified
+	 * {@link NeighborhoodType}, i.e., if the last and the first
+	 * contour point are "connected".
+	 * 
+	 * @param nht
+	 * @return
+	 */
+	public boolean isClosed(NeighborhoodType nht) {
+		Point[] pnts = this.getPointArray();
+		if (pnts.length < 2) 
+			return true;
+		Point p1 = pnts[pnts.length - 1];
+		Point p2 = pnts[0];
+		double d2 = p1.distance2(p2);	// N4: max 1, N8: max 2
+		//System.out.println(nht + " dist=" + d2);
+		
+		if (nht == NeighborhoodType.N4 && d2 <= 1)
+			return true;
+		if (nht == NeighborhoodType.N8 && d2 <= 2)
+			return true;
+		return false;
+	}
 
 		
 	// Compare method for sorting contours by length (longer contours at front)
@@ -151,11 +198,23 @@ public class Contour implements Comparable<Contour>, Iterable<Point> {
 		public Outer(int label) {
 			super(label);
 		}
+		
+		@Override
+		public String toString(){
+			return
+				"Contour.Outer " + this.getLabel() + ": " + this.getLength() + " points";
+		}
 	}
 	
 	public static class Inner extends Contour {
 		public Inner(int label) {
 			super(label);
+		}
+		
+		@Override
+		public String toString(){
+			return
+				"Contour.Inner " + this.getLabel() + ": " + this.getLength() + " points";
 		}
 	}
 	

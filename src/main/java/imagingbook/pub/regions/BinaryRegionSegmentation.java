@@ -447,7 +447,7 @@ public abstract class BinaryRegionSegmentation {
 		 * Points on inner contours are arranged in counter-clockwise order.
 		 * @return the list of inner contours.
 		 */
-		public List<Contour.Inner> getInnerContours() {
+		public List<Contour.Inner> getInnerContours() {	// sort!!!
 			return innerContours;
 		}
 		

@@ -59,6 +59,7 @@ public class ContourOverlay extends Overlay {
 			Roi roi = new ShapeRoi(s);
 			roi.setStrokeColor(color);
 			roi.setStroke(stroke);
+//			roi.setStrokeWidth(strokeWidth);
 			add(roi);
 		}
 	}

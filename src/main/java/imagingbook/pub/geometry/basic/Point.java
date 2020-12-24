@@ -7,6 +7,8 @@ import java.util.Locale;
 
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 
+import imagingbook.lib.math.Arithmetic;
+
 /** 
  * Interface specifying the behavior of a simple 2D point with 
  * floating-point coordinates.
@@ -81,6 +83,10 @@ public interface Point {
 	
 	public default double distance(Point other) {
 		return distance(this, other);
+	}
+	
+	public default boolean equals(Point a, Point b) {
+		return Arithmetic.isZero(distance2(a, b), 1E-6);
 	}
 	
 	/**
