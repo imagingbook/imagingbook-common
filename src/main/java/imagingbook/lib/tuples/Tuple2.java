@@ -22,16 +22,16 @@ public final class Tuple2<T0, T1> implements Tuple {
 	public String toString() {
 		return String.format("<%s,%s>", f0.toString(), f1.toString());
 	}
+
+	public static <T0, T1> Tuple2<T0, T1> of(T0 val0, T1 val1) {
+		return new Tuple2<>(val0, val1);
+	}
 	
 	// experimental: 
 	
 	public void assignto(Handle<T0> h0, Handle<T1> h1) {
 		h0.set(f0);
 		h1.set(f1);
-	}
-
-	public static <T0, T1> Tuple2<T0, T1> of(T0 val0, T1 val1) {
-		return new Tuple2<>(val0, val1);
 	}
 	
 }

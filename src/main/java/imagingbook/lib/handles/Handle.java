@@ -36,6 +36,16 @@ public class Handle<T> {
 	
 	// ---------------------------------------------
 	
+	private static void foo(Handle<Integer> h) {
+		h.set(33);
+	}
+	
+	// returns multiple values as a tuple
+	private static Tuple2<Integer, String> bar() {
+		return Tuple2.of(99, "bar");
+	}
+
+	
 	public static void main(String[] args) {
 		Handle<Integer> a = Handle.of(10);
 		Handle<String>  s = Handle.of("prima!");
@@ -53,13 +63,5 @@ public class Handle<T> {
 		
 	}
 
-	static void foo(Handle<Integer> h) {
-		h.set(33);
-	}
-	
-	// returns multiple values as a tuple
-	static Tuple2<Integer, String> bar() {
-		return Tuple2.of(99, "bar");
-	}
 
 }
