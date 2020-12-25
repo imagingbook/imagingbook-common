@@ -23,5 +23,9 @@ public final class Tuple3<T0, T1, T2> implements Tuple {
 	public String toString() {
 		return String.format("<%s,%s,%s>", f0.toString(), f1.toString(), f2.toString());
 	}
+
+	public static <T0, T1, T2> Tuple3<T0, T1, T2> of(T0 val0, T1 val1, T2 val2) {
+		return new Tuple3<>(val0, val1, val2);
+	}
 	
 }
