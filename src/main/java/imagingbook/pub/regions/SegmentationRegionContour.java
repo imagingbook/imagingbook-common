@@ -17,7 +17,6 @@ import java.util.List;
 
 import ij.IJ;
 import ij.process.ByteProcessor;
-import imagingbook.lib.tuples.Tuple;
 import imagingbook.lib.tuples.Tuple2;
 import imagingbook.pub.geometry.basic.Point;
 
@@ -196,7 +195,7 @@ public class SegmentationRegionContour extends BinaryRegionSegmentation implemen
 			}
 			i = i + step;
 		}
-		return (done) ? Tuple.of(Point.create(x, y), d) : null; //Tuple.of(X, d0);
+		return (done) ? Tuple2.of(Point.create(x, y), d) : null; //Tuple2.of(X, d0);
 	}
 	
 	private void attachOuterContours() {
