@@ -17,6 +17,8 @@ import java.util.List;
 
 import ij.IJ;
 import ij.process.ByteProcessor;
+import imagingbook.lib.tuples.Tuple;
+import imagingbook.lib.tuples.Tuple2;
 import imagingbook.pub.geometry.basic.Point;
 
 /**
@@ -133,31 +135,115 @@ public class SegmentationRegionContour extends BinaryRegionSegmentation implemen
 	}
 	
 	// Trace one contour starting at (xs,ys) in direction ds	
-	private <T extends Contour> T traceContour(int[] Xs, final int ds, T contour) {
+	private <T extends Contour> T traceContour(int[] Xas, final int ds, T contour) {
 		final int label = contour.getLabel();	// C ist the (empty) contour
-		int xs = Xs[0], ys = Xs[1];
-		int[] X = {xs, ys};  						// start position
+//		final int xs = Xas[0], ys = Xas[1];
+		Point Xs = Point.create(Xas);
 		
-		int d = findNextContourPoint(X, ds);		// X is modified!
-		contour.addPoint(Point.create(X));
+//		int[] XA = {xs, ys};  						// start position
+		Point X = Xs;
 		
-		int xt = X[0], yt = X[1];					// xt = immediate successor of starting point (xs,ys)
-		boolean home = (xs == xt && ys == yt);  	// true if single-pixel contour
+//		int d = findNextContourPoint(X, ds);		// X is modified!
+		Tuple2<Point, Integer> tup = findNextContourPointTupel(X, ds);
+//		XA = toIntArray(tup.f0);
+		X = tup.f0;
+		int d = tup.f1;
+		
+//		contour.addPoint(Point.create(X));
+		contour.addPoint(tup.f0);
+		
+//		final int xt = XA[0], yt = XA[1];					// xt = immediate successor of starting point (xs,ys)
+		Point Xt = X; //Point.create(XA);
+//		boolean home = (xs == xt && ys == yt);  	// true if single-pixel contour
+		boolean home = samePointInt(Xs, Xt);
 		
 		while (!home) {
-			setLabel(X[0], X[1], label);
-			int xp = X[0], yp = X[1];  	// keep Xp = previous contour point	
+//			setLabel(XA[0], XA[1], label);
+			setLabel(X, label);
+//			int xp = XA[0], yp = XA[1];  	// keep Xp = previous contour point	
+			Point Xp = X; //Point.create(XA);
+			
 			int dn = (d + 6) % 8;
-			d = findNextContourPoint(X, dn);
+			
+//			d = findNextContourPoint(X, dn);
+			tup = findNextContourPointTupel(X, dn);
+//			XA = toIntArray(tup.f0);
+			X = tup.f0;
+			d = tup.f1;
+			
 			// are we back at the starting position?
-			home = (xp==xs && yp==ys && X[0]==xt && X[1]==yt); // back at start pos.
+			//home = (xp==xs && yp==ys && X[0]==xt && X[1]==yt); // back at start pos.
+			home = (samePointInt(Xp, Xs) && samePointInt(tup.f0, Xt)); // back at start pos.
 			if (!home) {
-				contour.addPoint(Point.create(X));
+//				contour.addPoint(Point.create(XA));
+				contour.addPoint(X);
 			}
 		}
 		//System.out.println("traceContour: " +  neighborType + " "+ C.toString() + " duplicates=" + C.countDuplicatePoints());
 		return contour;
 	}
+		
+	private int[] toIntArray(Point p) {
+		return new int[] {(int) p.getX(), (int) p.getY() };
+	}
+	
+	private boolean samePointInt(Point p1, Point p2) {
+		return (int)p1.getX()==(int)p2.getX() && (int)p1.getY()==(int)p2.getY();
+	}
+	
+//	// Trace one contour starting at (xs,ys) in direction ds	
+//	private <T extends Contour> T traceContour(int[] Xs, final int ds, T contour) {
+//		final int label = contour.getLabel();	// C ist the (empty) contour
+//		int xs = Xs[0], ys = Xs[1];
+//		
+//		Point pS = Point.create(Xs);
+//		//int[] X = {xs, ys};  						// start position
+//		Point X = pS;  				// start position
+//		
+//		//int d = findNextContourPoint(X, ds);		// X is modified!
+//		Tuple2<Point, Integer> tup = findNextContourPointTupel(X, ds);
+//		X = tup.f0;
+//		int d = tup.f1;
+//		
+////		contour.addPoint(Point.create(X));
+//		contour.addPoint(X);
+//		
+////		int xt = X[0], yt = X[1];					// xt = immediate successor of starting point (xs,ys)
+//		int xt = (int)X.getX(), yt = (int)X.getY();	
+//		Point Xt = X;
+//		
+//		boolean home1 = (xs == xt && ys == yt);  	// true if single-pixel contour
+//		boolean home = (pS.equals(Xt));
+//		//System.out.println(home1 + " / " + home);
+//		
+//		while (!home) {
+//			//setLabel(X[0], X[1], label);
+//			setLabel((int)X.getX(), (int)X.getY(), label);
+//			Point Xp = X;
+//			//int xp = X[0], yp = X[1];  	// keep Xp = previous contour point	
+//			int xp = (int)X.getX(), yp = (int)X.getY();	
+//			
+//			int dn = (d + 6) % 8;
+//			//d = findNextContourPoint(X, dn);
+//			tup = findNextContourPointTupel(Point.create(X), dn);
+////			X[0] = (int) tup.f0.getX(); 
+////			X[1] = (int) tup.f0.getY();
+//			X = tup.f0;
+//			d = tup.f1;
+//			// are we back at the starting position?
+////			home = (xp==xs && yp==ys && X[0]==xt && X[1]==yt); // back at start pos.
+//			
+//			home1 = (xp==xs && yp==ys && (int)X.getX()==xt && (int)X.getY()==yt);
+//			home = (Xp.equals(pS) && X.equals(Xt)); // back at start pos.
+//			//System.out.println("   " + home1 + " / " + home);
+//			if (!home) {
+////				contour.addPoint(Point.create(X));
+//				contour.addPoint(X);
+//			}
+//		}
+//		//System.out.println("traceContour: " +  neighborType + " "+ C.toString() + " duplicates=" + C.countDuplicatePoints());
+//		return contour;
+//	}
 	
 	private static final int[][] delta = {
 			{ 1,0}, { 1, 1}, {0, 1}, {-1, 1}, 
@@ -165,7 +251,32 @@ public class SegmentationRegionContour extends BinaryRegionSegmentation implemen
 
 	// --------------------------------------------------------------------
 	
-	private int findNextContourPoint(int[] X, int d0) {	// VERSION 1 (= reference, works fine!)
+	private Tuple2<Point, Integer> findNextContourPointTupel(Point XY, int d0) {	// VERSION 2 (works fine!)
+		int[] X = {(int) XY.getX(), (int) XY.getY()};
+		// Starts at point X in direction d0,
+		// returns the resulting tracing direction
+		// and modifies X.
+		int step = (neighborType == N4) ? 2 : 1;
+		int d = d0;
+		int i = 0;
+		boolean done = false;
+		while (i < 7 && !done) {	// N4: i = 0,2,4,6  N8: i = 0,1,2,3,4,5,6
+			int x = X[0] + delta[d][0];
+			int y = X[1] + delta[d][1];
+			if (ip.getPixel(x, y) == BACKGROUND) {
+				setLabel(x, y, VISITED);	// mark this background pixel not to be visited again
+				d = (d + step) % 8;
+			} 
+			else {	// found a non-background pixel (next pixel to follow)
+				X[0] = x; X[1] = y; // modify X (to be passed back)
+				done = true;
+			}
+			i = i + step;
+		}
+		return (done) ? Tuple.of(Point.create(X), d) : Tuple.of(XY, d0);
+	}
+	
+	private int findNextContourPoint(int[] X, int d0) {	// VERSION 2 (works fine!)
 		// Starts at point X in direction d0,
 		// returns the resulting tracing direction
 		// and modifies X.	
@@ -257,6 +368,10 @@ public class SegmentationRegionContour extends BinaryRegionSegmentation implemen
 		if (u >= -1 && u <= width && v >= -1 && v <= height) {
 			labelArray[u + 1][v + 1] = label;
 		}
+	}
+	
+	protected void setLabel(Point p, int label) { // (u,v) are image coordinates
+		setLabel((int)p.getX(), (int)p.getY(), label);
 	}
 	
 //	private List<Contour> copyContours(List<Contour> cntrs, boolean sort) {
