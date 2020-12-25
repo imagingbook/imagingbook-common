@@ -83,6 +83,10 @@ public interface Point {
 //		return points.toArray(new Point[0]);
 //	}
 	
+	public default boolean equals(Point p) {
+		return Arithmetic.isZero(this.getX() - p.getX()) && Arithmetic.isZero(this.getY() - p.getY());
+	}
+	
 	// ----------------------------------------------------------
 	
 	public static double distance(Point p, Point q) {
@@ -140,6 +144,17 @@ public interface Point {
 		@Override
 		public Point.Double duplicate() {
 			return new Double(x, y);
+		}
+		
+		@Override	// unfinished!
+		public boolean equals(Object other) {
+			if (other instanceof Point) {
+				Point p = (Point) other;
+				return Arithmetic.isZero(this.x - p.getX()) && Arithmetic.isZero(this.y - p.getY());
+			}
+			else {
+				return false;
+			}
 		}
 	}
 	

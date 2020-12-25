@@ -173,7 +173,7 @@ public class SegmentationRegionContourTest {
 			Contour.Outer outerContour = r0.getOuterContour();
 			Assert.assertNotNull(outerContour);
 			Assert.assertEquals(OuterContourLength, outerContour.getLength());
-			Assert.assertEquals(0, outerContour.countDuplicatePoints());	// !!
+			Assert.assertEquals(0, outerContour.countDuplicatePoints());
 			Assert.assertTrue(outerContour.isClosed(NHT));
 			
 			// check inner regions and contours
@@ -183,7 +183,7 @@ public class SegmentationRegionContourTest {
 				List<Contour.Inner> ics = regions.get(k).getInnerContours();
 				Assert.assertFalse(ics.isEmpty());
 				Assert.assertEquals(FirstInnerContourLength, ics.get(0).getLength());
-				Assert.assertEquals(0, ics.get(0).countDuplicatePoints());	// !!
+				Assert.assertEquals(0, ics.get(0).countDuplicatePoints());
 				Assert.assertTrue(ics.get(0).isClosed(NHT));
 			}
 		}
