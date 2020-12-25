@@ -14,7 +14,8 @@ import static imagingbook.lib.math.Arithmetic.isZero;
 import java.util.Locale;
 
 //import imagingbook.lib.math.Arithmetic;
-import imagingbook.pub.geometry.basic.Point;
+import imagingbook.pub.geometry.basic.Pnt2d;
+import imagingbook.pub.geometry.basic.Pnt2d.PntDouble;
 
 /**
  * This class represents an algebraic line of the form a * x + b * y + c = 0.
@@ -28,7 +29,7 @@ public class AlgebraicLine {
 
 	// static factory methods ----------------------------------------
 	
-	public static AlgebraicLine fromPoints(Point p1, Point p2) {
+	public static AlgebraicLine fromPoints(Pnt2d p1, Pnt2d p2) {
 		double a = p1.getY() - p2.getY();
 		double b = p2.getX() - p1.getX();
 		double c = -a * p1.getX() - b * p1.getY();
@@ -97,7 +98,7 @@ public class AlgebraicLine {
 	 * @param p point position.
 	 * @return The perpendicular distance between this line and the point p.
 	 */
-	public double getDistance(Point p) {
+	public double getDistance(Pnt2d p) {
 		return getDistance(p.getX(), p.getY());
 	}
 	
@@ -108,7 +109,7 @@ public class AlgebraicLine {
 	 * @param p an arbitrary 2D point
 	 * @return the closest line point
 	 */
-	public Point getClosestLinePoint(Point p) {
+	public Pnt2d getClosestLinePoint(Pnt2d p) {
 		final double s = 1.0; // 1.0 / (sqr(a) + sqr(b)); // assumed to be normalized
 		final double xr = this.getXref();
 		final double yr = this.getYref();
@@ -116,7 +117,7 @@ public class AlgebraicLine {
 		double yy = p.getY() - yr;
 		double x0 = xr + s * (sqr(b) * xx - a * b * yy - a * c);
 		double y0 = yr + s * (sqr(a) * yy - a * b * xx - b * c);
-		return Point.create(x0, y0);
+		return PntDouble.from(x0, y0);
 	}
 	
 //	@Override
@@ -148,8 +149,8 @@ public class AlgebraicLine {
 			AlgebraicLine L2 = (AlgebraicLine) other;
 			double delta = 1E-6;
 			// get two different points on L1:
-			Point xA = L1.getClosestLinePoint(Point.ZERO);
-			Point xB = Point.create(xA.getX() - L1.b, xA.getY() + L1.a);
+			Pnt2d xA = L1.getClosestLinePoint(PntDouble.ZERO);
+			Pnt2d xB = PntDouble.from(xA.getX() - L1.b, xA.getY() + L1.a);
 			// check if both points are L2 too:
 			return (isZero(L2.getDistance(xA), delta) && isZero(L2.getDistance(xB), delta));
 		}

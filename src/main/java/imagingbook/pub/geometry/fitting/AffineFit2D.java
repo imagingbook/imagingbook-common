@@ -7,7 +7,7 @@ import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.RealVector;
 import org.apache.commons.math3.linear.SingularValueDecomposition;
 
-import imagingbook.pub.geometry.basic.Point;
+import imagingbook.pub.geometry.basic.Pnt2d;
 
 public class AffineFit2D implements LinearFit2D {
 	
@@ -22,7 +22,7 @@ public class AffineFit2D implements LinearFit2D {
 	 * @param P the source points
 	 * @param Q the target points
 	 */
-	public AffineFit2D(Point[] P, Point[] Q) {	// 
+	public AffineFit2D(Pnt2d[] P, Pnt2d[] Q) {	// 
 		checkSize(P, Q);
 		int m = P.length;
 		
@@ -31,7 +31,7 @@ public class AffineFit2D implements LinearFit2D {
 		
 		// mount the matrix M
 		int row = 0;
-		for (Point p : P) {
+		for (Pnt2d p : P) {
 			M.setEntry(row, 0, p.getX());
 			M.setEntry(row, 1, p.getY());
 			M.setEntry(row, 2, 1);
@@ -44,7 +44,7 @@ public class AffineFit2D implements LinearFit2D {
 		
 		// mount vector b
 		row = 0;
-		for (Point q : Q) {
+		for (Pnt2d q : Q) {
 			b.setEntry(row, q.getX());
 			row++;
 			b.setEntry(row, q.getY());
@@ -74,7 +74,7 @@ public class AffineFit2D implements LinearFit2D {
 	
 	// --------------------------------------------------------
 	
-	private void checkSize(Point[] P, Point[] Q) {
+	private void checkSize(Pnt2d[] P, Pnt2d[] Q) {
 		if (P.length < 3 || Q.length < 3) {
 			throw new IllegalArgumentException("At least 3 point pairs are required to calculate this fit");
 		}

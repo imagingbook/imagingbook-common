@@ -20,7 +20,7 @@
 <span class="sourceLineNo">010</span><a id="line.10"></a>
 <span class="sourceLineNo">011</span><a id="line.11">import java.util.Locale;</a>
 <span class="sourceLineNo">012</span><a id="line.12"></a>
-<span class="sourceLineNo">013</span><a id="line.13">import imagingbook.pub.geometry.basic.Point;</a>
+<span class="sourceLineNo">013</span><a id="line.13">import imagingbook.pub.geometry.basic.Pnt2d;</a>
 <span class="sourceLineNo">014</span><a id="line.14">import imagingbook.pub.geometry.lines.AlgebraicLine;</a>
 <span class="sourceLineNo">015</span><a id="line.15">import imagingbook.pub.geometry.lines.HessianLine;</a>
 <span class="sourceLineNo">016</span><a id="line.16"></a>
@@ -39,7 +39,7 @@
 <span class="sourceLineNo">029</span><a id="line.29">        </a>
 <span class="sourceLineNo">030</span><a id="line.30">        // static factory methods -------------------------------</a>
 <span class="sourceLineNo">031</span><a id="line.31">        </a>
-<span class="sourceLineNo">032</span><a id="line.32">        public static HoughLine fromPoints(Point p1, Point p2, Point pRef, int count) {</a>
+<span class="sourceLineNo">032</span><a id="line.32">        public static HoughLine fromPoints(Pnt2d p1, Pnt2d p2, Pnt2d pRef, int count) {</a>
 <span class="sourceLineNo">033</span><a id="line.33">                return new HoughLine(AlgebraicLine.fromPoints(p1, p2), pRef.getX(), pRef.getY(), count);</a>
 <span class="sourceLineNo">034</span><a id="line.34">        }</a>
 <span class="sourceLineNo">035</span><a id="line.35">        </a>

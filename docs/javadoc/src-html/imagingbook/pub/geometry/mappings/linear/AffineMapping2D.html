@@ -21,7 +21,7 @@
 <span class="sourceLineNo">011</span><a id="line.11"></a>
 <span class="sourceLineNo">012</span><a id="line.12">import imagingbook.lib.math.Matrix;</a>
 <span class="sourceLineNo">013</span><a id="line.13">import imagingbook.lib.settings.PrintPrecision;</a>
-<span class="sourceLineNo">014</span><a id="line.14">import imagingbook.pub.geometry.basic.Point;</a>
+<span class="sourceLineNo">014</span><a id="line.14">import imagingbook.pub.geometry.basic.Pnt2d;</a>
 <span class="sourceLineNo">015</span><a id="line.15">import imagingbook.pub.geometry.fitting.AffineFit2D;</a>
 <span class="sourceLineNo">016</span><a id="line.16"></a>
 <span class="sourceLineNo">017</span><a id="line.17">/**</a>
@@ -39,7 +39,7 @@
 <span class="sourceLineNo">029</span><a id="line.29">         * @param Q the target points</a>
 <span class="sourceLineNo">030</span><a id="line.30">         * @return a new affine mapping for the two point sets</a>
 <span class="sourceLineNo">031</span><a id="line.31">         */</a>
-<span class="sourceLineNo">032</span><a id="line.32">        public static AffineMapping2D fromPoints(Point[] P, Point[] Q) {</a>
+<span class="sourceLineNo">032</span><a id="line.32">        public static AffineMapping2D fromPoints(Pnt2d[] P, Pnt2d[] Q) {</a>
 <span class="sourceLineNo">033</span><a id="line.33">                AffineFit2D fit = new AffineFit2D(P, Q);</a>
 <span class="sourceLineNo">034</span><a id="line.34">                return new AffineMapping2D(fit.getTransformationMatrix().getData());</a>
 <span class="sourceLineNo">035</span><a id="line.35">        }</a>
@@ -184,7 +184,7 @@
 <span class="sourceLineNo">174</span><a id="line.174">        }</a>
 <span class="sourceLineNo">175</span><a id="line.175"></a>
 <span class="sourceLineNo">176</span><a id="line.176">        @Override</a>
-<span class="sourceLineNo">177</span><a id="line.177">        public double[][] getJacobian(Point xy) {</a>
+<span class="sourceLineNo">177</span><a id="line.177">        public double[][] getJacobian(Pnt2d xy) {</a>
 <span class="sourceLineNo">178</span><a id="line.178">                final double x = xy.getX();</a>
 <span class="sourceLineNo">179</span><a id="line.179">                final double y = xy.getY();</a>
 <span class="sourceLineNo">180</span><a id="line.180">                return new double[][]</a>

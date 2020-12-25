@@ -4,21 +4,22 @@ package imagingbook.pub.hough.lines;
 import org.junit.Assert;
 import org.junit.Test;
 
-import imagingbook.pub.geometry.basic.Point;
+import imagingbook.pub.geometry.basic.Pnt2d;
+import imagingbook.pub.geometry.basic.Pnt2d.PntInt;
 import imagingbook.pub.geometry.lines.AlgebraicLine;
 
 public class HoughLineTest {
 	
-	static Point p1 = Point.create(30, 10);
-	static Point p2 = Point.create(200, 100);
-	static Point p3 = Point.create(90, 40);
+	static Pnt2d p1 = PntInt.from(30, 10);
+	static Pnt2d p2 = PntInt.from(200, 100);
+	static Pnt2d p3 = PntInt.from(90, 40);
 	
-	static Point pRef = Point.create(70, 50);
+	static Pnt2d pRef = PntInt.from(70, 50);
 	
 	@Test
 	public void test0() {
 		// example from CV lecture notes
-		Point xRef = Point.create(90, 60);
+		Pnt2d xRef = PntInt.from(90, 60);
 		AlgebraicLine h12 = AlgebraicLine.fromPoints(p1, p2);
 	
 		HoughLine L12 = new HoughLine(h12, xRef.getX(), xRef.getY(), 0);
@@ -41,7 +42,7 @@ public class HoughLineTest {
 	@Test
 	public void test2() {
 		HoughLine l12 = HoughLine.fromPoints(p1, p2, pRef, 2);
-		Point x0 = l12.getClosestLinePoint(p3);
+		Pnt2d x0 = l12.getClosestLinePoint(p3);
 		Assert.assertEquals(0.0, l12.getDistance(x0), 1E-6);						// x0 is actually ON the line
 		Assert.assertEquals(p3.distance(x0), Math.abs(l12.getDistance(p3)), 1E-6);	// distance (p3,x0) is shortest 
 	}

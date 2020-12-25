@@ -9,7 +9,8 @@
 
 package imagingbook.pub.geometry.mappings.nonlinear;
 
-import imagingbook.pub.geometry.basic.Point;
+import imagingbook.pub.geometry.basic.Pnt2d;
+import imagingbook.pub.geometry.basic.Pnt2d.PntDouble;
 import imagingbook.pub.geometry.mappings.Mapping2D;
 
 /**
@@ -41,7 +42,7 @@ public class SphereMapping implements Mapping2D {
 	}
 
 	@Override
-	public Point applyTo(Point pnt) {
+	public Pnt2d applyTo(Pnt2d pnt) {
 		final double x = pnt.getX();
 		final double y = pnt.getY();
 		double dx = x - xc;
@@ -63,10 +64,10 @@ public class SphereMapping implements Mapping2D {
 			double yAlpha = Math.asin(dy / Math.sqrt(dy2 + z2));
 			double yBeta = yAlpha - yAlpha * (1 / refIdx);
 			double y1 = y - z * Math.tan(yBeta);
-			return Point.create(x1, y1);
+			return PntDouble.from(x1, y1);
 		}
 		else { // otherwise leave point unchanged
-			return Point.create(x, y);
+			return PntDouble.from(x, y);
 		}
 	}
 }

@@ -35,7 +35,7 @@
 <span class="sourceLineNo">025</span><a id="line.25">import java.util.Iterator;</a>
 <span class="sourceLineNo">026</span><a id="line.26">import java.util.NoSuchElementException;</a>
 <span class="sourceLineNo">027</span><a id="line.27"></a>
-<span class="sourceLineNo">028</span><a id="line.28">import imagingbook.pub.geometry.basic.Point;</a>
+<span class="sourceLineNo">028</span><a id="line.28">import imagingbook.pub.geometry.basic.Pnt2d;</a>
 <span class="sourceLineNo">029</span><a id="line.29">import imagingbook.pub.geometry.delaunay.Triangle;</a>
 <span class="sourceLineNo">030</span><a id="line.30"></a>
 <span class="sourceLineNo">031</span><a id="line.31"></a>
@@ -83,7 +83,7 @@
 <span class="sourceLineNo">073</span><a id="line.73">            throw new IllegalArgumentException("Triangle must have 3 vertices");</a>
 <span class="sourceLineNo">074</span><a id="line.74">    }</a>
 <span class="sourceLineNo">075</span><a id="line.75">    </a>
-<span class="sourceLineNo">076</span><a id="line.76">        public Triangle2D(Point[] points) {</a>
+<span class="sourceLineNo">076</span><a id="line.76">        public Triangle2D(Pnt2d[] points) {</a>
 <span class="sourceLineNo">077</span><a id="line.77">                this(new Pnt(points[0]), new Pnt(points[1]), new Pnt(points[2]));</a>
 <span class="sourceLineNo">078</span><a id="line.78">        }</a>
 <span class="sourceLineNo">079</span><a id="line.79">    </a>
@@ -174,8 +174,8 @@
 <span class="sourceLineNo">164</span><a id="line.164">    // method required by {@link Triangle} interface:</a>
 <span class="sourceLineNo">165</span><a id="line.165">    </a>
 <span class="sourceLineNo">166</span><a id="line.166">        @Override</a>
-<span class="sourceLineNo">167</span><a id="line.167">        public Point[] getPoints() {</a>
-<span class="sourceLineNo">168</span><a id="line.168">                return this.toArray(new Point[0]);</a>
+<span class="sourceLineNo">167</span><a id="line.167">        public Pnt2d[] getPoints() {</a>
+<span class="sourceLineNo">168</span><a id="line.168">                return this.toArray(new Pnt2d[0]);</a>
 <span class="sourceLineNo">169</span><a id="line.169">        }</a>
 <span class="sourceLineNo">170</span><a id="line.170"></a>
 <span class="sourceLineNo">171</span><a id="line.171">}</a>

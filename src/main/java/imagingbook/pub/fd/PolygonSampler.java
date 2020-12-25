@@ -9,7 +9,8 @@
 
 package imagingbook.pub.fd;
 
-import imagingbook.pub.geometry.basic.Point;
+import imagingbook.pub.geometry.basic.Pnt2d;
+import imagingbook.pub.geometry.basic.Pnt2d.PntDouble;
 
 /**
  * @version 2020/04/01
@@ -28,21 +29,21 @@ public class PolygonSampler {
 	 * @param M the number of sample points.
 	 * @return the sample points as an array of Point objects.
 	 */
-	public Point[] samplePolygonUniformly(Point[] V, int M) {
+	public Pnt2d[] samplePolygonUniformly(Pnt2d[] V, int M) {
 		int N = V.length;
 		double Delta = pathLength(V) / M;	// constant segment length in Q
 		// distribute N points along polygon path P
-		Point[] S = new Point[M];
+		Pnt2d[] S = new Pnt2d[M];
 //		S[0] = (Point) V[0].clone();	// q_0 = p_0 (duplicate p_0)
-		S[0] = Point.create(V[0]);		// q_0 = p_0 (duplicate p_0)
+		S[0] = PntDouble.from(V[0]);		// q_0 = p_0 (duplicate p_0)
 		int i = 0;			// lower index of segment (i,i+1) in P
 		int j = 1;			// index of next point to be added to Q
 		double alpha = 0;	// lower boundary of current path segment in P
 		double beta = Delta;	// path position of next point to be added to Q
 		// for all M segments in P do:
 		while (i < N && j < M) {
-			Point vA = V[i];
-			Point vB = V[(i + 1) % N];
+			Pnt2d vA = V[i];
+			Pnt2d vB = V[(i + 1) % N];
 			double delta = vA.distance(vB);
 			// handle segment (i,i+1) with path boundaries (a,a+d), knowing a < b
 			while (beta <= alpha + delta && j < M) {
@@ -66,38 +67,38 @@ public class PolygonSampler {
 	 * polggon's circumference in [0,1].
 	 * @return the sample points as an array of Point objects.
 	 */
-	public Point[] samplePolygonUniformly(Point[] V, int M, double startFrac) {
+	public Pnt2d[] samplePolygonUniformly(Pnt2d[] V, int M, double startFrac) {
 		int startPos = (int) Math.round(V.length * startFrac) % V.length;
 		return samplePolygonUniformly(shiftLeft(V, startPos), M);
 	}
 	
-	private Point[] shiftLeft(Point[] V, int startPos) {
+	private Pnt2d[] shiftLeft(Pnt2d[] V, int startPos) {
 		int polyLen = V.length;
-		Point[] P2 = new Point[polyLen]; 
+		Pnt2d[] P2 = new Pnt2d[polyLen]; 
 		for (int i = 0; i < P2.length; i++) {
 //			P2[i] = (Point) V[(i + startPos) % polyLen].clone();
-			P2[i] = Point.create(V[(i + startPos) % polyLen]);
+			P2[i] = PntDouble.from(V[(i + startPos) % polyLen]);
 		}
 		return P2;
 	}
 	
 	
-	protected double pathLength(Point[] V) {
+	protected double pathLength(Pnt2d[] V) {
 		double L = 0;
 		final int N = V.length;
 		for (int i = 0; i < N; i++) {
-			Point p0 = V[i];
-			Point p1 = V[(i + 1) % N];
+			Pnt2d p0 = V[i];
+			Pnt2d p1 = V[(i + 1) % N];
 			L = L + p0.distance(p1);
 		}
 		return L;
 	}
 	
-	protected Point interpolate(Point p0, Point p1, double alpha) {
+	protected Pnt2d interpolate(Pnt2d p0, Pnt2d p1, double alpha) {
 		// alpha is in [0,1]
 		double x = p0.getX() + alpha * (p1.getX() - p0.getX());
 		double y = p0.getY() + alpha * (p1.getY() - p0.getY());
-		return Point.create(x, y);
+		return Pnt2d.PntDouble.from(x, y);
 	}
 	
 }

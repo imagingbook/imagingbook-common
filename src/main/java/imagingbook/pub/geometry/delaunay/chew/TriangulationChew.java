@@ -32,7 +32,7 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import imagingbook.pub.geometry.basic.Point;
+import imagingbook.pub.geometry.basic.Pnt2d;
 import imagingbook.pub.geometry.delaunay.DelaunayTriangulation;
 import imagingbook.pub.geometry.delaunay.Triangle;
 import imagingbook.pub.geometry.delaunay.Utils;
@@ -87,7 +87,7 @@ public class TriangulationChew extends AbstractSet<Triangle2D> implements Delaun
     private Triangle2D mostRecent = null;      // Most recently "active" triangle
     private final Triangle2D superTriangle;
     private final Graph<Triangle2D> triGraph;        // Holds triangles for navigation
-    private final List<Point> points;
+    private final List<Pnt2d> points;
     
     /** 
      * Convenience constructor for insertion into a bounding rectangle
@@ -104,7 +104,7 @@ public class TriangulationChew extends AbstractSet<Triangle2D> implements Delaun
      * Constructor that takes an initial outer (super) triangle.
      * @param outerTriangle the outer (super) triangle
      */
-    public TriangulationChew(Point[] outerTriangle) {
+    public TriangulationChew(Pnt2d[] outerTriangle) {
     	this(new Triangle2D(outerTriangle));
     }
     
@@ -114,7 +114,7 @@ public class TriangulationChew extends AbstractSet<Triangle2D> implements Delaun
      * The points are inserted into the resulting triangulation.
      * @param pointSet a sequence of 2D points
      */
-    public TriangulationChew(Collection<Point> pointSet) {
+    public TriangulationChew(Collection<Pnt2d> pointSet) {
     	this(new Triangle2D(Utils.makeOuterTriangle(pointSet)));
     	insertAll(pointSet);
     }
@@ -246,8 +246,8 @@ public class TriangulationChew extends AbstractSet<Triangle2D> implements Delaun
         return null;
     }
     
-    public void insertAll(Collection<Point> pointSet) {
-    	for (Point p : pointSet) {
+    public void insertAll(Collection<Pnt2d> pointSet) {
+    	for (Pnt2d p : pointSet) {
     		insert(p);
     	}
     }
@@ -259,7 +259,7 @@ public class TriangulationChew extends AbstractSet<Triangle2D> implements Delaun
      * Throws an {@link IllegalArgumentException} if p does not lie in any triangle.
      * @param p the point to be inserted
      */
-    public void insert(Point p) {
+    public void insert(Pnt2d p) {
     	Pnt vec = new Pnt(p);
         // Locate containing triangle
         Triangle2D triangle = locate(vec);
@@ -371,7 +371,7 @@ public class TriangulationChew extends AbstractSet<Triangle2D> implements Delaun
 	}
 	
 	@Override
-	public List<Point> getPoints() {
+	public List<Pnt2d> getPoints() {
 		return Collections.unmodifiableList(points);
 	}
 	

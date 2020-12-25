@@ -6,7 +6,7 @@ import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.RealVector;
 import org.apache.commons.math3.linear.SingularValueDecomposition;
 
-import imagingbook.pub.geometry.basic.Point;
+import imagingbook.pub.geometry.basic.Pnt2d;
 
 public class ProjectiveFit2D implements LinearFit2D {
 	
@@ -21,7 +21,7 @@ public class ProjectiveFit2D implements LinearFit2D {
 	 * @param P the source points
 	 * @param Q the target points
 	 */
-	public ProjectiveFit2D(Point[] P, Point[] Q) {
+	public ProjectiveFit2D(Pnt2d[] P, Pnt2d[] Q) {
 		checkSize(P, Q);
 		final int n = P.length;
 		
@@ -68,7 +68,7 @@ public class ProjectiveFit2D implements LinearFit2D {
 	
 	// ------------------------------------------------------------------------------
 	
-	protected static void checkSize(Point[] P, Point[] Q) {
+	protected static void checkSize(Pnt2d[] P, Pnt2d[] Q) {
 		if (P.length < 4 || Q.length < 4) {
 			throw new IllegalArgumentException("At least 4 point pairs are required to calculate this fit");
 		}

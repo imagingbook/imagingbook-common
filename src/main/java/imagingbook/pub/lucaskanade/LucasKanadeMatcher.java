@@ -11,7 +11,8 @@ package imagingbook.pub.lucaskanade;
 import ij.ImagePlus;
 import ij.process.FloatProcessor;
 import imagingbook.lib.math.Matrix;
-import imagingbook.pub.geometry.basic.Point;
+import imagingbook.pub.geometry.basic.Pnt2d;
+import imagingbook.pub.geometry.basic.Pnt2d.PntDouble;
 import imagingbook.pub.geometry.mappings.linear.AffineMapping2D;
 import imagingbook.pub.geometry.mappings.linear.ProjectiveMapping2D;
 import imagingbook.pub.geometry.mappings.linear.Translation2D;
@@ -74,24 +75,24 @@ public abstract class LucasKanadeMatcher {
 	 * @param Q an arbitrary quad (should be inside the search image I);
 	 * @return the transformation from {@code R}'s bounding rectangle to {@code Q}.
 	 */
-	public ProjectiveMapping2D getReferenceMappingTo(Point[] Q) {
-		Point[] Rpts = getReferencePoints();
+	public ProjectiveMapping2D getReferenceMappingTo(Pnt2d[] Q) {
+		Pnt2d[] Rpts = getReferencePoints();
 		return ProjectiveMapping2D.fromPoints(Rpts, Q);
 	}
 	
 	/**
 	 * @return the corner points of the bounding rectangle of R, centered at the origin.
 	 */
-	public Point[] getReferencePoints() {
+	public Pnt2d[] getReferencePoints() {
 		double xmin = -xc;
 		double xmax = -xc + wR - 1;
 		double ymin = -yc;
 		double ymax = -yc + hR - 1;
-		Point[] pts = new Point[4];
-		pts[0] = Point.create(xmin, ymin);
-		pts[1] = Point.create(xmax, ymin);
-		pts[2] = Point.create(xmax, ymax);
-		pts[3] = Point.create(xmin, ymax);
+		Pnt2d[] pts = new Pnt2d[4];
+		pts[0] = PntDouble.from(xmin, ymin);
+		pts[1] = PntDouble.from(xmax, ymin);
+		pts[2] = PntDouble.from(xmax, ymax);
+		pts[3] = PntDouble.from(xmin, ymax);
 		return pts;
 	}
 	

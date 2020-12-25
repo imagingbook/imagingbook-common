@@ -2,7 +2,7 @@ package imagingbook.pub.geometry.delaunay.guibas;
 
 import java.util.Arrays;
 
-import imagingbook.pub.geometry.basic.Point;
+import imagingbook.pub.geometry.basic.Pnt2d;
 import imagingbook.pub.geometry.delaunay.Triangle;
 
 
@@ -32,7 +32,7 @@ public class Triangle2D implements Triangle {
 		isOrientedCCW = findIfOrientedCCW();
 	}
 	
-	public Triangle2D(Point[] points) {
+	public Triangle2D(Pnt2d[] points) {
 		this(new Vector2D(points[0]), new Vector2D(points[1]), new Vector2D(points[2]));
 	}
 
@@ -197,8 +197,8 @@ public class Triangle2D implements Triangle {
 	}
 
 	@Override
-	public Point[] getPoints() {
-		return new Point[] {a, b, c};
+	public Pnt2d[] getPoints() {
+		return new Pnt2d[] {a, b, c};
 	}
 
 }

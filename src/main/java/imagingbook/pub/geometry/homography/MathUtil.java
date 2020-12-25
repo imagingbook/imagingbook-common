@@ -11,7 +11,7 @@ import org.apache.commons.math3.linear.RealVector;
 import org.apache.commons.math3.linear.SingularValueDecomposition;
 
 import imagingbook.lib.math.Matrix;
-import imagingbook.pub.geometry.basic.Point;
+import imagingbook.pub.geometry.basic.Pnt2d;
 
 /**
  * Static utility methods used for camera calibration.
@@ -227,7 +227,7 @@ public class MathUtil {
 		return (sum2 - (sum * sum) / n) / n;
 	}
 
-	public static RealMatrix getNormalisationMatrix(Point[] pnts) {
+	public static RealMatrix getNormalisationMatrix(Pnt2d[] pnts) {
 		final int N = pnts.length;
 		double[] x = new double[N];
 		double[] y = new double[N];

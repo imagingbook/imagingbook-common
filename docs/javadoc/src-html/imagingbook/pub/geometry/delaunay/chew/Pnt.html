@@ -10,7 +10,7 @@
 <div class="sourceContainer">
 <pre><span class="sourceLineNo">001</span><a id="line.1">package imagingbook.pub.geometry.delaunay.chew;</a>
 <span class="sourceLineNo">002</span><a id="line.2"></a>
-<span class="sourceLineNo">003</span><a id="line.3">import imagingbook.pub.geometry.basic.Point;</a>
+<span class="sourceLineNo">003</span><a id="line.3">import imagingbook.pub.geometry.basic.Pnt2d;</a>
 <span class="sourceLineNo">004</span><a id="line.4"></a>
 <span class="sourceLineNo">005</span><a id="line.5">/*</a>
 <span class="sourceLineNo">006</span><a id="line.6"> * Copyright (c) 2005, 2007 by L. Paul Chew.</a>
@@ -49,7 +49,7 @@
 <span class="sourceLineNo">039</span><a id="line.39"> * @version 2020-01-01</a>
 <span class="sourceLineNo">040</span><a id="line.40"> * </a>
 <span class="sourceLineNo">041</span><a id="line.41"> */</a>
-<span class="sourceLineNo">042</span><a id="line.42">public class Pnt implements Point {</a>
+<span class="sourceLineNo">042</span><a id="line.42">public class Pnt implements Pnt2d {</a>
 <span class="sourceLineNo">043</span><a id="line.43"></a>
 <span class="sourceLineNo">044</span><a id="line.44">    private double[] coordinates;          // The point's coordinates</a>
 <span class="sourceLineNo">045</span><a id="line.45"></a>
@@ -66,7 +66,7 @@
 <span class="sourceLineNo">056</span><a id="line.56">        coordinates = coords.clone();</a>
 <span class="sourceLineNo">057</span><a id="line.57">    }</a>
 <span class="sourceLineNo">058</span><a id="line.58">    </a>
-<span class="sourceLineNo">059</span><a id="line.59">    public Pnt (Point p) {</a>
+<span class="sourceLineNo">059</span><a id="line.59">    public Pnt (Pnt2d p) {</a>
 <span class="sourceLineNo">060</span><a id="line.60">        this(p.getX(), p.getY());</a>
 <span class="sourceLineNo">061</span><a id="line.61">    }</a>
 <span class="sourceLineNo">062</span><a id="line.62">    </a>
@@ -96,7 +96,7 @@
 <span class="sourceLineNo">086</span><a id="line.86">    public int hashCode () {</a>
 <span class="sourceLineNo">087</span><a id="line.87">        int hash = 0;</a>
 <span class="sourceLineNo">088</span><a id="line.88">        for (double c: this.coordinates) {</a>
-<span class="sourceLineNo">089</span><a id="line.89">            long bits = Double.doubleToLongBits(c);</a>
+<span class="sourceLineNo">089</span><a id="line.89">            long bits = java.lang.Double.doubleToLongBits(c);</a>
 <span class="sourceLineNo">090</span><a id="line.90">            hash = (31*hash) ^ (int)(bits ^ (bits &gt;&gt; 32));</a>
 <span class="sourceLineNo">091</span><a id="line.91">        }</a>
 <span class="sourceLineNo">092</span><a id="line.92">        return hash;</a>

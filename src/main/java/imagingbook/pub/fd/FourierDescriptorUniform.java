@@ -10,7 +10,7 @@ package imagingbook.pub.fd;
 
 import imagingbook.lib.math.Arithmetic;
 import imagingbook.lib.math.Complex;
-import imagingbook.pub.geometry.basic.Point;
+import imagingbook.pub.geometry.basic.Pnt2d;
 
 
 /**
@@ -28,7 +28,7 @@ public class FourierDescriptorUniform extends FourierDescriptor {
 	 * 
 	 * @param V polygon
 	 */
-	public FourierDescriptorUniform(Point[] V) {
+	public FourierDescriptorUniform(Pnt2d[] V) {
 		g = makeComplex(V);
 		G = DFT(g);
 	}
@@ -41,7 +41,7 @@ public class FourierDescriptorUniform extends FourierDescriptor {
 	 * @param V polygon
 	 * @param Mp number of coefficient pairs
 	 */
-	public FourierDescriptorUniform(Point[] V, int Mp) {
+	public FourierDescriptorUniform(Pnt2d[] V, int Mp) {
 		g = makeComplex(V);
 		G = DFT(g, 2 * Mp + 1);
 	}

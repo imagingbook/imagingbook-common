@@ -2,7 +2,7 @@ package imagingbook.pub.geometry.delaunay;
 
 import java.util.List;
 
-import imagingbook.pub.geometry.basic.Point;
+import imagingbook.pub.geometry.basic.Pnt2d;
 
 /**
  * Interface specification for various implementations of the
@@ -19,12 +19,12 @@ public interface DelaunayTriangulation {
 	List<Triangle> getTriangles();
 	
 	/**
-	 * Returns a list of 2D vertices (implementing the {@link Point} interface)
+	 * Returns a list of 2D vertices (implementing the {@link Pnt2d} interface)
 	 * contained in this triangulation. The sequence of points is assumed
 	 * to be in the order of their actual insertion. The list does not contain the
 	 * vertices of the initial (outer) triangle.
 	 * @return a list of points
 	 */
-	List<Point> getPoints();
+	List<Pnt2d> getPoints();
 
 }

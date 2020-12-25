@@ -11,7 +11,8 @@ package imagingbook.pub.lucaskanade;
 import ij.process.FloatProcessor;
 import imagingbook.lib.ij.IjUtils;
 import imagingbook.lib.math.Matrix;
-import imagingbook.pub.geometry.basic.Point;
+import imagingbook.pub.geometry.basic.Pnt2d;
+import imagingbook.pub.geometry.basic.Pnt2d.PntDouble;
 import imagingbook.pub.geometry.mappings.linear.ProjectiveMapping2D;
 
 /**
@@ -80,9 +81,9 @@ public class LucasKanadeForwardMatcher extends LucasKanadeMatcher {
 		for (int u = 0; u < wR; u++) {
 			for (int v = 0; v < hR; v++) {
 				//double[] x = {u - xc, v - yc};	// position w.r.t. the center of R
-				Point x = Point.create(u - xc, v - yc);		// position w.r.t. the center of R
+				Pnt2d x = PntDouble.from(u - xc, v - yc);		// position w.r.t. the center of R
 				//double[] xT = Tp.applyTo(x);		// warp x -> x'
-				Point xT = Tp.applyTo(x);		// warp x -> x'
+				Pnt2d xT = Tp.applyTo(x);		// warp x -> x'
 
 //				double gx = Ix.getInterpolatedValue(xT[0], xT[1]);	// interpolate the gradient at pos. xw
 //				double gy = Iy.getInterpolatedValue(xT[0], xT[1]);

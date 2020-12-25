@@ -12,7 +12,8 @@ import ij.IJ;
 import ij.process.FloatProcessor;
 import imagingbook.lib.ij.IjUtils;
 import imagingbook.lib.math.Matrix;
-import imagingbook.pub.geometry.basic.Point;
+import imagingbook.pub.geometry.basic.Pnt2d;
+import imagingbook.pub.geometry.basic.Pnt2d.PntDouble;
 import imagingbook.pub.geometry.mappings.linear.ProjectiveMapping2D;
 
 
@@ -59,7 +60,7 @@ public class LucasKanadeInverseMatcher extends LucasKanadeMatcher {
 		for (int u = 0; u < wR; u++) {			// for all coordinates (u,v) in R do
 			for (int v = 0; v < hR; v++) {
 //				double[] x = {u - xc, v - yc};	// position w.r.t. the center of R
-				Point x = Point.create(u - xc, v - yc);	// position w.r.t. the center of R
+				Pnt2d x = PntDouble.from(u - xc, v - yc);	// position w.r.t. the center of R
 				double[] gradR = {Rx[u][v], Ry[u][v]};
 
 				double[][] J = Tp.getJacobian(x);
@@ -104,11 +105,11 @@ public class LucasKanadeInverseMatcher extends LucasKanadeMatcher {
 				
 				// get coordinate relative to center of R
 //				double[] x = {u - xc, v - yc};
-				Point x = Point.create(u - xc, v - yc);
+				Pnt2d x = PntDouble.from(u - xc, v - yc);
 				
 				// warp I to I' (onto R)
 //				double[] xT = Tp.applyTo(x);		// warp from x -> x'
-				Point xT = Tp.applyTo(x);		// warp from x -> x'
+				Pnt2d xT = Tp.applyTo(x);		// warp from x -> x'
 
 				// calculate pixel difference d for pos. (u,v)
 				double d = I.getInterpolatedValue(xT.getX(), xT.getY()) - R.getf(u, v);

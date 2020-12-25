@@ -22,7 +22,7 @@ import org.apache.commons.math3.optim.univariate.UnivariatePointValuePair;
 
 import imagingbook.lib.math.Arithmetic;
 import imagingbook.lib.math.Complex;
-import imagingbook.pub.geometry.basic.Point;
+import imagingbook.pub.geometry.basic.Pnt2d;
 
 /**
  * This is the abstract super-class for Fourier descriptors. It cannot
@@ -105,7 +105,7 @@ public abstract class FourierDescriptor implements Cloneable {
 
 	// ----------------------------------------------------------------
 
-	protected static Complex[] makeComplex(Point[] points) {
+	protected static Complex[] makeComplex(Pnt2d[] points) {
 		int N = points.length;
 		Complex[] samples = new Complex[N];
 		for (int i = 0; i < N; i++) {

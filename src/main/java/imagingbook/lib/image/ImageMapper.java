@@ -2,7 +2,8 @@ package imagingbook.lib.image;
 
 import ij.process.ImageProcessor;
 import imagingbook.lib.interpolation.InterpolationMethod;
-import imagingbook.pub.geometry.basic.Point;
+import imagingbook.pub.geometry.basic.Pnt2d;
+import imagingbook.pub.geometry.basic.Pnt2d.PntInt;
 import imagingbook.pub.geometry.mappings.Mapping2D;
 
 /**
@@ -105,7 +106,7 @@ public class ImageMapper {
 		final int h = target.getHeight();
 		for (int v = 0; v < h; v++) {
 			for (int u = 0; u < w; u++) {
-				Point sourcePt = invMap.applyTo(Point.create(u, v));
+				Pnt2d sourcePt = invMap.applyTo(PntInt.from(u, v));
 				float[] val = sourceAcc.getPix(sourcePt.getX(), sourcePt.getY());
 				targetAcc.setPix(u, v, val);
 			}

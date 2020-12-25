@@ -13,7 +13,8 @@ import java.util.Deque;
 import java.util.LinkedList;
 
 import ij.process.ByteProcessor;
-import imagingbook.pub.geometry.basic.Point;
+import imagingbook.pub.geometry.basic.Pnt2d;
+import imagingbook.pub.geometry.basic.Pnt2d.PntInt;
 
 /**
  * Binary region labeler based on a depth-first flood filling
@@ -54,23 +55,23 @@ public class SegmentationDepthFirst extends BinaryRegionSegmentation {
 	}
 
 	private void floodFill(int u, int v, int label) {
-		Deque<Point> S = new LinkedList<Point>();	//stack contains pixel coordinates
-		S.push(Point.create(u, v));
+		Deque<Pnt2d> S = new LinkedList<Pnt2d>();	//stack contains pixel coordinates
+		S.push(PntInt.from(u, v));
 		while (!S.isEmpty()){
-			Point p = S.pop();
+			Pnt2d p = S.pop();
 			int x = (int) p.getX();
 			int y = (int) p.getY();
 			if ((x >= 0) && (x < width) && (y >= 0) && (y < height)	&& getLabel(x, y) == FOREGROUND) {
 				setLabel(x, y, label);
-				S.push(Point.create(x + 1, y));
-				S.push(Point.create(x, y + 1));
-				S.push(Point.create(x, y - 1));
-				S.push(Point.create(x - 1, y));
+				S.push(PntInt.from(x + 1, y));
+				S.push(PntInt.from(x, y + 1));
+				S.push(PntInt.from(x, y - 1));
+				S.push(PntInt.from(x - 1, y));
 				if (neighborType == NeighborhoodType.N8) {
-					S.push(Point.create(x + 1, y + 1));
-					S.push(Point.create(x - 1, y + 1));
-					S.push(Point.create(x + 1, y - 1));
-					S.push(Point.create(x - 1, y - 1));
+					S.push(PntInt.from(x + 1, y + 1));
+					S.push(PntInt.from(x - 1, y + 1));
+					S.push(PntInt.from(x + 1, y - 1));
+					S.push(PntInt.from(x - 1, y - 1));
 				}
 			}
 		}

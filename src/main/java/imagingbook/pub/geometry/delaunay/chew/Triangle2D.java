@@ -25,7 +25,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-import imagingbook.pub.geometry.basic.Point;
+import imagingbook.pub.geometry.basic.Pnt2d;
 import imagingbook.pub.geometry.delaunay.Triangle;
 
 
@@ -73,7 +73,7 @@ public class Triangle2D extends ArraySet<Pnt> implements Triangle {
             throw new IllegalArgumentException("Triangle must have 3 vertices");
     }
     
-	public Triangle2D(Point[] points) {
+	public Triangle2D(Pnt2d[] points) {
 		this(new Pnt(points[0]), new Pnt(points[1]), new Pnt(points[2]));
 	}
     
@@ -164,8 +164,8 @@ public class Triangle2D extends ArraySet<Pnt> implements Triangle {
     // method required by {@link Triangle} interface:
     
 	@Override
-	public Point[] getPoints() {
-		return this.toArray(new Point[0]);
+	public Pnt2d[] getPoints() {
+		return this.toArray(new Pnt2d[0]);
 	}
 
 }

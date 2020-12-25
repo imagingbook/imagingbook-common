@@ -10,7 +10,7 @@
 <div class="sourceContainer">
 <pre><span class="sourceLineNo">001</span><a id="line.1">package imagingbook.pub.geometry.mappings;</a>
 <span class="sourceLineNo">002</span><a id="line.2"></a>
-<span class="sourceLineNo">003</span><a id="line.3">import imagingbook.pub.geometry.basic.Point;</a>
+<span class="sourceLineNo">003</span><a id="line.3">import imagingbook.pub.geometry.basic.Pnt2d;</a>
 <span class="sourceLineNo">004</span><a id="line.4"></a>
 <span class="sourceLineNo">005</span><a id="line.5">public interface Mapping2D extends Cloneable {</a>
 <span class="sourceLineNo">006</span><a id="line.6">        </a>
@@ -20,10 +20,10 @@
 <span class="sourceLineNo">010</span><a id="line.10">         * @param pnt the original point</a>
 <span class="sourceLineNo">011</span><a id="line.11">         * @return the transformed point</a>
 <span class="sourceLineNo">012</span><a id="line.12">         */</a>
-<span class="sourceLineNo">013</span><a id="line.13">        Point applyTo (Point pnt);</a>
+<span class="sourceLineNo">013</span><a id="line.13">        Pnt2d applyTo (Pnt2d pnt);</a>
 <span class="sourceLineNo">014</span><a id="line.14">        </a>
-<span class="sourceLineNo">015</span><a id="line.15">        default Point[] applyTo(Point[] pnts) {</a>
-<span class="sourceLineNo">016</span><a id="line.16">                Point[] outPnts = new Point[pnts.length];</a>
+<span class="sourceLineNo">015</span><a id="line.15">        default Pnt2d[] applyTo(Pnt2d[] pnts) {</a>
+<span class="sourceLineNo">016</span><a id="line.16">                Pnt2d[] outPnts = new Pnt2d[pnts.length];</a>
 <span class="sourceLineNo">017</span><a id="line.17">                for (int i = 0; i &lt; pnts.length; i++) {</a>
 <span class="sourceLineNo">018</span><a id="line.18">                        outPnts[i] = applyTo(pnts[i]);</a>
 <span class="sourceLineNo">019</span><a id="line.19">                }</a>
@@ -48,7 +48,7 @@
 <span class="sourceLineNo">038</span><a id="line.38">         * @param xy the 2D position to calculate the Jacobian for</a>
 <span class="sourceLineNo">039</span><a id="line.39">         * @return the Jacobian matrix</a>
 <span class="sourceLineNo">040</span><a id="line.40">         */</a>
-<span class="sourceLineNo">041</span><a id="line.41">        default double[][] getJacobian(Point xy) {</a>
+<span class="sourceLineNo">041</span><a id="line.41">        default double[][] getJacobian(Pnt2d xy) {</a>
 <span class="sourceLineNo">042</span><a id="line.42">                throw new UnsupportedOperationException("No Jacobian available for this mapping");</a>
 <span class="sourceLineNo">043</span><a id="line.43">        }</a>
 <span class="sourceLineNo">044</span><a id="line.44">}</a>

@@ -11,7 +11,9 @@ import org.apache.commons.math3.linear.SingularValueDecomposition;
 
 import imagingbook.lib.math.Matrix;
 import imagingbook.lib.settings.PrintPrecision;
-import imagingbook.pub.geometry.basic.Point;
+import imagingbook.pub.geometry.basic.Pnt2d;
+import imagingbook.pub.geometry.basic.Pnt2d.PntDouble;
+import imagingbook.pub.geometry.basic.Pnt2d.PntInt;
 
 
 /**
@@ -53,7 +55,7 @@ public class ProcrustesFit implements LinearFit2D {
 	 * @param P the source points
 	 * @param Q the target points
 	 */
-	public ProcrustesFit(Point[] P, Point[] Q) {
+	public ProcrustesFit(Pnt2d[] P, Pnt2d[] Q) {
 		this(P, Q, true, true, true);
 	}
 	
@@ -68,7 +70,7 @@ public class ProcrustesFit implements LinearFit2D {
 	 * @param forceRotation if {@code true}, the orthogonal part of the transformation (Q)
 	 * 		is forced to a true rotation and no reflection is allowed
 	 */
-	public ProcrustesFit(Point[] P, Point[] Q, boolean allowTranslation, boolean allowScaling, boolean forceRotation) {
+	public ProcrustesFit(Pnt2d[] P, Pnt2d[] Q, boolean allowTranslation, boolean allowScaling, boolean forceRotation) {
 		checkSize(P, Q);
 		
 		double[] meanP = null;
@@ -172,13 +174,13 @@ public class ProcrustesFit implements LinearFit2D {
 	 * @param Q Sequence of n-dimensional points (reference).
 	 * @return The total error for the estimated fit.
 	 */
-	private double getEuclideanError(Point[] P, Point[] Q) {
+	private double getEuclideanError(Pnt2d[] P, Pnt2d[] Q) {
 		int m = Math.min(P.length,  Q.length);
 		RealMatrix sR = R.scalarMultiply(s);
 		double errSum = 0;
 		for (int i = 0; i < m; i++) {
-			RealVector p = new ArrayRealVector(P[i].toArray());
-			RealVector q = new ArrayRealVector(Q[i].toArray());
+			RealVector p = new ArrayRealVector(P[i].toDoubleArray());
+			RealVector q = new ArrayRealVector(Q[i].toDoubleArray());
 			RealVector pp = sR.operate(p).add(t);
 			//System.out.format("p=%s, q=%s, pp=%s\n", p.toString(), q.toString(), pp.toString());
 			double e = pp.subtract(q).getNorm();
@@ -193,22 +195,22 @@ public class ProcrustesFit implements LinearFit2D {
 		return new LUDecomposition(M).getDeterminant();
 	}
 	
-	private double[] getMeanVec(Point[] points) {
+	private double[] getMeanVec(Pnt2d[] points) {
 		double sumX = 0;
 		double sumY = 0;
-		for (Point p : points) {
+		for (Pnt2d p : points) {
 			sumX = sumX + p.getX();
 			sumY = sumY + p.getY();
 		}
 		return new double[] {sumX / points.length, sumY / points.length};
 	}
 	
-	private RealMatrix makeDataMatrix(Point[] points, double[] meanX) {
+	private RealMatrix makeDataMatrix(Pnt2d[] points, double[] meanX) {
 		RealMatrix M = MatrixUtils.createRealMatrix(2, points.length);
 		RealVector mean = MatrixUtils.createRealVector(meanX);
 		int i = 0;
-		for (Point p : points) {
-			RealVector cv = MatrixUtils.createRealVector(p.toArray());
+		for (Pnt2d p : points) {
+			RealVector cv = MatrixUtils.createRealVector(p.toDoubleArray());
 			if (meanX != null) {
 				cv = cv.subtract(mean);
 			}
@@ -230,7 +232,7 @@ public class ProcrustesFit implements LinearFit2D {
 //	}
 	
 	
-	private void checkSize(Point[] P, Point[] Q) {
+	private void checkSize(Pnt2d[] P, Pnt2d[] Q) {
 		if (P.length < 3 || Q.length < 3) {
 			throw new IllegalArgumentException("At least 3 point pairs are required to calculate this fit");
 		}
@@ -266,21 +268,21 @@ public class ProcrustesFit implements LinearFit2D {
 		System.out.format("original scale: s = %.6f\n", s);
 		System.out.println();
 		
-		Point[] P = {
-				Point.create(2, 5),
-				Point.create(7, 3),
-				Point.create(0, 9),
-				Point.create(5, 4)
+		Pnt2d[] P = {
+				PntInt.from(2, 5),
+				PntInt.from(7, 3),
+				PntInt.from(0, 9),
+				PntInt.from(5, 4)
 		};
 		
-		Point[] Q = new Point[P.length];
+		Pnt2d[] Q = new Pnt2d[P.length];
 		
 		for (int i = 0; i < P.length; i++) {
-			Point q = Point.create(R0.operate(P[i].toArray()));
+			Pnt2d q = PntDouble.from(R0.operate(P[i].toDoubleArray()));
 			// noise!
 			double qx = roundToDigits(s * q.getX() + t0[0], NDIGITS);
 			double qy = roundToDigits(s * q.getY() + t0[1], NDIGITS);
-			Q[i] = Point.create(qx, qy);
+			Q[i] = Pnt2d.PntDouble.from(qx, qy);
 		}
 		
 		//P[0] = Point.create(2, 0);	// to provoke a large error

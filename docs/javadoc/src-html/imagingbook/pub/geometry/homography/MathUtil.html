@@ -21,7 +21,7 @@
 <span class="sourceLineNo">011</span><a id="line.11">import org.apache.commons.math3.linear.SingularValueDecomposition;</a>
 <span class="sourceLineNo">012</span><a id="line.12"></a>
 <span class="sourceLineNo">013</span><a id="line.13">import imagingbook.lib.math.Matrix;</a>
-<span class="sourceLineNo">014</span><a id="line.14">import imagingbook.pub.geometry.basic.Point;</a>
+<span class="sourceLineNo">014</span><a id="line.14">import imagingbook.pub.geometry.basic.Pnt2d;</a>
 <span class="sourceLineNo">015</span><a id="line.15"></a>
 <span class="sourceLineNo">016</span><a id="line.16">/**</a>
 <span class="sourceLineNo">017</span><a id="line.17"> * Static utility methods used for camera calibration.</a>
@@ -237,7 +237,7 @@
 <span class="sourceLineNo">227</span><a id="line.227">                return (sum2 - (sum * sum) / n) / n;</a>
 <span class="sourceLineNo">228</span><a id="line.228">        }</a>
 <span class="sourceLineNo">229</span><a id="line.229"></a>
-<span class="sourceLineNo">230</span><a id="line.230">        public static RealMatrix getNormalisationMatrix(Point[] pnts) {</a>
+<span class="sourceLineNo">230</span><a id="line.230">        public static RealMatrix getNormalisationMatrix(Pnt2d[] pnts) {</a>
 <span class="sourceLineNo">231</span><a id="line.231">                final int N = pnts.length;</a>
 <span class="sourceLineNo">232</span><a id="line.232">                double[] x = new double[N];</a>
 <span class="sourceLineNo">233</span><a id="line.233">                double[] y = new double[N];</a>

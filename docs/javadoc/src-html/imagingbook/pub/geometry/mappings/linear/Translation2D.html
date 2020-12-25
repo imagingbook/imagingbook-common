@@ -19,7 +19,7 @@
 <span class="sourceLineNo">009</span><a id="line.9"></a>
 <span class="sourceLineNo">010</span><a id="line.10">package imagingbook.pub.geometry.mappings.linear;</a>
 <span class="sourceLineNo">011</span><a id="line.11"></a>
-<span class="sourceLineNo">012</span><a id="line.12">import imagingbook.pub.geometry.basic.Point;</a>
+<span class="sourceLineNo">012</span><a id="line.12">import imagingbook.pub.geometry.basic.Pnt2d;</a>
 <span class="sourceLineNo">013</span><a id="line.13"></a>
 <span class="sourceLineNo">014</span><a id="line.14">/**</a>
 <span class="sourceLineNo">015</span><a id="line.15"> * This class represents a pure 2D translation (as a special case of </a>
@@ -51,7 +51,7 @@
 <span class="sourceLineNo">041</span><a id="line.41">         * @param q the second point</a>
 <span class="sourceLineNo">042</span><a id="line.42">         * @return a new translation instance</a>
 <span class="sourceLineNo">043</span><a id="line.43">         */</a>
-<span class="sourceLineNo">044</span><a id="line.44">        public static Translation2D fromPoints(Point p, Point q) {</a>
+<span class="sourceLineNo">044</span><a id="line.44">        public static Translation2D fromPoints(Pnt2d p, Pnt2d q) {</a>
 <span class="sourceLineNo">045</span><a id="line.45">                return new Translation2D(q.getX() - p.getX(), q.getY() - p.getY());</a>
 <span class="sourceLineNo">046</span><a id="line.46">        }</a>
 <span class="sourceLineNo">047</span><a id="line.47">        </a>
@@ -78,7 +78,7 @@
 <span class="sourceLineNo">068</span><a id="line.68">        }</a>
 <span class="sourceLineNo">069</span><a id="line.69"></a>
 <span class="sourceLineNo">070</span><a id="line.70">        @Override</a>
-<span class="sourceLineNo">071</span><a id="line.71">        public double[][] getJacobian(Point xy) {</a>
+<span class="sourceLineNo">071</span><a id="line.71">        public double[][] getJacobian(Pnt2d xy) {</a>
 <span class="sourceLineNo">072</span><a id="line.72">                // this mapping has a constant Jacobian (indep. of xy)</a>
 <span class="sourceLineNo">073</span><a id="line.73">                return new double[][]</a>
 <span class="sourceLineNo">074</span><a id="line.74">                        {{1, 0},</a>

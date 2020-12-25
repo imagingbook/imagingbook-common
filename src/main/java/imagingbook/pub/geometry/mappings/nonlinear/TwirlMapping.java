@@ -9,7 +9,8 @@
 
 package imagingbook.pub.geometry.mappings.nonlinear;
 
-import imagingbook.pub.geometry.basic.Point;
+import imagingbook.pub.geometry.basic.Pnt2d;
+import imagingbook.pub.geometry.basic.Pnt2d.PntDouble;
 import imagingbook.pub.geometry.mappings.Mapping2D;
 
 public class TwirlMapping implements Mapping2D {
@@ -23,7 +24,7 @@ public class TwirlMapping implements Mapping2D {
 		this.rad = rad;
 	}
 
-	public Point applyTo(Point pnt) {
+	public Pnt2d applyTo(Pnt2d pnt) {
 		final double x = pnt.getX();
 		final double y = pnt.getY();
 		double dx = x - xc;
@@ -33,9 +34,9 @@ public class TwirlMapping implements Mapping2D {
 			double a = Math.atan2(dy,dx) + angle * (rad-d) / rad;
 			double x1 = xc + d * Math.cos(a);
 			double y1 = yc + d * Math.sin(a);
-			return Point.create(x1, y1);
+			return PntDouble.from(x1, y1);
 		}
-		return Point.create(x, y);
+		return PntDouble.from(x, y);
 	}
 }
 

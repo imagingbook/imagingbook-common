@@ -21,7 +21,8 @@ import java.util.List;
 import ij.gui.Roi;
 import imagingbook.lib.math.Arithmetic;
 import imagingbook.lib.math.Complex;
-import imagingbook.pub.geometry.basic.Point;
+import imagingbook.pub.geometry.basic.Pnt2d;
+import imagingbook.pub.geometry.basic.Pnt2d.PntInt;
 
 
 /**
@@ -38,7 +39,7 @@ public class FourierDescriptorFromPolygon extends FourierDescriptor {
 	 * @param V sequences of 2D points describing an arbitrary, closed polygon.
 	 * @param Mp the number of Fourier coefficient pairs (M = 2 * Mp + 1).
 	 */
-	public FourierDescriptorFromPolygon(Point[] V, int Mp) {
+	public FourierDescriptorFromPolygon(Pnt2d[] V, int Mp) {
 		g = makeComplex(V);
 		makeDftSpectrumTrigonometric(Mp);
 	}
@@ -111,17 +112,17 @@ public class FourierDescriptorFromPolygon extends FourierDescriptor {
         }
 	}
 	
-	static Point[] getRoiPoints(Roi roi) {
+	static Pnt2d[] getRoiPoints(Roi roi) {
 		Polygon poly = roi.getPolygon();
 		int[] xp = poly.xpoints;
 		int[] yp = poly.ypoints;
 		// copy vertices for all non-zero-length polygon segments:
-		List<Point> points = new ArrayList<Point>(xp.length);
-		points.add(Point.create(xp[0], yp[0]));
+		List<Pnt2d> points = new ArrayList<Pnt2d>(xp.length);
+		points.add(PntInt.from(xp[0], yp[0]));
 		int last = 0;
 		for (int i = 1; i < xp.length; i++) {
 			if (xp[last] != xp[i] || yp[last] != yp[i]) {
-				points.add(Point.create(xp[i], yp[i]));
+				points.add(PntInt.from(xp[i], yp[i]));
 				last = i;
 			}
 		}
@@ -129,6 +130,6 @@ public class FourierDescriptorFromPolygon extends FourierDescriptor {
 		if (xp[last] == xp[0] && yp[last] == yp[0]) {
 			points.remove(last);
 		}
-		return points.toArray(new Point[0]);
+		return points.toArray(new Pnt2d[0]);
 	}
 }

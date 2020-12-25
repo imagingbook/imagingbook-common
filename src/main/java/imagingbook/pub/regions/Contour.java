@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import imagingbook.pub.geometry.basic.Point;
+import imagingbook.pub.geometry.basic.Pnt2d;
 
 
 /**
@@ -32,12 +32,12 @@ import imagingbook.pub.geometry.basic.Point;
  * 
  * @version 2020/12/21
  */
-public class Contour implements Comparable<Contour>, Iterable<Point> {
+public class Contour implements Comparable<Contour>, Iterable<Pnt2d> {
 	
 	static private int INITIAL_SIZE = 50;
 	
 	private final int label;
-	private final List<Point> points;
+	private final List<Pnt2d> points;
 	
 	/**
 	 * Creates a new (empty) contour with the given region label.
@@ -45,10 +45,10 @@ public class Contour implements Comparable<Contour>, Iterable<Point> {
 	 */
 	public Contour (int label) {
 		this.label = label;
-		points = new ArrayList<Point>(INITIAL_SIZE);
+		points = new ArrayList<Pnt2d>(INITIAL_SIZE);
 	}
 	
-	protected void addPoint (Point p) {
+	protected void addPoint (Pnt2d p) {
 		points.add(p);
 	}
 	
@@ -58,7 +58,7 @@ public class Contour implements Comparable<Contour>, Iterable<Point> {
 	 * Get the list of contour points.
 	 * @return a reference to the internal list of contour points.
 	 */
-	public List<Point> getPointList() {
+	public List<Pnt2d> getPointList() {
 		return points;
 	}
 	
@@ -66,8 +66,8 @@ public class Contour implements Comparable<Contour>, Iterable<Point> {
 	 * Get the contour points as an array.
 	 * @return a new array of contour points.
 	 */
-	public Point[] getPointArray() {
-		return points.toArray(new Point[0]);
+	public Pnt2d[] getPointArray() {
+		return points.toArray(new Pnt2d[0]);
 	}
 		
 	//--------------------- contour statistics ------------
@@ -115,7 +115,7 @@ public class Contour implements Comparable<Contour>, Iterable<Point> {
 	 */
 	public Path2D getPolygonPath(double xOffset, double yOffset) {
 		Path2D path = new Path2D.Float();
-		Point[] pnts = this.getPointArray();
+		Pnt2d[] pnts = this.getPointArray();
 		if (pnts.length > 1){
 			path.moveTo(pnts[0].getX() + xOffset, pnts[0].getY() + yOffset);
 			for (int i = 1; i < pnts.length; i++) {
@@ -137,11 +137,10 @@ public class Contour implements Comparable<Contour>, Iterable<Point> {
 	/**
 	 * Returns the number of successive duplicates in this contour.
 	 * The result should be zero.
-	 * @param contour the contour to be checked.
 	 * @return as described.
 	 */
 	public int countDuplicatePoints() {
-		Point[] pnts = this.getPointArray();
+		Pnt2d[] pnts = this.getPointArray();
 		if (pnts.length <= 1) {
 			return 0;
 		}
@@ -160,15 +159,15 @@ public class Contour implements Comparable<Contour>, Iterable<Point> {
 	 * {@link NeighborhoodType}, i.e., if the last and the first
 	 * contour point are "connected".
 	 * 
-	 * @param nht
-	 * @return
+	 * @param nht the (@link NeighborhoodType}.
+	 * @return true if the contour is closed.
 	 */
 	public boolean isClosed(NeighborhoodType nht) {
-		Point[] pnts = this.getPointArray();
+		Pnt2d[] pnts = this.getPointArray();
 		if (pnts.length < 2) 
 			return true;
-		Point p1 = pnts[pnts.length - 1];
-		Point p2 = pnts[0];
+		Pnt2d p1 = pnts[pnts.length - 1];
+		Pnt2d p2 = pnts[0];
 		double d2 = p1.distance2(p2);	// N4: max 1, N8: max 2
 		//System.out.println(nht + " dist=" + d2);
 		
@@ -187,7 +186,7 @@ public class Contour implements Comparable<Contour>, Iterable<Point> {
 	}
 
 	@Override
-	public Iterator<Point> iterator() {
+	public Iterator<Pnt2d> iterator() {
 		return points.iterator();
 	}
 	

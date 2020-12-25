@@ -12,7 +12,7 @@ package imagingbook.pub.sift;
 
 import java.util.Locale;
 
-import imagingbook.pub.geometry.basic.Point;
+import imagingbook.pub.geometry.basic.Pnt2d;
 
 /**
  * SIFT descriptor.
@@ -22,7 +22,7 @@ import imagingbook.pub.geometry.basic.Point;
  * @author W. Burger
  * @version 2020/10/04
  */
-public class SiftDescriptor implements Point, Comparable<SiftDescriptor> {
+public class SiftDescriptor implements Pnt2d, Comparable<SiftDescriptor> {
 	
 	private final double x;	// image position
 	private final double y;

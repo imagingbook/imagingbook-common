@@ -7,7 +7,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import imagingbook.pub.geometry.basic.Point;
+import imagingbook.pub.geometry.basic.Pnt2d;
 import imagingbook.pub.geometry.delaunay.DelaunayTriangulation;
 import imagingbook.pub.geometry.delaunay.Triangle;
 import imagingbook.pub.geometry.delaunay.Utils;
@@ -61,7 +61,7 @@ public class TriangulationGuibas implements DelaunayTriangulation {
 	 * @param pointSet the point set to be triangulated
 	 * @param shuffle set {@code true} to randomly shuffle the input points
 	 */
-	public TriangulationGuibas(List<? extends Point> pointSet, boolean shuffle) {
+	public TriangulationGuibas(List<? extends Pnt2d> pointSet, boolean shuffle) {
 		if (pointSet == null || pointSet.size() < 3) {
 			throw new IllegalArgumentException("Point set must contain at least 3 points.");
 		}
@@ -76,24 +76,24 @@ public class TriangulationGuibas implements DelaunayTriangulation {
 	 * in their original order (without shuffling).
 	 * @param pointSet the point set to be triangulated
 	 */
-	public TriangulationGuibas(List<? extends Point> pointSet) {
+	public TriangulationGuibas(List<? extends Pnt2d> pointSet) {
 		this(pointSet, false);
 	}
 	
 	// -----------------------------------------------------------------------------
 	
 	/** 
-	 * Converts the incoming points (of unknown type but implementing the {@link Point} interface)
+	 * Converts the incoming points (of unknown type but implementing the {@link Pnt2d} interface)
 	 * to instances of the local implementation ({@link Vector2D}).
 	 * 
-	 * @param inPoints the input points (must implement {@link Point})
+	 * @param inPoints the input points (must implement {@link Pnt2d})
 	 * @param shuffle if {@code true}, the input point sequence is randomly permuted
 	 * @return the new point sequence
 	 */
-	private List<Vector2D> makePointset(Collection<? extends Point> inPoints, boolean shuffle) {
+	private List<Vector2D> makePointset(Collection<? extends Pnt2d> inPoints, boolean shuffle) {
 		Vector2D[] outPoints = new Vector2D[inPoints.size()];
 		int i = 0;
-		for (Point ip : inPoints) {
+		for (Pnt2d ip : inPoints) {
 			outPoints[i] = new Vector2D(ip);
 			i++;
 		}
@@ -223,7 +223,7 @@ public class TriangulationGuibas implements DelaunayTriangulation {
 	}
 
 	@Override
-	public List<Point> getPoints() {
+	public List<Pnt2d> getPoints() {
 		return Collections.unmodifiableList(points);
 	}
 	

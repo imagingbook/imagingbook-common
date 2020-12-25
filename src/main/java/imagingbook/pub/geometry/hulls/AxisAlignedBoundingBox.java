@@ -14,7 +14,8 @@ import static imagingbook.lib.math.Matrix.add;
 import static imagingbook.lib.math.Matrix.multiply;
 import static java.lang.Math.sqrt;
 
-import imagingbook.pub.geometry.basic.Point;
+import imagingbook.pub.geometry.basic.Pnt2d;
+import imagingbook.pub.geometry.basic.Pnt2d.PntDouble;
 
 /**
  * Represents a major axis-aligned bounding box of a 2D point set.
@@ -25,9 +26,9 @@ import imagingbook.pub.geometry.basic.Point;
  */
 public class AxisAlignedBoundingBox {
 	
-	private final Point[] boundingBox;	
+	private final Pnt2d[] boundingBox;	
 	
-	public AxisAlignedBoundingBox(Iterable<Point> points) {
+	public AxisAlignedBoundingBox(Iterable<Pnt2d> points) {
 		this.boundingBox = makeBox(points);
 	}
 	
@@ -36,7 +37,7 @@ public class AxisAlignedBoundingBox {
 	 * {@code null} if the orientation of the point set is undefined.
 	 * @return as described above
 	 */
-	public Point[] getCornerPoints() {
+	public Pnt2d[] getCornerPoints() {
 		return (boundingBox == null) ? null : boundingBox;
 	}
 		
@@ -48,7 +49,7 @@ public class AxisAlignedBoundingBox {
 	 * @param points binary region
 	 * @return the region's bounding box as a sequence of 4 coordinates (p0, p1, p2, p3)
 	 */
-	private Point[] makeBox(Iterable<Point> points) {
+	private Pnt2d[] makeBox(Iterable<Pnt2d> points) {
 		//double theta = getOrientationAngle(points);
 		
 		double[] xy = getOrientationVector(points);
@@ -66,7 +67,7 @@ public class AxisAlignedBoundingBox {
 		double bmin = Double.POSITIVE_INFINITY;
 		double bmax = Double.NEGATIVE_INFINITY;
 		
-		for (Point p : points) {
+		for (Pnt2d p : points) {
 			double u = p.getX();
 			double v = p.getY();
 			double a = u * xa + v * ya;	// project (u,v) on the major axis vector
@@ -77,16 +78,16 @@ public class AxisAlignedBoundingBox {
 			bmax = Math.max(b, bmax);
 		}
 		
-		Point[] corners = new Point[4];
-		corners[0] = Point.create(add(multiply(amin, ea), multiply(bmin, eb)));
-		corners[1] = Point.create(add(multiply(amin, ea), multiply(bmax, eb)));
-		corners[2] = Point.create(add(multiply(amax, ea), multiply(bmax, eb)));
-		corners[3] = Point.create(add(multiply(amax, ea), multiply(bmin, eb)));
+		Pnt2d[] corners = new Pnt2d[4];
+		corners[0] = PntDouble.from(add(multiply(amin, ea), multiply(bmin, eb)));
+		corners[1] = PntDouble.from(add(multiply(amin, ea), multiply(bmax, eb)));
+		corners[2] = PntDouble.from(add(multiply(amax, ea), multiply(bmax, eb)));
+		corners[3] = PntDouble.from(add(multiply(amax, ea), multiply(bmin, eb)));
 		return corners;
 	}
 
 	
-	private double[] getOrientationVector(Iterable<Point> points) {
+	private double[] getOrientationVector(Iterable<Pnt2d> points) {
 		double[] centroid = getCentroid(points);
 		final double xc = centroid[0];
 		final double yc = centroid[1];
@@ -94,7 +95,7 @@ public class AxisAlignedBoundingBox {
 		double mu20 = 0;
 		double mu02 = 0;
 
-		for (Point p : points) {
+		for (Pnt2d p : points) {
 			double dx = (p.getX() - xc);
 			double dy = (p.getY() - yc);
 			mu11 = mu11 + dx * dy;
@@ -113,11 +114,11 @@ public class AxisAlignedBoundingBox {
 		return new double[] {x0, y0};
 	}
 	
-	private double[] getCentroid(Iterable<Point> points) {
+	private double[] getCentroid(Iterable<Pnt2d> points) {
 		int n = 0;
 		double sumX = 0;
 		double sumY = 0;
-		for (Point p : points) {
+		for (Pnt2d p : points) {
 			sumX += p.getX();
 			sumY += p.getY();
 			n++;

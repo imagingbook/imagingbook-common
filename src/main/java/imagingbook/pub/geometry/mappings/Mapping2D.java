@@ -1,6 +1,6 @@
 package imagingbook.pub.geometry.mappings;
 
-import imagingbook.pub.geometry.basic.Point;
+import imagingbook.pub.geometry.basic.Pnt2d;
 
 public interface Mapping2D extends Cloneable {
 	
@@ -10,10 +10,10 @@ public interface Mapping2D extends Cloneable {
 	 * @param pnt the original point
 	 * @return the transformed point
 	 */
-	Point applyTo (Point pnt);
+	Pnt2d applyTo (Pnt2d pnt);
 	
-	default Point[] applyTo(Point[] pnts) {
-		Point[] outPnts = new Point[pnts.length];
+	default Pnt2d[] applyTo(Pnt2d[] pnts) {
+		Pnt2d[] outPnts = new Pnt2d[pnts.length];
 		for (int i = 0; i < pnts.length; i++) {
 			outPnts[i] = applyTo(pnts[i]);
 		}
@@ -38,7 +38,7 @@ public interface Mapping2D extends Cloneable {
 	 * @param xy the 2D position to calculate the Jacobian for
 	 * @return the Jacobian matrix
 	 */
-	default double[][] getJacobian(Point xy) {
+	default double[][] getJacobian(Pnt2d xy) {
 		throw new UnsupportedOperationException("No Jacobian available for this mapping");
 	}
 }

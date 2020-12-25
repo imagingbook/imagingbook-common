@@ -11,7 +11,8 @@ package imagingbook.pub.geometry.mappings.linear;
 
 import imagingbook.lib.math.Arithmetic;
 import imagingbook.lib.math.Matrix;
-import imagingbook.pub.geometry.basic.Point;
+import imagingbook.pub.geometry.basic.Pnt2d;
+import imagingbook.pub.geometry.basic.Pnt2d.PntDouble;
 import imagingbook.pub.geometry.mappings.Mapping2D;
 
 /**
@@ -101,13 +102,13 @@ public class LinearMapping2D implements Mapping2D {
 	// ----------------------------------------------------------
 	
 	@Override
-	public Point applyTo(Point pnt) {
+	public Pnt2d applyTo(Pnt2d pnt) {
 		final double x = pnt.getX();
 		final double y = pnt.getY();
 		double h =  (a20 * x + a21 * y + a22);
 		double x1 = (a00 * x + a01 * y + a02) / h;
 		double y1 = (a10 * x + a11 * y + a12) / h;
-		return Point.create(x1, y1);
+		return PntDouble.from(x1, y1);
 	}
 	
 //	@Override

@@ -22,7 +22,7 @@
 <span class="sourceLineNo">012</span><a id="line.12"></a>
 <span class="sourceLineNo">013</span><a id="line.13">import java.util.Locale;</a>
 <span class="sourceLineNo">014</span><a id="line.14"></a>
-<span class="sourceLineNo">015</span><a id="line.15">import imagingbook.pub.geometry.basic.Point;</a>
+<span class="sourceLineNo">015</span><a id="line.15">import imagingbook.pub.geometry.basic.Pnt2d;</a>
 <span class="sourceLineNo">016</span><a id="line.16"></a>
 <span class="sourceLineNo">017</span><a id="line.17">/**</a>
 <span class="sourceLineNo">018</span><a id="line.18"> * This class represents a straight line in Hessian normal form, i.e., </a>
@@ -37,7 +37,7 @@
 <span class="sourceLineNo">027</span><a id="line.27">        </a>
 <span class="sourceLineNo">028</span><a id="line.28">        // static factory methods ----------------------------------------</a>
 <span class="sourceLineNo">029</span><a id="line.29">        </a>
-<span class="sourceLineNo">030</span><a id="line.30">        public static HessianLine fromPoints(Point p1, Point p2) {</a>
+<span class="sourceLineNo">030</span><a id="line.30">        public static HessianLine fromPoints(Pnt2d p1, Pnt2d p2) {</a>
 <span class="sourceLineNo">031</span><a id="line.31">                return new HessianLine(AlgebraicLine.fromPoints(p1, p2));</a>
 <span class="sourceLineNo">032</span><a id="line.32">        }</a>
 <span class="sourceLineNo">033</span><a id="line.33">        </a>

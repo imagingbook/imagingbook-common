@@ -11,7 +11,7 @@ package imagingbook.pub.geometry.mappings.linear;
 
 import imagingbook.lib.math.Matrix;
 import imagingbook.lib.settings.PrintPrecision;
-import imagingbook.pub.geometry.basic.Point;
+import imagingbook.pub.geometry.basic.Pnt2d;
 import imagingbook.pub.geometry.fitting.AffineFit2D;
 
 /**
@@ -29,7 +29,7 @@ public class AffineMapping2D extends ProjectiveMapping2D {
 	 * @param Q the target points
 	 * @return a new affine mapping for the two point sets
 	 */
-	public static AffineMapping2D fromPoints(Point[] P, Point[] Q) {
+	public static AffineMapping2D fromPoints(Pnt2d[] P, Pnt2d[] Q) {
 		AffineFit2D fit = new AffineFit2D(P, Q);
 		return new AffineMapping2D(fit.getTransformationMatrix().getData());
 	}
@@ -174,7 +174,7 @@ public class AffineMapping2D extends ProjectiveMapping2D {
 	}
 
 	@Override
-	public double[][] getJacobian(Point xy) {
+	public double[][] getJacobian(Pnt2d xy) {
 		final double x = xy.getX();
 		final double y = xy.getY();
 		return new double[][]

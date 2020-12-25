@@ -42,7 +42,7 @@
 <span class="sourceLineNo">032</span><a id="line.32">import java.util.Set;</a>
 <span class="sourceLineNo">033</span><a id="line.33">import java.util.stream.Collectors;</a>
 <span class="sourceLineNo">034</span><a id="line.34"></a>
-<span class="sourceLineNo">035</span><a id="line.35">import imagingbook.pub.geometry.basic.Point;</a>
+<span class="sourceLineNo">035</span><a id="line.35">import imagingbook.pub.geometry.basic.Pnt2d;</a>
 <span class="sourceLineNo">036</span><a id="line.36">import imagingbook.pub.geometry.delaunay.DelaunayTriangulation;</a>
 <span class="sourceLineNo">037</span><a id="line.37">import imagingbook.pub.geometry.delaunay.Triangle;</a>
 <span class="sourceLineNo">038</span><a id="line.38">import imagingbook.pub.geometry.delaunay.Utils;</a>
@@ -97,7 +97,7 @@
 <span class="sourceLineNo">087</span><a id="line.87">    private Triangle2D mostRecent = null;      // Most recently "active" triangle</a>
 <span class="sourceLineNo">088</span><a id="line.88">    private final Triangle2D superTriangle;</a>
 <span class="sourceLineNo">089</span><a id="line.89">    private final Graph&lt;Triangle2D&gt; triGraph;        // Holds triangles for navigation</a>
-<span class="sourceLineNo">090</span><a id="line.90">    private final List&lt;Point&gt; points;</a>
+<span class="sourceLineNo">090</span><a id="line.90">    private final List&lt;Pnt2d&gt; points;</a>
 <span class="sourceLineNo">091</span><a id="line.91">    </a>
 <span class="sourceLineNo">092</span><a id="line.92">    /** </a>
 <span class="sourceLineNo">093</span><a id="line.93">     * Convenience constructor for insertion into a bounding rectangle</a>
@@ -114,7 +114,7 @@
 <span class="sourceLineNo">104</span><a id="line.104">     * Constructor that takes an initial outer (super) triangle.</a>
 <span class="sourceLineNo">105</span><a id="line.105">     * @param outerTriangle the outer (super) triangle</a>
 <span class="sourceLineNo">106</span><a id="line.106">     */</a>
-<span class="sourceLineNo">107</span><a id="line.107">    public TriangulationChew(Point[] outerTriangle) {</a>
+<span class="sourceLineNo">107</span><a id="line.107">    public TriangulationChew(Pnt2d[] outerTriangle) {</a>
 <span class="sourceLineNo">108</span><a id="line.108">        this(new Triangle2D(outerTriangle));</a>
 <span class="sourceLineNo">109</span><a id="line.109">    }</a>
 <span class="sourceLineNo">110</span><a id="line.110">    </a>
@@ -124,7 +124,7 @@
 <span class="sourceLineNo">114</span><a id="line.114">     * The points are inserted into the resulting triangulation.</a>
 <span class="sourceLineNo">115</span><a id="line.115">     * @param pointSet a sequence of 2D points</a>
 <span class="sourceLineNo">116</span><a id="line.116">     */</a>
-<span class="sourceLineNo">117</span><a id="line.117">    public TriangulationChew(Collection&lt;Point&gt; pointSet) {</a>
+<span class="sourceLineNo">117</span><a id="line.117">    public TriangulationChew(Collection&lt;Pnt2d&gt; pointSet) {</a>
 <span class="sourceLineNo">118</span><a id="line.118">        this(new Triangle2D(Utils.makeOuterTriangle(pointSet)));</a>
 <span class="sourceLineNo">119</span><a id="line.119">        insertAll(pointSet);</a>
 <span class="sourceLineNo">120</span><a id="line.120">    }</a>
@@ -256,8 +256,8 @@
 <span class="sourceLineNo">246</span><a id="line.246">        return null;</a>
 <span class="sourceLineNo">247</span><a id="line.247">    }</a>
 <span class="sourceLineNo">248</span><a id="line.248">    </a>
-<span class="sourceLineNo">249</span><a id="line.249">    public void insertAll(Collection&lt;Point&gt; pointSet) {</a>
-<span class="sourceLineNo">250</span><a id="line.250">        for (Point p : pointSet) {</a>
+<span class="sourceLineNo">249</span><a id="line.249">    public void insertAll(Collection&lt;Pnt2d&gt; pointSet) {</a>
+<span class="sourceLineNo">250</span><a id="line.250">        for (Pnt2d p : pointSet) {</a>
 <span class="sourceLineNo">251</span><a id="line.251">                insert(p);</a>
 <span class="sourceLineNo">252</span><a id="line.252">        }</a>
 <span class="sourceLineNo">253</span><a id="line.253">    }</a>
@@ -269,7 +269,7 @@
 <span class="sourceLineNo">259</span><a id="line.259">     * Throws an {@link IllegalArgumentException} if p does not lie in any triangle.</a>
 <span class="sourceLineNo">260</span><a id="line.260">     * @param p the point to be inserted</a>
 <span class="sourceLineNo">261</span><a id="line.261">     */</a>
-<span class="sourceLineNo">262</span><a id="line.262">    public void insert(Point p) {</a>
+<span class="sourceLineNo">262</span><a id="line.262">    public void insert(Pnt2d p) {</a>
 <span class="sourceLineNo">263</span><a id="line.263">        Pnt vec = new Pnt(p);</a>
 <span class="sourceLineNo">264</span><a id="line.264">        // Locate containing triangle</a>
 <span class="sourceLineNo">265</span><a id="line.265">        Triangle2D triangle = locate(vec);</a>
@@ -381,7 +381,7 @@
 <span class="sourceLineNo">371</span><a id="line.371">        }</a>
 <span class="sourceLineNo">372</span><a id="line.372">        </a>
 <span class="sourceLineNo">373</span><a id="line.373">        @Override</a>
-<span class="sourceLineNo">374</span><a id="line.374">        public List&lt;Point&gt; getPoints() {</a>
+<span class="sourceLineNo">374</span><a id="line.374">        public List&lt;Pnt2d&gt; getPoints() {</a>
 <span class="sourceLineNo">375</span><a id="line.375">                return Collections.unmodifiableList(points);</a>
 <span class="sourceLineNo">376</span><a id="line.376">        }</a>
 <span class="sourceLineNo">377</span><a id="line.377">        </a>

@@ -12,7 +12,7 @@
 <span class="sourceLineNo">002</span><a id="line.2"></a>
 <span class="sourceLineNo">003</span><a id="line.3">import org.apache.commons.math3.linear.RealMatrix;</a>
 <span class="sourceLineNo">004</span><a id="line.4"></a>
-<span class="sourceLineNo">005</span><a id="line.5">import imagingbook.pub.geometry.basic.Point;</a>
+<span class="sourceLineNo">005</span><a id="line.5">import imagingbook.pub.geometry.basic.Pnt2d;</a>
 <span class="sourceLineNo">006</span><a id="line.6">import imagingbook.pub.geometry.mappings.linear.LinearMapping2D;</a>
 <span class="sourceLineNo">007</span><a id="line.7"></a>
 <span class="sourceLineNo">008</span><a id="line.8">/**</a>
@@ -36,15 +36,15 @@
 <span class="sourceLineNo">026</span><a id="line.26">        double getError();</a>
 <span class="sourceLineNo">027</span><a id="line.27">        </a>
 <span class="sourceLineNo">028</span><a id="line.28">        </a>
-<span class="sourceLineNo">029</span><a id="line.29">        default public double calculateError(Point[] P, Point[] Q, RealMatrix A) {</a>
+<span class="sourceLineNo">029</span><a id="line.29">        default public double calculateError(Pnt2d[] P, Pnt2d[] Q, RealMatrix A) {</a>
 <span class="sourceLineNo">030</span><a id="line.30">                final int m = Math.min(P.length,  Q.length);</a>
 <span class="sourceLineNo">031</span><a id="line.31">                LinearMapping2D map = new LinearMapping2D(A.getData());</a>
 <span class="sourceLineNo">032</span><a id="line.32">                double errSum = 0;</a>
 <span class="sourceLineNo">033</span><a id="line.33">                for (int i = 0; i &lt; m; i++) {</a>
-<span class="sourceLineNo">034</span><a id="line.34">                        Point p = P[i];</a>
-<span class="sourceLineNo">035</span><a id="line.35">                        Point q = Q[i];</a>
-<span class="sourceLineNo">036</span><a id="line.36">                        Point pp = map.applyTo(p);</a>
-<span class="sourceLineNo">037</span><a id="line.37">                        double e = Point.distance(q, pp);</a>
+<span class="sourceLineNo">034</span><a id="line.34">                        Pnt2d p = P[i];</a>
+<span class="sourceLineNo">035</span><a id="line.35">                        Pnt2d q = Q[i];</a>
+<span class="sourceLineNo">036</span><a id="line.36">                        Pnt2d pp = map.applyTo(p);</a>
+<span class="sourceLineNo">037</span><a id="line.37">                        double e = q.distance(pp);</a>
 <span class="sourceLineNo">038</span><a id="line.38">                        errSum = errSum + e * e;</a>
 <span class="sourceLineNo">039</span><a id="line.39">                }</a>
 <span class="sourceLineNo">040</span><a id="line.40">                return Math.sqrt(errSum);</a>

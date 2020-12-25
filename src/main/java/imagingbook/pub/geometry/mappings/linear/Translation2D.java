@@ -9,7 +9,7 @@
 
 package imagingbook.pub.geometry.mappings.linear;
 
-import imagingbook.pub.geometry.basic.Point;
+import imagingbook.pub.geometry.basic.Pnt2d;
 
 /**
  * This class represents a pure 2D translation (as a special case of 
@@ -41,7 +41,7 @@ public class Translation2D extends AffineMapping2D {
 	 * @param q the second point
 	 * @return a new translation instance
 	 */
-	public static Translation2D fromPoints(Point p, Point q) {
+	public static Translation2D fromPoints(Pnt2d p, Pnt2d q) {
 		return new Translation2D(q.getX() - p.getX(), q.getY() - p.getY());
 	}
 	
@@ -68,7 +68,7 @@ public class Translation2D extends AffineMapping2D {
 	}
 
 	@Override
-	public double[][] getJacobian(Point xy) {
+	public double[][] getJacobian(Pnt2d xy) {
 		// this mapping has a constant Jacobian (indep. of xy)
 		return new double[][]
 			{{1, 0},

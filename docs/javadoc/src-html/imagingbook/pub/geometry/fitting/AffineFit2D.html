@@ -17,7 +17,7 @@
 <span class="sourceLineNo">007</span><a id="line.7">import org.apache.commons.math3.linear.RealVector;</a>
 <span class="sourceLineNo">008</span><a id="line.8">import org.apache.commons.math3.linear.SingularValueDecomposition;</a>
 <span class="sourceLineNo">009</span><a id="line.9"></a>
-<span class="sourceLineNo">010</span><a id="line.10">import imagingbook.pub.geometry.basic.Point;</a>
+<span class="sourceLineNo">010</span><a id="line.10">import imagingbook.pub.geometry.basic.Pnt2d;</a>
 <span class="sourceLineNo">011</span><a id="line.11"></a>
 <span class="sourceLineNo">012</span><a id="line.12">public class AffineFit2D implements LinearFit2D {</a>
 <span class="sourceLineNo">013</span><a id="line.13">        </a>
@@ -32,7 +32,7 @@
 <span class="sourceLineNo">022</span><a id="line.22">         * @param P the source points</a>
 <span class="sourceLineNo">023</span><a id="line.23">         * @param Q the target points</a>
 <span class="sourceLineNo">024</span><a id="line.24">         */</a>
-<span class="sourceLineNo">025</span><a id="line.25">        public AffineFit2D(Point[] P, Point[] Q) {      // </a>
+<span class="sourceLineNo">025</span><a id="line.25">        public AffineFit2D(Pnt2d[] P, Pnt2d[] Q) {      // </a>
 <span class="sourceLineNo">026</span><a id="line.26">                checkSize(P, Q);</a>
 <span class="sourceLineNo">027</span><a id="line.27">                int m = P.length;</a>
 <span class="sourceLineNo">028</span><a id="line.28">                </a>
@@ -41,7 +41,7 @@
 <span class="sourceLineNo">031</span><a id="line.31">                </a>
 <span class="sourceLineNo">032</span><a id="line.32">                // mount the matrix M</a>
 <span class="sourceLineNo">033</span><a id="line.33">                int row = 0;</a>
-<span class="sourceLineNo">034</span><a id="line.34">                for (Point p : P) {</a>
+<span class="sourceLineNo">034</span><a id="line.34">                for (Pnt2d p : P) {</a>
 <span class="sourceLineNo">035</span><a id="line.35">                        M.setEntry(row, 0, p.getX());</a>
 <span class="sourceLineNo">036</span><a id="line.36">                        M.setEntry(row, 1, p.getY());</a>
 <span class="sourceLineNo">037</span><a id="line.37">                        M.setEntry(row, 2, 1);</a>
@@ -54,7 +54,7 @@
 <span class="sourceLineNo">044</span><a id="line.44">                </a>
 <span class="sourceLineNo">045</span><a id="line.45">                // mount vector b</a>
 <span class="sourceLineNo">046</span><a id="line.46">                row = 0;</a>
-<span class="sourceLineNo">047</span><a id="line.47">                for (Point q : Q) {</a>
+<span class="sourceLineNo">047</span><a id="line.47">                for (Pnt2d q : Q) {</a>
 <span class="sourceLineNo">048</span><a id="line.48">                        b.setEntry(row, q.getX());</a>
 <span class="sourceLineNo">049</span><a id="line.49">                        row++;</a>
 <span class="sourceLineNo">050</span><a id="line.50">                        b.setEntry(row, q.getY());</a>
@@ -84,7 +84,7 @@
 <span class="sourceLineNo">074</span><a id="line.74">        </a>
 <span class="sourceLineNo">075</span><a id="line.75">        // --------------------------------------------------------</a>
 <span class="sourceLineNo">076</span><a id="line.76">        </a>
-<span class="sourceLineNo">077</span><a id="line.77">        private void checkSize(Point[] P, Point[] Q) {</a>
+<span class="sourceLineNo">077</span><a id="line.77">        private void checkSize(Pnt2d[] P, Pnt2d[] Q) {</a>
 <span class="sourceLineNo">078</span><a id="line.78">                if (P.length &lt; 3 || Q.length &lt; 3) {</a>
 <span class="sourceLineNo">079</span><a id="line.79">                        throw new IllegalArgumentException("At least 3 point pairs are required to calculate this fit");</a>
 <span class="sourceLineNo">080</span><a id="line.80">                }</a>

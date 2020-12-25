@@ -12,7 +12,7 @@ import imagingbook.lib.tuples.Tuple2;
  * 
  * @author WB
  *
- * @param <T>
+ * @param <T> the element type of this handle
  */
 public class Handle<T> {
 	

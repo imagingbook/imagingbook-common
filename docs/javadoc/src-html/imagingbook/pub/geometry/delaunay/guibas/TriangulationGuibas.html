@@ -17,7 +17,7 @@
 <span class="sourceLineNo">007</span><a id="line.7">import java.util.LinkedList;</a>
 <span class="sourceLineNo">008</span><a id="line.8">import java.util.List;</a>
 <span class="sourceLineNo">009</span><a id="line.9"></a>
-<span class="sourceLineNo">010</span><a id="line.10">import imagingbook.pub.geometry.basic.Point;</a>
+<span class="sourceLineNo">010</span><a id="line.10">import imagingbook.pub.geometry.basic.Pnt2d;</a>
 <span class="sourceLineNo">011</span><a id="line.11">import imagingbook.pub.geometry.delaunay.DelaunayTriangulation;</a>
 <span class="sourceLineNo">012</span><a id="line.12">import imagingbook.pub.geometry.delaunay.Triangle;</a>
 <span class="sourceLineNo">013</span><a id="line.13">import imagingbook.pub.geometry.delaunay.Utils;</a>
@@ -71,7 +71,7 @@
 <span class="sourceLineNo">061</span><a id="line.61">         * @param pointSet the point set to be triangulated</a>
 <span class="sourceLineNo">062</span><a id="line.62">         * @param shuffle set {@code true} to randomly shuffle the input points</a>
 <span class="sourceLineNo">063</span><a id="line.63">         */</a>
-<span class="sourceLineNo">064</span><a id="line.64">        public TriangulationGuibas(List&lt;? extends Point&gt; pointSet, boolean shuffle) {</a>
+<span class="sourceLineNo">064</span><a id="line.64">        public TriangulationGuibas(List&lt;? extends Pnt2d&gt; pointSet, boolean shuffle) {</a>
 <span class="sourceLineNo">065</span><a id="line.65">                if (pointSet == null || pointSet.size() &lt; 3) {</a>
 <span class="sourceLineNo">066</span><a id="line.66">                        throw new IllegalArgumentException("Point set must contain at least 3 points.");</a>
 <span class="sourceLineNo">067</span><a id="line.67">                }</a>
@@ -86,24 +86,24 @@
 <span class="sourceLineNo">076</span><a id="line.76">         * in their original order (without shuffling).</a>
 <span class="sourceLineNo">077</span><a id="line.77">         * @param pointSet the point set to be triangulated</a>
 <span class="sourceLineNo">078</span><a id="line.78">         */</a>
-<span class="sourceLineNo">079</span><a id="line.79">        public TriangulationGuibas(List&lt;? extends Point&gt; pointSet) {</a>
+<span class="sourceLineNo">079</span><a id="line.79">        public TriangulationGuibas(List&lt;? extends Pnt2d&gt; pointSet) {</a>
 <span class="sourceLineNo">080</span><a id="line.80">                this(pointSet, false);</a>
 <span class="sourceLineNo">081</span><a id="line.81">        }</a>
 <span class="sourceLineNo">082</span><a id="line.82">        </a>
 <span class="sourceLineNo">083</span><a id="line.83">        // -----------------------------------------------------------------------------</a>
 <span class="sourceLineNo">084</span><a id="line.84">        </a>
 <span class="sourceLineNo">085</span><a id="line.85">        /** </a>
-<span class="sourceLineNo">086</span><a id="line.86">         * Converts the incoming points (of unknown type but implementing the {@link Point} interface)</a>
+<span class="sourceLineNo">086</span><a id="line.86">         * Converts the incoming points (of unknown type but implementing the {@link Pnt2d} interface)</a>
 <span class="sourceLineNo">087</span><a id="line.87">         * to instances of the local implementation ({@link Vector2D}).</a>
 <span class="sourceLineNo">088</span><a id="line.88">         * </a>
-<span class="sourceLineNo">089</span><a id="line.89">         * @param inPoints the input points (must implement {@link Point})</a>
+<span class="sourceLineNo">089</span><a id="line.89">         * @param inPoints the input points (must implement {@link Pnt2d})</a>
 <span class="sourceLineNo">090</span><a id="line.90">         * @param shuffle if {@code true}, the input point sequence is randomly permuted</a>
 <span class="sourceLineNo">091</span><a id="line.91">         * @return the new point sequence</a>
 <span class="sourceLineNo">092</span><a id="line.92">         */</a>
-<span class="sourceLineNo">093</span><a id="line.93">        private List&lt;Vector2D&gt; makePointset(Collection&lt;? extends Point&gt; inPoints, boolean shuffle) {</a>
+<span class="sourceLineNo">093</span><a id="line.93">        private List&lt;Vector2D&gt; makePointset(Collection&lt;? extends Pnt2d&gt; inPoints, boolean shuffle) {</a>
 <span class="sourceLineNo">094</span><a id="line.94">                Vector2D[] outPoints = new Vector2D[inPoints.size()];</a>
 <span class="sourceLineNo">095</span><a id="line.95">                int i = 0;</a>
-<span class="sourceLineNo">096</span><a id="line.96">                for (Point ip : inPoints) {</a>
+<span class="sourceLineNo">096</span><a id="line.96">                for (Pnt2d ip : inPoints) {</a>
 <span class="sourceLineNo">097</span><a id="line.97">                        outPoints[i] = new Vector2D(ip);</a>
 <span class="sourceLineNo">098</span><a id="line.98">                        i++;</a>
 <span class="sourceLineNo">099</span><a id="line.99">                }</a>
@@ -233,7 +233,7 @@
 <span class="sourceLineNo">223</span><a id="line.223">        }</a>
 <span class="sourceLineNo">224</span><a id="line.224"></a>
 <span class="sourceLineNo">225</span><a id="line.225">        @Override</a>
-<span class="sourceLineNo">226</span><a id="line.226">        public List&lt;Point&gt; getPoints() {</a>
+<span class="sourceLineNo">226</span><a id="line.226">        public List&lt;Pnt2d&gt; getPoints() {</a>
 <span class="sourceLineNo">227</span><a id="line.227">                return Collections.unmodifiableList(points);</a>
 <span class="sourceLineNo">228</span><a id="line.228">        }</a>
 <span class="sourceLineNo">229</span><a id="line.229">        </a>

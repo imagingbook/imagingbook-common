@@ -15,7 +15,9 @@ import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.RealVector;
 
 import imagingbook.lib.math.Matrix;
-import imagingbook.pub.geometry.basic.Point;
+import imagingbook.pub.geometry.basic.Pnt2d;
+import imagingbook.pub.geometry.basic.Pnt2d.PntDouble;
+import imagingbook.pub.geometry.basic.Pnt2d.PntInt;
 import imagingbook.pub.geometry.mappings.linear.ProjectiveMapping2D;
 
 /**
@@ -59,7 +61,7 @@ public class HomographyEstimator {
 	 * @param Q the 2nd sequence of 2D points
 	 * @return the estimated homography (instance of type {@linkplain ProjectiveMapping2D})
 	 */
-	public ProjectiveMapping2D getHomographyMapping(Point[] P, Point[] Q) {
+	public ProjectiveMapping2D getHomographyMapping(Pnt2d[] P, Pnt2d[] Q) {
 		RealMatrix H = getHomography(P, Q);
 		return new ProjectiveMapping2D(H.getData());
 	}
@@ -71,7 +73,7 @@ public class HomographyEstimator {
 	 * @param Q the 2nd sequence of 2D points
 	 * @return the estimated homography (3 x 3 matrix)
 	 */
-	public RealMatrix getHomography(Point[] P, Point[] Q) {
+	public RealMatrix getHomography(Pnt2d[] P, Pnt2d[] Q) {
 		if (P.length != Q.length) {
 			throw new IllegalArgumentException("getHomography(): P and Q must be of same length");
 		}
@@ -85,8 +87,8 @@ public class HomographyEstimator {
 
 		// find an initial solution using the DLT
 		for (int j = 0, r = 0; j < P.length; j++) {
-			final double[] pA = MathUtil.transform(P[j].toArray(), Na);
-			final double[] pB = MathUtil.transform(Q[j].toArray(), Nb);
+			final double[] pA = MathUtil.transform(P[j].toDoubleArray(), Na);
+			final double[] pB = MathUtil.transform(Q[j].toDoubleArray(), Nb);
 			final double xA = pA[0];
 			final double yA = pA[1];
 			final double xB = pB[0];
@@ -132,7 +134,7 @@ public class HomographyEstimator {
 	 * @return the sequence of estimated homographies (3 x 3 matrices), one for each view
 	 * @deprecated
 	 */
-	public RealMatrix[] getHomographies(Point[] modelPts, Point[][] obsPoints) {
+	public RealMatrix[] getHomographies(Pnt2d[] modelPts, Pnt2d[][] obsPoints) {
 		final int M = obsPoints.length;
 		RealMatrix[] homographies = new RealMatrix[M];
 		for (int i = 0; i < M; i++) {
@@ -148,7 +150,7 @@ public class HomographyEstimator {
 	 * @param pntsB the 2nd sequence of 2D points
 	 * @return the refined homography matrix
 	 */
-	private static RealMatrix refineHomography(RealMatrix Hinit, Point[] pntsA, Point[] pntsB) {
+	private static RealMatrix refineHomography(RealMatrix Hinit, Pnt2d[] pntsA, Pnt2d[] pntsB) {
 		final int M = pntsA.length;		
 		double[] observed = new double[2 * M];
 		for (int i = 0; i < M; i++) {
@@ -180,7 +182,7 @@ public class HomographyEstimator {
 	}
 
 
-	private static MultivariateVectorFunction getValueFunction(Point[] X) {
+	private static MultivariateVectorFunction getValueFunction(Pnt2d[] X) {
 		//System.out.println("MultivariateVectorFunction getValueFunction");
 		return new MultivariateVectorFunction() {
 			public double[] value(double[] h) {			
@@ -197,7 +199,7 @@ public class HomographyEstimator {
 		};
 	}
 
-	private static MultivariateMatrixFunction getJacobianFunction(Point[] X) {
+	private static MultivariateMatrixFunction getJacobianFunction(Pnt2d[] X) {
 		return new MultivariateMatrixFunction() {
 			public double[][] value(double[] h) {
 				final double[][] J = new double[2 * X.length][];
@@ -316,20 +318,20 @@ public class HomographyEstimator {
 
 	static double NOISE = 0.1;
 
-	private static Point mapPoint(RealMatrix H, Point p) {
-		double[] xa = p.toArray(); // {p.getX(), p.getY()};
+	private static Pnt2d mapPoint(RealMatrix H, Pnt2d p) {
+		double[] xa = p.toDoubleArray(); // {p.getX(), p.getY()};
 		double[] xb = MathUtil.transform(xa, H);
-		return Point.create(xb);
+		return PntDouble.from(xb);
 	}
 
 	private static Random rand = new Random();
 
-	private static Point mapPointWithNoise(RealMatrix H, Point p, double noise) {
+	private static Pnt2d mapPointWithNoise(RealMatrix H, Pnt2d p, double noise) {
 		double[] xa = {p.getX(), p.getY()};
 		double[] xb = MathUtil.transform(xa, H);
 		double xn = noise * rand.nextGaussian();
 		double yn = noise * rand.nextGaussian();
-		return Point.create(xb[0] + xn, xb[1] + yn);
+		return Pnt2d.PntDouble.from(xb[0] + xn, xb[1] + yn);
 	}
 
 	/**
@@ -346,27 +348,27 @@ public class HomographyEstimator {
 		System.out.println(Matrix.toString(Hreal.scalarMultiply(1/Hreal.getEntry(2, 2)).getData()));
 		//		System.out.println(Matrix.toString(Hreal.getData()));
 
-		List<Point> pntlistA = new ArrayList<Point>();
-		pntlistA.add(Point.create(10, 7));
-		pntlistA.add(Point.create(3, -1));
-		pntlistA.add(Point.create(5, 5));
-		pntlistA.add(Point.create(-6, 13));
-		pntlistA.add(Point.create(0, 1));
-		pntlistA.add(Point.create(2, 3));
+		List<Pnt2d> pntlistA = new ArrayList<Pnt2d>();
+		pntlistA.add(PntInt.from(10, 7));
+		pntlistA.add(PntInt.from(3, -1));
+		pntlistA.add(PntInt.from(5, 5));
+		pntlistA.add(PntInt.from(-6, 13));
+		pntlistA.add(PntInt.from(0, 1));
+		pntlistA.add(PntInt.from(2, 3));
 
-		List<Point> pntlistB = new ArrayList<Point>();
-		for (Point a : pntlistA) {
+		List<Pnt2d> pntlistB = new ArrayList<Pnt2d>();
+		for (Pnt2d a : pntlistA) {
 			pntlistB.add(mapPointWithNoise(Hreal, a, NOISE));
 		}
 
-		Point[] pntsA = pntlistA.toArray(new Point[0]);
-		Point[] pntsB = pntlistB.toArray(new Point[0]);
+		Pnt2d[] pntsA = pntlistA.toArray(new Pnt2d[0]);
+		Pnt2d[] pntsB = pntlistB.toArray(new Pnt2d[0]);
 
 
 		System.out.println("\nPoint correspondences:");
 		for (int i = 0; i < pntsA.length; i++) {
-			Point a = pntsA[i];
-			Point b = pntsB[i];
+			Pnt2d a = pntsA[i];
+			Pnt2d b = pntsB[i];
 			System.out.format("(%.3f, %.3f) -> (%.3f, %.3f)\n", a.getX(), a.getY(), b.getX(), b.getY());
 		}
 		System.out.println();
@@ -386,13 +388,13 @@ public class HomographyEstimator {
 
 	}
 
-	private static void runTestDLT(HomographyEstimator he, Point[] pntsA, Point[] pntsB) {
+	private static void runTestDLT(HomographyEstimator he, Pnt2d[] pntsA, Pnt2d[] pntsB) {
 		RealMatrix Hest = he.getHomography(pntsA, pntsB);
 
 		System.out.println("H (estim.) = "); 
 		System.out.println(Matrix.toString(Hest.getData()));
 
-		Point[] pntsC = new Point[pntsA.length];
+		Pnt2d[] pntsC = new Pnt2d[pntsA.length];
 		for (int i = 0; i < pntsA.length; i++) {	
 			pntsC[i] = mapPoint(Hest, pntsA[i]);
 		}
@@ -401,9 +403,9 @@ public class HomographyEstimator {
 		double sumDist2 = 0;
 		double maxDist2 = Double.NEGATIVE_INFINITY;
 		for (int i = 0; i < pntsA.length; i++) {
-			Point a = pntsA[i];
-			Point b = pntsB[i];
-			Point c = pntsC[i];
+			Pnt2d a = pntsA[i];
+			Pnt2d b = pntsB[i];
+			Pnt2d c = pntsC[i];
 			double dist2 = b.distance2(c);
 			sumDist2 += dist2;
 			maxDist2 = Math.max(maxDist2, dist2);
@@ -413,24 +415,26 @@ public class HomographyEstimator {
 		System.out.format("Max. dist = %.2f\n", Math.sqrt(maxDist2));	
 	}
 
-	private static void runTestLeastSquares(Point[] pntsA, Point[] pntsB) {
+	private static void runTestLeastSquares(Pnt2d[] pntsA, Pnt2d[] pntsB) {
 		ProjectiveMapping2D mapping = ProjectiveMapping2D.fromPoints(pntsA, pntsB);
 		double[][] Hmap = mapping.getTransformationMatrix();
 		System.out.println("H (mapping) = "); 
 		System.out.println(Matrix.toString(Hmap));
 		{
-			Point[] pntsC = new Point[pntsA.length];
+			Pnt2d[] pntsC = new Pnt2d[pntsA.length];
 			for (int i = 0; i < pntsA.length; i++) {	
-				pntsC[i] = (Point) mapping.applyTo(Point.create(pntsA[i].getX(), pntsA[i].getY()));
+				pntsC[i] = //(Pnt2d) 
+					mapping.applyTo(Pnt2d.PntDouble.from(pntsA[i]));
+//					mapping.applyTo(Pnt2d.PntDouble.from(pntsA[i].getX(), pntsA[i].getY()));
 			}
 
 			System.out.println("\nPoints mapped:");
 			double sumDist2 = 0;
 			double maxDist2 = Double.NEGATIVE_INFINITY;
 			for (int i = 0; i < pntsA.length; i++) {
-				Point a = pntsA[i];
-				Point b = pntsB[i];
-				Point c = pntsC[i];
+				Pnt2d a = pntsA[i];
+				Pnt2d b = pntsB[i];
+				Pnt2d c = pntsC[i];
 				double dist2 = b.distance2(c);
 				sumDist2 += dist2;
 				maxDist2 = Math.max(maxDist2, dist2);
@@ -446,7 +450,7 @@ public class HomographyEstimator {
 			System.out.println("H (estim.) = "); 
 			System.out.println(Matrix.toString(Hest.getData()));
 
-			Point[] pntsC = new Point[pntsA.length];
+			Pnt2d[] pntsC = new Pnt2d[pntsA.length];
 			for (int i = 0; i < pntsA.length; i++) {	
 				pntsC[i] = mapPoint(Hest, pntsA[i]);
 			}
@@ -456,9 +460,9 @@ public class HomographyEstimator {
 			double maxDist2 = Double.NEGATIVE_INFINITY;
 			for (int i = 0; i < pntsA.length; i++) {
 				@SuppressWarnings("unused")
-				Point a = pntsA[i];
-				Point b = pntsB[i];
-				Point c = pntsC[i];
+				Pnt2d a = pntsA[i];
+				Pnt2d b = pntsB[i];
+				Pnt2d c = pntsC[i];
 				double dist2 = b.distance2(c);
 				sumDist2 += dist2;
 				maxDist2 = Math.max(maxDist2, dist2);

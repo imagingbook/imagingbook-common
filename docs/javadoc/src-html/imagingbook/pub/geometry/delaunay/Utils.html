@@ -12,7 +12,7 @@
 <span class="sourceLineNo">002</span><a id="line.2"></a>
 <span class="sourceLineNo">003</span><a id="line.3">import java.util.Collection;</a>
 <span class="sourceLineNo">004</span><a id="line.4"></a>
-<span class="sourceLineNo">005</span><a id="line.5">import imagingbook.pub.geometry.basic.Point;</a>
+<span class="sourceLineNo">005</span><a id="line.5">import imagingbook.pub.geometry.basic.Pnt2d;</a>
 <span class="sourceLineNo">006</span><a id="line.6"></a>
 <span class="sourceLineNo">007</span><a id="line.7">/**</a>
 <span class="sourceLineNo">008</span><a id="line.8"> * This class defines static utility methods used by the Delaunay implementations.</a>
@@ -26,13 +26,13 @@
 <span class="sourceLineNo">016</span><a id="line.16">         * @param points the 2D point set</a>
 <span class="sourceLineNo">017</span><a id="line.17">         * @return a triangle as an array of 3 points</a>
 <span class="sourceLineNo">018</span><a id="line.18">         */</a>
-<span class="sourceLineNo">019</span><a id="line.19">        public static Point[] makeOuterTriangle(Collection&lt;? extends Point&gt; points) {</a>
+<span class="sourceLineNo">019</span><a id="line.19">        public static Pnt2d[] makeOuterTriangle(Collection&lt;? extends Pnt2d&gt; points) {</a>
 <span class="sourceLineNo">020</span><a id="line.20">                double xmin = Double.POSITIVE_INFINITY;</a>
 <span class="sourceLineNo">021</span><a id="line.21">                double xmax = Double.NEGATIVE_INFINITY;</a>
 <span class="sourceLineNo">022</span><a id="line.22">                double ymin = xmin;</a>
 <span class="sourceLineNo">023</span><a id="line.23">                double ymax = xmax;</a>
 <span class="sourceLineNo">024</span><a id="line.24">                </a>
-<span class="sourceLineNo">025</span><a id="line.25">                for (Point p : points) {</a>
+<span class="sourceLineNo">025</span><a id="line.25">                for (Pnt2d p : points) {</a>
 <span class="sourceLineNo">026</span><a id="line.26">                        double x = p.getX();</a>
 <span class="sourceLineNo">027</span><a id="line.27">                        double y = p.getY();</a>
 <span class="sourceLineNo">028</span><a id="line.28">                        xmin = Math.min(x, xmin);</a>
@@ -53,17 +53,17 @@
 <span class="sourceLineNo">043</span><a id="line.43">         * @param ymax maximum y-coordinate of the bounding rectangle</a>
 <span class="sourceLineNo">044</span><a id="line.44">         * @return a triangle as an array of 3 points</a>
 <span class="sourceLineNo">045</span><a id="line.45">         */</a>
-<span class="sourceLineNo">046</span><a id="line.46">        public static Point[] makeOuterTriangle(double xmin, double xmax, double ymin, double ymax) {</a>
+<span class="sourceLineNo">046</span><a id="line.46">        public static Pnt2d[] makeOuterTriangle(double xmin, double xmax, double ymin, double ymax) {</a>
 <span class="sourceLineNo">047</span><a id="line.47">                double width = xmax - xmin;</a>
 <span class="sourceLineNo">048</span><a id="line.48">                double height = ymax - ymin;</a>
 <span class="sourceLineNo">049</span><a id="line.49">                double diam = Math.max(width,  height);</a>
 <span class="sourceLineNo">050</span><a id="line.50">                double xc = xmin + width / 2;</a>
 <span class="sourceLineNo">051</span><a id="line.51">                double yc = ymin + height / 2;</a>
 <span class="sourceLineNo">052</span><a id="line.52">                double s = 50;</a>
-<span class="sourceLineNo">053</span><a id="line.53">                return new Point[] {</a>
-<span class="sourceLineNo">054</span><a id="line.54">                                Point.create(xc, yc + s * diam),</a>
-<span class="sourceLineNo">055</span><a id="line.55">                                Point.create(xc + s * diam, yc),</a>
-<span class="sourceLineNo">056</span><a id="line.56">                                Point.create(xc - s * diam, yc - s * diam)</a>
+<span class="sourceLineNo">053</span><a id="line.53">                return new Pnt2d[] {</a>
+<span class="sourceLineNo">054</span><a id="line.54">                                Pnt2d.PntDouble.from(xc, yc + s * diam),</a>
+<span class="sourceLineNo">055</span><a id="line.55">                                Pnt2d.PntDouble.from(xc + s * diam, yc),</a>
+<span class="sourceLineNo">056</span><a id="line.56">                                Pnt2d.PntDouble.from(xc - s * diam, yc - s * diam)</a>
 <span class="sourceLineNo">057</span><a id="line.57">                };</a>
 <span class="sourceLineNo">058</span><a id="line.58">        }</a>
 <span class="sourceLineNo">059</span><a id="line.59">        </a>
@@ -75,7 +75,7 @@
 <span class="sourceLineNo">065</span><a id="line.65">         * @param height the height of the bounding rectangle</a>
 <span class="sourceLineNo">066</span><a id="line.66">         * @return a triangle as an array of 3 points</a>
 <span class="sourceLineNo">067</span><a id="line.67">         */</a>
-<span class="sourceLineNo">068</span><a id="line.68">        public static Point[] makeOuterTriangle(double width, double height) {</a>
+<span class="sourceLineNo">068</span><a id="line.68">        public static Pnt2d[] makeOuterTriangle(double width, double height) {</a>
 <span class="sourceLineNo">069</span><a id="line.69">                return makeOuterTriangle(0, width, 0, height);</a>
 <span class="sourceLineNo">070</span><a id="line.70">        }</a>
 <span class="sourceLineNo">071</span><a id="line.71"></a>

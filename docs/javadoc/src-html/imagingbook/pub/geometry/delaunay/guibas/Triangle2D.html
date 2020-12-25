@@ -12,7 +12,7 @@
 <span class="sourceLineNo">002</span><a id="line.2"></a>
 <span class="sourceLineNo">003</span><a id="line.3">import java.util.Arrays;</a>
 <span class="sourceLineNo">004</span><a id="line.4"></a>
-<span class="sourceLineNo">005</span><a id="line.5">import imagingbook.pub.geometry.basic.Point;</a>
+<span class="sourceLineNo">005</span><a id="line.5">import imagingbook.pub.geometry.basic.Pnt2d;</a>
 <span class="sourceLineNo">006</span><a id="line.6">import imagingbook.pub.geometry.delaunay.Triangle;</a>
 <span class="sourceLineNo">007</span><a id="line.7"></a>
 <span class="sourceLineNo">008</span><a id="line.8"></a>
@@ -42,7 +42,7 @@
 <span class="sourceLineNo">032</span><a id="line.32">                isOrientedCCW = findIfOrientedCCW();</a>
 <span class="sourceLineNo">033</span><a id="line.33">        }</a>
 <span class="sourceLineNo">034</span><a id="line.34">        </a>
-<span class="sourceLineNo">035</span><a id="line.35">        public Triangle2D(Point[] points) {</a>
+<span class="sourceLineNo">035</span><a id="line.35">        public Triangle2D(Pnt2d[] points) {</a>
 <span class="sourceLineNo">036</span><a id="line.36">                this(new Vector2D(points[0]), new Vector2D(points[1]), new Vector2D(points[2]));</a>
 <span class="sourceLineNo">037</span><a id="line.37">        }</a>
 <span class="sourceLineNo">038</span><a id="line.38"></a>
@@ -207,8 +207,8 @@
 <span class="sourceLineNo">197</span><a id="line.197">        }</a>
 <span class="sourceLineNo">198</span><a id="line.198"></a>
 <span class="sourceLineNo">199</span><a id="line.199">        @Override</a>
-<span class="sourceLineNo">200</span><a id="line.200">        public Point[] getPoints() {</a>
-<span class="sourceLineNo">201</span><a id="line.201">                return new Point[] {a, b, c};</a>
+<span class="sourceLineNo">200</span><a id="line.200">        public Pnt2d[] getPoints() {</a>
+<span class="sourceLineNo">201</span><a id="line.201">                return new Pnt2d[] {a, b, c};</a>
 <span class="sourceLineNo">202</span><a id="line.202">        }</a>
 <span class="sourceLineNo">203</span><a id="line.203"></a>
 <span class="sourceLineNo">204</span><a id="line.204">}</a>

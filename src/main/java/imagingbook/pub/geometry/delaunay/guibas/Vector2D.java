@@ -1,22 +1,22 @@
 package imagingbook.pub.geometry.delaunay.guibas;
 
-import imagingbook.pub.geometry.basic.Point;
+import imagingbook.pub.geometry.basic.Pnt2d;
 
 /**
  * Implements a 2D point or vector with {@code double} coordinates.
  * Instances of this class are immutable.
  */
-public class Vector2D implements Point {
+public class Vector2D implements Pnt2d {
 
     private final double x;
     private final double y;
     
 	/**
-	 * Constructor from any object that implements the generic {@link Point} 
+	 * Constructor from any object that implements the generic {@link Pnt2d} 
 	 * interface.
 	 * @param pt original point object (of unknown class)
 	 */
-	public Vector2D(Point pt) {
+	public Vector2D(Pnt2d pt) {
 		this.x = pt.getX();
 		this.y = pt.getY();
 	}

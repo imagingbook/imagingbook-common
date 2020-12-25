@@ -9,7 +9,8 @@
 
 package imagingbook.pub.geometry.mappings.nonlinear;
 
-import imagingbook.pub.geometry.basic.Point;
+import imagingbook.pub.geometry.basic.Pnt2d;
+import imagingbook.pub.geometry.basic.Pnt2d.PntDouble;
 import imagingbook.pub.geometry.mappings.Mapping2D;
 
 /**
@@ -34,12 +35,12 @@ public class RippleMapping implements Mapping2D {
 	}
 
 	@Override
-	public Point applyTo(Point pnt) {
+	public Pnt2d applyTo(Pnt2d pnt) {
 		final double x = pnt.getX();
 		final double y = pnt.getY();
 		double xx = x + xAmpl * Math.sin(y / xWavel);
 		double yy = y + yAmpl * Math.sin(x / yWavel);
-		return Point.create(xx, yy);
+		return PntDouble.from(xx, yy);
 	}
 }
 

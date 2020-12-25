@@ -17,7 +17,8 @@ import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import org.apache.commons.math3.geometry.euclidean.twod.hull.ConvexHull2D;
 import org.apache.commons.math3.geometry.euclidean.twod.hull.MonotoneChain;
 
-import imagingbook.pub.geometry.basic.Point;
+import imagingbook.pub.geometry.basic.Pnt2d;
+import imagingbook.pub.geometry.basic.Pnt2d.PntDouble;
 
 /**
  * This class serves to calculate the convex hull of a binary region
@@ -35,17 +36,17 @@ public class ConvexHull {
 	
 	// public constructors ------------------------
 	
-	public ConvexHull(Iterable<Point> iterable) {
+	public ConvexHull(Iterable<Pnt2d> iterable) {
 		this.hull = new MonotoneChain().generate(convertToVector2D(iterable));
 	}
 	
 	// public methods ------------------------
 	
-	public Point[] getVertices() {
+	public Pnt2d[] getVertices() {
 		Vector2D[] vecs = hull.getVertices();	// apparently vertices are ordered, but is this guaranteed?
-		Point[] pnts = new Point[vecs.length];
+		Pnt2d[] pnts = new Pnt2d[vecs.length];
 		for (int i = 0; i < vecs.length; i++) {
-			pnts[i] = Point.create(vecs[i]);
+			pnts[i] = PntDouble.from(vecs[i]);
 		}
 		return pnts;
 	}
@@ -64,9 +65,9 @@ public class ConvexHull {
 	
 	// --------------------------------------------------------------------
 	
-	private Collection<Vector2D> convertToVector2D(Iterable<Point> iterable) {
+	private Collection<Vector2D> convertToVector2D(Iterable<Pnt2d> iterable) {
 		Collection<Vector2D> vecs = new ArrayList<Vector2D>();
-		for (Point p : iterable) {
+		for (Pnt2d p : iterable) {
 			vecs.add(new Vector2D(p.getX(), p.getY()));
 		}
 		return vecs;

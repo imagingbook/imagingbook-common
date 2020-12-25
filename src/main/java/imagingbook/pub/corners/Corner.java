@@ -11,17 +11,17 @@ package imagingbook.pub.corners;
 
 import java.util.Locale;
 
-import imagingbook.pub.geometry.basic.Point;
+import imagingbook.pub.geometry.basic.Pnt2d;
 
 
 /**
  * This class represents a 2D corner.
- * A corner is essentially a {@link Point} plus a scalar quantity
+ * A corner is essentially a {@link Pnt2d} plus a scalar quantity
  * {@link #q} for the corner strength.
  * 
  * @version 2020/10/02
  */
-public class Corner implements Point, Comparable<Corner> {
+public class Corner implements Pnt2d, Comparable<Corner> {
 	protected final float x, y, q;
 
 	public Corner (float x, float y, float q) {

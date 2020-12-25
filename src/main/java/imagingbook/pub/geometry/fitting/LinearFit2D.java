@@ -2,7 +2,7 @@ package imagingbook.pub.geometry.fitting;
 
 import org.apache.commons.math3.linear.RealMatrix;
 
-import imagingbook.pub.geometry.basic.Point;
+import imagingbook.pub.geometry.basic.Pnt2d;
 import imagingbook.pub.geometry.mappings.linear.LinearMapping2D;
 
 /**
@@ -26,15 +26,15 @@ public interface LinearFit2D {
 	double getError();
 	
 	
-	default public double calculateError(Point[] P, Point[] Q, RealMatrix A) {
+	default public double calculateError(Pnt2d[] P, Pnt2d[] Q, RealMatrix A) {
 		final int m = Math.min(P.length,  Q.length);
 		LinearMapping2D map = new LinearMapping2D(A.getData());
 		double errSum = 0;
 		for (int i = 0; i < m; i++) {
-			Point p = P[i];
-			Point q = Q[i];
-			Point pp = map.applyTo(p);
-			double e = Point.distance(q, pp);
+			Pnt2d p = P[i];
+			Pnt2d q = Q[i];
+			Pnt2d pp = map.applyTo(p);
+			double e = q.distance(pp);
 			errSum = errSum + e * e;
 		}
 		return Math.sqrt(errSum);

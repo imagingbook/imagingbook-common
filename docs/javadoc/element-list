@@ -2,12 +2,14 @@ imagingbook
 imagingbook.lib
 imagingbook.lib.color
 imagingbook.lib.filters
+imagingbook.lib.handles
 imagingbook.lib.ij
 imagingbook.lib.image
 imagingbook.lib.interpolation
 imagingbook.lib.math
 imagingbook.lib.math.testing
 imagingbook.lib.settings
+imagingbook.lib.tuples
 imagingbook.lib.util
 imagingbook.lib.util.choice
 imagingbook.pub

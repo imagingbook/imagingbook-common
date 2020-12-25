@@ -1,12 +1,12 @@
 package imagingbook.pub.geometry.delaunay;
 
-import imagingbook.pub.geometry.basic.Point;
+import imagingbook.pub.geometry.basic.Pnt2d;
 
 /** 
  * Interface specifying the behavior of a 2D triangle.
  */
 public interface Triangle {
 	
-	Point[] getPoints();
+	Pnt2d[] getPoints();
 }
 

@@ -12,7 +12,7 @@ package imagingbook.pub.geometry.lines;
 
 import java.util.Locale;
 
-import imagingbook.pub.geometry.basic.Point;
+import imagingbook.pub.geometry.basic.Pnt2d;
 
 /**
  * This class represents a straight line in Hessian normal form, i.e., 
@@ -27,7 +27,7 @@ public class HessianLine extends AlgebraicLine {
 	
 	// static factory methods ----------------------------------------
 	
-	public static HessianLine fromPoints(Point p1, Point p2) {
+	public static HessianLine fromPoints(Pnt2d p1, Pnt2d p2) {
 		return new HessianLine(AlgebraicLine.fromPoints(p1, p2));
 	}
 	

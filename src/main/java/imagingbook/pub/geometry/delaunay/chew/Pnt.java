@@ -1,6 +1,6 @@
 package imagingbook.pub.geometry.delaunay.chew;
 
-import imagingbook.pub.geometry.basic.Point;
+import imagingbook.pub.geometry.basic.Pnt2d;
 
 /*
  * Copyright (c) 2005, 2007 by L. Paul Chew.
@@ -39,7 +39,7 @@ import imagingbook.pub.geometry.basic.Point;
  * @version 2020-01-01
  * 
  */
-public class Pnt implements Point {
+public class Pnt implements Pnt2d {
 
     private double[] coordinates;          // The point's coordinates
 
@@ -56,7 +56,7 @@ public class Pnt implements Point {
         coordinates = coords.clone();
     }
     
-    public Pnt (Point p) {
+    public Pnt (Pnt2d p) {
     	this(p.getX(), p.getY());
     }
     

@@ -9,7 +9,8 @@
 package imagingbook.lib.image;
 
 import ij.process.ImageProcessor;
-import imagingbook.pub.geometry.basic.Point;
+import imagingbook.pub.geometry.basic.Pnt2d;
+import imagingbook.pub.geometry.basic.Pnt2d.PntInt;
 import imagingbook.pub.geometry.mappings.linear.AffineMapping2D;
 import imagingbook.pub.geometry.mappings.linear.LinearMapping2D;
 import imagingbook.pub.geometry.mappings.linear.ProjectiveMapping2D;
@@ -60,7 +61,7 @@ public class ImageExtractor {
 		return R;
 	}
 	
-	public ImageProcessor extractImage(int width, int height, Point[] sourcePnts) {
+	public ImageProcessor extractImage(int width, int height, Pnt2d[] sourcePnts) {
 		ImageProcessor R = I.createProcessor(width, height);
 		ProjectiveMapping2D T = getMapping(width, height, sourcePnts);
 		extractImage(R, T);
@@ -88,8 +89,8 @@ public class ImageExtractor {
 		int hT = R.getHeight();
 		for (int u = 0; u < wT; u++) {
 			for (int v = 0; v < hT; v++) {
-				Point uv = Point.create(u, v);
-				Point xy = T.applyTo(uv);
+				Pnt2d uv = PntInt.from(u, v);
+				Pnt2d xy = T.applyTo(uv);
 				float[] val = iaI.getPix(xy.getX(), xy.getY());
 				iaR.setPix(u, v, val);
 			}
@@ -105,17 +106,17 @@ public class ImageExtractor {
 	 * a {@link ProjectiveMapping2D} is used. The 3 or 4 points map clockwise to
 	 * the corner points of the target image R, starting with the top-left corner.
 	 * @param R the target image;
-	 * @param sourcePnts an array of 3 or 4 {@link Point} objects.
+	 * @param sourcePnts an array of 3 or 4 {@link Pnt2d} objects.
 	 */
-	public void extractImage(ImageProcessor R, Point[] sourcePnts) {
+	public void extractImage(ImageProcessor R, Pnt2d[] sourcePnts) {
 		ProjectiveMapping2D T = getMapping(R.getWidth(), R.getHeight(), sourcePnts);
 		extractImage(R, T);
 	}
 	
-	private ProjectiveMapping2D getMapping(int w, int h, Point[] sourcePnts) {
-		Point[] targetPnts = {
-				Point.create(0, 0), Point.create(w - 1, 0),
-				Point.create(w - 1, h - 1), Point.create(0, h - 1)
+	private ProjectiveMapping2D getMapping(int w, int h, Pnt2d[] sourcePnts) {
+		Pnt2d[] targetPnts = {
+				PntInt.from(0, 0), PntInt.from(w - 1, 0),
+				PntInt.from(w - 1, h - 1), PntInt.from(0, h - 1)
 			};
 		ProjectiveMapping2D T = null;
 		switch (sourcePnts.length) {

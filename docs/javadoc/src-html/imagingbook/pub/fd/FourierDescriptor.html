@@ -32,7 +32,7 @@
 <span class="sourceLineNo">022</span><a id="line.22"></a>
 <span class="sourceLineNo">023</span><a id="line.23">import imagingbook.lib.math.Arithmetic;</a>
 <span class="sourceLineNo">024</span><a id="line.24">import imagingbook.lib.math.Complex;</a>
-<span class="sourceLineNo">025</span><a id="line.25">import imagingbook.pub.geometry.basic.Point;</a>
+<span class="sourceLineNo">025</span><a id="line.25">import imagingbook.pub.geometry.basic.Pnt2d;</a>
 <span class="sourceLineNo">026</span><a id="line.26"></a>
 <span class="sourceLineNo">027</span><a id="line.27">/**</a>
 <span class="sourceLineNo">028</span><a id="line.28"> * This is the abstract super-class for Fourier descriptors. It cannot</a>
@@ -115,7 +115,7 @@
 <span class="sourceLineNo">105</span><a id="line.105"></a>
 <span class="sourceLineNo">106</span><a id="line.106">        // ----------------------------------------------------------------</a>
 <span class="sourceLineNo">107</span><a id="line.107"></a>
-<span class="sourceLineNo">108</span><a id="line.108">        protected static Complex[] makeComplex(Point[] points) {</a>
+<span class="sourceLineNo">108</span><a id="line.108">        protected static Complex[] makeComplex(Pnt2d[] points) {</a>
 <span class="sourceLineNo">109</span><a id="line.109">                int N = points.length;</a>
 <span class="sourceLineNo">110</span><a id="line.110">                Complex[] samples = new Complex[N];</a>
 <span class="sourceLineNo">111</span><a id="line.111">                for (int i = 0; i &lt; N; i++) {</a>

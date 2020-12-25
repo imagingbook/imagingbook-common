@@ -13,7 +13,8 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 import ij.process.ByteProcessor;
-import imagingbook.pub.geometry.basic.Point;
+import imagingbook.pub.geometry.basic.Pnt2d;
+import imagingbook.pub.geometry.basic.Pnt2d.PntInt;
 
 /**
  * Binary region labeler based on a breadth-first flood filling
@@ -55,23 +56,23 @@ public class SegmentationBreadthFirst extends BinaryRegionSegmentation {
 	}
 
 	private void floodFill(int u, int v, int label) {
-		Queue<Point> Q = new LinkedList<Point>();	//queue contains pixel coordinates
-		Q.add(Point.create(u, v));
+		Queue<Pnt2d> Q = new LinkedList<Pnt2d>();	//queue contains pixel coordinates
+		Q.add(PntInt.from(u, v));
 		while (!Q.isEmpty()) {
-			Point p = Q.remove();	// get the next point to process
+			Pnt2d p = Q.remove();	// get the next point to process
 			int x = (int) p.getX();
 			int y = (int) p.getY();
 			if ((x >= 0) && (x < width) && (y >= 0) && (y < height) && getLabel(x, y) == FOREGROUND) {
 				setLabel(x, y, label);
-				Q.add(Point.create(x + 1, y));
-				Q.add(Point.create(x, y + 1));
-				Q.add(Point.create(x, y - 1));
-				Q.add(Point.create(x - 1, y));
+				Q.add(PntInt.from(x + 1, y));
+				Q.add(PntInt.from(x, y + 1));
+				Q.add(PntInt.from(x, y - 1));
+				Q.add(PntInt.from(x - 1, y));
 				if (neighborType == NeighborhoodType.N8) {
-					Q.add(Point.create(x + 1, y + 1));
-					Q.add(Point.create(x - 1, y + 1));
-					Q.add(Point.create(x + 1, y - 1));
-					Q.add(Point.create(x - 1, y - 1));
+					Q.add(PntInt.from(x + 1, y + 1));
+					Q.add(PntInt.from(x - 1, y + 1));
+					Q.add(PntInt.from(x + 1, y - 1));
+					Q.add(PntInt.from(x - 1, y - 1));
 				}
 			}
 		}

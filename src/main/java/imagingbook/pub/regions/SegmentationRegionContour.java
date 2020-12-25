@@ -18,7 +18,7 @@ import java.util.List;
 import ij.IJ;
 import ij.process.ByteProcessor;
 import imagingbook.lib.tuples.Tuple2;
-import imagingbook.pub.geometry.basic.Point;
+import imagingbook.pub.geometry.basic.Pnt2d.PntInt;
 
 /**
  * Binary region segmenter based on a combined region labeling
@@ -108,7 +108,7 @@ public class SegmentationRegionContour extends BinaryRegionSegmentation implemen
 						label = getLabel(u, v);
 						if (label == 0) {	// new (unlabeled) region is hit
 							label = getNextLabel(); // assign a new region label
-							Point xs = Point.create(u, v);
+							PntInt xs = PntInt.from(u, v);
 							int ds = 0;
 							Contour.Outer c = traceContour(xs, ds, new Contour.Outer(label));
 							outerContours.add(c);
@@ -119,7 +119,7 @@ public class SegmentationRegionContour extends BinaryRegionSegmentation implemen
 				else {	// hit a BACKGROUND pixel
 					if (label != 0) { // exiting a region
 						if (getLabel(u, v) == BACKGROUND) { // unlabeled - new inner contour
-							Point xs = Point.create(u - 1, v);
+							PntInt xs = PntInt.from(u - 1, v);
 							int ds = (neighborType == N4) ? 2 : 1;
 							Contour.Inner c = traceContour(xs, ds, new Contour.Inner(label));
 							innerContours.add(c);
@@ -133,23 +133,23 @@ public class SegmentationRegionContour extends BinaryRegionSegmentation implemen
 	}
 	
 	// Trace one contour starting at Xs in direction ds	
-	private <T extends Contour> T traceContour(Point Xs, final int ds, T contour) {
+	private <T extends Contour> T traceContour(PntInt Xs, final int ds, T contour) {
 		final int label = contour.getLabel();	// C ist the (empty) contour		
-		Point X = Xs;			// start position
+		PntInt X = Xs;			// start position
 		
 		int d = ds;
-		Tuple2<Point, Integer> next = findNextContourPoint(X, d);
+		Tuple2<PntInt, Integer> next = findNextContourPoint(X, d);
 		if (next != null) {	// if null we keep X and d
 			X = next.f0;
 			d = next.f1;
 		}
 		contour.addPoint(X);
-		final Point Xt = X;
+		final PntInt Xt = X;
 		
-		boolean home = Xs.equals(Xt);
+		boolean home = Xt.equals(Xs);
 		while (!home) {
 			setLabel(X, label);
-			Point Xp = X;
+			PntInt Xp = X;
 			int dn = (d + 6) % 8;
 			
 			next = findNextContourPoint(X, dn);
@@ -176,9 +176,9 @@ public class SegmentationRegionContour extends BinaryRegionSegmentation implemen
 	// Starts at point X0 in direction d0, returns a tuple holding
 	// the next point and the direction in which it was found if successful.
 	// Returns null if no successor point is found.
-	private Tuple2<Point, Integer> findNextContourPoint(final Point X0, final int d0) {	// VERSION 3 (using Point/Tuple)
+	private Tuple2<PntInt, Integer> findNextContourPoint(final PntInt X0, final int d0) {	// VERSION 3 (using Point/Tuple)
 		final int step = (neighborType == N4) ? 2 : 1;
-		Point X = X0;
+		PntInt X = X0;
 		int d = d0;
 		int i = 0;
 		int x = 0, y = 0;
@@ -195,7 +195,7 @@ public class SegmentationRegionContour extends BinaryRegionSegmentation implemen
 			}
 			i = i + step;
 		}
-		return (done) ? Tuple2.of(Point.create(x, y), d) : null; //Tuple2.of(X, d0);
+		return (done) ? Tuple2.of(PntInt.from(x, y), d) : null; //Tuple2.of(X, d0);
 	}
 	
 	private void attachOuterContours() {
@@ -244,8 +244,8 @@ public class SegmentationRegionContour extends BinaryRegionSegmentation implemen
 		}
 	}
 	
-	protected void setLabel(Point p, int label) { // (u,v) are image coordinates
-		setLabel((int)p.getX(), (int)p.getY(), label);
+	protected void setLabel(PntInt p, int label) { // (u,v) are image coordinates
+		setLabel(p.x, p.y, label);
 	}
 	
 //	private List<Contour> copyContours(List<Contour> cntrs, boolean sort) {

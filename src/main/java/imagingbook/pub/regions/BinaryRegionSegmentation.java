@@ -25,7 +25,9 @@ import java.util.NoSuchElementException;
 
 import ij.process.ByteProcessor;
 import ij.process.ImageProcessor;
-import imagingbook.pub.geometry.basic.Point;
+import imagingbook.pub.geometry.basic.Pnt2d;
+import imagingbook.pub.geometry.basic.Pnt2d.PntDouble;
+import imagingbook.pub.geometry.basic.Pnt2d.PntInt;
 
 /**
  * Performs region segmentation on a given binary image.
@@ -239,7 +241,7 @@ public abstract class BinaryRegionSegmentation {
 	 * contained pixel coordinates but refers to the label array of the
 	 * enclosing {@link BinaryRegionSegmentation} instance.
 	 * Instances of this class support iteration over the contained pixel
-	 * coordinates of type {@link Point}, e.g., by
+	 * coordinates of type {@link Pnt2d}, e.g., by
 	 * <pre>
 	 * import imagingbook.pub.geometry.basic.Point;
 	 * 
@@ -250,7 +252,7 @@ public abstract class BinaryRegionSegmentation {
 	 * The advantage of providing iteration only is that it avoids the
 	 * creation of (possibly large) arrays of pixel coordinates.
 	 */
-	public class BinaryRegion implements Comparable<BinaryRegion>, Iterable<Point> {
+	public class BinaryRegion implements Comparable<BinaryRegion>, Iterable<Pnt2d> {
 		
 		private final int label;				// the label of THIS region
 		private int size = 0;
@@ -384,15 +386,15 @@ public abstract class BinaryRegionSegmentation {
 		 * 
 		 * @return the centroid of this region.
 		 */
-		public Point getCentroid() {
+		public Pnt2d getCentroid() {
 			if (Double.isNaN(xc))
 				return null;
 			else
-				return Point.create(xc, yc);
+				return PntDouble.from(xc, yc);
 		}
 		
 		@Override
-		public Iterator<Point> iterator() {
+		public Iterator<Pnt2d> iterator() {
 			return new RegionPixelIterator(this);
 		}
 		
@@ -546,13 +548,13 @@ public abstract class BinaryRegionSegmentation {
 	
 	/**
 	 * Instances of this class are returned by {@link BinaryRegion#iterator()},
-	 * which implements  {@link Iterable} for instances of class {@link Point}.
+	 * which implements  {@link Iterable} for instances of class {@link Pnt2d}.
 	 */
-	private class RegionPixelIterator implements Iterator<Point> {
+	private class RegionPixelIterator implements Iterator<Pnt2d> {
 		private final int label;					// the corresponding region's label
 		private final int uMin, uMax, vMin, vMax;	// coordinates of region's bounding box
 		int uCur, vCur;								// current pixel position
-		private Point pNext;						// coordinates of the next region pixel
+		private Pnt2d pNext;						// coordinates of the next region pixel
 		private boolean first;						// control flag
 
 		RegionPixelIterator(BinaryRegion R) {
@@ -575,7 +577,7 @@ public abstract class BinaryRegionSegmentation {
 		 * 
 		 * @return the next point
 		 */
-		private Point.Int findNext() {
+		private Pnt2d.PntInt findNext() {
 			// start search for next region pixel at (u,v):
 			int u = (first) ? uCur : uCur + 1;
 			int v = vCur;
@@ -585,7 +587,7 @@ public abstract class BinaryRegionSegmentation {
 					if (getLabel(u, v) == label) { // next pixel found (uses surrounding labeling)
 						uCur = u;
 						vCur = v;
-						return Point.create(uCur, vCur);
+						return PntInt.from(uCur, vCur);
 					}
 					u++;
 				}
@@ -611,9 +613,9 @@ public abstract class BinaryRegionSegmentation {
 		// Returns: the next element in the iteration
 		// Throws: NoSuchElementException - if the iteration has no more elements.
 		@Override
-		public Point next() {
+		public Pnt2d next() {
 			if (pNext != null || hasNext()) {
-				Point pn = pNext;
+				Pnt2d pn = pNext;
 				pNext = null;		// "consume" pNext
 				return pn;
 			}

@@ -11,7 +11,8 @@ package imagingbook.pub.geometry.mappings.linear;
 
 import imagingbook.lib.math.Arithmetic;
 import imagingbook.lib.settings.PrintPrecision;
-import imagingbook.pub.geometry.basic.Point;
+import imagingbook.pub.geometry.basic.Pnt2d;
+import imagingbook.pub.geometry.basic.Pnt2d.PntDouble;
 import imagingbook.pub.geometry.fitting.ProjectiveFit2D;
 
 
@@ -33,7 +34,7 @@ public class ProjectiveMapping2D extends LinearMapping2D {
 	 * @param Q the target points
 	 * @return a new projective mapping for the two point sets
 	 */
-	public static ProjectiveMapping2D fromPoints(Point[] P, Point[] Q) {
+	public static ProjectiveMapping2D fromPoints(Pnt2d[] P, Pnt2d[] Q) {
 		ProjectiveFit2D fit = new ProjectiveFit2D(P, Q);
 		return new ProjectiveMapping2D(fit.getTransformationMatrix().getData());
 	}
@@ -255,7 +256,7 @@ public class ProjectiveMapping2D extends LinearMapping2D {
 	}
 	
 	@Override
-	public double[][] getJacobian(Point xy) {
+	public double[][] getJacobian(Pnt2d xy) {
 		// see Baker 2003 "20 Years" Part 1, Eq. 99 (p. 46)
 		final double x = xy.getX();
 		final double y = xy.getY();
@@ -281,20 +282,20 @@ public class ProjectiveMapping2D extends LinearMapping2D {
 		PrintPrecision.set(6);
 
 		// book example:
-		Point[] P = {
-				Point.create(2, 5),
-				Point.create(4, 6),
-				Point.create(7, 9),
-				Point.create(5, 9),
-				Point.create(5.2, 9.1)	// 5 points, overdetermined!
+		Pnt2d[] P = {
+				PntDouble.from(2, 5),
+				PntDouble.from(4, 6),
+				PntDouble.from(7, 9),
+				PntDouble.from(5, 9),
+				PntDouble.from(5.2, 9.1)	// 5 points, overdetermined!
 				};
 		
-		Point[] Q = {
-				Point.create(4, 3),
-				Point.create(5, 2),
-				Point.create(9, 3),
-				Point.create(7, 5),
-				Point.create(7, 4.9)	// 5 points, overdetermined!
+		Pnt2d[] Q = {
+				PntDouble.from(4, 3),
+				PntDouble.from(5, 2),
+				PntDouble.from(9, 3),
+				PntDouble.from(7, 5),
+				PntDouble.from(7, 4.9)	// 5 points, overdetermined!
 				};
 		
 		ProjectiveMapping2D pm = ProjectiveMapping2D.fromPoints(P, Q);
@@ -302,7 +303,7 @@ public class ProjectiveMapping2D extends LinearMapping2D {
 		System.out.println("\nprojective mapping = \n" + pm.toString());
 		
 		for (int i = 0; i < P.length; i++) {
-			Point Bi = pm.applyTo(P[i]);
+			Pnt2d Bi = pm.applyTo(P[i]);
 			System.out.println(P[i].toString() + " -> " + Bi.toString());
 		}
 		
@@ -312,7 +313,7 @@ public class ProjectiveMapping2D extends LinearMapping2D {
 		System.out.println("\ninverse projective mapping (normalized) = \n" + pmi.toString());
 		
 		for (int i = 0; i < Q.length; i++) {
-			Point Ai = pmi.applyTo(Q[i]);
+			Pnt2d Ai = pmi.applyTo(Q[i]);
 			System.out.println(Q[i].toString() + " -> " + Ai.toString());
 		}
 		

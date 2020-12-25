@@ -10,23 +10,23 @@
 <div class="sourceContainer">
 <pre><span class="sourceLineNo">001</span><a id="line.1">package imagingbook.pub.geometry.delaunay.guibas;</a>
 <span class="sourceLineNo">002</span><a id="line.2"></a>
-<span class="sourceLineNo">003</span><a id="line.3">import imagingbook.pub.geometry.basic.Point;</a>
+<span class="sourceLineNo">003</span><a id="line.3">import imagingbook.pub.geometry.basic.Pnt2d;</a>
 <span class="sourceLineNo">004</span><a id="line.4"></a>
 <span class="sourceLineNo">005</span><a id="line.5">/**</a>
 <span class="sourceLineNo">006</span><a id="line.6"> * Implements a 2D point or vector with {@code double} coordinates.</a>
 <span class="sourceLineNo">007</span><a id="line.7"> * Instances of this class are immutable.</a>
 <span class="sourceLineNo">008</span><a id="line.8"> */</a>
-<span class="sourceLineNo">009</span><a id="line.9">public class Vector2D implements Point {</a>
+<span class="sourceLineNo">009</span><a id="line.9">public class Vector2D implements Pnt2d {</a>
 <span class="sourceLineNo">010</span><a id="line.10"></a>
 <span class="sourceLineNo">011</span><a id="line.11">    private final double x;</a>
 <span class="sourceLineNo">012</span><a id="line.12">    private final double y;</a>
 <span class="sourceLineNo">013</span><a id="line.13">    </a>
 <span class="sourceLineNo">014</span><a id="line.14">        /**</a>
-<span class="sourceLineNo">015</span><a id="line.15">         * Constructor from any object that implements the generic {@link Point} </a>
+<span class="sourceLineNo">015</span><a id="line.15">         * Constructor from any object that implements the generic {@link Pnt2d} </a>
 <span class="sourceLineNo">016</span><a id="line.16">         * interface.</a>
 <span class="sourceLineNo">017</span><a id="line.17">         * @param pt original point object (of unknown class)</a>
 <span class="sourceLineNo">018</span><a id="line.18">         */</a>
-<span class="sourceLineNo">019</span><a id="line.19">        public Vector2D(Point pt) {</a>
+<span class="sourceLineNo">019</span><a id="line.19">        public Vector2D(Pnt2d pt) {</a>
 <span class="sourceLineNo">020</span><a id="line.20">                this.x = pt.getX();</a>
 <span class="sourceLineNo">021</span><a id="line.21">                this.y = pt.getY();</a>
 <span class="sourceLineNo">022</span><a id="line.22">        }</a>

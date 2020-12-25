@@ -10,7 +10,7 @@ package imagingbook.pub.hough.lines;
 
 import java.util.Locale;
 
-import imagingbook.pub.geometry.basic.Point;
+import imagingbook.pub.geometry.basic.Pnt2d;
 import imagingbook.pub.geometry.lines.AlgebraicLine;
 import imagingbook.pub.geometry.lines.HessianLine;
 
@@ -29,7 +29,7 @@ public class HoughLine extends HessianLine implements Comparable<HoughLine> {
 	
 	// static factory methods -------------------------------
 	
-	public static HoughLine fromPoints(Point p1, Point p2, Point pRef, int count) {
+	public static HoughLine fromPoints(Pnt2d p1, Pnt2d p2, Pnt2d pRef, int count) {
 		return new HoughLine(AlgebraicLine.fromPoints(p1, p2), pRef.getX(), pRef.getY(), count);
 	}
 	
