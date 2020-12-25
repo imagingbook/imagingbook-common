@@ -110,6 +110,39 @@ public class SegmentationRegionContourTest {
 		tc.run();
 	}
 	
+	// ************************************************************************
+	
+	@Test
+	public void testBigN4() {
+		TestCase tc = new TestCase();
+		// -----------------------------------------------------------------
+		tc.ImgName = "rhino-big-crop.png";
+		tc.NHT = N4;
+		tc.RegionCount = 10254;
+		tc.LargestRegionSize = 562365;
+		tc.OuterContourLength = 11548;
+		tc.FirstRegionWithHole = 0;
+		tc.FirstInnerContourLength = 168;
+		// -----------------------------------------------------------------
+		tc.run();
+	}
+	
+	@Test
+	public void testBigN8() {
+		TestCase tc = new TestCase();
+		// -----------------------------------------------------------------
+		tc.ImgName = "rhino-big-crop.png";
+		tc.NHT = N8;
+		tc.RegionCount = 9382;
+		tc.LargestRegionSize = 564659;
+		tc.OuterContourLength = 9974;
+		tc.FirstRegionWithHole = 0;
+		tc.FirstInnerContourLength = 125;
+		// -----------------------------------------------------------------
+		tc.run();
+	}
+	
+	
 	// --------------------------------------------------------------------------------------------
 	// --------------------------------------------------------------------------------------------
 	

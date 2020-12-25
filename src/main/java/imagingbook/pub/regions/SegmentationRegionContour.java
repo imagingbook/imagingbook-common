@@ -137,22 +137,14 @@ public class SegmentationRegionContour extends BinaryRegionSegmentation implemen
 	// Trace one contour starting at (xs,ys) in direction ds	
 	private <T extends Contour> T traceContour(int[] Xas, final int ds, T contour) {
 		final int label = contour.getLabel();	// C ist the (empty) contour
-//		final int xs = Xas[0], ys = Xas[1];
-		Point Xs = Point.create(Xas);
+		Point Xs = Point.create(Xas);					
+		Point X = Xs;			// start position
 		
-//		int[] XA = {xs, ys};  						// start position
-		Point X = Xs;
-		
-//		int d = findNextContourPoint(X, ds);		// X is modified!
 		Tuple2<Point, Integer> tup = findNextContourPointTupel(X, ds);
-//		XA = toIntArray(tup.f0);
 		X = tup.f0;
 		int d = tup.f1;
+		contour.addPoint(X);
 		
-//		contour.addPoint(Point.create(X));
-		contour.addPoint(tup.f0);
-		
-//		final int xt = XA[0], yt = XA[1];					// xt = immediate successor of starting point (xs,ys)
 		Point Xt = X; //Point.create(XA);
 //		boolean home = (xs == xt && ys == yt);  	// true if single-pixel contour
 		boolean home = samePointInt(Xs, Xt);
