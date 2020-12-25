@@ -118,7 +118,7 @@ public interface Point {
 	 */
 	public class Double implements Point {
 
-		private final double x, y;
+		public final double x, y;
 
 		private Double(double x, double y) {
 			this.x = x;
@@ -162,7 +162,7 @@ public interface Point {
 	
 	public class Int implements Point {
 		
-		private final int x, y;
+		public final int x, y;
 		
 		public Int(int x, int y) {
 			this.x = x;
