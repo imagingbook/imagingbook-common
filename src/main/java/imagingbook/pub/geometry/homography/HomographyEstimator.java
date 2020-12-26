@@ -331,7 +331,7 @@ public class HomographyEstimator {
 		double[] xb = MathUtil.transform(xa, H);
 		double xn = noise * rand.nextGaussian();
 		double yn = noise * rand.nextGaussian();
-		return Pnt2d.PntDouble.from(xb[0] + xn, xb[1] + yn);
+		return PntDouble.from(xb[0] + xn, xb[1] + yn);
 	}
 
 	/**
@@ -424,7 +424,7 @@ public class HomographyEstimator {
 			Pnt2d[] pntsC = new Pnt2d[pntsA.length];
 			for (int i = 0; i < pntsA.length; i++) {	
 				pntsC[i] = //(Pnt2d) 
-					mapping.applyTo(Pnt2d.PntDouble.from(pntsA[i]));
+					mapping.applyTo(PntDouble.from(pntsA[i]));
 //					mapping.applyTo(Pnt2d.PntDouble.from(pntsA[i].getX(), pntsA[i].getY()));
 			}
 

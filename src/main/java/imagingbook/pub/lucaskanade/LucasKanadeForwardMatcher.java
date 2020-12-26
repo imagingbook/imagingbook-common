@@ -80,13 +80,9 @@ public class LucasKanadeForwardMatcher extends LucasKanadeMatcher {
 		// for all positions (u,v) in R do
 		for (int u = 0; u < wR; u++) {
 			for (int v = 0; v < hR; v++) {
-				//double[] x = {u - xc, v - yc};	// position w.r.t. the center of R
 				Pnt2d x = PntDouble.from(u - xc, v - yc);		// position w.r.t. the center of R
-				//double[] xT = Tp.applyTo(x);		// warp x -> x'
 				Pnt2d xT = Tp.applyTo(x);		// warp x -> x'
 
-//				double gx = Ix.getInterpolatedValue(xT[0], xT[1]);	// interpolate the gradient at pos. xw
-//				double gy = Iy.getInterpolatedValue(xT[0], xT[1]);
 				double gx = Ix.getInterpolatedValue(xT.getX(), xT.getY());	// interpolate the gradient at pos. xw
 				double gy = Iy.getInterpolatedValue(xT.getX(), xT.getY());
 				

@@ -104,11 +104,9 @@ public class LucasKanadeInverseMatcher extends LucasKanadeMatcher {
 			for (int v = 0; v < hR; v++) {
 				
 				// get coordinate relative to center of R
-//				double[] x = {u - xc, v - yc};
 				Pnt2d x = PntDouble.from(u - xc, v - yc);
 				
 				// warp I to I' (onto R)
-//				double[] xT = Tp.applyTo(x);		// warp from x -> x'
 				Pnt2d xT = Tp.applyTo(x);		// warp from x -> x'
 
 				// calculate pixel difference d for pos. (u,v)
@@ -130,7 +128,6 @@ public class LucasKanadeInverseMatcher extends LucasKanadeMatcher {
 		qmag = Matrix.normL2squared(qopt);
 		
 		// Calculate the warp parameters p', such that T_p'(x) = T_p (T^-1_q (x), for any point x.
-//		ProjectiveMapping2D Tqopt = ProjectiveMapping2D.fromParameters(qopt);
 		ProjectiveMapping2D Tqopt = toProjectiveMap(qopt);
 		ProjectiveMapping2D Tqopti = Tqopt.getInverse();
 		return Tqopti.concat(Tp);

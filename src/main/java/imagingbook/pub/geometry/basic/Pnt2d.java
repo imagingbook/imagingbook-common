@@ -7,6 +7,8 @@ import java.awt.geom.Point2D;
 import java.util.Locale;
 
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
+import org.apache.commons.math3.linear.MatrixUtils;
+import org.apache.commons.math3.linear.RealVector;
 
 import imagingbook.lib.math.Arithmetic;
 
@@ -45,6 +47,10 @@ public interface Pnt2d {
 	
 	public default Vector2D toVector2D() {
 		return new Vector2D(getX(), getY());
+	}
+	
+	public default RealVector toRealVector() {
+		return MatrixUtils.createRealVector(this.toDoubleArray());
 	}
 	
 	public default Pnt2d duplicate() {

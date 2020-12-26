@@ -210,7 +210,8 @@ public class ProcrustesFit implements LinearFit2D {
 		RealVector mean = MatrixUtils.createRealVector(meanX);
 		int i = 0;
 		for (Pnt2d p : points) {
-			RealVector cv = MatrixUtils.createRealVector(p.toDoubleArray());
+			RealVector cv = p.toRealVector();
+//			RealVector cv = MatrixUtils.createRealVector(p.toDoubleArray());
 			if (meanX != null) {
 				cv = cv.subtract(mean);
 			}

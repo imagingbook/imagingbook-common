@@ -117,7 +117,7 @@ public class FourierDescriptorFromPolygon extends FourierDescriptor {
 		int[] xp = poly.xpoints;
 		int[] yp = poly.ypoints;
 		// copy vertices for all non-zero-length polygon segments:
-		List<Pnt2d> points = new ArrayList<Pnt2d>(xp.length);
+		List<Pnt2d> points = new ArrayList<>(xp.length);
 		points.add(PntInt.from(xp[0], yp[0]));
 		int last = 0;
 		for (int i = 1; i < xp.length; i++) {

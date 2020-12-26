@@ -42,6 +42,11 @@ import imagingbook.pub.geometry.basic.Pnt2d;
 public class Pnt implements Pnt2d {
 
     private double[] coordinates;          // The point's coordinates
+    
+    public Pnt(Pnt2d p) {
+    	this(p.getX(), p.getY());
+    }
+    
 
     /**
      * Constructor.
@@ -51,13 +56,9 @@ public class Pnt implements Pnt2d {
         // Copying is done here to ensure that Pnt's coords cannot be altered.
         // This is necessary because the double... notation actually creates a
         // constructor with double[] as its argument.
-//        coordinates = new double[coords.length];
-//        System.arraycopy(coords, 0, coordinates, 0, coords.length);
+    	//        coordinates = new double[coords.length];
+    	//        System.arraycopy(coords, 0, coordinates, 0, coords.length);
         coordinates = coords.clone();
-    }
-    
-    public Pnt (Pnt2d p) {
-    	this(p.getX(), p.getY());
     }
     
     // -----------------------------------------------------------------------------
