@@ -134,30 +134,23 @@ public class SegmentationRegionContour extends BinaryRegionSegmentation implemen
 	
 	// Trace one contour starting at Xs in direction ds	
 	private <T extends Contour> T traceContour(PntInt Xs, final int ds, T contour) {
-		final int label = contour.getLabel();	// C ist the (empty) contour		
-		PntInt X = Xs;			// start position
+		final int label = contour.getLabel();	// C is the (empty) contour		
 		
-		int d = ds;
-		Tuple2<PntInt, Integer> next = findNextContourPoint(X, d);
-		if (next != null) {	// if null we keep X and d
-			X = next.f0;
-			d = next.f1;
-		}
+		Tuple2<PntInt, Integer> next = findNextContourPoint(Xs, ds);
+		PntInt X = next.f0;
+		int d = next.f1;
+		
 		contour.addPoint(X);
 		final PntInt Xt = X;
+		boolean home = Xs.equals(Xt);
 		
-		boolean home = Xt.equals(Xs);
 		while (!home) {
 			setLabel(X, label);
 			PntInt Xp = X;
 			int dn = (d + 6) % 8;
-			
 			next = findNextContourPoint(X, dn);
-			if (next != null) {
-				X = next.f0;
-				d = next.f1;
-			}
-			
+			X = next.f0;
+			d = next.f1;
 			// are we back at the starting position?
 			home = (Xp.equals(Xs) && X.equals(Xt)); // back at start pos.
 			if (!home) {
@@ -178,16 +171,14 @@ public class SegmentationRegionContour extends BinaryRegionSegmentation implemen
 	// Returns null if no successor point is found.
 	private Tuple2<PntInt, Integer> findNextContourPoint(final PntInt X0, final int d0) {	// VERSION 3 (using Point/Tuple)
 		final int step = (neighborType == N4) ? 2 : 1;
-		PntInt X = X0;
+		PntInt X = null;
 		int d = d0;
 		int i = 0;
-		int x = 0, y = 0;
 		boolean done = false;
 		while (i < 7 && !done) {	// N4: i = 0,2,4,6  N8: i = 0,1,2,3,4,5,6
-			x = (int)X.getX() + delta[d][0];
-			y = (int)X.getY() + delta[d][1];
-			if (ip.getPixel(x, y) == BACKGROUND) {
-				setLabel(x, y, VISITED);	// mark this background pixel not to be visited again
+			X = X0.plus(delta[d][0], delta[d][1]);
+			if (ip.getPixel(X.x, X.y) == BACKGROUND) {
+				setLabel(X, VISITED);	// mark this background pixel not to be visited again
 				d = (d + step) % 8;
 			} 
 			else {	// found a non-background pixel (next pixel to follow)
@@ -195,7 +186,7 @@ public class SegmentationRegionContour extends BinaryRegionSegmentation implemen
 			}
 			i = i + step;
 		}
-		return (done) ? Tuple2.of(PntInt.from(x, y), d) : null; //Tuple2.of(X, d0);
+		return (done) ? Tuple2.of(X, d) : Tuple2.of(X0, d0);
 	}
 	
 	private void attachOuterContours() {

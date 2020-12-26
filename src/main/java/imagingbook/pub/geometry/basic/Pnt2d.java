@@ -18,8 +18,11 @@ import imagingbook.lib.math.Arithmetic;
  * {@link java.awt.geom.Point2D} and {@link java.awt.Point}
  * but was re-implemented to avoid dependency on AWT and for
  * more flexibility in naming and class structure.
+ * Since defined as an interface, {@link Pnt2d} can be easily implemented 
+ * by other point-like structures, e.g. corners 
+ * (see {@link imagingbook.pub.corners.Corner}).
  * <br>
- * Two concrete classes are defined for points with {@code double}
+ * Two concrete (nested) classes are defined for points with {@code double}
  * and {@code int} coordinates, respectively.
  * See {@link Pnt2d.PntDouble} and {@link Pnt2d.PntInt} for how
  * to instantiate such point objects.
@@ -48,6 +51,22 @@ public interface Pnt2d {
 		throw new UnsupportedOperationException();
 	}
 	
+	public default Pnt2d plus(Pnt2d p) {
+		throw new UnsupportedOperationException();
+	}
+	
+	public default Pnt2d plus(double dx, double dy) {
+		throw new UnsupportedOperationException();
+	}
+	
+	public default Pnt2d plus(int dx, int dy) {
+		return plus((double)dx, (double)dy);
+	}
+	
+	public default Pnt2d minus(Pnt2d p) {
+		throw new UnsupportedOperationException();
+	}
+	
 	// ----------------------------------------------------------
 
 	public default boolean equals(Pnt2d p) {
@@ -63,6 +82,8 @@ public interface Pnt2d {
 	public default double distance(Pnt2d p) {
 		return Math.sqrt(this.distance2(p));
 	}
+	
+	// ----------------------------------------------------------
 	
 	/**
 	 * Immutable 2D point with {@code double} coordinates.
@@ -105,11 +126,39 @@ public interface Pnt2d {
 			return new PntDouble(this.x, this.y);
 		}
 		
+		// addition -----------------------------------
+		
+		@Override
+		public PntDouble plus(Pnt2d p) {
+			return new PntDouble(this.x + p.getX(), this.y + p.getY());
+		}
+		
+		@Override
+		public PntDouble plus(double dx, double dy) {
+			return new PntDouble(this.x + dx, this.y + dy);
+		}
+		
+		// subtraction -----------------------------------
+		
+		@Override
+		public PntDouble minus(Pnt2d p) {
+			return new PntDouble(this.x - p.getX(), this.y - p.getY());
+		}
+		
+		// misc -----------------------------------
+		
 		@Override
 		public String toString() {
 			return String.format(Locale.US, "%s[%.3f, %.3f]", 
 					getClass().getSimpleName(), x, y);
 		}
+		
+		@Override
+	    public int hashCode() {	// taken from awt.Point2D.Double
+	        long bits = java.lang.Double.doubleToLongBits(this.x);
+	        bits ^= java.lang.Double.doubleToLongBits(this.y) * 31;
+	        return (((int) bits) ^ ((int) (bits >> 32)));
+	    }
 		
 		// static factory methods
 		
@@ -179,11 +228,40 @@ public interface Pnt2d {
 			return new PntInt(this.x, this.y);
 		}
 		
+		// addition -----------------------------------
+		
 		@Override
-		public String toString() {
-			return String.format(Locale.US, "%s[%d, %d]", 
-					getClass().getSimpleName(), x, y);
+		public PntInt plus(Pnt2d p) {
+			if (p instanceof PntInt) {		 
+				return new PntInt(this.x + ((PntInt)p).x, this.y + ((PntInt)p).y);
+			}
+			else throw new IllegalArgumentException("cannot add " + p.getClass().getSimpleName() + " to " +
+					this.getClass().getSimpleName());
 		}
+		
+		@Override
+		public PntInt plus(double dx, double dy) {
+			throw new IllegalArgumentException("cannot add (double, double) to " +
+					this.getClass().getSimpleName());
+		}
+		
+		@Override
+		public PntInt plus(int dx, int dy) {
+			return new PntInt(this.x + dx, this.y + dy);
+		}
+		
+		// subtraction -----------------------------------
+		
+		@Override
+		public PntInt minus(Pnt2d p) {
+			if (p instanceof PntInt) {		 
+				return new PntInt(this.x - ((PntInt)p).x, this.y - ((PntInt)p).y);
+			}
+			else throw new IllegalArgumentException("cannot subtract " + p.getClass().getSimpleName() + " from " +
+					this.getClass().getSimpleName());
+		}
+		
+		// equality -----------------------------------
 		
 		public boolean equals(Pnt2d p) {
 			if (p instanceof PntInt) {
@@ -196,6 +274,20 @@ public interface Pnt2d {
 		
 		public boolean equals(PntInt p) {
 			return (this.x == p.x) && (this.y == p.y);
+		}
+		
+		// misc -----------------------------------
+		
+		@Override
+		public String toString() {
+			return String.format(Locale.US, "%s[%d, %d]", 
+					getClass().getSimpleName(), x, y);
+		}
+		
+		
+		@Override
+		public int hashCode() {
+			return (17 + this.x) * 37 + this.y;	
 		}
 		
 		// static factory methods --------------------------------------

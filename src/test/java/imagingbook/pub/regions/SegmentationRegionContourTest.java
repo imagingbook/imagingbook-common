@@ -5,7 +5,7 @@ import static imagingbook.pub.regions.NeighborhoodType.N8;
 
 import java.nio.file.Path;
 import java.util.List;
-
+import java.lang.Thread;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -186,7 +186,11 @@ public class SegmentationRegionContourTest {
 				Assert.assertEquals(0, ics.get(0).countDuplicatePoints());
 				Assert.assertTrue(ics.get(0).isClosed(NHT));
 			}
+//			try {
+//				Thread.sleep(2000);
+//			} catch (InterruptedException e) {}
 		}
+		
 	}
 	
 	private static ByteProcessor openImage(String imgName) {
