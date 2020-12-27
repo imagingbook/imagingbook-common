@@ -70,7 +70,7 @@
 <span class="sourceLineNo">060</span><a id="line.60">         * @param source the {@link ImageAccessor.Scalar} representing the source (scalar-valued) image</a>
 <span class="sourceLineNo">061</span><a id="line.61">         * @param u the horizontal pixel position</a>
 <span class="sourceLineNo">062</span><a id="line.62">         * @param v the vertical pixel position</a>
-<span class="sourceLineNo">063</span><a id="line.63">         * @return the resulting (scalar) filter value for the specified pixel position</a>
+<span class="sourceLineNo">063</span><a id="line.63">         * @return the resulting (scalar) pixel value for the specified image position</a>
 <span class="sourceLineNo">064</span><a id="line.64">         */</a>
 <span class="sourceLineNo">065</span><a id="line.65">        public abstract float filterPixel(ImageAccessor.Scalar source, int u, int v);</a>
 <span class="sourceLineNo">066</span><a id="line.66">        </a>
@@ -81,49 +81,48 @@
 <span class="sourceLineNo">071</span><a id="line.71">         * @param source the {@link ImageAccessor.Rgb} representing the source (RGB) image</a>
 <span class="sourceLineNo">072</span><a id="line.72">         * @param u the horizontal pixel position</a>
 <span class="sourceLineNo">073</span><a id="line.73">         * @param v the vertical pixel position</a>
-<span class="sourceLineNo">074</span><a id="line.74">         * @return the resulting (RGB) filter value for the specified pixel position</a>
+<span class="sourceLineNo">074</span><a id="line.74">         * @return the resulting (RGB) pixel value for the specified image position</a>
 <span class="sourceLineNo">075</span><a id="line.75">         */</a>
 <span class="sourceLineNo">076</span><a id="line.76">        public abstract float[] filterPixel(ImageAccessor.Rgb source, int u, int v);</a>
 <span class="sourceLineNo">077</span><a id="line.77">        </a>
-<span class="sourceLineNo">078</span><a id="line.78"></a>
-<span class="sourceLineNo">079</span><a id="line.79">        /**</a>
-<span class="sourceLineNo">080</span><a id="line.80">         * Dispatch work depending on actual (runtime) type of processor.</a>
-<span class="sourceLineNo">081</span><a id="line.81">         * This is ugly but we want to avoid generic types (which would</a>
-<span class="sourceLineNo">082</span><a id="line.82">         * not be of much help in this case anyway).</a>
-<span class="sourceLineNo">083</span><a id="line.83">         * </a>
-<span class="sourceLineNo">084</span><a id="line.84">         * @param ip the image this filter is applied to (destructively)</a>
-<span class="sourceLineNo">085</span><a id="line.85">         */</a>
-<span class="sourceLineNo">086</span><a id="line.86">        public void applyTo(ImageProcessor ip) {        // TODO: check for target == null?</a>
-<span class="sourceLineNo">087</span><a id="line.87">                final int w = ip.getWidth();</a>
-<span class="sourceLineNo">088</span><a id="line.88">                final int h = ip.getHeight();</a>
-<span class="sourceLineNo">089</span><a id="line.89">                ImageProcessor ipCopy = ip.duplicate();</a>
-<span class="sourceLineNo">090</span><a id="line.90"> </a>
-<span class="sourceLineNo">091</span><a id="line.91">                if (ip instanceof ColorProcessor) {</a>
-<span class="sourceLineNo">092</span><a id="line.92">                        ImageAccessor.Rgb iaOrig = ImageAccessor.Rgb.create(ip, obs, null);</a>
-<span class="sourceLineNo">093</span><a id="line.93">                        ImageAccessor.Rgb iaCopy = ImageAccessor.Rgb.create(ipCopy, obs, null);</a>
-<span class="sourceLineNo">094</span><a id="line.94">                        for (int v = 0; v &lt; h; v++) {</a>
-<span class="sourceLineNo">095</span><a id="line.95">                                for (int u = 0; u &lt; w; u++) {</a>
-<span class="sourceLineNo">096</span><a id="line.96">                        //int p = (int) filterPixel(iaCopy, u, v);</a>
-<span class="sourceLineNo">097</span><a id="line.97">                        float[] rgb = filterPixel(iaCopy, u, v);</a>
-<span class="sourceLineNo">098</span><a id="line.98">                        iaOrig.setPix(u, v, rgb);</a>
-<span class="sourceLineNo">099</span><a id="line.99">                    }</a>
-<span class="sourceLineNo">100</span><a id="line.100">                    IJ.showProgress(v, h);</a>
+<span class="sourceLineNo">078</span><a id="line.78">        /**</a>
+<span class="sourceLineNo">079</span><a id="line.79">         * Dispatch work depending on actual (runtime) type of processor.</a>
+<span class="sourceLineNo">080</span><a id="line.80">         * This is ugly but we want to avoid generic types (which would</a>
+<span class="sourceLineNo">081</span><a id="line.81">         * not be of much help in this case anyway).</a>
+<span class="sourceLineNo">082</span><a id="line.82">         * </a>
+<span class="sourceLineNo">083</span><a id="line.83">         * @param ip the image this filter is applied to (destructively)</a>
+<span class="sourceLineNo">084</span><a id="line.84">         */</a>
+<span class="sourceLineNo">085</span><a id="line.85">        public void applyTo(ImageProcessor ip) {        // TODO: check for target == null?</a>
+<span class="sourceLineNo">086</span><a id="line.86">                final int w = ip.getWidth();</a>
+<span class="sourceLineNo">087</span><a id="line.87">                final int h = ip.getHeight();</a>
+<span class="sourceLineNo">088</span><a id="line.88">                ImageProcessor ipCopy = ip.duplicate();</a>
+<span class="sourceLineNo">089</span><a id="line.89"> </a>
+<span class="sourceLineNo">090</span><a id="line.90">                if (ip instanceof ColorProcessor) {</a>
+<span class="sourceLineNo">091</span><a id="line.91">                        ImageAccessor.Rgb iaOrig = new ImageAccessor.Rgb((ColorProcessor)ip, obs, null);</a>
+<span class="sourceLineNo">092</span><a id="line.92">                        ImageAccessor.Rgb iaCopy = new ImageAccessor.Rgb((ColorProcessor)ipCopy, obs, null);</a>
+<span class="sourceLineNo">093</span><a id="line.93">                        for (int v = 0; v &lt; h; v++) {</a>
+<span class="sourceLineNo">094</span><a id="line.94">                                for (int u = 0; u &lt; w; u++) {</a>
+<span class="sourceLineNo">095</span><a id="line.95">                        //int p = (int) filterPixel(iaCopy, u, v);</a>
+<span class="sourceLineNo">096</span><a id="line.96">                        float[] rgb = filterPixel(iaCopy, u, v);</a>
+<span class="sourceLineNo">097</span><a id="line.97">                        iaOrig.setPix(u, v, rgb);</a>
+<span class="sourceLineNo">098</span><a id="line.98">                    }</a>
+<span class="sourceLineNo">099</span><a id="line.99">                    IJ.showProgress(v, h);</a>
+<span class="sourceLineNo">100</span><a id="line.100">                }</a>
 <span class="sourceLineNo">101</span><a id="line.101">                }</a>
-<span class="sourceLineNo">102</span><a id="line.102">                }</a>
-<span class="sourceLineNo">103</span><a id="line.103">                else {</a>
-<span class="sourceLineNo">104</span><a id="line.104">                        ImageAccessor.Scalar iaOrig = ImageAccessor.Scalar.create(ip, obs, null);</a>
-<span class="sourceLineNo">105</span><a id="line.105">                        ImageAccessor.Scalar iaCopy = ImageAccessor.Scalar.create(ipCopy, obs, null);</a>
-<span class="sourceLineNo">106</span><a id="line.106">                        for (int v = 0; v &lt; h; v++) {</a>
-<span class="sourceLineNo">107</span><a id="line.107">                                for (int u = 0; u &lt; w; u++) {</a>
-<span class="sourceLineNo">108</span><a id="line.108">                                        float p = filterPixel(iaCopy, u, v);</a>
-<span class="sourceLineNo">109</span><a id="line.109">                                        iaOrig.setVal(u, v, p);</a>
-<span class="sourceLineNo">110</span><a id="line.110">                                }</a>
-<span class="sourceLineNo">111</span><a id="line.111">                                IJ.showProgress(v, h);</a>
-<span class="sourceLineNo">112</span><a id="line.112">                        }</a>
-<span class="sourceLineNo">113</span><a id="line.113">                }</a>
-<span class="sourceLineNo">114</span><a id="line.114">        }</a>
-<span class="sourceLineNo">115</span><a id="line.115"></a>
-<span class="sourceLineNo">116</span><a id="line.116">}</a>
+<span class="sourceLineNo">102</span><a id="line.102">                else {</a>
+<span class="sourceLineNo">103</span><a id="line.103">                        ImageAccessor.Scalar iaOrig = ImageAccessor.Scalar.create(ip, obs, null);</a>
+<span class="sourceLineNo">104</span><a id="line.104">                        ImageAccessor.Scalar iaCopy = ImageAccessor.Scalar.create(ipCopy, obs, null);</a>
+<span class="sourceLineNo">105</span><a id="line.105">                        for (int v = 0; v &lt; h; v++) {</a>
+<span class="sourceLineNo">106</span><a id="line.106">                                for (int u = 0; u &lt; w; u++) {</a>
+<span class="sourceLineNo">107</span><a id="line.107">                                        float p = filterPixel(iaCopy, u, v);</a>
+<span class="sourceLineNo">108</span><a id="line.108">                                        iaOrig.setVal(u, v, p);</a>
+<span class="sourceLineNo">109</span><a id="line.109">                                }</a>
+<span class="sourceLineNo">110</span><a id="line.110">                                IJ.showProgress(v, h);</a>
+<span class="sourceLineNo">111</span><a id="line.111">                        }</a>
+<span class="sourceLineNo">112</span><a id="line.112">                }</a>
+<span class="sourceLineNo">113</span><a id="line.113">        }</a>
+<span class="sourceLineNo">114</span><a id="line.114"></a>
+<span class="sourceLineNo">115</span><a id="line.115">}</a>
 
 
 
