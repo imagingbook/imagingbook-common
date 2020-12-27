@@ -6,9 +6,10 @@
  * Copyright (c) 2006-2020 Wilhelm Burger, Mark J. Burge. All rights reserved. 
  * Visit http://imagingbook.com for additional details.
  *******************************************************************************/
-package imagingbook.lib.image;
+package imagingbook.pub.lucaskanade.utils;
 
 import ij.process.ImageProcessor;
+import imagingbook.lib.image.ImageAccessor;
 import imagingbook.pub.geometry.basic.Pnt2d;
 import imagingbook.pub.geometry.basic.Pnt2d.PntInt;
 import imagingbook.pub.geometry.mappings.linear.AffineMapping2D;
@@ -16,7 +17,7 @@ import imagingbook.pub.geometry.mappings.linear.LinearMapping2D;
 import imagingbook.pub.geometry.mappings.linear.ProjectiveMapping2D;
 
 /**
- * Use to exctract warped images for testing the Lucas-Kanade matcher.
+ * Use to extract warped images for testing the Lucas-Kanade matcher.
  * @author wilbur
  *
  */

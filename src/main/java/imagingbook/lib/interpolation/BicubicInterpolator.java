@@ -25,7 +25,7 @@ public class BicubicInterpolator extends PixelInterpolator {
 	
 	@Override
 	public float getInterpolatedValue(ImageAccessor.Scalar ia, double x, double y) {
-		final int u0 = (int) Math.floor(x);	//use floor to handle negative coordinates too
+		final int u0 = (int) Math.floor(x);
 		final int v0 = (int) Math.floor(y);
 		double q = 0;
 		for (int j = 0; j <= 3; j++) {

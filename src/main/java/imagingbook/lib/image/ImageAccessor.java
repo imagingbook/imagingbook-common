@@ -35,16 +35,18 @@ import imagingbook.lib.interpolation.PixelInterpolator;
  * <br>
  * In addition, the accessors for scalar-valued images ({@link Byte}, {@link Short},
  * {@link Float}) provide the methods
- * {@link Scalar#getVal(int, int)}, {@link Scalar#getVal(double, double)} and {@link Scalar#setVal(int, int, float)}
+ * {@link Scalar#getVal(int, int)}, {@link Scalar#getVal(double, double)} and 
+ * {@link Scalar#setVal(int, int, float)}
  * to read and write scalar-valued pixels passed as single {@code float} values.
  * <br>
- * The methods {@link getPix(double, double)} and {@link Scalar#getVal(double, double)} perform interpolation at non-integer coordinates
+ * The methods {@link #getPix(double, double)} and {@link Scalar#getVal(double, double)} perform interpolation at non-integer coordinates
  * using the specified {@link InterpolationMethod}.
  * <pre>
  * 
  * </pre>
  * <br>
- * See {@link imagingbook.lib.filters.GenericFilter} for a concrete usage example.
+ * See {@link imagingbook.lib.filters.GenericFilter} 
+ * and {@code Pixel_Interpolation.Interpolator_Demo} (in {@code imagingbook-plugins-all}) for a concrete usage examples.
  * 
  * @author W. Burger
  * @version 2020/12/27
@@ -98,6 +100,14 @@ public abstract class ImageAccessor {
 		this.outOfBoundsStrategy = (obs != null) ? obs : DefaultOutOfBoundsStrategy;
 		this.interpolationMethod = (ipm != null) ? ipm : DefaultInterpolationMethod;
 		this.indexer = PixelIndexer.create(width, height, outOfBoundsStrategy);
+	}
+	
+	public int getWidth() {
+		return this.width;
+	}
+	
+	public int getHeight() {
+		return this.height;
 	}
 	
 	/**
@@ -188,7 +198,9 @@ public abstract class ImageAccessor {
 				return new ImageAccessor.Short((ShortProcessor) ip, obs, ipm);
 			if (ip instanceof FloatProcessor)
 				return new ImageAccessor.Float((FloatProcessor) ip, obs, ipm);
-			throw new IllegalArgumentException("cannot create ImageAccessor.Gray for this processor");
+			throw new IllegalArgumentException("cannot create " + 
+				ImageAccessor.Scalar.class.getSimpleName() + " for " +
+				ip.getClass().getSimpleName());
 		}
 		
 		protected final ImageProcessor ip;
