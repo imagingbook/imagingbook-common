@@ -10,19 +10,20 @@
 package imagingbook.lib.image;
 
 
-/*
+/**
  * This class implements different schemes for accessing pixel values from
  * a 2D image that is contained in a 1D array.
- * 
+ * The key method {@link #getIndex(int, int)} returns the 1D array index
+ * for a pair of image coordinates. 
  */
 public abstract class PixelIndexer {
 	
 	public static PixelIndexer create(int width, int height, OutOfBoundsStrategy mode) {
 		switch (mode) {
-		case DefaultValue 	: return new PixelIndexer.DefaultValueIndexer(width, height);
-		case NearestBorder	: return new PixelIndexer.NearestBorderIndexer(width, height);
-		case MirrorImage	: return new PixelIndexer.MirrorImageIndexer(width, height);
-		case Exception		: return new PixelIndexer.ExceptionIndexer(width, height);
+		case DefaultValue 	: return new DefaultValueIndexer(width, height);
+		case NearestBorder	: return new NearestBorderIndexer(width, height);
+		case MirrorImage	: return new MirrorImageIndexer(width, height);
+		case Exception		: return new ExceptionIndexer(width, height);
 		}
 		return null;
 	}
@@ -35,82 +36,112 @@ public abstract class PixelIndexer {
 		this.height = height;
 	}
 	
+	/**
+	 * Returns the 1D array index for a given pair of image coordinates. 
+	 * @param u x-coordinate
+	 * @param v y-coordinate
+	 * @return 1D array index
+	 */
 	public abstract int getIndex(int u, int v);
+	
+	private int defaultIndex(int u, int v) {
+		return width * v + u;
+	}
+	
+	// ---------------------------------------------------------
 
-	/* 
+	/** 
 	 * This indexer returns out of bounds pixel values that
 	 * are taken from the closest border pixel. This is the
 	 * most common method.
 	 */
 	public static class NearestBorderIndexer extends PixelIndexer {
+		
 		NearestBorderIndexer(int width, int height) {
 			super(width, height);
 		}
 
+		@Override
 		public int getIndex(int u, int v) {
-			if (u < 0)
+			if (u < 0) {
 				u = 0;
-			else if (u >= width)
+			}
+			else if (u >= width) {
 				u = width - 1;
-			if (v < 0)
+			}
+			if (v < 0) {
 				v = 0;
-			else if (v >= height)
+			}
+			else if (v >= height) {
 				v = height - 1;
-			return width * v + u;
+			}
+			return super.defaultIndex(u, v);
 		}
 	}
 	
-	/* 
+	/** 
 	 * This index returns out of bound pixels taken from
 	 * the mirrored image.
 	 */
 	public static class MirrorImageIndexer extends PixelIndexer {
+		
 		MirrorImageIndexer(int width, int height) {
 			super(width, height);
 		}
 
+		@Override
 		public int getIndex(int u, int v) {
-			// this is a fast modulo operation for positive divisors only
+			// fast modulo operation for positive divisors only
 			u = u % width;
-			if (u < 0) u = u + width; 
+			if (u < 0) {
+				u = u + width; 
+			}
 			v = v % height;
-			if (v < 0) v = v + height; 
-			return width * v + u;
+			if (v < 0) {
+				v = v + height; 
+			}
+			return super.defaultIndex(u, v);
 		}
 	}
 	
-	/* 
+	/** 
 	 * This indexer returns -1 for out of bounds pixels to
 	 * indicate that a (predefined) default value should be used.
 	 */
 	public static class DefaultValueIndexer extends PixelIndexer {
+		
 		DefaultValueIndexer(int width, int height) {
 			super(width, height);
 		}
 
+		@Override
 		public int getIndex(int u, int v) {
-			if (u < 0 || u >= width || v < 0 || v >= height)
+			if (u < 0 || u >= width || v < 0 || v >= height) {
 				return -1;
-			else 
-				return width * v + u;
+			}
+			else {
+				return super.defaultIndex(u, v);
+			}
 		}
 	}
 	
-	/*
+	/**
 	 * This indexer throws an exception if out of bounds pixels
 	 * are accessed.
 	 */
 	public static class ExceptionIndexer extends PixelIndexer {
+		
 		ExceptionIndexer(int width, int height) {
 			super(width, height);
 		}
 
+		@Override
 		public int getIndex(int u, int v) {
 			if (u < 0 || u >= width || v < 0 || v >= height) {
 				throw new ArrayIndexOutOfBoundsException();
 			}
 			else 
-				return width * v + u;
+				return super.defaultIndex(u, v);
 		}
 	}
 

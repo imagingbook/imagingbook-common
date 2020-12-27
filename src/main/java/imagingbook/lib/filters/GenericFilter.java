@@ -60,7 +60,7 @@ public abstract class GenericFilter {
 	 * @param source the {@link ImageAccessor.Scalar} representing the source (scalar-valued) image
 	 * @param u the horizontal pixel position
 	 * @param v the vertical pixel position
-	 * @return the resulting (scalar) filter value for the specified pixel position
+	 * @return the resulting (scalar) pixel value for the specified image position
 	 */
  	public abstract float filterPixel(ImageAccessor.Scalar source, int u, int v);
  	
@@ -71,11 +71,10 @@ public abstract class GenericFilter {
 	 * @param source the {@link ImageAccessor.Rgb} representing the source (RGB) image
 	 * @param u the horizontal pixel position
 	 * @param v the vertical pixel position
-	 * @return the resulting (RGB) filter value for the specified pixel position
+	 * @return the resulting (RGB) pixel value for the specified image position
 	 */
  	public abstract float[] filterPixel(ImageAccessor.Rgb source, int u, int v);
  	
-
  	/**
  	 * Dispatch work depending on actual (runtime) type of processor.
  	 * This is ugly but we want to avoid generic types (which would
@@ -89,8 +88,8 @@ public abstract class GenericFilter {
  		ImageProcessor ipCopy = ip.duplicate();
  
  		if (ip instanceof ColorProcessor) {
- 	 		ImageAccessor.Rgb iaOrig = ImageAccessor.Rgb.create(ip, obs, null);
- 	 		ImageAccessor.Rgb iaCopy = ImageAccessor.Rgb.create(ipCopy, obs, null);
+ 	 		ImageAccessor.Rgb iaOrig = new ImageAccessor.Rgb((ColorProcessor)ip, obs, null);
+ 	 		ImageAccessor.Rgb iaCopy = new ImageAccessor.Rgb((ColorProcessor)ipCopy, obs, null);
 			for (int v = 0; v < h; v++) {
 				for (int u = 0; u < w; u++) {
  	            	//int p = (int) filterPixel(iaCopy, u, v);

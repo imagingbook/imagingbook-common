@@ -19,29 +19,51 @@ import imagingbook.lib.interpolation.PixelInterpolator;
 
 
 /**
- * This class provides unified image access to all 4 types of images available in ImageJ.
- * Byte, Short, Float: get/set values are passed as type float using getVal() and setVal().
- * Byte, Short, Float, Rgb: uses a float[] to pass in values using getPix() and setPix().
+ * This abstract class provides unified image access to all 4 types of images available in ImageJ:
+ * 8-bit, 16-bit, float, and color images.
+ * It is used as a wrapper around an instance of ImageJ's {@link ImageProcessor} type.
+ * <br>
+ * A generic {@link ImageAccessor} is created, e.g., by {@link #create(ImageProcessor)}, which
+ * returns an instance of {@link Byte}, {@link Short}, {@link Float} or
+ * {@link Rgb}.
+ * {@link ImageAccessor} itself can access any ImageJ image using 
+ * the methods {@link #getPix(int, int)}, {@link #getPix(double, double)}
+ * for retrieving pixel values and {@link #setPix(int, int, float[])}
+ * to modify pixel values.
+ * All pixel values are of type {@code float[]}, either containing a single element (for
+ * scalar-valued images) or three elements (for color images).
+ * <br>
+ * In addition, the accessors for scalar-valued images ({@link Byte}, {@link Short},
+ * {@link Float}) provide the methods
+ * {@link Scalar#getVal(int, int)}, {@link Scalar#getVal(double, double)} and {@link Scalar#setVal(int, int, float)}
+ * to read and write scalar-valued pixels passed as single {@code float} values.
+ * <br>
+ * The methods {@link getPix(double, double)} and {@link Scalar#getVal(double, double)} perform interpolation at non-integer coordinates
+ * using the specified {@link InterpolationMethod}.
+ * <pre>
  * 
- * getVal() and getPix() interpolate for non-integer coordinates.
+ * </pre>
+ * <br>
+ * See {@link imagingbook.lib.filters.GenericFilter} for a concrete usage example.
  * 
  * @author W. Burger
- * @version 2015/12/20
+ * @version 2020/12/27
  */
 public abstract class ImageAccessor {
 	
-	static OutOfBoundsStrategy DefaultOutOfBoundsStrategy = OutOfBoundsStrategy.DefaultValue;
-	static InterpolationMethod DefaultInterpolationMethod = InterpolationMethod.Bilinear;
+	static final OutOfBoundsStrategy DefaultOutOfBoundsStrategy = OutOfBoundsStrategy.DefaultValue;
+	static final InterpolationMethod DefaultInterpolationMethod = InterpolationMethod.Bilinear;
 		
 	protected final int width;
 	protected final int height;
-	protected final PixelIndexer indexer;				// implements the specified OutOfBoundsStrategy
+	protected final PixelIndexer indexer;		// implements the specified OutOfBoundsStrategy
 	protected final OutOfBoundsStrategy outOfBoundsStrategy;
 	protected final InterpolationMethod interpolationMethod;
 	
 	/**
 	 * Creates a new {@code ImageAccessor} instance for the given image,
 	 * using the default out-of-bounds strategy and interpolation method.
+	 * The conrete type of the returned instance depends on the specified image
 	 * 
 	 * @param ip the source image
 	 * @return a new {@code ImageAccessor} instance
@@ -53,6 +75,7 @@ public abstract class ImageAccessor {
 	/**
 	 * Creates a new {@code ImageAccessor} instance for the given image,
 	 * using the specified out-of-bounds strategy and interpolation method.
+	 * The conrete type of the returned instance depends on the specified image
 	 * 
 	 * @param ip the source image
 	 * @param obs the out-of-bounds strategy (use {@code null} for default settings)
@@ -77,25 +100,87 @@ public abstract class ImageAccessor {
 		this.indexer = PixelIndexer.create(width, height, outOfBoundsStrategy);
 	}
 	
+	/**
+	 * Returns the {@link ImageProcessor} associated with this
+	 * {@link ImageAccessor}.
+	 * @return the image processor
+	 */
 	public abstract ImageProcessor getProcessor();
 	
+	/**
+	 * Returns the {@link OutOfBoundsStrategy} specified for this
+	 * {@link ImageAccessor}.
+	 * @return the out-of-bounds strategy
+	 */
 	public OutOfBoundsStrategy getOutOfBoundsStrategy() {
 		return outOfBoundsStrategy;
 	}
 
+	/**
+	 * Returns the {@link InterpolationMethod} specified for this
+	 * {@link ImageAccessor}.
+	 * @return the interpolation method
+	 */
 	public InterpolationMethod getInterpolationMethod() {
 		return interpolationMethod;
 	}
 	
-	// all ImageAccessor's can do this (Gray and Color, get/set complete pixels):
-	public abstract float[] getPix(int u, int v);			// returns pixel value at integer position (u, v)
+	/**
+	 * Returns pixel value at the specified integer position as a
+	 * {@code float[]} with either 1 element for scalar-valued images
+	 * or 3 elements for RGB images.
+	 * @param u the x-coordinate
+	 * @param v the y-coordinate
+	 * @return the pixel value ({@code float[]})
+	 */
+	public abstract float[] getPix(int u, int v);
+	
+	/**
+	 * Returns pixel value at the specified floating-point position as a
+	 * {@code float[]} with either 1 for scalar-valued images
+	 * and or 3 elements for RGB images.
+	 * Interpolation is used non-integer coordinates.
+	 * 
+	 * @param x the x-coordinate
+	 * @param y the y-coordinate
+	 * @return the pixel value ({@code float[]})
+	 */
 	public abstract float[] getPix(double x, double y);		// returns interpolated pixel value at real position (x, y)
+	
+	/**
+	 * Sets the pixel value at the specified integer position.
+	 * The new value must be provided as {@code float[]} with 
+	 * 1 element for scalar-valued images or 3 elements for RGB images.
+	 * @param u the x-coordinate
+	 * @param v the y-coordinate
+	 * @param val the new pixel value ({@code float[]})
+	 */
 	public abstract void setPix(int u, int v, float[] val);
 	
 	// ------------------------------------------------------------
+	// ------------------------------------------------------------
 	
+	/**
+	 * The common (abstract) super-class for all image accessors to scalar-valued images.
+	 * It inherits all methods from {@link ImageAccessor} but
+	 * adds the methods {@link #getVal(int, int)}, {@link #getVal(double, double)}
+	 * and {@link #setVal(int, int, float)} for reading and writing scalar-valued 
+	 * pixel data.
+	 */
 	public static abstract class Scalar extends ImageAccessor {
 		
+		/**
+		 * Creates a new image accessor of general type {@link ImageAccessor.Scalar}.
+		 * The conrete type of the returned instance depends on the specified image, i.e.,
+		 * {@link Byte} for {@link ByteProcessor},
+		 * {@link Short} for {@link ShortProcessor},
+		 * {@link Float} for {@link FloatProcessor}.
+		 * 
+		 * @param ip the image to be accessed
+		 * @param obs the out-of-bounds strategy to be used (use {@code null} for default settings)
+		 * @param ipm the interpolation method to be used (use {@code null} for default settings)
+		 * @return a new image accessor
+		 */
 		public static ImageAccessor.Scalar create(ImageProcessor ip,  OutOfBoundsStrategy obs, InterpolationMethod ipm) {
 			if (ip instanceof ByteProcessor)
 				return new ImageAccessor.Byte((ByteProcessor) ip, obs, ipm);
@@ -109,8 +194,37 @@ public abstract class ImageAccessor {
 		protected final ImageProcessor ip;
 		protected final float pixelDefaultValue = 0.0f;
 		
-		// only scalar accessors can do this (get/set scalar values):
+		/**
+		 * Reads and returns the scalar pixel value for the given image position.
+		 * The value returned for coordinates outside the image boundaries depends
+		 * on the {@link OutOfBoundsStrategy} specified for this {@link ImageAccessor}.
+		 * @param u the x-coordinate
+		 * @param v the y-coordinate
+		 * @return the pixel value ({@code float})
+		 */
 		public abstract float getVal(int u, int v);				// returns pixel value at integer position (u, v)
+		
+		/**
+		 * Reads and returns the interpolated scalar pixel value for the given image position.
+		 * The value returned for coordinates outside the image boundaries depends
+		 * on the {@link OutOfBoundsStrategy} specified for this {@link ImageAccessor}.
+		 * 
+		 * @param x the x-coordinate
+		 * @param y the y-coordinate
+		 * @return the pixel value ({@code float})
+		 */
+		public float getVal(double x, double y) {	// interpolating version
+			return interpolator.getInterpolatedValue(this, x, y);
+		}
+		
+		/**
+		 * Writes a scalar pixel value to the given image position.
+		 * What happens for coordinates outside the image boundaries depends
+		 * on the {@link OutOfBoundsStrategy} specified for this {@link ImageAccessor}.
+		 * @param u the x-coordinate
+		 * @param v the y-coordinate
+		 * @param val the new pixel value ({@code float})
+		 */
 		public abstract void setVal(int u, int v, float val);
 		
 		protected final PixelInterpolator interpolator;	// performs interpolation
@@ -119,10 +233,6 @@ public abstract class ImageAccessor {
 			super(ip, obs, ipm);
 			this.ip = ip;
 			this.interpolator = PixelInterpolator.create(interpolationMethod);
-		}
-		
-		public float getVal(double x, double y) {	// interpolating version
-			return interpolator.getInterpolatedValue(this, x, y);
 		}
 		
 		@Override
@@ -143,11 +253,22 @@ public abstract class ImageAccessor {
 	
 	// ------------------------------------------------------------
 	
+	/**
+	 * Image accessor for scalar images with 8-bit (byte) values.
+	 */
 	public static class Byte extends ImageAccessor.Scalar {
 		private final ByteProcessor ip;
 		private final byte[] pixels;
 		
-		
+		/**
+		 * Constructor. Creates a new image accessor of type {@link Byte}.
+		 * See also the generic factory method 
+		 * {@link Scalar#create(ImageProcessor, OutOfBoundsStrategy, InterpolationMethod)}.
+		 * 
+		 * @param ip an instance of {@link ByteProcessor}
+		 * @param obs the out-of-bounds strategy to be used (use {@code null} for default settings)
+		 * @param ipm the interpolation method to be used (use {@code null} for default settings)
+		 */
 		public Byte(ByteProcessor ip, OutOfBoundsStrategy obs, InterpolationMethod ipm) {
 			super(ip, obs, ipm);
 			this.ip = ip;
@@ -170,24 +291,34 @@ public abstract class ImageAccessor {
 		}
 		
 		@Override
-		public void setVal(int u, int v, float valf) {
-			int val = Math.round(valf);
-			if (val < 0)
-				val = 0;
-			if (val > 255)
-				val = 255;
+		public void setVal(int u, int v, float val) {
+			int vali = Math.round(val);
+			if (vali < 0) vali = 0;
+			if (vali > 255) vali = 255;
 			if (u >= 0 && u < width && v >= 0 && v < height) {
-				pixels[width * v + u] = (byte) (0xFF & val);
+				pixels[width * v + u] = (byte) (0xFF & vali);
 			}
 		}
 	}
 	
 	// ------------------------------------------------------------
 	
+	/**
+	 * Image accessor for scalar images with 16-bit (short) values.
+	 */
 	public static class Short extends ImageAccessor.Scalar {
 		private final ShortProcessor ip;
 		private final short[] pixels;
 		
+		/**
+		 * Constructor. Creates a new image accessor of type {@link Short}.
+		 * See also the generic factory method 
+		 * {@link Scalar#create(ImageProcessor, OutOfBoundsStrategy, InterpolationMethod)}.
+		 * 
+		 * @param ip an instance of {@link ShortProcessor}
+		 * @param obs the out-of-bounds strategy to be used (use {@code null} for default settings)
+		 * @param ipm the interpolation method to be used (use {@code null} for default settings)
+		 */
 		public Short(ShortProcessor ip, OutOfBoundsStrategy obs, InterpolationMethod ipm) {
 			super(ip, obs, ipm);
 			this.ip = ip;
@@ -209,22 +340,34 @@ public abstract class ImageAccessor {
 		}
 		
 		@Override
-		public void setVal(int u, int v, float valf) {
-			int val = Math.round(valf);
-			if (val < 0) val = 0;
-            if (val > 65535) val = 65535;
+		public void setVal(int u, int v, float val) {
+			int vali = Math.round(val);
+			if (vali < 0) vali = 0;
+            if (vali > 65535) vali = 65535;
 			if (u >= 0 && u < width && v >= 0 && v < height) {
-				pixels[width * v + u] = (short) (0xFFFF & val);
+				pixels[width * v + u] = (short) (0xFFFF & vali);
 			}
 		}
 	}
 	
 	// ------------------------------------------------------------
 	
+	/**
+	 * Image accessor for scalar images with 32-bit (float) values.
+	 */
 	public static class Float extends ImageAccessor.Scalar {
 		private final FloatProcessor ip;
 		private final float[] pixels;
 		
+		/**
+		 * Constructor. Creates a new image accessor of type {@link Float}.
+		 * See also the generic factory method 
+		 * {@link Scalar#create(ImageProcessor, OutOfBoundsStrategy, InterpolationMethod)}.
+		 * 
+		 * @param ip an instance of {@link FloatProcessor}
+		 * @param obs the out-of-bounds strategy to be used (use {@code null} for default settings)
+		 * @param ipm the interpolation method to be used (use {@code null} for default settings)
+		 */
 		public Float(FloatProcessor ip, OutOfBoundsStrategy obs, InterpolationMethod ipm) {
 			super(ip, obs, ipm);
 			this.ip = ip;
@@ -255,6 +398,9 @@ public abstract class ImageAccessor {
 	
 	// ------------------------------------------------------------
 	
+	/**
+	 * Image accessor for vector-valued RGB images.
+	 */
 	public static class Rgb extends ImageAccessor {
 		private final ColorProcessor ip;
 		private final int[] pixels;
@@ -262,13 +408,7 @@ public abstract class ImageAccessor {
 		private final int[] rgb = new int[3];
 		
 		private final ImageAccessor.Byte rAcc, gAcc, bAcc;
-		
-		
-		public static ImageAccessor.Rgb create(ImageProcessor ip,  OutOfBoundsStrategy obs, InterpolationMethod ipm) {
-			if (ip instanceof ColorProcessor)
-				return new ImageAccessor.Rgb((ColorProcessor) ip, obs, ipm);
-			throw new IllegalArgumentException("cannot create ImageAccessor.Rgb for this processor");
-		}
+
 		
 		public Rgb(ColorProcessor ip, OutOfBoundsStrategy obs, InterpolationMethod ipm) {
 			super(ip, obs, ipm);
@@ -342,6 +482,24 @@ public abstract class ImageAccessor {
 		if (val < 0) return 0;
 		if (val > 255) return 255;
 		return val;
+	}
+	
+	// -------------------------------------------------------------------------
+	
+	public static void main(String[] args) {
+		int width = 300;
+		int height = 200;
+		
+		ImageProcessor ip = new ByteProcessor(width, height);
+		ImageAccessor.Scalar ia = ImageAccessor.Scalar.create(ip, null, null);
+		
+		for (int u = 0; u < width; u++) {
+			for (int v = 0; v < height; v++) {
+				float val = ia.getVal(u, v);
+				ia.setVal(u, v, val  + 1);
+			}
+		}
+		
 	}
 	
 }
