@@ -40,5 +40,25 @@ public class Pnt2dDistanceTest {
 		Assert.assertEquals(dist, p1.distance(p2), DELTA);
 		Assert.assertEquals(dist, p2.distance(p1), DELTA);
 	}
+	
+	
+	@Test
+	public void testL1DistanceDouble() {
+		Pnt2d p1 = PntDouble.from( 3, 8);
+		Pnt2d p2 = PntDouble.from(-2, 7);
+		double dist = 6;
+		Assert.assertEquals(dist, p1.distL1(p2), DELTA);
+		Assert.assertEquals(dist, p2.distL1(p1), DELTA);
+	}
+	
+	
+	@Test
+	public void testL1DistanceInt() {
+		PntInt p1 = PntInt.from( 3, 8);
+		PntInt p2 = PntInt.from(-2, 7);
+		int dist = 6;
+		Assert.assertEquals(dist, p1.distL1(p2));
+		Assert.assertEquals(dist, p2.distL1(p1));
+	}
 
 }

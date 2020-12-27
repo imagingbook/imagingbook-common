@@ -406,7 +406,7 @@ public class HomographyEstimator {
 			Pnt2d a = pntsA[i];
 			Pnt2d b = pntsB[i];
 			Pnt2d c = pntsC[i];
-			double dist2 = b.distance2(c);
+			double dist2 = b.distanceSq(c);
 			sumDist2 += dist2;
 			maxDist2 = Math.max(maxDist2, dist2);
 			System.out.format("(%.3f, %.3f) -> (%.3f, %.3f) d=%.4f\n", a.getX(), a.getY(), c.getX(), c.getY(), dist2);
@@ -435,7 +435,7 @@ public class HomographyEstimator {
 				Pnt2d a = pntsA[i];
 				Pnt2d b = pntsB[i];
 				Pnt2d c = pntsC[i];
-				double dist2 = b.distance2(c);
+				double dist2 = b.distanceSq(c);
 				sumDist2 += dist2;
 				maxDist2 = Math.max(maxDist2, dist2);
 				System.out.format("(%.3f, %.3f) -> (%.3f, %.3f) d=%.4f\n", a.getX(), a.getY(), c.getX(), c.getY(), dist2);
@@ -463,7 +463,7 @@ public class HomographyEstimator {
 				Pnt2d a = pntsA[i];
 				Pnt2d b = pntsB[i];
 				Pnt2d c = pntsC[i];
-				double dist2 = b.distance2(c);
+				double dist2 = b.distanceSq(c);
 				sumDist2 += dist2;
 				maxDist2 = Math.max(maxDist2, dist2);
 				//				System.out.format("(%.3f, %.3f) -> (%.3f, %.3f) d=%.4f\n", a.getX(), a.getY(), c.getX(), c.getY(), dist2);

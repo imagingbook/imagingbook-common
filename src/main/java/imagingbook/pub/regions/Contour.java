@@ -168,7 +168,7 @@ public class Contour implements Comparable<Contour>, Iterable<Pnt2d> {
 			return true;
 		Pnt2d p1 = pnts[pnts.length - 1];
 		Pnt2d p2 = pnts[0];
-		double d2 = p1.distance2(p2);	// N4: max 1, N8: max 2
+		double d2 = p1.distanceSq(p2);	// N4: max 1, N8: max 2
 		//System.out.println(nht + " dist=" + d2);
 		
 		if (nht == NeighborhoodType.N4 && d2 <= 1)

@@ -255,7 +255,7 @@ public abstract class GradientCornerDetector {
 				// delete all remaining corners cj too close to c0:
 				for (int j = i + 1; j < Ca.length; j++) {
 					Corner cj = Ca[j];
-					if (cj != null && c0.distance2(cj) < dmin2)
+					if (cj != null && c0.distanceSq(cj) < dmin2)
 						Ca[j] = null;   //delete corner cj from C
 				}
 			}
