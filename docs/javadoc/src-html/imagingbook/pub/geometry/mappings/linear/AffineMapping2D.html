@@ -164,63 +164,65 @@
 <span class="sourceLineNo">154</span><a id="line.154">         * Note that inverting an affine transformation always yields</a>
 <span class="sourceLineNo">155</span><a id="line.155">         * another affine transformation.</a>
 <span class="sourceLineNo">156</span><a id="line.156">         */</a>
-<span class="sourceLineNo">157</span><a id="line.157">        public AffineMapping2D getInverse() {</a>
-<span class="sourceLineNo">158</span><a id="line.158">                double det = a00 * a11 - a01 * a10;</a>
-<span class="sourceLineNo">159</span><a id="line.159">                double b00 = a11 / det;</a>
-<span class="sourceLineNo">160</span><a id="line.160">                double b01 = -a01 / det;</a>
-<span class="sourceLineNo">161</span><a id="line.161">                double b02 = (a01 * a12 - a02 * a11) / det;</a>
-<span class="sourceLineNo">162</span><a id="line.162">                double b10 = -a10 / det;</a>
-<span class="sourceLineNo">163</span><a id="line.163">                double b11 = a00 / det;</a>
-<span class="sourceLineNo">164</span><a id="line.164">                double b12 = (a02 * a10 - a00 * a12) / det;</a>
-<span class="sourceLineNo">165</span><a id="line.165">                return new AffineMapping2D(b00, b01, b02, b10, b11, b12);</a>
-<span class="sourceLineNo">166</span><a id="line.166">        }</a>
-<span class="sourceLineNo">167</span><a id="line.167"></a>
-<span class="sourceLineNo">168</span><a id="line.168">        /**</a>
-<span class="sourceLineNo">169</span><a id="line.169">         * {@inheritDoc}</a>
-<span class="sourceLineNo">170</span><a id="line.170">         * @return a new affine mapping</a>
-<span class="sourceLineNo">171</span><a id="line.171">         */</a>
-<span class="sourceLineNo">172</span><a id="line.172">        public AffineMapping2D duplicate() {</a>
-<span class="sourceLineNo">173</span><a id="line.173">                return new AffineMapping2D(this);</a>
-<span class="sourceLineNo">174</span><a id="line.174">        }</a>
-<span class="sourceLineNo">175</span><a id="line.175"></a>
-<span class="sourceLineNo">176</span><a id="line.176">        @Override</a>
-<span class="sourceLineNo">177</span><a id="line.177">        public double[][] getJacobian(Pnt2d xy) {</a>
-<span class="sourceLineNo">178</span><a id="line.178">                final double x = xy.getX();</a>
-<span class="sourceLineNo">179</span><a id="line.179">                final double y = xy.getY();</a>
-<span class="sourceLineNo">180</span><a id="line.180">                return new double[][]</a>
-<span class="sourceLineNo">181</span><a id="line.181">                        {{x, y, 0, 0, 1, 0},</a>
-<span class="sourceLineNo">182</span><a id="line.182">                         {0, 0, x, y, 0, 1}};</a>
-<span class="sourceLineNo">183</span><a id="line.183">        }</a>
-<span class="sourceLineNo">184</span><a id="line.184">        </a>
-<span class="sourceLineNo">185</span><a id="line.185">        // ----------------------------------------------------------------------</a>
+<span class="sourceLineNo">157</span><a id="line.157">        @Override</a>
+<span class="sourceLineNo">158</span><a id="line.158">        public AffineMapping2D getInverse() {</a>
+<span class="sourceLineNo">159</span><a id="line.159">                double det = a00 * a11 - a01 * a10;</a>
+<span class="sourceLineNo">160</span><a id="line.160">                double b00 = a11 / det;</a>
+<span class="sourceLineNo">161</span><a id="line.161">                double b01 = -a01 / det;</a>
+<span class="sourceLineNo">162</span><a id="line.162">                double b02 = (a01 * a12 - a02 * a11) / det;</a>
+<span class="sourceLineNo">163</span><a id="line.163">                double b10 = -a10 / det;</a>
+<span class="sourceLineNo">164</span><a id="line.164">                double b11 = a00 / det;</a>
+<span class="sourceLineNo">165</span><a id="line.165">                double b12 = (a02 * a10 - a00 * a12) / det;</a>
+<span class="sourceLineNo">166</span><a id="line.166">                return new AffineMapping2D(b00, b01, b02, b10, b11, b12);</a>
+<span class="sourceLineNo">167</span><a id="line.167">        }</a>
+<span class="sourceLineNo">168</span><a id="line.168"></a>
+<span class="sourceLineNo">169</span><a id="line.169">        /**</a>
+<span class="sourceLineNo">170</span><a id="line.170">         * {@inheritDoc}</a>
+<span class="sourceLineNo">171</span><a id="line.171">         * @return a new affine mapping</a>
+<span class="sourceLineNo">172</span><a id="line.172">         */</a>
+<span class="sourceLineNo">173</span><a id="line.173">        @Override</a>
+<span class="sourceLineNo">174</span><a id="line.174">        public AffineMapping2D duplicate() {</a>
+<span class="sourceLineNo">175</span><a id="line.175">                return new AffineMapping2D(this);</a>
+<span class="sourceLineNo">176</span><a id="line.176">        }</a>
+<span class="sourceLineNo">177</span><a id="line.177"></a>
+<span class="sourceLineNo">178</span><a id="line.178">        @Override</a>
+<span class="sourceLineNo">179</span><a id="line.179">        public double[][] getJacobian(Pnt2d xy) {</a>
+<span class="sourceLineNo">180</span><a id="line.180">                final double x = xy.getX();</a>
+<span class="sourceLineNo">181</span><a id="line.181">                final double y = xy.getY();</a>
+<span class="sourceLineNo">182</span><a id="line.182">                return new double[][]</a>
+<span class="sourceLineNo">183</span><a id="line.183">                        {{x, y, 0, 0, 1, 0},</a>
+<span class="sourceLineNo">184</span><a id="line.184">                         {0, 0, x, y, 0, 1}};</a>
+<span class="sourceLineNo">185</span><a id="line.185">        }</a>
 <span class="sourceLineNo">186</span><a id="line.186">        </a>
-<span class="sourceLineNo">187</span><a id="line.187">        /**</a>
-<span class="sourceLineNo">188</span><a id="line.188">         * For testing only.</a>
-<span class="sourceLineNo">189</span><a id="line.189">         * @param args ignored</a>
-<span class="sourceLineNo">190</span><a id="line.190">         */</a>
-<span class="sourceLineNo">191</span><a id="line.191">        public static void main(String[] args) {</a>
-<span class="sourceLineNo">192</span><a id="line.192">                PrintPrecision.set(6);</a>
-<span class="sourceLineNo">193</span><a id="line.193">                double[][] a = </a>
-<span class="sourceLineNo">194</span><a id="line.194">                                {{-2, 4, -3}, </a>
-<span class="sourceLineNo">195</span><a id="line.195">                                {3, 7, 2}, </a>
-<span class="sourceLineNo">196</span><a id="line.196">                                {0, 0, 1}};</a>
-<span class="sourceLineNo">197</span><a id="line.197">                System.out.println("a = \n" + Matrix.toString(a));</a>
-<span class="sourceLineNo">198</span><a id="line.198">                System.out.println();</a>
-<span class="sourceLineNo">199</span><a id="line.199">                double[][] ai = Matrix.inverse(a);</a>
-<span class="sourceLineNo">200</span><a id="line.200">                System.out.println("ai = \n" + Matrix.toString(ai));</a>
-<span class="sourceLineNo">201</span><a id="line.201">                </a>
-<span class="sourceLineNo">202</span><a id="line.202">                LinearMapping2D Ai = new LinearMapping2D(ai);</a>
-<span class="sourceLineNo">203</span><a id="line.203">                System.out.println("Ai is affine: " + isAffine(Ai));</a>
-<span class="sourceLineNo">204</span><a id="line.204">                </a>
-<span class="sourceLineNo">205</span><a id="line.205">                double[][] I = Matrix.multiply(a, ai);</a>
-<span class="sourceLineNo">206</span><a id="line.206">                System.out.println("\ntest: should be the  identity matrix: = \n" + Matrix.toString(I));</a>
-<span class="sourceLineNo">207</span><a id="line.207">        }</a>
-<span class="sourceLineNo">208</span><a id="line.208"></a>
-<span class="sourceLineNo">209</span><a id="line.209">}</a>
+<span class="sourceLineNo">187</span><a id="line.187">        // ----------------------------------------------------------------------</a>
+<span class="sourceLineNo">188</span><a id="line.188">        </a>
+<span class="sourceLineNo">189</span><a id="line.189">        /**</a>
+<span class="sourceLineNo">190</span><a id="line.190">         * For testing only.</a>
+<span class="sourceLineNo">191</span><a id="line.191">         * @param args ignored</a>
+<span class="sourceLineNo">192</span><a id="line.192">         */</a>
+<span class="sourceLineNo">193</span><a id="line.193">        public static void main(String[] args) {</a>
+<span class="sourceLineNo">194</span><a id="line.194">                PrintPrecision.set(6);</a>
+<span class="sourceLineNo">195</span><a id="line.195">                double[][] a = </a>
+<span class="sourceLineNo">196</span><a id="line.196">                                {{-2, 4, -3}, </a>
+<span class="sourceLineNo">197</span><a id="line.197">                                {3, 7, 2}, </a>
+<span class="sourceLineNo">198</span><a id="line.198">                                {0, 0, 1}};</a>
+<span class="sourceLineNo">199</span><a id="line.199">                System.out.println("a = \n" + Matrix.toString(a));</a>
+<span class="sourceLineNo">200</span><a id="line.200">                System.out.println();</a>
+<span class="sourceLineNo">201</span><a id="line.201">                double[][] ai = Matrix.inverse(a);</a>
+<span class="sourceLineNo">202</span><a id="line.202">                System.out.println("ai = \n" + Matrix.toString(ai));</a>
+<span class="sourceLineNo">203</span><a id="line.203">                </a>
+<span class="sourceLineNo">204</span><a id="line.204">                LinearMapping2D Ai = new LinearMapping2D(ai);</a>
+<span class="sourceLineNo">205</span><a id="line.205">                System.out.println("Ai is affine: " + isAffine(Ai));</a>
+<span class="sourceLineNo">206</span><a id="line.206">                </a>
+<span class="sourceLineNo">207</span><a id="line.207">                double[][] I = Matrix.multiply(a, ai);</a>
+<span class="sourceLineNo">208</span><a id="line.208">                System.out.println("\ntest: should be the  identity matrix: = \n" + Matrix.toString(I));</a>
+<span class="sourceLineNo">209</span><a id="line.209">        }</a>
 <span class="sourceLineNo">210</span><a id="line.210"></a>
-<span class="sourceLineNo">211</span><a id="line.211"></a>
+<span class="sourceLineNo">211</span><a id="line.211">}</a>
 <span class="sourceLineNo">212</span><a id="line.212"></a>
 <span class="sourceLineNo">213</span><a id="line.213"></a>
+<span class="sourceLineNo">214</span><a id="line.214"></a>
+<span class="sourceLineNo">215</span><a id="line.215"></a>
 
 
 

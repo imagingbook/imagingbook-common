@@ -3,6 +3,7 @@ package imagingbook.pub.geometry.basic;
 import static imagingbook.lib.math.Arithmetic.isZero;
 import static imagingbook.lib.math.Arithmetic.sqr;
 
+import java.awt.Point;
 import java.awt.geom.Point2D;
 import java.util.Locale;
 
@@ -10,14 +11,12 @@ import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealVector;
 
-import imagingbook.lib.math.Arithmetic;
-
 /** 
  * Interface specifying the behavior of simple 2D points. 
  * It is used to adapt to different (legacy) point implementations 
  * with a common API. 
  * To some extent this is similar to the functionality provided by
- * {@link java.awt.geom.Point2D} and {@link java.awt.Point}
+ * {@link Point2D} and {@link Point}
  * but was re-implemented to avoid dependency on AWT and for
  * more flexibility in naming and class structure.
  * Since defined as an interface, {@link Pnt2d} can be easily implemented 
@@ -33,11 +32,20 @@ import imagingbook.lib.math.Arithmetic;
 public interface Pnt2d {
 	
 	/**
-	 * The default tolerance for matching coordinates.
+	 * The default tolerance for matching coordinates (1E-6).
 	 */
 	public final static double TOLERANCE = 1E-6;
 	
+	/**
+	 * Returns the x-coordinate of this point.
+	 * @return the x-coordinate value
+	 */
 	double getX();
+	
+	/**
+	 * Returns the y-coordinate of this point.
+	 * @return the y-coordinate value
+	 */
 	double getY();
 	
 	// ----------------------------------------------------------
@@ -206,7 +214,7 @@ public interface Pnt2d {
 	// ----------------------------------------------------------
 	
 	/**
-	 * Immutable 2D point with {@code double} coordinates.
+	 * Immutable 2D point implementation with {@code double} coordinates.
 	 * This class implements the {@link Pnt2d} interface.
 	 * <br>
 	 * A public constructor ({@link #PntDouble(double, double)})
@@ -348,7 +356,7 @@ public interface Pnt2d {
 	// ----------------------------------------------------------
 	
 	/**
-	 * Immutable 2D point with {@code int} coordinates.
+	 * Immutable 2D point implementation with {@code int} coordinates.
 	 * This class implements the {@link Pnt2d} interface.
 	 * <br>
 	 * A public constructor ({@link #PntInt(int, int)})
@@ -430,11 +438,11 @@ public interface Pnt2d {
 		
 		/**
 		 * Returns a new {@link PntDouble} instance
-		 * with the same coordinates as the given {@link java.awt.Point}.
+		 * with the same coordinates as the given AWT {@link Point}.
 		 * @param p the original AWT point
 		 * @return the new point
 		 */
-		public static PntInt from(java.awt.Point p) {
+		public static PntInt from(Point p) {
 			return new PntInt(p.x, p.y);
 		}
 		
@@ -523,6 +531,7 @@ public interface Pnt2d {
 		
 		// misc -----------------------------------
 		
+		
 		@Override
 		public String toString() {
 			return String.format(Locale.US, "%s[%d, %d]", 
@@ -546,11 +555,11 @@ public interface Pnt2d {
 		}
 		
 		/**
-		 * Returns this point's coordinates as a new {@link java.awt.Point} point.
+		 * Returns this point's coordinates as a new AWT {@link Point} point.
 		 * @return the new point
 		 */
-		public java.awt.Point toAwtPoint() {
-			return new java.awt.Point(this.x, this.y);
+		public Point toAwtPoint() {
+			return new Point(this.x, this.y);
 		}
 	}
 }

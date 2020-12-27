@@ -154,6 +154,7 @@ public class AffineMapping2D extends ProjectiveMapping2D {
 	 * Note that inverting an affine transformation always yields
 	 * another affine transformation.
 	 */
+	@Override
 	public AffineMapping2D getInverse() {
 		double det = a00 * a11 - a01 * a10;
 		double b00 = a11 / det;
@@ -169,6 +170,7 @@ public class AffineMapping2D extends ProjectiveMapping2D {
 	 * {@inheritDoc}
 	 * @return a new affine mapping
 	 */
+	@Override
 	public AffineMapping2D duplicate() {
 		return new AffineMapping2D(this);
 	}
