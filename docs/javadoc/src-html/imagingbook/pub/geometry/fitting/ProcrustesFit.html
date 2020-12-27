@@ -220,121 +220,122 @@
 <span class="sourceLineNo">210</span><a id="line.210">                RealVector mean = MatrixUtils.createRealVector(meanX);</a>
 <span class="sourceLineNo">211</span><a id="line.211">                int i = 0;</a>
 <span class="sourceLineNo">212</span><a id="line.212">                for (Pnt2d p : points) {</a>
-<span class="sourceLineNo">213</span><a id="line.213">                        RealVector cv = MatrixUtils.createRealVector(p.toDoubleArray());</a>
-<span class="sourceLineNo">214</span><a id="line.214">                        if (meanX != null) {</a>
-<span class="sourceLineNo">215</span><a id="line.215">                                cv = cv.subtract(mean);</a>
-<span class="sourceLineNo">216</span><a id="line.216">                        }</a>
-<span class="sourceLineNo">217</span><a id="line.217">                        M.setColumnVector(i, cv);</a>
-<span class="sourceLineNo">218</span><a id="line.218">                        i++;</a>
-<span class="sourceLineNo">219</span><a id="line.219">                }</a>
-<span class="sourceLineNo">220</span><a id="line.220">                return M;</a>
-<span class="sourceLineNo">221</span><a id="line.221">        }</a>
-<span class="sourceLineNo">222</span><a id="line.222">        </a>
-<span class="sourceLineNo">223</span><a id="line.223">//      private void printSVD(SingularValueDecomposition svd) {</a>
-<span class="sourceLineNo">224</span><a id="line.224">//              RealMatrix U = svd.getU();</a>
-<span class="sourceLineNo">225</span><a id="line.225">//              RealMatrix S = svd.getS();</a>
-<span class="sourceLineNo">226</span><a id="line.226">//              RealMatrix V = svd.getV();</a>
-<span class="sourceLineNo">227</span><a id="line.227">//              System.out.println("------ SVD ---------------");</a>
-<span class="sourceLineNo">228</span><a id="line.228">//              System.out.println("U = " + Matrix.toString(U.getData()));</a>
-<span class="sourceLineNo">229</span><a id="line.229">//              System.out.println("S = " + Matrix.toString(S.getData()));</a>
-<span class="sourceLineNo">230</span><a id="line.230">//              System.out.println("V = " + Matrix.toString(V.getData()));</a>
-<span class="sourceLineNo">231</span><a id="line.231">//              System.out.println("--------------------------");</a>
-<span class="sourceLineNo">232</span><a id="line.232">//      }</a>
-<span class="sourceLineNo">233</span><a id="line.233">        </a>
+<span class="sourceLineNo">213</span><a id="line.213">                        RealVector cv = p.toRealVector();</a>
+<span class="sourceLineNo">214</span><a id="line.214">//                      RealVector cv = MatrixUtils.createRealVector(p.toDoubleArray());</a>
+<span class="sourceLineNo">215</span><a id="line.215">                        if (meanX != null) {</a>
+<span class="sourceLineNo">216</span><a id="line.216">                                cv = cv.subtract(mean);</a>
+<span class="sourceLineNo">217</span><a id="line.217">                        }</a>
+<span class="sourceLineNo">218</span><a id="line.218">                        M.setColumnVector(i, cv);</a>
+<span class="sourceLineNo">219</span><a id="line.219">                        i++;</a>
+<span class="sourceLineNo">220</span><a id="line.220">                }</a>
+<span class="sourceLineNo">221</span><a id="line.221">                return M;</a>
+<span class="sourceLineNo">222</span><a id="line.222">        }</a>
+<span class="sourceLineNo">223</span><a id="line.223">        </a>
+<span class="sourceLineNo">224</span><a id="line.224">//      private void printSVD(SingularValueDecomposition svd) {</a>
+<span class="sourceLineNo">225</span><a id="line.225">//              RealMatrix U = svd.getU();</a>
+<span class="sourceLineNo">226</span><a id="line.226">//              RealMatrix S = svd.getS();</a>
+<span class="sourceLineNo">227</span><a id="line.227">//              RealMatrix V = svd.getV();</a>
+<span class="sourceLineNo">228</span><a id="line.228">//              System.out.println("------ SVD ---------------");</a>
+<span class="sourceLineNo">229</span><a id="line.229">//              System.out.println("U = " + Matrix.toString(U.getData()));</a>
+<span class="sourceLineNo">230</span><a id="line.230">//              System.out.println("S = " + Matrix.toString(S.getData()));</a>
+<span class="sourceLineNo">231</span><a id="line.231">//              System.out.println("V = " + Matrix.toString(V.getData()));</a>
+<span class="sourceLineNo">232</span><a id="line.232">//              System.out.println("--------------------------");</a>
+<span class="sourceLineNo">233</span><a id="line.233">//      }</a>
 <span class="sourceLineNo">234</span><a id="line.234">        </a>
-<span class="sourceLineNo">235</span><a id="line.235">        private void checkSize(Pnt2d[] P, Pnt2d[] Q) {</a>
-<span class="sourceLineNo">236</span><a id="line.236">                if (P.length &lt; 3 || Q.length &lt; 3) {</a>
-<span class="sourceLineNo">237</span><a id="line.237">                        throw new IllegalArgumentException("At least 3 point pairs are required to calculate this fit");</a>
-<span class="sourceLineNo">238</span><a id="line.238">                }</a>
-<span class="sourceLineNo">239</span><a id="line.239">        }</a>
-<span class="sourceLineNo">240</span><a id="line.240"></a>
-<span class="sourceLineNo">241</span><a id="line.241">        // --------------------------------------------------------------------------------</a>
-<span class="sourceLineNo">242</span><a id="line.242">        </a>
-<span class="sourceLineNo">243</span><a id="line.243">        private static double roundToDigits(double x, int ndigits) {</a>
-<span class="sourceLineNo">244</span><a id="line.244">                int d = (int) Math.pow(10, ndigits);</a>
-<span class="sourceLineNo">245</span><a id="line.245">                return Math.rint(x * d) / d;</a>
-<span class="sourceLineNo">246</span><a id="line.246">        }</a>
-<span class="sourceLineNo">247</span><a id="line.247"></a>
-<span class="sourceLineNo">248</span><a id="line.248">        public static void main(String[] args) {</a>
-<span class="sourceLineNo">249</span><a id="line.249">                PrintPrecision.set(6);</a>
-<span class="sourceLineNo">250</span><a id="line.250">                int NDIGITS = 1;</a>
-<span class="sourceLineNo">251</span><a id="line.251">                </a>
-<span class="sourceLineNo">252</span><a id="line.252">                boolean allowTranslation = true;</a>
-<span class="sourceLineNo">253</span><a id="line.253">                boolean allowScaling = true;</a>
-<span class="sourceLineNo">254</span><a id="line.254">                boolean forceRotation = true;</a>
-<span class="sourceLineNo">255</span><a id="line.255">                </a>
-<span class="sourceLineNo">256</span><a id="line.256">                double a = 0.6;</a>
-<span class="sourceLineNo">257</span><a id="line.257">                double[][] R0data =</a>
-<span class="sourceLineNo">258</span><a id="line.258">                        {{ Math.cos(a), -Math.sin(a) },</a>
-<span class="sourceLineNo">259</span><a id="line.259">                         { Math.sin(a),  Math.cos(a) }};</a>
-<span class="sourceLineNo">260</span><a id="line.260">                </a>
-<span class="sourceLineNo">261</span><a id="line.261">                RealMatrix R0 = MatrixUtils.createRealMatrix(R0data);</a>
-<span class="sourceLineNo">262</span><a id="line.262">                double[] t0 = {4, -3};</a>
-<span class="sourceLineNo">263</span><a id="line.263">                double s = 3.5;</a>
-<span class="sourceLineNo">264</span><a id="line.264">                </a>
-<span class="sourceLineNo">265</span><a id="line.265">                System.out.format("original alpha: a = %.6f\n", a);</a>
-<span class="sourceLineNo">266</span><a id="line.266">                System.out.println("original rotation: R = \n" + Matrix.toString(R0.getData()));</a>
-<span class="sourceLineNo">267</span><a id="line.267">                System.out.println("original translation: t = " + Matrix.toString(t0));</a>
-<span class="sourceLineNo">268</span><a id="line.268">                System.out.format("original scale: s = %.6f\n", s);</a>
-<span class="sourceLineNo">269</span><a id="line.269">                System.out.println();</a>
-<span class="sourceLineNo">270</span><a id="line.270">                </a>
-<span class="sourceLineNo">271</span><a id="line.271">                Pnt2d[] P = {</a>
-<span class="sourceLineNo">272</span><a id="line.272">                                PntInt.from(2, 5),</a>
-<span class="sourceLineNo">273</span><a id="line.273">                                PntInt.from(7, 3),</a>
-<span class="sourceLineNo">274</span><a id="line.274">                                PntInt.from(0, 9),</a>
-<span class="sourceLineNo">275</span><a id="line.275">                                PntInt.from(5, 4)</a>
-<span class="sourceLineNo">276</span><a id="line.276">                };</a>
-<span class="sourceLineNo">277</span><a id="line.277">                </a>
-<span class="sourceLineNo">278</span><a id="line.278">                Pnt2d[] Q = new Pnt2d[P.length];</a>
-<span class="sourceLineNo">279</span><a id="line.279">                </a>
-<span class="sourceLineNo">280</span><a id="line.280">                for (int i = 0; i &lt; P.length; i++) {</a>
-<span class="sourceLineNo">281</span><a id="line.281">                        Pnt2d q = PntDouble.from(R0.operate(P[i].toDoubleArray()));</a>
-<span class="sourceLineNo">282</span><a id="line.282">                        // noise!</a>
-<span class="sourceLineNo">283</span><a id="line.283">                        double qx = roundToDigits(s * q.getX() + t0[0], NDIGITS);</a>
-<span class="sourceLineNo">284</span><a id="line.284">                        double qy = roundToDigits(s * q.getY() + t0[1], NDIGITS);</a>
-<span class="sourceLineNo">285</span><a id="line.285">                        Q[i] = Pnt2d.PntDouble.from(qx, qy);</a>
-<span class="sourceLineNo">286</span><a id="line.286">                }</a>
-<span class="sourceLineNo">287</span><a id="line.287">                </a>
-<span class="sourceLineNo">288</span><a id="line.288">                //P[0] = Point.create(2, 0);    // to provoke a large error</a>
-<span class="sourceLineNo">289</span><a id="line.289">                </a>
-<span class="sourceLineNo">290</span><a id="line.290">                ProcrustesFit pf = new ProcrustesFit(P, Q, allowTranslation, allowScaling, forceRotation);</a>
-<span class="sourceLineNo">291</span><a id="line.291"></a>
-<span class="sourceLineNo">292</span><a id="line.292">                System.out.format("estimated alpha: a = %.6f\n", Math.acos(pf.getR().getEntry(0, 0)));</a>
-<span class="sourceLineNo">293</span><a id="line.293">                System.out.println("estimated rotation: R = \n" + Matrix.toString(pf.getR().getData()));</a>
-<span class="sourceLineNo">294</span><a id="line.294">                System.out.println("estimated translation: t = " + Matrix.toString(pf.getT().toArray()));</a>
-<span class="sourceLineNo">295</span><a id="line.295">                System.out.format("estimated scale: s = %.6f\n", pf.getScale());</a>
-<span class="sourceLineNo">296</span><a id="line.296">                </a>
-<span class="sourceLineNo">297</span><a id="line.297">                System.out.println();</a>
-<span class="sourceLineNo">298</span><a id="line.298">                System.out.format("RMS fitting error = %.6f\n", pf.getError());</a>
-<span class="sourceLineNo">299</span><a id="line.299">                System.out.format("euclidean error (test) = %.6f\n", pf.getEuclideanError(P, Q));</a>
-<span class="sourceLineNo">300</span><a id="line.300">                </a>
-<span class="sourceLineNo">301</span><a id="line.301">                double[][] A = pf.getTransformationMatrix().getData();</a>
-<span class="sourceLineNo">302</span><a id="line.302">                System.out.println("transformation matrix: A = \n" + Matrix.toString(A));</a>
-<span class="sourceLineNo">303</span><a id="line.303">        }</a>
-<span class="sourceLineNo">304</span><a id="line.304"></a>
-<span class="sourceLineNo">305</span><a id="line.305">        /*</a>
-<span class="sourceLineNo">306</span><a id="line.306">        original alpha: a = 0.600000</a>
-<span class="sourceLineNo">307</span><a id="line.307">        original rotation: R = </a>
-<span class="sourceLineNo">308</span><a id="line.308">        {{0.825336, -0.564642}, </a>
-<span class="sourceLineNo">309</span><a id="line.309">        {0.564642, 0.825336}}</a>
-<span class="sourceLineNo">310</span><a id="line.310">        original translation: t = {4.000000, -3.000000}</a>
-<span class="sourceLineNo">311</span><a id="line.311">        original scale: s = 3.500000</a>
-<span class="sourceLineNo">312</span><a id="line.312">        </a>
-<span class="sourceLineNo">313</span><a id="line.313">        estimated alpha: a = 0.599589</a>
-<span class="sourceLineNo">314</span><a id="line.314">        estimated rotation: R = </a>
-<span class="sourceLineNo">315</span><a id="line.315">        {{0.825568, -0.564303}, </a>
-<span class="sourceLineNo">316</span><a id="line.316">        {0.564303, 0.825568}}</a>
-<span class="sourceLineNo">317</span><a id="line.317">        estimated translation: t = {3.980905, -3.011055}</a>
-<span class="sourceLineNo">318</span><a id="line.318">        estimated scale: s = 3.500560</a>
-<span class="sourceLineNo">319</span><a id="line.319">        </a>
-<span class="sourceLineNo">320</span><a id="line.320">        fitting error = 0.048079</a>
-<span class="sourceLineNo">321</span><a id="line.321">        euclidean error (test) = 0.048079</a>
-<span class="sourceLineNo">322</span><a id="line.322">        transformation matrix: A = </a>
-<span class="sourceLineNo">323</span><a id="line.323">        {{2.889950, -1.975377, 3.980905}, </a>
-<span class="sourceLineNo">324</span><a id="line.324">        {1.975377, 2.889950, -3.011055}}</a>
-<span class="sourceLineNo">325</span><a id="line.325">         */</a>
-<span class="sourceLineNo">326</span><a id="line.326">}</a>
-<span class="sourceLineNo">327</span><a id="line.327"></a>
+<span class="sourceLineNo">235</span><a id="line.235">        </a>
+<span class="sourceLineNo">236</span><a id="line.236">        private void checkSize(Pnt2d[] P, Pnt2d[] Q) {</a>
+<span class="sourceLineNo">237</span><a id="line.237">                if (P.length &lt; 3 || Q.length &lt; 3) {</a>
+<span class="sourceLineNo">238</span><a id="line.238">                        throw new IllegalArgumentException("At least 3 point pairs are required to calculate this fit");</a>
+<span class="sourceLineNo">239</span><a id="line.239">                }</a>
+<span class="sourceLineNo">240</span><a id="line.240">        }</a>
+<span class="sourceLineNo">241</span><a id="line.241"></a>
+<span class="sourceLineNo">242</span><a id="line.242">        // --------------------------------------------------------------------------------</a>
+<span class="sourceLineNo">243</span><a id="line.243">        </a>
+<span class="sourceLineNo">244</span><a id="line.244">        private static double roundToDigits(double x, int ndigits) {</a>
+<span class="sourceLineNo">245</span><a id="line.245">                int d = (int) Math.pow(10, ndigits);</a>
+<span class="sourceLineNo">246</span><a id="line.246">                return Math.rint(x * d) / d;</a>
+<span class="sourceLineNo">247</span><a id="line.247">        }</a>
+<span class="sourceLineNo">248</span><a id="line.248"></a>
+<span class="sourceLineNo">249</span><a id="line.249">        public static void main(String[] args) {</a>
+<span class="sourceLineNo">250</span><a id="line.250">                PrintPrecision.set(6);</a>
+<span class="sourceLineNo">251</span><a id="line.251">                int NDIGITS = 1;</a>
+<span class="sourceLineNo">252</span><a id="line.252">                </a>
+<span class="sourceLineNo">253</span><a id="line.253">                boolean allowTranslation = true;</a>
+<span class="sourceLineNo">254</span><a id="line.254">                boolean allowScaling = true;</a>
+<span class="sourceLineNo">255</span><a id="line.255">                boolean forceRotation = true;</a>
+<span class="sourceLineNo">256</span><a id="line.256">                </a>
+<span class="sourceLineNo">257</span><a id="line.257">                double a = 0.6;</a>
+<span class="sourceLineNo">258</span><a id="line.258">                double[][] R0data =</a>
+<span class="sourceLineNo">259</span><a id="line.259">                        {{ Math.cos(a), -Math.sin(a) },</a>
+<span class="sourceLineNo">260</span><a id="line.260">                         { Math.sin(a),  Math.cos(a) }};</a>
+<span class="sourceLineNo">261</span><a id="line.261">                </a>
+<span class="sourceLineNo">262</span><a id="line.262">                RealMatrix R0 = MatrixUtils.createRealMatrix(R0data);</a>
+<span class="sourceLineNo">263</span><a id="line.263">                double[] t0 = {4, -3};</a>
+<span class="sourceLineNo">264</span><a id="line.264">                double s = 3.5;</a>
+<span class="sourceLineNo">265</span><a id="line.265">                </a>
+<span class="sourceLineNo">266</span><a id="line.266">                System.out.format("original alpha: a = %.6f\n", a);</a>
+<span class="sourceLineNo">267</span><a id="line.267">                System.out.println("original rotation: R = \n" + Matrix.toString(R0.getData()));</a>
+<span class="sourceLineNo">268</span><a id="line.268">                System.out.println("original translation: t = " + Matrix.toString(t0));</a>
+<span class="sourceLineNo">269</span><a id="line.269">                System.out.format("original scale: s = %.6f\n", s);</a>
+<span class="sourceLineNo">270</span><a id="line.270">                System.out.println();</a>
+<span class="sourceLineNo">271</span><a id="line.271">                </a>
+<span class="sourceLineNo">272</span><a id="line.272">                Pnt2d[] P = {</a>
+<span class="sourceLineNo">273</span><a id="line.273">                                PntInt.from(2, 5),</a>
+<span class="sourceLineNo">274</span><a id="line.274">                                PntInt.from(7, 3),</a>
+<span class="sourceLineNo">275</span><a id="line.275">                                PntInt.from(0, 9),</a>
+<span class="sourceLineNo">276</span><a id="line.276">                                PntInt.from(5, 4)</a>
+<span class="sourceLineNo">277</span><a id="line.277">                };</a>
+<span class="sourceLineNo">278</span><a id="line.278">                </a>
+<span class="sourceLineNo">279</span><a id="line.279">                Pnt2d[] Q = new Pnt2d[P.length];</a>
+<span class="sourceLineNo">280</span><a id="line.280">                </a>
+<span class="sourceLineNo">281</span><a id="line.281">                for (int i = 0; i &lt; P.length; i++) {</a>
+<span class="sourceLineNo">282</span><a id="line.282">                        Pnt2d q = PntDouble.from(R0.operate(P[i].toDoubleArray()));</a>
+<span class="sourceLineNo">283</span><a id="line.283">                        // noise!</a>
+<span class="sourceLineNo">284</span><a id="line.284">                        double qx = roundToDigits(s * q.getX() + t0[0], NDIGITS);</a>
+<span class="sourceLineNo">285</span><a id="line.285">                        double qy = roundToDigits(s * q.getY() + t0[1], NDIGITS);</a>
+<span class="sourceLineNo">286</span><a id="line.286">                        Q[i] = Pnt2d.PntDouble.from(qx, qy);</a>
+<span class="sourceLineNo">287</span><a id="line.287">                }</a>
+<span class="sourceLineNo">288</span><a id="line.288">                </a>
+<span class="sourceLineNo">289</span><a id="line.289">                //P[0] = Point.create(2, 0);    // to provoke a large error</a>
+<span class="sourceLineNo">290</span><a id="line.290">                </a>
+<span class="sourceLineNo">291</span><a id="line.291">                ProcrustesFit pf = new ProcrustesFit(P, Q, allowTranslation, allowScaling, forceRotation);</a>
+<span class="sourceLineNo">292</span><a id="line.292"></a>
+<span class="sourceLineNo">293</span><a id="line.293">                System.out.format("estimated alpha: a = %.6f\n", Math.acos(pf.getR().getEntry(0, 0)));</a>
+<span class="sourceLineNo">294</span><a id="line.294">                System.out.println("estimated rotation: R = \n" + Matrix.toString(pf.getR().getData()));</a>
+<span class="sourceLineNo">295</span><a id="line.295">                System.out.println("estimated translation: t = " + Matrix.toString(pf.getT().toArray()));</a>
+<span class="sourceLineNo">296</span><a id="line.296">                System.out.format("estimated scale: s = %.6f\n", pf.getScale());</a>
+<span class="sourceLineNo">297</span><a id="line.297">                </a>
+<span class="sourceLineNo">298</span><a id="line.298">                System.out.println();</a>
+<span class="sourceLineNo">299</span><a id="line.299">                System.out.format("RMS fitting error = %.6f\n", pf.getError());</a>
+<span class="sourceLineNo">300</span><a id="line.300">                System.out.format("euclidean error (test) = %.6f\n", pf.getEuclideanError(P, Q));</a>
+<span class="sourceLineNo">301</span><a id="line.301">                </a>
+<span class="sourceLineNo">302</span><a id="line.302">                double[][] A = pf.getTransformationMatrix().getData();</a>
+<span class="sourceLineNo">303</span><a id="line.303">                System.out.println("transformation matrix: A = \n" + Matrix.toString(A));</a>
+<span class="sourceLineNo">304</span><a id="line.304">        }</a>
+<span class="sourceLineNo">305</span><a id="line.305"></a>
+<span class="sourceLineNo">306</span><a id="line.306">        /*</a>
+<span class="sourceLineNo">307</span><a id="line.307">        original alpha: a = 0.600000</a>
+<span class="sourceLineNo">308</span><a id="line.308">        original rotation: R = </a>
+<span class="sourceLineNo">309</span><a id="line.309">        {{0.825336, -0.564642}, </a>
+<span class="sourceLineNo">310</span><a id="line.310">        {0.564642, 0.825336}}</a>
+<span class="sourceLineNo">311</span><a id="line.311">        original translation: t = {4.000000, -3.000000}</a>
+<span class="sourceLineNo">312</span><a id="line.312">        original scale: s = 3.500000</a>
+<span class="sourceLineNo">313</span><a id="line.313">        </a>
+<span class="sourceLineNo">314</span><a id="line.314">        estimated alpha: a = 0.599589</a>
+<span class="sourceLineNo">315</span><a id="line.315">        estimated rotation: R = </a>
+<span class="sourceLineNo">316</span><a id="line.316">        {{0.825568, -0.564303}, </a>
+<span class="sourceLineNo">317</span><a id="line.317">        {0.564303, 0.825568}}</a>
+<span class="sourceLineNo">318</span><a id="line.318">        estimated translation: t = {3.980905, -3.011055}</a>
+<span class="sourceLineNo">319</span><a id="line.319">        estimated scale: s = 3.500560</a>
+<span class="sourceLineNo">320</span><a id="line.320">        </a>
+<span class="sourceLineNo">321</span><a id="line.321">        fitting error = 0.048079</a>
+<span class="sourceLineNo">322</span><a id="line.322">        euclidean error (test) = 0.048079</a>
+<span class="sourceLineNo">323</span><a id="line.323">        transformation matrix: A = </a>
+<span class="sourceLineNo">324</span><a id="line.324">        {{2.889950, -1.975377, 3.980905}, </a>
+<span class="sourceLineNo">325</span><a id="line.325">        {1.975377, 2.889950, -3.011055}}</a>
+<span class="sourceLineNo">326</span><a id="line.326">         */</a>
+<span class="sourceLineNo">327</span><a id="line.327">}</a>
+<span class="sourceLineNo">328</span><a id="line.328"></a>
 
 
 

@@ -265,7 +265,7 @@
 <span class="sourceLineNo">255</span><a id="line.255">                                // delete all remaining corners cj too close to c0:</a>
 <span class="sourceLineNo">256</span><a id="line.256">                                for (int j = i + 1; j &lt; Ca.length; j++) {</a>
 <span class="sourceLineNo">257</span><a id="line.257">                                        Corner cj = Ca[j];</a>
-<span class="sourceLineNo">258</span><a id="line.258">                                        if (cj != null &amp;&amp; c0.distance2(cj) &lt; dmin2)</a>
+<span class="sourceLineNo">258</span><a id="line.258">                                        if (cj != null &amp;&amp; c0.distanceSq(cj) &lt; dmin2)</a>
 <span class="sourceLineNo">259</span><a id="line.259">                                                Ca[j] = null;   //delete corner cj from C</a>
 <span class="sourceLineNo">260</span><a id="line.260">                                }</a>
 <span class="sourceLineNo">261</span><a id="line.261">                        }</a>

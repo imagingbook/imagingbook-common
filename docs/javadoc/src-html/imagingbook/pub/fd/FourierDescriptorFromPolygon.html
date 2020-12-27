@@ -127,7 +127,7 @@
 <span class="sourceLineNo">117</span><a id="line.117">                int[] xp = poly.xpoints;</a>
 <span class="sourceLineNo">118</span><a id="line.118">                int[] yp = poly.ypoints;</a>
 <span class="sourceLineNo">119</span><a id="line.119">                // copy vertices for all non-zero-length polygon segments:</a>
-<span class="sourceLineNo">120</span><a id="line.120">                List&lt;Pnt2d&gt; points = new ArrayList&lt;Pnt2d&gt;(xp.length);</a>
+<span class="sourceLineNo">120</span><a id="line.120">                List&lt;Pnt2d&gt; points = new ArrayList&lt;&gt;(xp.length);</a>
 <span class="sourceLineNo">121</span><a id="line.121">                points.add(PntInt.from(xp[0], yp[0]));</a>
 <span class="sourceLineNo">122</span><a id="line.122">                int last = 0;</a>
 <span class="sourceLineNo">123</span><a id="line.123">                for (int i = 1; i &lt; xp.length; i++) {</a>

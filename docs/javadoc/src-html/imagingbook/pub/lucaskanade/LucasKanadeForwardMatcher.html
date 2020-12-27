@@ -90,73 +90,69 @@
 <span class="sourceLineNo">080</span><a id="line.80">                // for all positions (u,v) in R do</a>
 <span class="sourceLineNo">081</span><a id="line.81">                for (int u = 0; u &lt; wR; u++) {</a>
 <span class="sourceLineNo">082</span><a id="line.82">                        for (int v = 0; v &lt; hR; v++) {</a>
-<span class="sourceLineNo">083</span><a id="line.83">                                //double[] x = {u - xc, v - yc};        // position w.r.t. the center of R</a>
-<span class="sourceLineNo">084</span><a id="line.84">                                Pnt2d x = PntDouble.from(u - xc, v - yc);               // position w.r.t. the center of R</a>
-<span class="sourceLineNo">085</span><a id="line.85">                                //double[] xT = Tp.applyTo(x);          // warp x -&gt; x'</a>
-<span class="sourceLineNo">086</span><a id="line.86">                                Pnt2d xT = Tp.applyTo(x);               // warp x -&gt; x'</a>
-<span class="sourceLineNo">087</span><a id="line.87"></a>
-<span class="sourceLineNo">088</span><a id="line.88">//                              double gx = Ix.getInterpolatedValue(xT[0], xT[1]);      // interpolate the gradient at pos. xw</a>
-<span class="sourceLineNo">089</span><a id="line.89">//                              double gy = Iy.getInterpolatedValue(xT[0], xT[1]);</a>
-<span class="sourceLineNo">090</span><a id="line.90">                                double gx = Ix.getInterpolatedValue(xT.getX(), xT.getY());      // interpolate the gradient at pos. xw</a>
-<span class="sourceLineNo">091</span><a id="line.91">                                double gy = Iy.getInterpolatedValue(xT.getX(), xT.getY());</a>
-<span class="sourceLineNo">092</span><a id="line.92">                                </a>
-<span class="sourceLineNo">093</span><a id="line.93">                                double[] G = new double[] {gx, gy};                             // interpolated gradient vector</a>
-<span class="sourceLineNo">094</span><a id="line.94"></a>
-<span class="sourceLineNo">095</span><a id="line.95">                                // Step 4: Evaluate the Jacobian of the warp W at position x</a>
-<span class="sourceLineNo">096</span><a id="line.96">                                double[][] J = Tp.getJacobian(x);</a>
-<span class="sourceLineNo">097</span><a id="line.97"></a>
-<span class="sourceLineNo">098</span><a id="line.98">                                // Step 5: compute the steepest descent image:</a>
-<span class="sourceLineNo">099</span><a id="line.99">                                double[] sx = Matrix.multiply(G, J); // I_steepest = gradI(xy) * dW/dp(xy)  is a n-dim vector</a>
+<span class="sourceLineNo">083</span><a id="line.83">                                Pnt2d x = PntDouble.from(u - xc, v - yc);               // position w.r.t. the center of R</a>
+<span class="sourceLineNo">084</span><a id="line.84">                                Pnt2d xT = Tp.applyTo(x);               // warp x -&gt; x'</a>
+<span class="sourceLineNo">085</span><a id="line.85"></a>
+<span class="sourceLineNo">086</span><a id="line.86">                                double gx = Ix.getInterpolatedValue(xT.getX(), xT.getY());      // interpolate the gradient at pos. xw</a>
+<span class="sourceLineNo">087</span><a id="line.87">                                double gy = Iy.getInterpolatedValue(xT.getX(), xT.getY());</a>
+<span class="sourceLineNo">088</span><a id="line.88">                                </a>
+<span class="sourceLineNo">089</span><a id="line.89">                                double[] G = new double[] {gx, gy};                             // interpolated gradient vector</a>
+<span class="sourceLineNo">090</span><a id="line.90"></a>
+<span class="sourceLineNo">091</span><a id="line.91">                                // Step 4: Evaluate the Jacobian of the warp W at position x</a>
+<span class="sourceLineNo">092</span><a id="line.92">                                double[][] J = Tp.getJacobian(x);</a>
+<span class="sourceLineNo">093</span><a id="line.93"></a>
+<span class="sourceLineNo">094</span><a id="line.94">                                // Step 5: compute the steepest descent image:</a>
+<span class="sourceLineNo">095</span><a id="line.95">                                double[] sx = Matrix.multiply(G, J); // I_steepest = gradI(xy) * dW/dp(xy)  is a n-dim vector</a>
+<span class="sourceLineNo">096</span><a id="line.96"></a>
+<span class="sourceLineNo">097</span><a id="line.97">                                if (params.showSteepestDescentImages &amp;&amp; iteration == 1) {</a>
+<span class="sourceLineNo">098</span><a id="line.98">                                        S[u][v] = sx;</a>
+<span class="sourceLineNo">099</span><a id="line.99">                                }</a>
 <span class="sourceLineNo">100</span><a id="line.100"></a>
-<span class="sourceLineNo">101</span><a id="line.101">                                if (params.showSteepestDescentImages &amp;&amp; iteration == 1) {</a>
-<span class="sourceLineNo">102</span><a id="line.102">                                        S[u][v] = sx;</a>
-<span class="sourceLineNo">103</span><a id="line.103">                                }</a>
+<span class="sourceLineNo">101</span><a id="line.101">                                // Step 6: Update the Hessian matrix</a>
+<span class="sourceLineNo">102</span><a id="line.102">                                double[][] Hx = Matrix.outerProduct(sx, sx);</a>
+<span class="sourceLineNo">103</span><a id="line.103">                                H = Matrix.add(H, Hx);</a>
 <span class="sourceLineNo">104</span><a id="line.104"></a>
-<span class="sourceLineNo">105</span><a id="line.105">                                // Step 6: Update the Hessian matrix</a>
-<span class="sourceLineNo">106</span><a id="line.106">                                double[][] Hx = Matrix.outerProduct(sx, sx);</a>
-<span class="sourceLineNo">107</span><a id="line.107">                                H = Matrix.add(H, Hx);</a>
+<span class="sourceLineNo">105</span><a id="line.105">                                // Step 7: Compute sum_x [gradI*dW/dp]^T (R(x)-I(W(x;p))] = Isteepest^T * Exy]</a>
+<span class="sourceLineNo">106</span><a id="line.106">                                double d = R.getf(u, v) - I.getInterpolatedValue(xT.getX(), xT.getY());</a>
+<span class="sourceLineNo">107</span><a id="line.107">                                sqrError = sqrError + d * d;</a>
 <span class="sourceLineNo">108</span><a id="line.108"></a>
-<span class="sourceLineNo">109</span><a id="line.109">                                // Step 7: Compute sum_x [gradI*dW/dp]^T (R(x)-I(W(x;p))] = Isteepest^T * Exy]</a>
-<span class="sourceLineNo">110</span><a id="line.110">                                double d = R.getf(u, v) - I.getInterpolatedValue(xT.getX(), xT.getY());</a>
-<span class="sourceLineNo">111</span><a id="line.111">                                sqrError = sqrError + d * d;</a>
+<span class="sourceLineNo">109</span><a id="line.109">                                dp = Matrix.add(dp, Matrix.multiply(d, sx));</a>
+<span class="sourceLineNo">110</span><a id="line.110">                        }</a>
+<span class="sourceLineNo">111</span><a id="line.111">                }</a>
 <span class="sourceLineNo">112</span><a id="line.112"></a>
-<span class="sourceLineNo">113</span><a id="line.113">                                dp = Matrix.add(dp, Matrix.multiply(d, sx));</a>
-<span class="sourceLineNo">114</span><a id="line.114">                        }</a>
-<span class="sourceLineNo">115</span><a id="line.115">                }</a>
-<span class="sourceLineNo">116</span><a id="line.116"></a>
-<span class="sourceLineNo">117</span><a id="line.117">                if (params.showHessians &amp;&amp; iteration == 1) {</a>
-<span class="sourceLineNo">118</span><a id="line.118">                        IjUtils.createImage("H", H).show();</a>
-<span class="sourceLineNo">119</span><a id="line.119">                        IjUtils.createImage("Hi", Matrix.inverse(H)).show();</a>
-<span class="sourceLineNo">120</span><a id="line.120">                }</a>
-<span class="sourceLineNo">121</span><a id="line.121"></a>
-<span class="sourceLineNo">122</span><a id="line.122">                // Step 8: Compute delta_p using Equation 10</a>
-<span class="sourceLineNo">123</span><a id="line.123">                //                      double[][] Hi = Matrix.invert(H);</a>
-<span class="sourceLineNo">124</span><a id="line.124">                //                      if (Hi == null) {</a>
-<span class="sourceLineNo">125</span><a id="line.125">                //                              IJ.log("could not invert Hessian matrix!");</a>
-<span class="sourceLineNo">126</span><a id="line.126">                //                              return null;</a>
-<span class="sourceLineNo">127</span><a id="line.127">                //                      }</a>
-<span class="sourceLineNo">128</span><a id="line.128">                // Step 9: update the parameter vector</a>
-<span class="sourceLineNo">129</span><a id="line.129">                //                      double[] dp = Matrix.multiply(Hi, S);</a>
-<span class="sourceLineNo">130</span><a id="line.130"></a>
-<span class="sourceLineNo">131</span><a id="line.131">                // Step 8/9 (alternative)</a>
-<span class="sourceLineNo">132</span><a id="line.132">                double[] qopt = Matrix.solve(H, dp);</a>
-<span class="sourceLineNo">133</span><a id="line.133">                if (qopt == null) {     // this should not happen</a>
-<span class="sourceLineNo">134</span><a id="line.134">                        throw new RuntimeException(this.getClass().getName() + ": Encountered singular Hessian matrix!");</a>
-<span class="sourceLineNo">135</span><a id="line.135">                        //return null;</a>
-<span class="sourceLineNo">136</span><a id="line.136">                }</a>
-<span class="sourceLineNo">137</span><a id="line.137">                </a>
-<span class="sourceLineNo">138</span><a id="line.138">//              double[] p = Matrix.add(Tp.getParameters(), qopt);</a>
-<span class="sourceLineNo">139</span><a id="line.139">                double[] p = Matrix.add(getParameters(Tp), qopt);</a>
-<span class="sourceLineNo">140</span><a id="line.140">                qmag = Matrix.normL2squared(qopt);</a>
+<span class="sourceLineNo">113</span><a id="line.113">                if (params.showHessians &amp;&amp; iteration == 1) {</a>
+<span class="sourceLineNo">114</span><a id="line.114">                        IjUtils.createImage("H", H).show();</a>
+<span class="sourceLineNo">115</span><a id="line.115">                        IjUtils.createImage("Hi", Matrix.inverse(H)).show();</a>
+<span class="sourceLineNo">116</span><a id="line.116">                }</a>
+<span class="sourceLineNo">117</span><a id="line.117"></a>
+<span class="sourceLineNo">118</span><a id="line.118">                // Step 8: Compute delta_p using Equation 10</a>
+<span class="sourceLineNo">119</span><a id="line.119">                //                      double[][] Hi = Matrix.invert(H);</a>
+<span class="sourceLineNo">120</span><a id="line.120">                //                      if (Hi == null) {</a>
+<span class="sourceLineNo">121</span><a id="line.121">                //                              IJ.log("could not invert Hessian matrix!");</a>
+<span class="sourceLineNo">122</span><a id="line.122">                //                              return null;</a>
+<span class="sourceLineNo">123</span><a id="line.123">                //                      }</a>
+<span class="sourceLineNo">124</span><a id="line.124">                // Step 9: update the parameter vector</a>
+<span class="sourceLineNo">125</span><a id="line.125">                //                      double[] dp = Matrix.multiply(Hi, S);</a>
+<span class="sourceLineNo">126</span><a id="line.126"></a>
+<span class="sourceLineNo">127</span><a id="line.127">                // Step 8/9 (alternative)</a>
+<span class="sourceLineNo">128</span><a id="line.128">                double[] qopt = Matrix.solve(H, dp);</a>
+<span class="sourceLineNo">129</span><a id="line.129">                if (qopt == null) {     // this should not happen</a>
+<span class="sourceLineNo">130</span><a id="line.130">                        throw new RuntimeException(this.getClass().getName() + ": Encountered singular Hessian matrix!");</a>
+<span class="sourceLineNo">131</span><a id="line.131">                        //return null;</a>
+<span class="sourceLineNo">132</span><a id="line.132">                }</a>
+<span class="sourceLineNo">133</span><a id="line.133">                </a>
+<span class="sourceLineNo">134</span><a id="line.134">//              double[] p = Matrix.add(Tp.getParameters(), qopt);</a>
+<span class="sourceLineNo">135</span><a id="line.135">                double[] p = Matrix.add(getParameters(Tp), qopt);</a>
+<span class="sourceLineNo">136</span><a id="line.136">                qmag = Matrix.normL2squared(qopt);</a>
+<span class="sourceLineNo">137</span><a id="line.137"></a>
+<span class="sourceLineNo">138</span><a id="line.138">                if (params.showSteepestDescentImages &amp;&amp; iteration == 1) {</a>
+<span class="sourceLineNo">139</span><a id="line.139">                        showSteepestDescentImages(S);</a>
+<span class="sourceLineNo">140</span><a id="line.140">                }</a>
 <span class="sourceLineNo">141</span><a id="line.141"></a>
-<span class="sourceLineNo">142</span><a id="line.142">                if (params.showSteepestDescentImages &amp;&amp; iteration == 1) {</a>
-<span class="sourceLineNo">143</span><a id="line.143">                        showSteepestDescentImages(S);</a>
-<span class="sourceLineNo">144</span><a id="line.144">                }</a>
-<span class="sourceLineNo">145</span><a id="line.145"></a>
-<span class="sourceLineNo">146</span><a id="line.146">//              return ProjectiveMapping2D.fromParameters(p);</a>
-<span class="sourceLineNo">147</span><a id="line.147">                return toProjectiveMap(p);</a>
-<span class="sourceLineNo">148</span><a id="line.148">        }</a>
-<span class="sourceLineNo">149</span><a id="line.149">}</a>
+<span class="sourceLineNo">142</span><a id="line.142">//              return ProjectiveMapping2D.fromParameters(p);</a>
+<span class="sourceLineNo">143</span><a id="line.143">                return toProjectiveMap(p);</a>
+<span class="sourceLineNo">144</span><a id="line.144">        }</a>
+<span class="sourceLineNo">145</span><a id="line.145">}</a>
 
 
 

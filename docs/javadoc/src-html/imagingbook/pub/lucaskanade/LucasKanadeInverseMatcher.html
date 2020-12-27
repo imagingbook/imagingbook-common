@@ -114,49 +114,46 @@
 <span class="sourceLineNo">104</span><a id="line.104">                        for (int v = 0; v &lt; hR; v++) {</a>
 <span class="sourceLineNo">105</span><a id="line.105">                                </a>
 <span class="sourceLineNo">106</span><a id="line.106">                                // get coordinate relative to center of R</a>
-<span class="sourceLineNo">107</span><a id="line.107">//                              double[] x = {u - xc, v - yc};</a>
-<span class="sourceLineNo">108</span><a id="line.108">                                Pnt2d x = PntDouble.from(u - xc, v - yc);</a>
-<span class="sourceLineNo">109</span><a id="line.109">                                </a>
-<span class="sourceLineNo">110</span><a id="line.110">                                // warp I to I' (onto R)</a>
-<span class="sourceLineNo">111</span><a id="line.111">//                              double[] xT = Tp.applyTo(x);            // warp from x -&gt; x'</a>
-<span class="sourceLineNo">112</span><a id="line.112">                                Pnt2d xT = Tp.applyTo(x);               // warp from x -&gt; x'</a>
-<span class="sourceLineNo">113</span><a id="line.113"></a>
-<span class="sourceLineNo">114</span><a id="line.114">                                // calculate pixel difference d for pos. (u,v)</a>
-<span class="sourceLineNo">115</span><a id="line.115">                                double d = I.getInterpolatedValue(xT.getX(), xT.getY()) - R.getf(u, v);</a>
-<span class="sourceLineNo">116</span><a id="line.116">                                sqrError = sqrError + d * d;</a>
-<span class="sourceLineNo">117</span><a id="line.117">                                </a>
-<span class="sourceLineNo">118</span><a id="line.118">                                // multiply the pixel difference d with the corresponding steepest descent image sx</a>
-<span class="sourceLineNo">119</span><a id="line.119">                                // and sum into dp:</a>
-<span class="sourceLineNo">120</span><a id="line.120">                                double[] sx = S[u][v];</a>
-<span class="sourceLineNo">121</span><a id="line.121">                                dp = Matrix.add(dp, Matrix.multiply(d, sx));</a>
-<span class="sourceLineNo">122</span><a id="line.122">                        }</a>
-<span class="sourceLineNo">123</span><a id="line.123">                }</a>
-<span class="sourceLineNo">124</span><a id="line.124">                </a>
-<span class="sourceLineNo">125</span><a id="line.125">                // estimate the parameter difference vector qopt:</a>
-<span class="sourceLineNo">126</span><a id="line.126">                double[] qopt = Matrix.multiply(Hi, dp);</a>
-<span class="sourceLineNo">127</span><a id="line.127">                if (params.debug) IJ.log("qopt  = " + Matrix.toString(qopt));</a>
-<span class="sourceLineNo">128</span><a id="line.128">                </a>
-<span class="sourceLineNo">129</span><a id="line.129">                // measure the magnitude of the difference vector:</a>
-<span class="sourceLineNo">130</span><a id="line.130">                qmag = Matrix.normL2squared(qopt);</a>
-<span class="sourceLineNo">131</span><a id="line.131">                </a>
-<span class="sourceLineNo">132</span><a id="line.132">                // Calculate the warp parameters p', such that T_p'(x) = T_p (T^-1_q (x), for any point x.</a>
-<span class="sourceLineNo">133</span><a id="line.133">//              ProjectiveMapping2D Tqopt = ProjectiveMapping2D.fromParameters(qopt);</a>
-<span class="sourceLineNo">134</span><a id="line.134">                ProjectiveMapping2D Tqopt = toProjectiveMap(qopt);</a>
-<span class="sourceLineNo">135</span><a id="line.135">                ProjectiveMapping2D Tqopti = Tqopt.getInverse();</a>
-<span class="sourceLineNo">136</span><a id="line.136">                return Tqopti.concat(Tp);</a>
-<span class="sourceLineNo">137</span><a id="line.137">        }</a>
-<span class="sourceLineNo">138</span><a id="line.138">        </a>
-<span class="sourceLineNo">139</span><a id="line.139">        @Override</a>
-<span class="sourceLineNo">140</span><a id="line.140">        public boolean hasConverged() {</a>
-<span class="sourceLineNo">141</span><a id="line.141">                return (qmag &lt; params.tolerance);</a>
-<span class="sourceLineNo">142</span><a id="line.142">        }</a>
-<span class="sourceLineNo">143</span><a id="line.143">        </a>
-<span class="sourceLineNo">144</span><a id="line.144">        @Override</a>
-<span class="sourceLineNo">145</span><a id="line.145">        public double getRmsError() {</a>
-<span class="sourceLineNo">146</span><a id="line.146">                return Math.sqrt(sqrError);</a>
-<span class="sourceLineNo">147</span><a id="line.147">        }</a>
-<span class="sourceLineNo">148</span><a id="line.148">        </a>
-<span class="sourceLineNo">149</span><a id="line.149">}</a>
+<span class="sourceLineNo">107</span><a id="line.107">                                Pnt2d x = PntDouble.from(u - xc, v - yc);</a>
+<span class="sourceLineNo">108</span><a id="line.108">                                </a>
+<span class="sourceLineNo">109</span><a id="line.109">                                // warp I to I' (onto R)</a>
+<span class="sourceLineNo">110</span><a id="line.110">                                Pnt2d xT = Tp.applyTo(x);               // warp from x -&gt; x'</a>
+<span class="sourceLineNo">111</span><a id="line.111"></a>
+<span class="sourceLineNo">112</span><a id="line.112">                                // calculate pixel difference d for pos. (u,v)</a>
+<span class="sourceLineNo">113</span><a id="line.113">                                double d = I.getInterpolatedValue(xT.getX(), xT.getY()) - R.getf(u, v);</a>
+<span class="sourceLineNo">114</span><a id="line.114">                                sqrError = sqrError + d * d;</a>
+<span class="sourceLineNo">115</span><a id="line.115">                                </a>
+<span class="sourceLineNo">116</span><a id="line.116">                                // multiply the pixel difference d with the corresponding steepest descent image sx</a>
+<span class="sourceLineNo">117</span><a id="line.117">                                // and sum into dp:</a>
+<span class="sourceLineNo">118</span><a id="line.118">                                double[] sx = S[u][v];</a>
+<span class="sourceLineNo">119</span><a id="line.119">                                dp = Matrix.add(dp, Matrix.multiply(d, sx));</a>
+<span class="sourceLineNo">120</span><a id="line.120">                        }</a>
+<span class="sourceLineNo">121</span><a id="line.121">                }</a>
+<span class="sourceLineNo">122</span><a id="line.122">                </a>
+<span class="sourceLineNo">123</span><a id="line.123">                // estimate the parameter difference vector qopt:</a>
+<span class="sourceLineNo">124</span><a id="line.124">                double[] qopt = Matrix.multiply(Hi, dp);</a>
+<span class="sourceLineNo">125</span><a id="line.125">                if (params.debug) IJ.log("qopt  = " + Matrix.toString(qopt));</a>
+<span class="sourceLineNo">126</span><a id="line.126">                </a>
+<span class="sourceLineNo">127</span><a id="line.127">                // measure the magnitude of the difference vector:</a>
+<span class="sourceLineNo">128</span><a id="line.128">                qmag = Matrix.normL2squared(qopt);</a>
+<span class="sourceLineNo">129</span><a id="line.129">                </a>
+<span class="sourceLineNo">130</span><a id="line.130">                // Calculate the warp parameters p', such that T_p'(x) = T_p (T^-1_q (x), for any point x.</a>
+<span class="sourceLineNo">131</span><a id="line.131">                ProjectiveMapping2D Tqopt = toProjectiveMap(qopt);</a>
+<span class="sourceLineNo">132</span><a id="line.132">                ProjectiveMapping2D Tqopti = Tqopt.getInverse();</a>
+<span class="sourceLineNo">133</span><a id="line.133">                return Tqopti.concat(Tp);</a>
+<span class="sourceLineNo">134</span><a id="line.134">        }</a>
+<span class="sourceLineNo">135</span><a id="line.135">        </a>
+<span class="sourceLineNo">136</span><a id="line.136">        @Override</a>
+<span class="sourceLineNo">137</span><a id="line.137">        public boolean hasConverged() {</a>
+<span class="sourceLineNo">138</span><a id="line.138">                return (qmag &lt; params.tolerance);</a>
+<span class="sourceLineNo">139</span><a id="line.139">        }</a>
+<span class="sourceLineNo">140</span><a id="line.140">        </a>
+<span class="sourceLineNo">141</span><a id="line.141">        @Override</a>
+<span class="sourceLineNo">142</span><a id="line.142">        public double getRmsError() {</a>
+<span class="sourceLineNo">143</span><a id="line.143">                return Math.sqrt(sqrError);</a>
+<span class="sourceLineNo">144</span><a id="line.144">        }</a>
+<span class="sourceLineNo">145</span><a id="line.145">        </a>
+<span class="sourceLineNo">146</span><a id="line.146">}</a>
 
 
 

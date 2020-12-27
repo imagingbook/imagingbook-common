@@ -178,7 +178,7 @@
 <span class="sourceLineNo">168</span><a id="line.168">                        return true;</a>
 <span class="sourceLineNo">169</span><a id="line.169">                Pnt2d p1 = pnts[pnts.length - 1];</a>
 <span class="sourceLineNo">170</span><a id="line.170">                Pnt2d p2 = pnts[0];</a>
-<span class="sourceLineNo">171</span><a id="line.171">                double d2 = p1.distance2(p2);   // N4: max 1, N8: max 2</a>
+<span class="sourceLineNo">171</span><a id="line.171">                double d2 = p1.distanceSq(p2);  // N4: max 1, N8: max 2</a>
 <span class="sourceLineNo">172</span><a id="line.172">                //System.out.println(nht + " dist=" + d2);</a>
 <span class="sourceLineNo">173</span><a id="line.173">                </a>
 <span class="sourceLineNo">174</span><a id="line.174">                if (nht == NeighborhoodType.N4 &amp;&amp; d2 &lt;= 1)</a>

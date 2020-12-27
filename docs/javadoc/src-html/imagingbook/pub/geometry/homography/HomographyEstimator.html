@@ -341,7 +341,7 @@
 <span class="sourceLineNo">331</span><a id="line.331">                double[] xb = MathUtil.transform(xa, H);</a>
 <span class="sourceLineNo">332</span><a id="line.332">                double xn = noise * rand.nextGaussian();</a>
 <span class="sourceLineNo">333</span><a id="line.333">                double yn = noise * rand.nextGaussian();</a>
-<span class="sourceLineNo">334</span><a id="line.334">                return Pnt2d.PntDouble.from(xb[0] + xn, xb[1] + yn);</a>
+<span class="sourceLineNo">334</span><a id="line.334">                return PntDouble.from(xb[0] + xn, xb[1] + yn);</a>
 <span class="sourceLineNo">335</span><a id="line.335">        }</a>
 <span class="sourceLineNo">336</span><a id="line.336"></a>
 <span class="sourceLineNo">337</span><a id="line.337">        /**</a>
@@ -416,7 +416,7 @@
 <span class="sourceLineNo">406</span><a id="line.406">                        Pnt2d a = pntsA[i];</a>
 <span class="sourceLineNo">407</span><a id="line.407">                        Pnt2d b = pntsB[i];</a>
 <span class="sourceLineNo">408</span><a id="line.408">                        Pnt2d c = pntsC[i];</a>
-<span class="sourceLineNo">409</span><a id="line.409">                        double dist2 = b.distance2(c);</a>
+<span class="sourceLineNo">409</span><a id="line.409">                        double dist2 = b.distanceSq(c);</a>
 <span class="sourceLineNo">410</span><a id="line.410">                        sumDist2 += dist2;</a>
 <span class="sourceLineNo">411</span><a id="line.411">                        maxDist2 = Math.max(maxDist2, dist2);</a>
 <span class="sourceLineNo">412</span><a id="line.412">                        System.out.format("(%.3f, %.3f) -&gt; (%.3f, %.3f) d=%.4f\n", a.getX(), a.getY(), c.getX(), c.getY(), dist2);</a>
@@ -434,7 +434,7 @@
 <span class="sourceLineNo">424</span><a id="line.424">                        Pnt2d[] pntsC = new Pnt2d[pntsA.length];</a>
 <span class="sourceLineNo">425</span><a id="line.425">                        for (int i = 0; i &lt; pntsA.length; i++) {        </a>
 <span class="sourceLineNo">426</span><a id="line.426">                                pntsC[i] = //(Pnt2d) </a>
-<span class="sourceLineNo">427</span><a id="line.427">                                        mapping.applyTo(Pnt2d.PntDouble.from(pntsA[i]));</a>
+<span class="sourceLineNo">427</span><a id="line.427">                                        mapping.applyTo(PntDouble.from(pntsA[i]));</a>
 <span class="sourceLineNo">428</span><a id="line.428">//                                      mapping.applyTo(Pnt2d.PntDouble.from(pntsA[i].getX(), pntsA[i].getY()));</a>
 <span class="sourceLineNo">429</span><a id="line.429">                        }</a>
 <span class="sourceLineNo">430</span><a id="line.430"></a>
@@ -445,7 +445,7 @@
 <span class="sourceLineNo">435</span><a id="line.435">                                Pnt2d a = pntsA[i];</a>
 <span class="sourceLineNo">436</span><a id="line.436">                                Pnt2d b = pntsB[i];</a>
 <span class="sourceLineNo">437</span><a id="line.437">                                Pnt2d c = pntsC[i];</a>
-<span class="sourceLineNo">438</span><a id="line.438">                                double dist2 = b.distance2(c);</a>
+<span class="sourceLineNo">438</span><a id="line.438">                                double dist2 = b.distanceSq(c);</a>
 <span class="sourceLineNo">439</span><a id="line.439">                                sumDist2 += dist2;</a>
 <span class="sourceLineNo">440</span><a id="line.440">                                maxDist2 = Math.max(maxDist2, dist2);</a>
 <span class="sourceLineNo">441</span><a id="line.441">                                System.out.format("(%.3f, %.3f) -&gt; (%.3f, %.3f) d=%.4f\n", a.getX(), a.getY(), c.getX(), c.getY(), dist2);</a>
@@ -473,7 +473,7 @@
 <span class="sourceLineNo">463</span><a id="line.463">                                Pnt2d a = pntsA[i];</a>
 <span class="sourceLineNo">464</span><a id="line.464">                                Pnt2d b = pntsB[i];</a>
 <span class="sourceLineNo">465</span><a id="line.465">                                Pnt2d c = pntsC[i];</a>
-<span class="sourceLineNo">466</span><a id="line.466">                                double dist2 = b.distance2(c);</a>
+<span class="sourceLineNo">466</span><a id="line.466">                                double dist2 = b.distanceSq(c);</a>
 <span class="sourceLineNo">467</span><a id="line.467">                                sumDist2 += dist2;</a>
 <span class="sourceLineNo">468</span><a id="line.468">                                maxDist2 = Math.max(maxDist2, dist2);</a>
 <span class="sourceLineNo">469</span><a id="line.469">                                //                              System.out.format("(%.3f, %.3f) -&gt; (%.3f, %.3f) d=%.4f\n", a.getX(), a.getY(), c.getX(), c.getY(), dist2);</a>
