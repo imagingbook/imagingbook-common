@@ -20,6 +20,7 @@ import imagingbook.lib.math.VectorNorm.NormType;
 /**
  * Basic vector median filter for color images implemented
  * by extending the {@link GenericFilter} class.
+ * 
  * @author W. Burger
  * @version 2013/05/30
  */
@@ -78,7 +79,7 @@ public class VectorMedianFilter extends GenericFilter {
 	public float[] filterVector(ImageAccessor ia, int u, int v) {
 		final int[] pCtr = new int[3];		// center pixel
 		final float[] pCtrf = ia.getPix(u, v);
-		copyRgb(pCtrf, pCtr);
+		copyRgbTo(pCtrf, pCtr);
 		getSupportRegion(ia, u, v);	// TODO: check method!
 		double dCtr = aggregateDistance(pCtr, supportRegion); 
 		double dMin = Double.MAX_VALUE;
@@ -98,20 +99,20 @@ public class VectorMedianFilter extends GenericFilter {
 		final float[] pF = new float[3];	// the returned color tupel
 		if (dMin < dCtr) {	// modify this pixel
 			if (params.markModifiedPixels) {
-				copyRgb(modColor, pF);
+				copyRgbTo(modColor, pF);
 				modifiedCount++;
 			}
 			else {
-				copyRgb(pmin, pF);
+				copyRgbTo(pmin, pF);
 			}
 		}
 		else {	// keep the original pixel value
-			copyRgb(pCtr, pF);
+			copyRgbTo(pCtr, pF);
 		}
 		return pF;
  	}
 	
-	int[][] getSupportRegion(ImageAccessor ia, int u, int v) {
+	private int[][] getSupportRegion(ImageAccessor ia, int u, int v) {
 		//final int[] p = new int[3];
 		// fill 'supportRegion' for current mask position
 		int n = 0;
@@ -123,7 +124,7 @@ public class VectorMedianFilter extends GenericFilter {
 				if (maskArray[i][j] > 0) {
 					int vj = v + j - maskCenter;
 					final float[] p = ia.getPix(ui, vj);
-					copyRgb(p, supportRegion[n]);
+					copyRgbTo(p, supportRegion[n]);
 					n = n + 1;
 				}
 			}
@@ -131,20 +132,20 @@ public class VectorMedianFilter extends GenericFilter {
 		return supportRegion;
 	}
 	
-	void copyRgb(float[] source, int[] target) {
+	private void copyRgbTo(float[] source, int[] target) {
 		target[0] = (int) source[0];
 		target[1] = (int) source[1];
 		target[2] = (int) source[2];
 	}
 	
-	void copyRgb(float[] source, float[] target) {
-		target[0] = source[0];
-		target[1] = source[1];
-		target[2] = source[2];
-	}
+//	private void copyRgbTo(float[] source, float[] target) {
+//		target[0] = source[0];
+//		target[1] = source[1];
+//		target[2] = source[2];
+//	}
 	
 	
-	void copyRgb(int[] source, float[] target) {
+	private void copyRgbTo(int[] source, float[] target) {
 		target[0] = source[0];
 		target[1] = source[1];
 		target[2] = source[2];
@@ -152,7 +153,7 @@ public class VectorMedianFilter extends GenericFilter {
 	
 	// find the color with the smallest summed distance to all others.
 	// brute force and thus slow
-	double aggregateDistance(int[] p, int[][] P) {
+	private double aggregateDistance(int[] p, int[][] P) {
 		double d = 0;
 		for (int i = 0; i < P.length; i++) {
 			d = d + vNorm.distance(p, P[i]);

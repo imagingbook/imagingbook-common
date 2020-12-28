@@ -19,14 +19,14 @@
 <span class="sourceLineNo">009</span><a id="line.9"></a>
 <span class="sourceLineNo">010</span><a id="line.10">package imagingbook.lib.interpolation;</a>
 <span class="sourceLineNo">011</span><a id="line.11"></a>
-<span class="sourceLineNo">012</span><a id="line.12">import imagingbook.lib.image.ImageAccessor;</a>
+<span class="sourceLineNo">012</span><a id="line.12">import imagingbook.lib.image.access.ScalarAccessor;</a>
 <span class="sourceLineNo">013</span><a id="line.13"></a>
 <span class="sourceLineNo">014</span><a id="line.14">public class SplineInterpolator extends PixelInterpolator {</a>
 <span class="sourceLineNo">015</span><a id="line.15">        private final double a; </a>
 <span class="sourceLineNo">016</span><a id="line.16">        private final double b;</a>
 <span class="sourceLineNo">017</span><a id="line.17"></a>
 <span class="sourceLineNo">018</span><a id="line.18">        </a>
-<span class="sourceLineNo">019</span><a id="line.19">        public SplineInterpolator(ImageAccessor.Scalar ia) {</a>
+<span class="sourceLineNo">019</span><a id="line.19">        public SplineInterpolator(ScalarAccessor ia) {</a>
 <span class="sourceLineNo">020</span><a id="line.20">                this(0.5, 0.0); // default is a Catmull-Rom spline</a>
 <span class="sourceLineNo">021</span><a id="line.21">        }</a>
 <span class="sourceLineNo">022</span><a id="line.22">        </a>
@@ -38,7 +38,7 @@
 <span class="sourceLineNo">028</span><a id="line.28">        </a>
 <span class="sourceLineNo">029</span><a id="line.29">        </a>
 <span class="sourceLineNo">030</span><a id="line.30">        @Override</a>
-<span class="sourceLineNo">031</span><a id="line.31">        public float getInterpolatedValue(ImageAccessor.Scalar ia, double x0, double y0) {</a>
+<span class="sourceLineNo">031</span><a id="line.31">        public float getInterpolatedValue(ScalarAccessor ia, double x0, double y0) {</a>
 <span class="sourceLineNo">032</span><a id="line.32">                final int u0 = (int) Math.floor(x0);    //use floor to handle negative coordinates too</a>
 <span class="sourceLineNo">033</span><a id="line.33">                final int v0 = (int) Math.floor(y0);</a>
 <span class="sourceLineNo">034</span><a id="line.34">                double q = 0;</a>

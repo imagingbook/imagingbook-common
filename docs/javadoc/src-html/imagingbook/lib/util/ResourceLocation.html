@@ -45,11 +45,11 @@
 <span class="sourceLineNo">035</span><a id="line.35"> * Here is an example how to access the associated resources from some other class:</a>
 <span class="sourceLineNo">036</span><a id="line.36"> * &lt;pre&gt;</a>
 <span class="sourceLineNo">037</span><a id="line.37"> * ResourceLocation rd = new imagingbook.DATA.images.Resources();</a>
-<span class="sourceLineNo">038</span><a id="line.38"> * Path path = rd.getResourcePath("boats.tif");&lt;/pre&gt;</a>
+<span class="sourceLineNo">038</span><a id="line.38"> * Path path = rd.getResourcePath("boats.png");&lt;/pre&gt;</a>
 <span class="sourceLineNo">039</span><a id="line.39"> * </a>
 <span class="sourceLineNo">040</span><a id="line.40"> * Specifically, an image can be opened as follows:</a>
 <span class="sourceLineNo">041</span><a id="line.41"> * &lt;pre&gt;</a>
-<span class="sourceLineNo">042</span><a id="line.42"> * Path path = rd.getResourcePath("boats.tif");</a>
+<span class="sourceLineNo">042</span><a id="line.42"> * Path path = rd.getResourcePath("boats.png");</a>
 <span class="sourceLineNo">043</span><a id="line.43"> * ImagePlus im = IjUtils.openImage(path);</a>
 <span class="sourceLineNo">044</span><a id="line.44"> * ImageProcessor ip = im.getProcessor();</a>
 <span class="sourceLineNo">045</span><a id="line.45"> * ...&lt;/pre&gt;</a>
@@ -58,12 +58,12 @@
 <span class="sourceLineNo">048</span><a id="line.48"> * locations (package structure) are:</a>
 <span class="sourceLineNo">049</span><a id="line.49"> * &lt;pre&gt;</a>
 <span class="sourceLineNo">050</span><a id="line.50"> * src/main/java/imagingbook/DATA/images/Resources.java (the marker class extending {@link ResourceLocation})</a>
-<span class="sourceLineNo">051</span><a id="line.51"> * src/main/resources/imagingbook/DATA/images/boats.tif ... (the actual resource files)&lt;/pre&gt;</a>
+<span class="sourceLineNo">051</span><a id="line.51"> * src/main/resources/imagingbook/DATA/images/boats.png ... (the actual resource files)&lt;/pre&gt;</a>
 <span class="sourceLineNo">052</span><a id="line.52"> * </a>
 <span class="sourceLineNo">053</span><a id="line.53"> * or (if resources are used for testing only)</a>
 <span class="sourceLineNo">054</span><a id="line.54"> * &lt;pre&gt;</a>
 <span class="sourceLineNo">055</span><a id="line.55"> * src/test/java/imagingbook/DATA/images/Resources.java (the marker class extending {@link ResourceLocation})</a>
-<span class="sourceLineNo">056</span><a id="line.56"> * src/test/resources/imagingbook/DATA/images/boats.tif ... (the actual resource files)&lt;/pre&gt;</a>
+<span class="sourceLineNo">056</span><a id="line.56"> * src/test/resources/imagingbook/DATA/images/boats.png ... (the actual resource files)&lt;/pre&gt;</a>
 <span class="sourceLineNo">057</span><a id="line.57"> * </a>
 <span class="sourceLineNo">058</span><a id="line.58"> * &lt;p&gt;</a>
 <span class="sourceLineNo">059</span><a id="line.59"> * Note: To avoid marker classes showing up in the JavaDoc documentation,</a>

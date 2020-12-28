@@ -26,8 +26,8 @@ public abstract class VectorAccessor extends ImageAccessor {
 	 * Real sublasses must know how to create an accessor to
 	 * the image's k-th component.
 	 * 
-	 * @param k
-	 * @return
+	 * @param k the component index
+	 * @return the image accessor for the specified component
 	 */
 	protected abstract ScalarAccessor makeComponentAccessor(int k);
 	

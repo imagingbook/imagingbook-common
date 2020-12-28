@@ -10,7 +10,6 @@
 package imagingbook.lib.filters;
 
 import imagingbook.lib.image.access.ScalarAccessor;
-import imagingbook.lib.image.access.VectorAccessor;
 
 
 /**
@@ -20,7 +19,7 @@ import imagingbook.lib.image.access.VectorAccessor;
 public class LinearFilter extends GenericFilter {
 	
 	private final float[][] kernel2d;
-	private final float[] rgb = new float[3];
+//	private final float[] rgb = new float[3];
 
 	private final int kernelWidth, kernelHeight;	// width/height of the kernel
 	private final int kernelCtrX, kernelCtrY;	// center coordinates of the kernel

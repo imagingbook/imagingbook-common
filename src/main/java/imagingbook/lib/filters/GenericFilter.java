@@ -10,7 +10,6 @@
 package imagingbook.lib.filters;
 
 import ij.IJ;
-import ij.process.ColorProcessor;
 import ij.process.ImageProcessor;
 import imagingbook.lib.image.access.ImageAccessor;
 import imagingbook.lib.image.access.OutOfBoundsStrategy;

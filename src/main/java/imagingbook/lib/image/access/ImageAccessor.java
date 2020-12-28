@@ -39,9 +39,6 @@ import imagingbook.lib.interpolation.InterpolationMethod;
  * <br>
  * The methods {@link #getPix(double, double)} and {@link ScalarAccessor#getVal(double, double)} perform interpolation at non-integer coordinates
  * using the specified {@link InterpolationMethod}.
- * <pre>
- * 
- * </pre>
  * <br>
  * See {@link imagingbook.lib.filters.GenericFilter} 
  * and {@code Pixel_Interpolation.Interpolator_Demo} (in {@code imagingbook-plugins-all}) for a concrete usage examples.

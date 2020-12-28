@@ -19,156 +19,159 @@
 <span class="sourceLineNo">009</span><a id="line.9"></a>
 <span class="sourceLineNo">010</span><a id="line.10">package imagingbook.pub.color.filters;</a>
 <span class="sourceLineNo">011</span><a id="line.11"></a>
-<span class="sourceLineNo">012</span><a id="line.12">import imagingbook.lib.filters.GenericFilter;</a>
-<span class="sourceLineNo">013</span><a id="line.13">import imagingbook.lib.image.ImageAccessor;</a>
-<span class="sourceLineNo">014</span><a id="line.14">import imagingbook.lib.image.ImageAccessor.Scalar;</a>
-<span class="sourceLineNo">015</span><a id="line.15">import imagingbook.lib.math.VectorNorm;</a>
-<span class="sourceLineNo">016</span><a id="line.16">import imagingbook.lib.math.VectorNorm.NormType;</a>
-<span class="sourceLineNo">017</span><a id="line.17"></a>
-<span class="sourceLineNo">018</span><a id="line.18">import java.awt.Color;</a>
+<span class="sourceLineNo">012</span><a id="line.12">import java.awt.Color;</a>
+<span class="sourceLineNo">013</span><a id="line.13"></a>
+<span class="sourceLineNo">014</span><a id="line.14">import imagingbook.lib.filters.GenericFilter;</a>
+<span class="sourceLineNo">015</span><a id="line.15">import imagingbook.lib.image.access.ImageAccessor;</a>
+<span class="sourceLineNo">016</span><a id="line.16">import imagingbook.lib.image.access.ScalarAccessor;</a>
+<span class="sourceLineNo">017</span><a id="line.17">import imagingbook.lib.math.VectorNorm;</a>
+<span class="sourceLineNo">018</span><a id="line.18">import imagingbook.lib.math.VectorNorm.NormType;</a>
 <span class="sourceLineNo">019</span><a id="line.19"></a>
 <span class="sourceLineNo">020</span><a id="line.20">/**</a>
 <span class="sourceLineNo">021</span><a id="line.21"> * Basic vector median filter for color images implemented</a>
 <span class="sourceLineNo">022</span><a id="line.22"> * by extending the {@link GenericFilter} class.</a>
-<span class="sourceLineNo">023</span><a id="line.23"> * @author W. Burger</a>
-<span class="sourceLineNo">024</span><a id="line.24"> * @version 2013/05/30</a>
-<span class="sourceLineNo">025</span><a id="line.25"> */</a>
-<span class="sourceLineNo">026</span><a id="line.26">public class VectorMedianFilter extends GenericFilter {</a>
-<span class="sourceLineNo">027</span><a id="line.27">        </a>
-<span class="sourceLineNo">028</span><a id="line.28">        public static class Parameters {</a>
-<span class="sourceLineNo">029</span><a id="line.29">                /** Filter radius */</a>
-<span class="sourceLineNo">030</span><a id="line.30">                public double radius = 3.0;</a>
-<span class="sourceLineNo">031</span><a id="line.31">                /** Distance norm to use */</a>
-<span class="sourceLineNo">032</span><a id="line.32">                public NormType distanceNorm = NormType.L1;</a>
-<span class="sourceLineNo">033</span><a id="line.33">                /** For testing only */</a>
-<span class="sourceLineNo">034</span><a id="line.34">                public boolean markModifiedPixels = false;</a>
-<span class="sourceLineNo">035</span><a id="line.35">                /** For testing only */</a>
-<span class="sourceLineNo">036</span><a id="line.36">                public boolean showMask = false;</a>
-<span class="sourceLineNo">037</span><a id="line.37">        }</a>
-<span class="sourceLineNo">038</span><a id="line.38">        </a>
-<span class="sourceLineNo">039</span><a id="line.39">        final Parameters params;</a>
-<span class="sourceLineNo">040</span><a id="line.40">        </a>
-<span class="sourceLineNo">041</span><a id="line.41">        public static Color modifiedColor = Color.black;</a>
-<span class="sourceLineNo">042</span><a id="line.42">        final int[] modColor = {modifiedColor.getRed(), modifiedColor.getGreen(), modifiedColor.getBlue()};</a>
-<span class="sourceLineNo">043</span><a id="line.43">        public int modifiedCount = 0;</a>
-<span class="sourceLineNo">044</span><a id="line.44">        </a>
-<span class="sourceLineNo">045</span><a id="line.45">        final FilterMask mask;</a>
-<span class="sourceLineNo">046</span><a id="line.46">        final int[][] supportRegion;            // supportRegion[i][c] with index i, color component c</a>
-<span class="sourceLineNo">047</span><a id="line.47">        final VectorNorm vNorm;</a>
-<span class="sourceLineNo">048</span><a id="line.48">        </a>
-<span class="sourceLineNo">049</span><a id="line.49">        //-------------------------------------------------------------------------------------</a>
-<span class="sourceLineNo">050</span><a id="line.50">        </a>
-<span class="sourceLineNo">051</span><a id="line.51">        // uses default parameters:</a>
-<span class="sourceLineNo">052</span><a id="line.52">        public VectorMedianFilter() {   </a>
-<span class="sourceLineNo">053</span><a id="line.53">                this(new Parameters());</a>
-<span class="sourceLineNo">054</span><a id="line.54">        }</a>
-<span class="sourceLineNo">055</span><a id="line.55">        </a>
-<span class="sourceLineNo">056</span><a id="line.56">        // accepts parameter object:</a>
-<span class="sourceLineNo">057</span><a id="line.57">        public VectorMedianFilter(Parameters params) {</a>
-<span class="sourceLineNo">058</span><a id="line.58">                this.params = params;</a>
-<span class="sourceLineNo">059</span><a id="line.59">                mask = new FilterMask(params.radius);</a>
-<span class="sourceLineNo">060</span><a id="line.60">                supportRegion = new int[mask.getCount()][3];</a>
-<span class="sourceLineNo">061</span><a id="line.61">                vNorm = params.distanceNorm.create();</a>
-<span class="sourceLineNo">062</span><a id="line.62">                initialize();</a>
-<span class="sourceLineNo">063</span><a id="line.63">        }</a>
-<span class="sourceLineNo">064</span><a id="line.64">        </a>
-<span class="sourceLineNo">065</span><a id="line.65">        //-------------------------------------------------------------------------------------</a>
-<span class="sourceLineNo">066</span><a id="line.66">        </a>
-<span class="sourceLineNo">067</span><a id="line.67">        void initialize() {</a>
-<span class="sourceLineNo">068</span><a id="line.68">                if (params.showMask) mask.show("Mask");</a>
-<span class="sourceLineNo">069</span><a id="line.69">        }</a>
-<span class="sourceLineNo">070</span><a id="line.70">        </a>
-<span class="sourceLineNo">071</span><a id="line.71">        public float filterPixel(Scalar source, int u, int v) {</a>
-<span class="sourceLineNo">072</span><a id="line.72">                throw new IllegalArgumentException("no filter for gray images");</a>
-<span class="sourceLineNo">073</span><a id="line.73">        }</a>
-<span class="sourceLineNo">074</span><a id="line.74">        </a>
-<span class="sourceLineNo">075</span><a id="line.75">        // vector median filter for RGB color image</a>
-<span class="sourceLineNo">076</span><a id="line.76">        public float[] filterPixel(ImageAccessor.Rgb ia, int u, int v) {</a>
-<span class="sourceLineNo">077</span><a id="line.77">                final int[] pCtr = new int[3];          // center pixel</a>
-<span class="sourceLineNo">078</span><a id="line.78">                final float[] pCtrf = ia.getPix(u, v);</a>
-<span class="sourceLineNo">079</span><a id="line.79">                copyRgb(pCtrf, pCtr);</a>
-<span class="sourceLineNo">080</span><a id="line.80">                getSupportRegion(ia, u, v);     // TODO: check method!</a>
-<span class="sourceLineNo">081</span><a id="line.81">                double dCtr = aggregateDistance(pCtr, supportRegion); </a>
-<span class="sourceLineNo">082</span><a id="line.82">                double dMin = Double.MAX_VALUE;</a>
-<span class="sourceLineNo">083</span><a id="line.83">                int jMin = -1;</a>
-<span class="sourceLineNo">084</span><a id="line.84">                for (int j = 0; j &lt; supportRegion.length; j++) {</a>
-<span class="sourceLineNo">085</span><a id="line.85">                        int[] p = supportRegion[j];</a>
-<span class="sourceLineNo">086</span><a id="line.86">                        double d = aggregateDistance(p, supportRegion);</a>
-<span class="sourceLineNo">087</span><a id="line.87">                        if (d &lt; dMin) {</a>
-<span class="sourceLineNo">088</span><a id="line.88">                                jMin = j;</a>
-<span class="sourceLineNo">089</span><a id="line.89">                                dMin = d;</a>
-<span class="sourceLineNo">090</span><a id="line.90">                        }</a>
-<span class="sourceLineNo">091</span><a id="line.91">                }</a>
-<span class="sourceLineNo">092</span><a id="line.92">                int[] pmin = supportRegion[jMin];</a>
-<span class="sourceLineNo">093</span><a id="line.93">                // modify this pixel only if the min aggregate distance of some</a>
-<span class="sourceLineNo">094</span><a id="line.94">                // other pixel in the filter region is smaller</a>
-<span class="sourceLineNo">095</span><a id="line.95">                // than the aggregate distance of the original center pixel:</a>
-<span class="sourceLineNo">096</span><a id="line.96">                final float[] pF = new float[3];        // the returned color tupel</a>
-<span class="sourceLineNo">097</span><a id="line.97">                if (dMin &lt; dCtr) {      // modify this pixel</a>
-<span class="sourceLineNo">098</span><a id="line.98">                        if (params.markModifiedPixels) {</a>
-<span class="sourceLineNo">099</span><a id="line.99">                                copyRgb(modColor, pF);</a>
-<span class="sourceLineNo">100</span><a id="line.100">                                modifiedCount++;</a>
-<span class="sourceLineNo">101</span><a id="line.101">                        }</a>
-<span class="sourceLineNo">102</span><a id="line.102">                        else {</a>
-<span class="sourceLineNo">103</span><a id="line.103">                                copyRgb(pmin, pF);</a>
+<span class="sourceLineNo">023</span><a id="line.23"> * </a>
+<span class="sourceLineNo">024</span><a id="line.24"> * @author W. Burger</a>
+<span class="sourceLineNo">025</span><a id="line.25"> * @version 2013/05/30</a>
+<span class="sourceLineNo">026</span><a id="line.26"> */</a>
+<span class="sourceLineNo">027</span><a id="line.27">public class VectorMedianFilter extends GenericFilter {</a>
+<span class="sourceLineNo">028</span><a id="line.28">        </a>
+<span class="sourceLineNo">029</span><a id="line.29">        public static class Parameters {</a>
+<span class="sourceLineNo">030</span><a id="line.30">                /** Filter radius */</a>
+<span class="sourceLineNo">031</span><a id="line.31">                public double radius = 3.0;</a>
+<span class="sourceLineNo">032</span><a id="line.32">                /** Distance norm to use */</a>
+<span class="sourceLineNo">033</span><a id="line.33">                public NormType distanceNorm = NormType.L1;</a>
+<span class="sourceLineNo">034</span><a id="line.34">                /** For testing only */</a>
+<span class="sourceLineNo">035</span><a id="line.35">                public boolean markModifiedPixels = false;</a>
+<span class="sourceLineNo">036</span><a id="line.36">                /** For testing only */</a>
+<span class="sourceLineNo">037</span><a id="line.37">                public boolean showMask = false;</a>
+<span class="sourceLineNo">038</span><a id="line.38">        }</a>
+<span class="sourceLineNo">039</span><a id="line.39">        </a>
+<span class="sourceLineNo">040</span><a id="line.40">        final Parameters params;</a>
+<span class="sourceLineNo">041</span><a id="line.41">        </a>
+<span class="sourceLineNo">042</span><a id="line.42">        public static Color modifiedColor = Color.black;</a>
+<span class="sourceLineNo">043</span><a id="line.43">        final int[] modColor = {modifiedColor.getRed(), modifiedColor.getGreen(), modifiedColor.getBlue()};</a>
+<span class="sourceLineNo">044</span><a id="line.44">        public int modifiedCount = 0;</a>
+<span class="sourceLineNo">045</span><a id="line.45">        </a>
+<span class="sourceLineNo">046</span><a id="line.46">        final FilterMask mask;</a>
+<span class="sourceLineNo">047</span><a id="line.47">        final int[][] supportRegion;            // supportRegion[i][c] with index i, color component c</a>
+<span class="sourceLineNo">048</span><a id="line.48">        final VectorNorm vNorm;</a>
+<span class="sourceLineNo">049</span><a id="line.49">        </a>
+<span class="sourceLineNo">050</span><a id="line.50">        //-------------------------------------------------------------------------------------</a>
+<span class="sourceLineNo">051</span><a id="line.51">        </a>
+<span class="sourceLineNo">052</span><a id="line.52">        // uses default parameters:</a>
+<span class="sourceLineNo">053</span><a id="line.53">        public VectorMedianFilter() {   </a>
+<span class="sourceLineNo">054</span><a id="line.54">                this(new Parameters());</a>
+<span class="sourceLineNo">055</span><a id="line.55">        }</a>
+<span class="sourceLineNo">056</span><a id="line.56">        </a>
+<span class="sourceLineNo">057</span><a id="line.57">        // accepts parameter object:</a>
+<span class="sourceLineNo">058</span><a id="line.58">        public VectorMedianFilter(Parameters params) {</a>
+<span class="sourceLineNo">059</span><a id="line.59">                this.params = params;</a>
+<span class="sourceLineNo">060</span><a id="line.60">                mask = new FilterMask(params.radius);</a>
+<span class="sourceLineNo">061</span><a id="line.61">                supportRegion = new int[mask.getCount()][3];</a>
+<span class="sourceLineNo">062</span><a id="line.62">                vNorm = params.distanceNorm.create();</a>
+<span class="sourceLineNo">063</span><a id="line.63">                initialize();</a>
+<span class="sourceLineNo">064</span><a id="line.64">        }</a>
+<span class="sourceLineNo">065</span><a id="line.65">        </a>
+<span class="sourceLineNo">066</span><a id="line.66">        //-------------------------------------------------------------------------------------</a>
+<span class="sourceLineNo">067</span><a id="line.67">        </a>
+<span class="sourceLineNo">068</span><a id="line.68">        void initialize() {</a>
+<span class="sourceLineNo">069</span><a id="line.69">                if (params.showMask) mask.show("Mask");</a>
+<span class="sourceLineNo">070</span><a id="line.70">        }</a>
+<span class="sourceLineNo">071</span><a id="line.71">        </a>
+<span class="sourceLineNo">072</span><a id="line.72">        @Override</a>
+<span class="sourceLineNo">073</span><a id="line.73">        public float filterScalar(ScalarAccessor source, int u, int v) {</a>
+<span class="sourceLineNo">074</span><a id="line.74">                throw new UnsupportedOperationException("no filter for gray images");</a>
+<span class="sourceLineNo">075</span><a id="line.75">        }</a>
+<span class="sourceLineNo">076</span><a id="line.76">        </a>
+<span class="sourceLineNo">077</span><a id="line.77">        // vector median filter for RGB color image</a>
+<span class="sourceLineNo">078</span><a id="line.78">        @Override</a>
+<span class="sourceLineNo">079</span><a id="line.79">        public float[] filterVector(ImageAccessor ia, int u, int v) {</a>
+<span class="sourceLineNo">080</span><a id="line.80">                final int[] pCtr = new int[3];          // center pixel</a>
+<span class="sourceLineNo">081</span><a id="line.81">                final float[] pCtrf = ia.getPix(u, v);</a>
+<span class="sourceLineNo">082</span><a id="line.82">                copyRgbTo(pCtrf, pCtr);</a>
+<span class="sourceLineNo">083</span><a id="line.83">                getSupportRegion(ia, u, v);     // TODO: check method!</a>
+<span class="sourceLineNo">084</span><a id="line.84">                double dCtr = aggregateDistance(pCtr, supportRegion); </a>
+<span class="sourceLineNo">085</span><a id="line.85">                double dMin = Double.MAX_VALUE;</a>
+<span class="sourceLineNo">086</span><a id="line.86">                int jMin = -1;</a>
+<span class="sourceLineNo">087</span><a id="line.87">                for (int j = 0; j &lt; supportRegion.length; j++) {</a>
+<span class="sourceLineNo">088</span><a id="line.88">                        int[] p = supportRegion[j];</a>
+<span class="sourceLineNo">089</span><a id="line.89">                        double d = aggregateDistance(p, supportRegion);</a>
+<span class="sourceLineNo">090</span><a id="line.90">                        if (d &lt; dMin) {</a>
+<span class="sourceLineNo">091</span><a id="line.91">                                jMin = j;</a>
+<span class="sourceLineNo">092</span><a id="line.92">                                dMin = d;</a>
+<span class="sourceLineNo">093</span><a id="line.93">                        }</a>
+<span class="sourceLineNo">094</span><a id="line.94">                }</a>
+<span class="sourceLineNo">095</span><a id="line.95">                int[] pmin = supportRegion[jMin];</a>
+<span class="sourceLineNo">096</span><a id="line.96">                // modify this pixel only if the min aggregate distance of some</a>
+<span class="sourceLineNo">097</span><a id="line.97">                // other pixel in the filter region is smaller</a>
+<span class="sourceLineNo">098</span><a id="line.98">                // than the aggregate distance of the original center pixel:</a>
+<span class="sourceLineNo">099</span><a id="line.99">                final float[] pF = new float[3];        // the returned color tupel</a>
+<span class="sourceLineNo">100</span><a id="line.100">                if (dMin &lt; dCtr) {      // modify this pixel</a>
+<span class="sourceLineNo">101</span><a id="line.101">                        if (params.markModifiedPixels) {</a>
+<span class="sourceLineNo">102</span><a id="line.102">                                copyRgbTo(modColor, pF);</a>
+<span class="sourceLineNo">103</span><a id="line.103">                                modifiedCount++;</a>
 <span class="sourceLineNo">104</span><a id="line.104">                        }</a>
-<span class="sourceLineNo">105</span><a id="line.105">                }</a>
-<span class="sourceLineNo">106</span><a id="line.106">                else {  // keep the original pixel value</a>
-<span class="sourceLineNo">107</span><a id="line.107">                        copyRgb(pCtr, pF);</a>
+<span class="sourceLineNo">105</span><a id="line.105">                        else {</a>
+<span class="sourceLineNo">106</span><a id="line.106">                                copyRgbTo(pmin, pF);</a>
+<span class="sourceLineNo">107</span><a id="line.107">                        }</a>
 <span class="sourceLineNo">108</span><a id="line.108">                }</a>
-<span class="sourceLineNo">109</span><a id="line.109">                return pF;</a>
-<span class="sourceLineNo">110</span><a id="line.110">        }</a>
-<span class="sourceLineNo">111</span><a id="line.111">        </a>
-<span class="sourceLineNo">112</span><a id="line.112">        int[][] getSupportRegion(ImageAccessor.Rgb ia, int u, int v) {</a>
-<span class="sourceLineNo">113</span><a id="line.113">                //final int[] p = new int[3];</a>
-<span class="sourceLineNo">114</span><a id="line.114">                // fill 'supportRegion' for current mask position</a>
-<span class="sourceLineNo">115</span><a id="line.115">                int n = 0;</a>
-<span class="sourceLineNo">116</span><a id="line.116">                final int[][] maskArray = mask.getMask();</a>
-<span class="sourceLineNo">117</span><a id="line.117">                final int maskCenter = mask.getCenter();</a>
-<span class="sourceLineNo">118</span><a id="line.118">                for (int i = 0; i &lt; maskArray.length; i++) {</a>
-<span class="sourceLineNo">119</span><a id="line.119">                        int ui = u + i - maskCenter;</a>
-<span class="sourceLineNo">120</span><a id="line.120">                        for (int j = 0; j &lt; maskArray[0].length; j++) {</a>
-<span class="sourceLineNo">121</span><a id="line.121">                                if (maskArray[i][j] &gt; 0) {</a>
-<span class="sourceLineNo">122</span><a id="line.122">                                        int vj = v + j - maskCenter;</a>
-<span class="sourceLineNo">123</span><a id="line.123">                                        final float[] p = ia.getPix(ui, vj);</a>
-<span class="sourceLineNo">124</span><a id="line.124">                                        copyRgb(p, supportRegion[n]);</a>
-<span class="sourceLineNo">125</span><a id="line.125">                                        n = n + 1;</a>
-<span class="sourceLineNo">126</span><a id="line.126">                                }</a>
-<span class="sourceLineNo">127</span><a id="line.127">                        }</a>
-<span class="sourceLineNo">128</span><a id="line.128">                }</a>
-<span class="sourceLineNo">129</span><a id="line.129">                return supportRegion;</a>
-<span class="sourceLineNo">130</span><a id="line.130">        }</a>
-<span class="sourceLineNo">131</span><a id="line.131">        </a>
-<span class="sourceLineNo">132</span><a id="line.132">        void copyRgb(float[] source, int[] target) {</a>
-<span class="sourceLineNo">133</span><a id="line.133">                target[0] = (int) source[0];</a>
-<span class="sourceLineNo">134</span><a id="line.134">                target[1] = (int) source[1];</a>
-<span class="sourceLineNo">135</span><a id="line.135">                target[2] = (int) source[2];</a>
-<span class="sourceLineNo">136</span><a id="line.136">        }</a>
-<span class="sourceLineNo">137</span><a id="line.137">        </a>
-<span class="sourceLineNo">138</span><a id="line.138">        void copyRgb(float[] source, float[] target) {</a>
-<span class="sourceLineNo">139</span><a id="line.139">                target[0] = source[0];</a>
-<span class="sourceLineNo">140</span><a id="line.140">                target[1] = source[1];</a>
-<span class="sourceLineNo">141</span><a id="line.141">                target[2] = source[2];</a>
-<span class="sourceLineNo">142</span><a id="line.142">        }</a>
-<span class="sourceLineNo">143</span><a id="line.143">        </a>
-<span class="sourceLineNo">144</span><a id="line.144">        </a>
-<span class="sourceLineNo">145</span><a id="line.145">        void copyRgb(int[] source, float[] target) {</a>
-<span class="sourceLineNo">146</span><a id="line.146">                target[0] = source[0];</a>
-<span class="sourceLineNo">147</span><a id="line.147">                target[1] = source[1];</a>
-<span class="sourceLineNo">148</span><a id="line.148">                target[2] = source[2];</a>
-<span class="sourceLineNo">149</span><a id="line.149">        }</a>
-<span class="sourceLineNo">150</span><a id="line.150">        </a>
-<span class="sourceLineNo">151</span><a id="line.151">        // find the color with the smallest summed distance to all others.</a>
-<span class="sourceLineNo">152</span><a id="line.152">        // brute force and thus slow</a>
-<span class="sourceLineNo">153</span><a id="line.153">        double aggregateDistance(int[] p, int[][] P) {</a>
-<span class="sourceLineNo">154</span><a id="line.154">                double d = 0;</a>
-<span class="sourceLineNo">155</span><a id="line.155">                for (int i = 0; i &lt; P.length; i++) {</a>
-<span class="sourceLineNo">156</span><a id="line.156">                        d = d + vNorm.distance(p, P[i]);</a>
-<span class="sourceLineNo">157</span><a id="line.157">                }</a>
-<span class="sourceLineNo">158</span><a id="line.158">                return d;</a>
-<span class="sourceLineNo">159</span><a id="line.159">        }</a>
-<span class="sourceLineNo">160</span><a id="line.160"></a>
-<span class="sourceLineNo">161</span><a id="line.161">}</a>
+<span class="sourceLineNo">109</span><a id="line.109">                else {  // keep the original pixel value</a>
+<span class="sourceLineNo">110</span><a id="line.110">                        copyRgbTo(pCtr, pF);</a>
+<span class="sourceLineNo">111</span><a id="line.111">                }</a>
+<span class="sourceLineNo">112</span><a id="line.112">                return pF;</a>
+<span class="sourceLineNo">113</span><a id="line.113">        }</a>
+<span class="sourceLineNo">114</span><a id="line.114">        </a>
+<span class="sourceLineNo">115</span><a id="line.115">        private int[][] getSupportRegion(ImageAccessor ia, int u, int v) {</a>
+<span class="sourceLineNo">116</span><a id="line.116">                //final int[] p = new int[3];</a>
+<span class="sourceLineNo">117</span><a id="line.117">                // fill 'supportRegion' for current mask position</a>
+<span class="sourceLineNo">118</span><a id="line.118">                int n = 0;</a>
+<span class="sourceLineNo">119</span><a id="line.119">                final int[][] maskArray = mask.getMask();</a>
+<span class="sourceLineNo">120</span><a id="line.120">                final int maskCenter = mask.getCenter();</a>
+<span class="sourceLineNo">121</span><a id="line.121">                for (int i = 0; i &lt; maskArray.length; i++) {</a>
+<span class="sourceLineNo">122</span><a id="line.122">                        int ui = u + i - maskCenter;</a>
+<span class="sourceLineNo">123</span><a id="line.123">                        for (int j = 0; j &lt; maskArray[0].length; j++) {</a>
+<span class="sourceLineNo">124</span><a id="line.124">                                if (maskArray[i][j] &gt; 0) {</a>
+<span class="sourceLineNo">125</span><a id="line.125">                                        int vj = v + j - maskCenter;</a>
+<span class="sourceLineNo">126</span><a id="line.126">                                        final float[] p = ia.getPix(ui, vj);</a>
+<span class="sourceLineNo">127</span><a id="line.127">                                        copyRgbTo(p, supportRegion[n]);</a>
+<span class="sourceLineNo">128</span><a id="line.128">                                        n = n + 1;</a>
+<span class="sourceLineNo">129</span><a id="line.129">                                }</a>
+<span class="sourceLineNo">130</span><a id="line.130">                        }</a>
+<span class="sourceLineNo">131</span><a id="line.131">                }</a>
+<span class="sourceLineNo">132</span><a id="line.132">                return supportRegion;</a>
+<span class="sourceLineNo">133</span><a id="line.133">        }</a>
+<span class="sourceLineNo">134</span><a id="line.134">        </a>
+<span class="sourceLineNo">135</span><a id="line.135">        private void copyRgbTo(float[] source, int[] target) {</a>
+<span class="sourceLineNo">136</span><a id="line.136">                target[0] = (int) source[0];</a>
+<span class="sourceLineNo">137</span><a id="line.137">                target[1] = (int) source[1];</a>
+<span class="sourceLineNo">138</span><a id="line.138">                target[2] = (int) source[2];</a>
+<span class="sourceLineNo">139</span><a id="line.139">        }</a>
+<span class="sourceLineNo">140</span><a id="line.140">        </a>
+<span class="sourceLineNo">141</span><a id="line.141">//      private void copyRgbTo(float[] source, float[] target) {</a>
+<span class="sourceLineNo">142</span><a id="line.142">//              target[0] = source[0];</a>
+<span class="sourceLineNo">143</span><a id="line.143">//              target[1] = source[1];</a>
+<span class="sourceLineNo">144</span><a id="line.144">//              target[2] = source[2];</a>
+<span class="sourceLineNo">145</span><a id="line.145">//      }</a>
+<span class="sourceLineNo">146</span><a id="line.146">        </a>
+<span class="sourceLineNo">147</span><a id="line.147">        </a>
+<span class="sourceLineNo">148</span><a id="line.148">        private void copyRgbTo(int[] source, float[] target) {</a>
+<span class="sourceLineNo">149</span><a id="line.149">                target[0] = source[0];</a>
+<span class="sourceLineNo">150</span><a id="line.150">                target[1] = source[1];</a>
+<span class="sourceLineNo">151</span><a id="line.151">                target[2] = source[2];</a>
+<span class="sourceLineNo">152</span><a id="line.152">        }</a>
+<span class="sourceLineNo">153</span><a id="line.153">        </a>
+<span class="sourceLineNo">154</span><a id="line.154">        // find the color with the smallest summed distance to all others.</a>
+<span class="sourceLineNo">155</span><a id="line.155">        // brute force and thus slow</a>
+<span class="sourceLineNo">156</span><a id="line.156">        private double aggregateDistance(int[] p, int[][] P) {</a>
+<span class="sourceLineNo">157</span><a id="line.157">                double d = 0;</a>
+<span class="sourceLineNo">158</span><a id="line.158">                for (int i = 0; i &lt; P.length; i++) {</a>
+<span class="sourceLineNo">159</span><a id="line.159">                        d = d + vNorm.distance(p, P[i]);</a>
+<span class="sourceLineNo">160</span><a id="line.160">                }</a>
+<span class="sourceLineNo">161</span><a id="line.161">                return d;</a>
+<span class="sourceLineNo">162</span><a id="line.162">        }</a>
+<span class="sourceLineNo">163</span><a id="line.163"></a>
+<span class="sourceLineNo">164</span><a id="line.164">}</a>
 
 
 

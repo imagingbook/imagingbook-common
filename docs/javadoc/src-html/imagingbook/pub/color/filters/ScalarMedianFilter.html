@@ -19,92 +19,95 @@
 <span class="sourceLineNo">009</span><a id="line.9"></a>
 <span class="sourceLineNo">010</span><a id="line.10">package imagingbook.pub.color.filters;</a>
 <span class="sourceLineNo">011</span><a id="line.11"></a>
-<span class="sourceLineNo">012</span><a id="line.12">import imagingbook.lib.filters.GenericFilter;</a>
-<span class="sourceLineNo">013</span><a id="line.13">import imagingbook.lib.image.ImageAccessor;</a>
-<span class="sourceLineNo">014</span><a id="line.14"></a>
-<span class="sourceLineNo">015</span><a id="line.15">import java.util.Arrays;</a>
-<span class="sourceLineNo">016</span><a id="line.16"></a>
-<span class="sourceLineNo">017</span><a id="line.17">/**</a>
-<span class="sourceLineNo">018</span><a id="line.18"> * Ordinary (scalar) median filter for color images implemented</a>
-<span class="sourceLineNo">019</span><a id="line.19"> * by extending the {@link GenericFilter} class.</a>
-<span class="sourceLineNo">020</span><a id="line.20"> * Color images are filtered individually in all channels.</a>
-<span class="sourceLineNo">021</span><a id="line.21"> * @author W. Burger</a>
-<span class="sourceLineNo">022</span><a id="line.22"> * @version 2013/05/30</a>
-<span class="sourceLineNo">023</span><a id="line.23"> */</a>
-<span class="sourceLineNo">024</span><a id="line.24">public class ScalarMedianFilter extends GenericFilter {</a>
-<span class="sourceLineNo">025</span><a id="line.25">        </a>
-<span class="sourceLineNo">026</span><a id="line.26">        public static class Parameters {</a>
-<span class="sourceLineNo">027</span><a id="line.27">                /** Filter radius */</a>
-<span class="sourceLineNo">028</span><a id="line.28">                public double radius = 3.0;</a>
-<span class="sourceLineNo">029</span><a id="line.29">        }</a>
-<span class="sourceLineNo">030</span><a id="line.30">        </a>
-<span class="sourceLineNo">031</span><a id="line.31">        final Parameters params;</a>
-<span class="sourceLineNo">032</span><a id="line.32">        FilterMask mask;</a>
-<span class="sourceLineNo">033</span><a id="line.33"></a>
-<span class="sourceLineNo">034</span><a id="line.34">        //-------------------------------------------------------------------------------------</a>
-<span class="sourceLineNo">035</span><a id="line.35">        </a>
-<span class="sourceLineNo">036</span><a id="line.36">        public ScalarMedianFilter() {</a>
-<span class="sourceLineNo">037</span><a id="line.37">                this(new Parameters());</a>
-<span class="sourceLineNo">038</span><a id="line.38">        }</a>
-<span class="sourceLineNo">039</span><a id="line.39">        </a>
-<span class="sourceLineNo">040</span><a id="line.40">        public ScalarMedianFilter(Parameters params) {</a>
-<span class="sourceLineNo">041</span><a id="line.41">                this.params = params;</a>
-<span class="sourceLineNo">042</span><a id="line.42">                this.mask = new FilterMask(params.radius);</a>
-<span class="sourceLineNo">043</span><a id="line.43">        }</a>
-<span class="sourceLineNo">044</span><a id="line.44">                </a>
-<span class="sourceLineNo">045</span><a id="line.45">        //-------------------------------------------------------------------------------------</a>
-<span class="sourceLineNo">046</span><a id="line.46"></a>
-<span class="sourceLineNo">047</span><a id="line.47">        public float filterPixel(ImageAccessor.Scalar source, int u, int v) {</a>
-<span class="sourceLineNo">048</span><a id="line.48">                final int maskCount = mask.getCount();</a>
-<span class="sourceLineNo">049</span><a id="line.49">                final float[] p = new float[maskCount];</a>
-<span class="sourceLineNo">050</span><a id="line.50">                final int medianIndex = maskCount/2;</a>
-<span class="sourceLineNo">051</span><a id="line.51">                final int maskCenter = mask.getCenter();</a>
-<span class="sourceLineNo">052</span><a id="line.52">                final int[][] maskArray = mask.getMask();</a>
-<span class="sourceLineNo">053</span><a id="line.53">                int k = 0;</a>
-<span class="sourceLineNo">054</span><a id="line.54">                for (int i = 0; i &lt; maskArray.length; i++) {</a>
-<span class="sourceLineNo">055</span><a id="line.55">                        int ui = u + i - maskCenter;</a>
-<span class="sourceLineNo">056</span><a id="line.56">                        for (int j = 0; j &lt; maskArray[0].length; j++) {</a>
-<span class="sourceLineNo">057</span><a id="line.57">                                if (maskArray[i][j] &gt; 0) {</a>
-<span class="sourceLineNo">058</span><a id="line.58">                                        int vj = v + j - maskCenter;</a>
-<span class="sourceLineNo">059</span><a id="line.59">                                        p[k] = source.getVal(ui, vj);</a>
-<span class="sourceLineNo">060</span><a id="line.60">                                        k = k + 1;</a>
-<span class="sourceLineNo">061</span><a id="line.61">                                }</a>
-<span class="sourceLineNo">062</span><a id="line.62">                        }</a>
-<span class="sourceLineNo">063</span><a id="line.63">                }</a>
-<span class="sourceLineNo">064</span><a id="line.64">                Arrays.sort(p);</a>
-<span class="sourceLineNo">065</span><a id="line.65">                return p[medianIndex];</a>
-<span class="sourceLineNo">066</span><a id="line.66">        }</a>
-<span class="sourceLineNo">067</span><a id="line.67"></a>
-<span class="sourceLineNo">068</span><a id="line.68">        public float[] filterPixel(ImageAccessor.Rgb source, int u, int v) {</a>
-<span class="sourceLineNo">069</span><a id="line.69">                final int maskCount = mask.getCount();</a>
-<span class="sourceLineNo">070</span><a id="line.70">                final float[] pR = new float[maskCount];</a>
-<span class="sourceLineNo">071</span><a id="line.71">                final float[] pG = new float[maskCount];</a>
-<span class="sourceLineNo">072</span><a id="line.72">                final float[] pB = new float[maskCount];</a>
-<span class="sourceLineNo">073</span><a id="line.73">                //final int[] pctr = new int[3];</a>
-<span class="sourceLineNo">074</span><a id="line.74">                //final float[] pF = new float[3];</a>
-<span class="sourceLineNo">075</span><a id="line.75">                final int medianIndex = maskCount/2;</a>
-<span class="sourceLineNo">076</span><a id="line.76">                final int maskCenter = mask.getCenter();</a>
-<span class="sourceLineNo">077</span><a id="line.77">                final int[][] maskArray = mask.getMask();</a>
-<span class="sourceLineNo">078</span><a id="line.78">                int k = 0;</a>
-<span class="sourceLineNo">079</span><a id="line.79">                for (int i=0; i&lt;maskArray.length; i++) {</a>
-<span class="sourceLineNo">080</span><a id="line.80">                        int ui = u + i - maskCenter;</a>
-<span class="sourceLineNo">081</span><a id="line.81">                        for (int j=0; j&lt;maskArray[0].length; j++) {</a>
-<span class="sourceLineNo">082</span><a id="line.82">                                if (maskArray[i][j] &gt; 0) {</a>
-<span class="sourceLineNo">083</span><a id="line.83">                                        int vj = v + j - maskCenter;</a>
-<span class="sourceLineNo">084</span><a id="line.84">                                        float[] pctr = source.getPix(ui,vj);</a>
-<span class="sourceLineNo">085</span><a id="line.85">                                        pR[k] = pctr[0];</a>
-<span class="sourceLineNo">086</span><a id="line.86">                                        pG[k] = pctr[1];</a>
-<span class="sourceLineNo">087</span><a id="line.87">                                        pB[k] = pctr[2];</a>
-<span class="sourceLineNo">088</span><a id="line.88">                                        k = k + 1;</a>
-<span class="sourceLineNo">089</span><a id="line.89">                                }</a>
-<span class="sourceLineNo">090</span><a id="line.90">                        }</a>
-<span class="sourceLineNo">091</span><a id="line.91">                }</a>
-<span class="sourceLineNo">092</span><a id="line.92">                Arrays.sort(pR); //pF[0] = pR[medianIndex];</a>
-<span class="sourceLineNo">093</span><a id="line.93">                Arrays.sort(pG); //pF[1] = pG[medianIndex];</a>
-<span class="sourceLineNo">094</span><a id="line.94">                Arrays.sort(pB); //pF[2] = pB[medianIndex];</a>
-<span class="sourceLineNo">095</span><a id="line.95">                return new float[] { pR[medianIndex], pG[medianIndex], pB[medianIndex] };</a>
-<span class="sourceLineNo">096</span><a id="line.96">        }</a>
-<span class="sourceLineNo">097</span><a id="line.97">}</a>
+<span class="sourceLineNo">012</span><a id="line.12">import java.util.Arrays;</a>
+<span class="sourceLineNo">013</span><a id="line.13"></a>
+<span class="sourceLineNo">014</span><a id="line.14">import imagingbook.lib.filters.GenericFilter;</a>
+<span class="sourceLineNo">015</span><a id="line.15">import imagingbook.lib.image.access.ImageAccessor;</a>
+<span class="sourceLineNo">016</span><a id="line.16">import imagingbook.lib.image.access.ScalarAccessor;</a>
+<span class="sourceLineNo">017</span><a id="line.17"></a>
+<span class="sourceLineNo">018</span><a id="line.18">/**</a>
+<span class="sourceLineNo">019</span><a id="line.19"> * Ordinary (scalar) median filter for color images implemented</a>
+<span class="sourceLineNo">020</span><a id="line.20"> * by extending the {@link GenericFilter} class.</a>
+<span class="sourceLineNo">021</span><a id="line.21"> * Color images are filtered individually in all channels.</a>
+<span class="sourceLineNo">022</span><a id="line.22"> * @author W. Burger</a>
+<span class="sourceLineNo">023</span><a id="line.23"> * @version 2013/05/30</a>
+<span class="sourceLineNo">024</span><a id="line.24"> */</a>
+<span class="sourceLineNo">025</span><a id="line.25">public class ScalarMedianFilter extends GenericFilter {</a>
+<span class="sourceLineNo">026</span><a id="line.26">        </a>
+<span class="sourceLineNo">027</span><a id="line.27">        public static class Parameters {</a>
+<span class="sourceLineNo">028</span><a id="line.28">                /** Filter radius */</a>
+<span class="sourceLineNo">029</span><a id="line.29">                public double radius = 3.0;</a>
+<span class="sourceLineNo">030</span><a id="line.30">        }</a>
+<span class="sourceLineNo">031</span><a id="line.31">        </a>
+<span class="sourceLineNo">032</span><a id="line.32">        final Parameters params;</a>
+<span class="sourceLineNo">033</span><a id="line.33">        FilterMask mask;</a>
+<span class="sourceLineNo">034</span><a id="line.34"></a>
+<span class="sourceLineNo">035</span><a id="line.35">        //-------------------------------------------------------------------------------------</a>
+<span class="sourceLineNo">036</span><a id="line.36">        </a>
+<span class="sourceLineNo">037</span><a id="line.37">        public ScalarMedianFilter() {</a>
+<span class="sourceLineNo">038</span><a id="line.38">                this(new Parameters());</a>
+<span class="sourceLineNo">039</span><a id="line.39">        }</a>
+<span class="sourceLineNo">040</span><a id="line.40">        </a>
+<span class="sourceLineNo">041</span><a id="line.41">        public ScalarMedianFilter(Parameters params) {</a>
+<span class="sourceLineNo">042</span><a id="line.42">                this.params = params;</a>
+<span class="sourceLineNo">043</span><a id="line.43">                this.mask = new FilterMask(params.radius);</a>
+<span class="sourceLineNo">044</span><a id="line.44">        }</a>
+<span class="sourceLineNo">045</span><a id="line.45">                </a>
+<span class="sourceLineNo">046</span><a id="line.46">        //-------------------------------------------------------------------------------------</a>
+<span class="sourceLineNo">047</span><a id="line.47"></a>
+<span class="sourceLineNo">048</span><a id="line.48">        @Override</a>
+<span class="sourceLineNo">049</span><a id="line.49">        public float filterScalar(ScalarAccessor source, int u, int v) {</a>
+<span class="sourceLineNo">050</span><a id="line.50">                final int maskCount = mask.getCount();</a>
+<span class="sourceLineNo">051</span><a id="line.51">                final float[] p = new float[maskCount];</a>
+<span class="sourceLineNo">052</span><a id="line.52">                final int medianIndex = maskCount/2;</a>
+<span class="sourceLineNo">053</span><a id="line.53">                final int maskCenter = mask.getCenter();</a>
+<span class="sourceLineNo">054</span><a id="line.54">                final int[][] maskArray = mask.getMask();</a>
+<span class="sourceLineNo">055</span><a id="line.55">                int k = 0;</a>
+<span class="sourceLineNo">056</span><a id="line.56">                for (int i = 0; i &lt; maskArray.length; i++) {</a>
+<span class="sourceLineNo">057</span><a id="line.57">                        int ui = u + i - maskCenter;</a>
+<span class="sourceLineNo">058</span><a id="line.58">                        for (int j = 0; j &lt; maskArray[0].length; j++) {</a>
+<span class="sourceLineNo">059</span><a id="line.59">                                if (maskArray[i][j] &gt; 0) {</a>
+<span class="sourceLineNo">060</span><a id="line.60">                                        int vj = v + j - maskCenter;</a>
+<span class="sourceLineNo">061</span><a id="line.61">                                        p[k] = source.getVal(ui, vj);</a>
+<span class="sourceLineNo">062</span><a id="line.62">                                        k = k + 1;</a>
+<span class="sourceLineNo">063</span><a id="line.63">                                }</a>
+<span class="sourceLineNo">064</span><a id="line.64">                        }</a>
+<span class="sourceLineNo">065</span><a id="line.65">                }</a>
+<span class="sourceLineNo">066</span><a id="line.66">                Arrays.sort(p);</a>
+<span class="sourceLineNo">067</span><a id="line.67">                return p[medianIndex];</a>
+<span class="sourceLineNo">068</span><a id="line.68">        }</a>
+<span class="sourceLineNo">069</span><a id="line.69"></a>
+<span class="sourceLineNo">070</span><a id="line.70">        @Override</a>
+<span class="sourceLineNo">071</span><a id="line.71">        public float[] filterVector(ImageAccessor source, int u, int v) {</a>
+<span class="sourceLineNo">072</span><a id="line.72">                final int maskCount = mask.getCount();</a>
+<span class="sourceLineNo">073</span><a id="line.73">                final float[] pR = new float[maskCount];</a>
+<span class="sourceLineNo">074</span><a id="line.74">                final float[] pG = new float[maskCount];</a>
+<span class="sourceLineNo">075</span><a id="line.75">                final float[] pB = new float[maskCount];</a>
+<span class="sourceLineNo">076</span><a id="line.76">                //final int[] pctr = new int[3];</a>
+<span class="sourceLineNo">077</span><a id="line.77">                //final float[] pF = new float[3];</a>
+<span class="sourceLineNo">078</span><a id="line.78">                final int medianIndex = maskCount/2;</a>
+<span class="sourceLineNo">079</span><a id="line.79">                final int maskCenter = mask.getCenter();</a>
+<span class="sourceLineNo">080</span><a id="line.80">                final int[][] maskArray = mask.getMask();</a>
+<span class="sourceLineNo">081</span><a id="line.81">                int k = 0;</a>
+<span class="sourceLineNo">082</span><a id="line.82">                for (int i=0; i&lt;maskArray.length; i++) {</a>
+<span class="sourceLineNo">083</span><a id="line.83">                        int ui = u + i - maskCenter;</a>
+<span class="sourceLineNo">084</span><a id="line.84">                        for (int j=0; j&lt;maskArray[0].length; j++) {</a>
+<span class="sourceLineNo">085</span><a id="line.85">                                if (maskArray[i][j] &gt; 0) {</a>
+<span class="sourceLineNo">086</span><a id="line.86">                                        int vj = v + j - maskCenter;</a>
+<span class="sourceLineNo">087</span><a id="line.87">                                        float[] pctr = source.getPix(ui,vj);</a>
+<span class="sourceLineNo">088</span><a id="line.88">                                        pR[k] = pctr[0];</a>
+<span class="sourceLineNo">089</span><a id="line.89">                                        pG[k] = pctr[1];</a>
+<span class="sourceLineNo">090</span><a id="line.90">                                        pB[k] = pctr[2];</a>
+<span class="sourceLineNo">091</span><a id="line.91">                                        k = k + 1;</a>
+<span class="sourceLineNo">092</span><a id="line.92">                                }</a>
+<span class="sourceLineNo">093</span><a id="line.93">                        }</a>
+<span class="sourceLineNo">094</span><a id="line.94">                }</a>
+<span class="sourceLineNo">095</span><a id="line.95">                Arrays.sort(pR); //pF[0] = pR[medianIndex];</a>
+<span class="sourceLineNo">096</span><a id="line.96">                Arrays.sort(pG); //pF[1] = pG[medianIndex];</a>
+<span class="sourceLineNo">097</span><a id="line.97">                Arrays.sort(pB); //pF[2] = pB[medianIndex];</a>
+<span class="sourceLineNo">098</span><a id="line.98">                return new float[] { pR[medianIndex], pG[medianIndex], pB[medianIndex] };</a>
+<span class="sourceLineNo">099</span><a id="line.99">        }</a>
+<span class="sourceLineNo">100</span><a id="line.100">}</a>
 
 
 

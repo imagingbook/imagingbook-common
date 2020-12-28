@@ -5,6 +5,7 @@ imagingbook.lib.filters
 imagingbook.lib.handles
 imagingbook.lib.ij
 imagingbook.lib.image
+imagingbook.lib.image.access
 imagingbook.lib.interpolation
 imagingbook.lib.math
 imagingbook.lib.math.testing
@@ -42,6 +43,7 @@ imagingbook.pub.histogram
 imagingbook.pub.hough
 imagingbook.pub.hough.lines
 imagingbook.pub.lucaskanade
+imagingbook.pub.lucaskanade.utils
 imagingbook.pub.matching
 imagingbook.pub.moments
 imagingbook.pub.morphology
