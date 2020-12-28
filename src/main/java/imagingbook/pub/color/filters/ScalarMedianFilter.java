@@ -12,7 +12,6 @@ package imagingbook.pub.color.filters;
 import java.util.Arrays;
 
 import imagingbook.lib.filters.GenericFilter;
-import imagingbook.lib.image.access.ImageAccessor;
 import imagingbook.lib.image.access.ScalarAccessor;
 
 /**
@@ -20,7 +19,7 @@ import imagingbook.lib.image.access.ScalarAccessor;
  * by extending the {@link GenericFilter} class.
  * Color images are filtered individually in all channels.
  * @author W. Burger
- * @version 2013/05/30
+ * @version 2020/12/28
  */
 public class ScalarMedianFilter extends GenericFilter {
 	
@@ -46,7 +45,7 @@ public class ScalarMedianFilter extends GenericFilter {
 	//-------------------------------------------------------------------------------------
 
 	@Override
-	public float filterScalar(ScalarAccessor source, int u, int v) {
+	protected float filterScalar(ScalarAccessor source, int u, int v) {
 		final int maskCount = mask.getCount();
 		final float[] p = new float[maskCount];
 		final int medianIndex = maskCount/2;
@@ -67,34 +66,34 @@ public class ScalarMedianFilter extends GenericFilter {
 		return p[medianIndex];
 	}
 
-	@Override
-	public float[] filterVector(ImageAccessor source, int u, int v) {
-		final int maskCount = mask.getCount();
-		final float[] pR = new float[maskCount];
-		final float[] pG = new float[maskCount];
-		final float[] pB = new float[maskCount];
-		//final int[] pctr = new int[3];
-		//final float[] pF = new float[3];
-		final int medianIndex = maskCount/2;
-		final int maskCenter = mask.getCenter();
-		final int[][] maskArray = mask.getMask();
-		int k = 0;
-		for (int i=0; i<maskArray.length; i++) {
-			int ui = u + i - maskCenter;
-			for (int j=0; j<maskArray[0].length; j++) {
-				if (maskArray[i][j] > 0) {
-					int vj = v + j - maskCenter;
-					float[] pctr = source.getPix(ui,vj);
-					pR[k] = pctr[0];
-					pG[k] = pctr[1];
-					pB[k] = pctr[2];
-					k = k + 1;
-				}
-			}
-		}
-		Arrays.sort(pR); //pF[0] = pR[medianIndex];
-		Arrays.sort(pG); //pF[1] = pG[medianIndex];
-		Arrays.sort(pB); //pF[2] = pB[medianIndex];
-		return new float[] { pR[medianIndex], pG[medianIndex], pB[medianIndex] };
- 	}
+//	@Override
+//	protected float[] filterVector(ImageAccessor source, int u, int v) {
+//		final int maskCount = mask.getCount();
+//		final float[] pR = new float[maskCount];
+//		final float[] pG = new float[maskCount];
+//		final float[] pB = new float[maskCount];
+//		//final int[] pctr = new int[3];
+//		//final float[] pF = new float[3];
+//		final int medianIndex = maskCount/2;
+//		final int maskCenter = mask.getCenter();
+//		final int[][] maskArray = mask.getMask();
+//		int k = 0;
+//		for (int i=0; i<maskArray.length; i++) {
+//			int ui = u + i - maskCenter;
+//			for (int j=0; j<maskArray[0].length; j++) {
+//				if (maskArray[i][j] > 0) {
+//					int vj = v + j - maskCenter;
+//					float[] pctr = source.getPix(ui,vj);
+//					pR[k] = pctr[0];
+//					pG[k] = pctr[1];
+//					pB[k] = pctr[2];
+//					k = k + 1;
+//				}
+//			}
+//		}
+//		Arrays.sort(pR); //pF[0] = pR[medianIndex];
+//		Arrays.sort(pG); //pF[1] = pG[medianIndex];
+//		Arrays.sort(pB); //pF[2] = pB[medianIndex];
+//		return new float[] { pR[medianIndex], pG[medianIndex], pB[medianIndex] };
+// 	}
 }

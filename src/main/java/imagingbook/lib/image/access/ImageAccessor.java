@@ -60,8 +60,8 @@ public abstract class ImageAccessor {
 	
 	/**
 	 * Creates a new {@code ImageAccessor} instance for the given image,
-	 * using the default out-of-bounds strategy and interpolation method.
-	 * The concrete type of the returned instance depends on the specified image
+	 * using the default out-of-bounds strategy and interpolation methods.
+	 * The concrete type of the returned instance depends on the specified image.
 	 * 
 	 * @param ip the source image
 	 * @return a new {@code ImageAccessor} instance
@@ -71,10 +71,9 @@ public abstract class ImageAccessor {
 	}
 	
 	/**
-	 * Convenience method.
 	 * Creates a new {@code ImageAccessor} instance for the given image,
-	 * using the specified out-of-bounds strategy and interpolation method.
-	 * The concrete type of the returned instance depends on the specified image
+	 * using the specified out-of-bounds strategy and interpolation methods.
+	 * The concrete type of the returned instance depends on the specified image.
 	 * 
 	 * @param ip the source image
 	 * @param obs the out-of-bounds strategy (use {@code null} for default settings)
@@ -100,10 +99,18 @@ public abstract class ImageAccessor {
 		this.indexer = PixelIndexer.create(width, height, this.outOfBoundsStrategy);
 	}
 	
+	/**
+	 * Returns the width of the associated image.
+	 * @return the image width.
+	 */
 	public int getWidth() {
 		return this.width;
 	}
 	
+	/**
+	 * Returns the height of the associated image.
+	 * @return the image height.
+	 */
 	public int getHeight() {
 		return this.height;
 	}
@@ -118,6 +125,12 @@ public abstract class ImageAccessor {
 		return this.ip;
 	}
 	
+	/**
+	 * Returns the depth (number of components) of this image
+	 * accessor. 1 is returned if the image is scalar-valued.
+	 * 
+	 * @return the image depth.
+	 */
 	public abstract int getDepth();
 	
 	/**
@@ -141,9 +154,10 @@ public abstract class ImageAccessor {
 	}
 	
 	/**
-	 * Returns pixel value at the specified integer position as a
-	 * {@code float[]} with either 1 element for scalar-valued images
-	 * or 3 elements for RGB images.
+	 * Returns the pixel value for the specified floating-point 
+	 * position as a {@code float[]} with either 1 element for scalar-valued images
+	 * and or more elements (e.g., 3 for for RGB images).
+	 * 
 	 * @param u the x-coordinate
 	 * @param v the y-coordinate
 	 * @return the pixel value ({@code float[]})
@@ -151,9 +165,9 @@ public abstract class ImageAccessor {
 	public abstract float[] getPix(int u, int v);
 	
 	/**
-	 * Returns pixel value at the specified floating-point position as a
-	 * {@code float[]} with either 1 for scalar-valued images
-	 * and or 3 elements for RGB images.
+	 * Returns the interpolated pixel value for the specified floating-point 
+	 * position as a {@code float[]} with either 1 element for scalar-valued images
+	 * and or more elements (e.g., 3 for for RGB images).
 	 * Interpolation is used non-integer coordinates.
 	 * 
 	 * @param x the x-coordinate
@@ -212,9 +226,33 @@ public abstract class ImageAccessor {
 	 */
 	public abstract void setVal(int u, int v, int k, float val);
 	
+	/**
+	 * Returns the {@link ImageAccessor} for the k-th component;
+	 * the result is a sub-type of {@link ScalarAccessor}.
+	 * In the case of a scalar-valued image, THIS object is returned.
+	 * 
+	 * @param k the component index
+	 * @return the component accessor.
+	 */
 	public abstract ScalarAccessor getComponentAccessor(int k);
 	
+	/**
+	 * Sets the default value (returned when accessing out-of-bounds 
+	 * pixel coordinates) common to all image components.
+	 * 
+	 * @param val the default value.
+	 */
 	public abstract void setDefaultValue(float val);
+	
+	
+	/**
+	 * Sets the default values (returned when accessing out-of-bounds 
+	 * pixel coordinates) for all image components.
+	 * The length of the passed array must match the component
+	 * count. See also {@link #getDepth()}.
+	 * 
+	 * @param vals an array of default values.
+	 */
 	public abstract void setDefaultValue(float[] vals);
 	
 }

@@ -96,7 +96,8 @@ public class NagaoMatsuyamaFilter extends GenericFilter {
 	
 	// ------------------------------------------------------
 
-	public float filterScalar(ScalarAccessor image, int u, int v) {
+	@Override
+	protected float filterScalar(ScalarAccessor image, int u, int v) {
 		minVariance = Float.MAX_VALUE;
 		evalSubregion(image, R1, u, v);
 		minVariance = minVariance - (float) params.varThreshold;
@@ -129,7 +130,7 @@ public class NagaoMatsuyamaFilter extends GenericFilter {
 	final float[] rgb = {0,0,0};
 	
 	@Override
-	public float[] filterVector(ImageAccessor ia, int u, int v) {
+	protected float[] filterVector(ImageAccessor ia, int u, int v) {
 		minVariance = Float.MAX_VALUE;
 		evalSubregionColor(ia, R1, u, v);
 		minVariance = minVariance - (3 * (float) params.varThreshold);

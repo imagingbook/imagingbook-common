@@ -82,7 +82,7 @@ public class BilateralFilter extends GenericFilter {
 	}
 	
 	@Override
-	public float filterScalar(ScalarAccessor I, int u, int v) {
+	protected float filterScalar(ScalarAccessor I, int u, int v) {
 		float S = 0;			// sum of weighted pixel values
 		float W = 0;			// sum of weights
 		
@@ -102,7 +102,7 @@ public class BilateralFilter extends GenericFilter {
 	}
 	
 	@Override
-	public float[] filterVector(ImageAccessor I, int u, int v) {
+	protected float[] filterVector(ImageAccessor I, int u, int v) {
 		float[] S = new float[3]; 	// sum of weighted RGB values
 		float W = 0;				// sum of weights
 		//int[] a = new int[3];
@@ -130,13 +130,13 @@ public class BilateralFilter extends GenericFilter {
 	
 	// ------------------------------------------------------
 	// This returns the weights for a Gaussian range kernel (scalar version):
-	protected float similarityGauss(float a, float b) {
+	float similarityGauss(float a, float b) {
 		double dI = a - b;
 		return (float) Math.exp(-(dI * dI) / (2 * sigmaR2));
 	}
 	
 	// This returns the weights for a Gaussian range kernel (color vector version):
-	protected float similarityGauss(float[] a, float[] b) {
+	float similarityGauss(float[] a, float[] b) {
 		double d2 = colorScale * colorNorm.distance2(a, b);
 		return (float) Math.exp(-d2 / (2 * sigmaR2));
 	}
@@ -157,7 +157,7 @@ public class BilateralFilter extends GenericFilter {
 
 	// ------------------------------------------------------
 
-	protected float[][] makeDomainKernel2D(double sigma, int K) {
+	private float[][] makeDomainKernel2D(double sigma, int K) {
 		int size = K + 1 + K;
 		float[][] domainKernel = new float[size][size]; //center cell = kernel[K][K]
 		double sigma2 = sigma * sigma;
@@ -172,7 +172,8 @@ public class BilateralFilter extends GenericFilter {
 		return domainKernel;
 	}
 	
-	protected float[] makeRangeKernel(double sigma, int K) {
+	// TODO: check if/why this method is unused!
+	private float[] makeRangeKernel(double sigma, int K) {
 		int size = K + 1 + K;
 		float[] rangeKernel = new float[size]; //center cell = kernel[K]
 		double sigma2 = sigma * sigma;

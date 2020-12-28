@@ -78,7 +78,7 @@ public abstract class GenericFilter {
 	 * @param v the vertical pixel position
 	 * @return the resulting (scalar) pixel value for the specified image position
 	 */
- 	public abstract float filterScalar(ScalarAccessor source, int u, int v);
+ 	protected abstract float filterScalar(ScalarAccessor source, int u, int v);
  	
  	/**
 	 * Calculates and returns the filter result for a single pixel
@@ -95,7 +95,7 @@ public abstract class GenericFilter {
 	 * @param v the vertical pixel position
 	 * @return the resulting (RGB) pixel value for the specified image position
 	 */
-	public float[] filterVector(ImageAccessor source, int u, int v) {
+	protected float[] filterVector(ImageAccessor source, int u, int v) {
 		float[] result = new float[source.getDepth()];
 		// DEFAULT: apply the same filter independently to all scalar-valued components:
 		for (int k = 0; k < 3; k++) {
@@ -126,6 +126,7 @@ public abstract class GenericFilter {
 			if (showProgress) IJ.showProgress(v, h);
 		}
  	}
+
 
 // 	public void applyTo(ImageProcessor ip) {
 //		final int w = ip.getWidth();

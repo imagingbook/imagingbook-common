@@ -35,7 +35,7 @@ public class LinearFilter extends GenericFilter {
 	// --------------------------------------------------------------
 	
 	@Override
-	public float filterScalar(ScalarAccessor ia, int u, int v) {
+	protected float filterScalar(ScalarAccessor ia, int u, int v) {
 		float sum = 0;
 		for (int j = 0; j < kernelHeight; j++) {
 			int vj = v + j - kernelCtrY;

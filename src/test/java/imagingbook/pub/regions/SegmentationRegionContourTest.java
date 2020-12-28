@@ -5,7 +5,7 @@ import static imagingbook.pub.regions.NeighborhoodType.N8;
 
 import java.nio.file.Path;
 import java.util.List;
-import java.lang.Thread;
+
 import org.junit.Assert;
 import org.junit.Test;
 

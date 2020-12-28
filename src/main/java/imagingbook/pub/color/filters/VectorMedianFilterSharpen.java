@@ -15,7 +15,6 @@ import java.util.Arrays;
 import imagingbook.lib.filters.GenericFilter;
 import imagingbook.lib.image.access.ImageAccessor;
 import imagingbook.lib.image.access.ScalarAccessor;
-import imagingbook.lib.image.access.VectorAccessor;
 import imagingbook.lib.math.VectorNorm;
 import imagingbook.lib.math.VectorNorm.NormType;
 
@@ -72,13 +71,14 @@ public class VectorMedianFilterSharpen extends GenericFilter {
 		initialize();
 	}
 	
-	void initialize() {
+	private void initialize() {
 		modColor = new int[] {params.modifiedColor.getRed(), params.modifiedColor.getGreen(), params.modifiedColor.getBlue()};
 		if (params.showMask) 
 			mask.show("Mask");
 	}
 	
-	public float filterScalar(ScalarAccessor source, int u, int v) {
+	@Override
+	protected float filterScalar(ScalarAccessor source, int u, int v) {
 		throw new UnsupportedOperationException("no filter for gray images");
 	}
 	
@@ -86,10 +86,10 @@ public class VectorMedianFilterSharpen extends GenericFilter {
 	 * Vector median filter for RGB color images
 	 */
 	@Override
-	public float[] filterVector(ImageAccessor ia, int u, int v) {
+	protected float[] filterVector(ImageAccessor ia, int u, int v) {
 		final int[] pCtr = new int[3];		// center pixel
 		final float[] pCtrf = ia.getPix(u, v);
-		copyRgb(pCtrf, pCtr);			// TODO: check, not elegant
+		copyRgbTo(pCtrf, pCtr);			// TODO: check, not elegant
 		getSupportRegion(ia, u, v);
 		double dCtr = trimmedAggregateDistance(pCtr, supportRegion, a); 
 		double dMin = Double.MAX_VALUE;
@@ -109,20 +109,20 @@ public class VectorMedianFilterSharpen extends GenericFilter {
 		final float[] pF = new float[3];			// the returned color tupel
 		if (dCtr - dMin > params.threshold * a) {	// modify this pixel
 			if (params.markModifiedPixels) {
-				copyRgb(modColor, pF);
+				copyRgbTo(modColor, pF);
 				modifiedCount++;
 			}
 			else {
-				copyRgb(pmin, pF);
+				copyRgbTo(pmin, pF);
 			}
 		}
 		else {	// keep the original pixel value
-			copyRgb(pCtr, pF);
+			copyRgbTo(pCtr, pF);
 		}
 		return pF;
  	}
 	
-	int[][] getSupportRegion(ImageAccessor ia, int u, int v) {
+	private int[][] getSupportRegion(ImageAccessor ia, int u, int v) {
 		//final int[] p = new int[3];
 		// fill 'supportRegion' for current mask position
 		int n = 0;
@@ -134,7 +134,7 @@ public class VectorMedianFilterSharpen extends GenericFilter {
 				if (maskArray[i][j] > 0) {
 					int vj = v + j - maskCenter;
 					final float[] p = ia.getPix(ui, vj);
-					copyRgb(p, supportRegion[n]);
+					copyRgbTo(p, supportRegion[n]);
 					n = n + 1;
 				}
 			}
@@ -142,19 +142,19 @@ public class VectorMedianFilterSharpen extends GenericFilter {
 		return supportRegion;
 	}
 	
-	void copyRgb(int[] source, int[] target) {
-		target[0] = source[0];
-		target[1] = source[1];
-		target[2] = source[2];
-	}
+//	private void copyRgbTo(int[] source, int[] target) {
+//		target[0] = source[0];
+//		target[1] = source[1];
+//		target[2] = source[2];
+//	}
 	
-	void copyRgb(float[] source, int[] target) {
+	private void copyRgbTo(float[] source, int[] target) {
 		target[0] = (int) source[0];
 		target[1] = (int) source[1];
 		target[2] = (int) source[2];
 	}
 	
-	void copyRgb(int[] source, float[] target) {
+	private void copyRgbTo(int[] source, float[] target) {
 		target[0] = source[0];
 		target[1] = source[1];
 		target[2] = source[2];
@@ -162,15 +162,15 @@ public class VectorMedianFilterSharpen extends GenericFilter {
 	
 	// find the color with the smallest summed distance to all others.
 	// brute force and thus slow
-	double aggregateDistance(int[] p, int[][] P) {
-		double d = 0;
-		for (int i = 0; i < P.length; i++) {
-			d = d + vNorm.distance(p, P[i]);
-		}
-		return d;
-	}
+//	private double aggregateDistance(int[] p, int[][] P) {
+//		double d = 0;
+//		for (int i = 0; i < P.length; i++) {
+//			d = d + vNorm.distance(p, P[i]);
+//		}
+//		return d;
+//	}
 	
-	double trimmedAggregateDistance(int[] p, int[][] P, int a) {
+	private double trimmedAggregateDistance(int[] p, int[][] P, int a) {
 		if (a <= 1) {
 			return 0;	// aggregate distance of rank 1 is always zero
 		}
@@ -189,8 +189,8 @@ public class VectorMedianFilterSharpen extends GenericFilter {
 		return d;
 	}
 	
-	final int rgbToInt (int r, int g, int b) {
-		return ((r & 0xFF)<<16) | ((g & 0xFF)<<8) | b & 0xFF;
-	}
+//	private final int rgbToInt (int r, int g, int b) {
+//		return ((r & 0xFF)<<16) | ((g & 0xFF)<<8) | b & 0xFF;
+//	}
 
 }

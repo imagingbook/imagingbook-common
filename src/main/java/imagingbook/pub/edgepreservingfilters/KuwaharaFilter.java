@@ -80,7 +80,7 @@ public class KuwaharaFilter extends GenericFilter {
 	 * This method is used for all scalar-values images.
 	 */
 	@Override
-	public float filterScalar(ScalarAccessor ia, int u, int v) {
+	protected float filterScalar(ScalarAccessor ia, int u, int v) {
 		Smin = Float.MAX_VALUE;
 		evalSubregionGray(ia, u, v);					// a centered subregion (not in original Kuwahara)
 		Smin = Smin - (float)params.tsigma * n;			// tS * n because we use variance scaled by n
@@ -117,7 +117,7 @@ public class KuwaharaFilter extends GenericFilter {
 	final float[] rgb = {0,0,0};
 	
 	@Override
-	public float[] filterVector(ImageAccessor ia, int u, int v) {
+	protected float[] filterVector(ImageAccessor ia, int u, int v) {
 		Smin = Float.MAX_VALUE;
 		evalSubregion(ia, u, v);						// centered subregion - different to original Kuwahara!
 		Smin = Smin - (3 * (float)params.tsigma * n);	// tS * n because we use variance scaled by n

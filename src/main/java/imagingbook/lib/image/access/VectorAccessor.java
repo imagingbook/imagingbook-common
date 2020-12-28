@@ -23,8 +23,9 @@ public abstract class VectorAccessor extends ImageAccessor {
 	}
 	
 	/**
-	 * Real sublasses must know how to create an accessor to
-	 * the image's k-th component.
+	 * To be implemented by all real sublasses of {@link ScalarAccessor}, 
+	 * who know how to create an accessor object to their k-th component.
+	 * See {@link RgbAccessor#makeComponentAccessor(int)} for an example.
 	 * 
 	 * @param k the component index
 	 * @return the image accessor for the specified component
@@ -71,6 +72,9 @@ public abstract class VectorAccessor extends ImageAccessor {
 	
 	@Override
 	public void setDefaultValue(float[] vals) {
+		if (vals.length != depth) {
+			throw new IllegalArgumentException("default values must be of length " + depth);
+		}
 		for (int k = 0; k < depth; k++) {
 			componentAccessors[k].setDefaultValue(vals[k]);
 		}

@@ -70,13 +70,13 @@ public class VectorMedianFilter extends GenericFilter {
 	}
 	
 	@Override
-	public float filterScalar(ScalarAccessor source, int u, int v) {
+	protected float filterScalar(ScalarAccessor source, int u, int v) {
 		throw new UnsupportedOperationException("no filter for gray images");
 	}
 	
 	// vector median filter for RGB color image
 	@Override
-	public float[] filterVector(ImageAccessor ia, int u, int v) {
+	protected float[] filterVector(ImageAccessor ia, int u, int v) {
 		final int[] pCtr = new int[3];		// center pixel
 		final float[] pCtrf = ia.getPix(u, v);
 		copyRgbTo(pCtrf, pCtr);

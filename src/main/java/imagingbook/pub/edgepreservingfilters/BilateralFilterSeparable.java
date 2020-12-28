@@ -10,7 +10,7 @@
 package imagingbook.pub.edgepreservingfilters;
 
 import ij.process.ImageProcessor;
-import imagingbook.lib.image.access.RgbAccessor;
+import imagingbook.lib.image.access.ImageAccessor;
 import imagingbook.lib.image.access.ScalarAccessor;
 
 /**
@@ -58,7 +58,8 @@ public class BilateralFilterSeparable extends BilateralFilter {
 
 	// ------------------------------------------------------
 	
-	public float filterScalar(ScalarAccessor I, int u, int v) {
+	@Override
+	protected float filterScalar(ScalarAccessor I, int u, int v) {
 		float a = I.getVal(u, v);
 		float S = 0;
 		float W = 0;
@@ -85,7 +86,8 @@ public class BilateralFilterSeparable extends BilateralFilter {
  		return S / W;
  	}
 	
-	public float[] filterPixel(RgbAccessor I, int u, int v) {
+	@Override  // TODO: check if special methid is needed at all!
+	protected float[] filterVector(ImageAccessor I, int u, int v) {
 		//final int[] a = new int[3];
 		//final int[] b = new int[3];
 		final float[] S = new float[3]; 	// sum of weighted RGB (initialized to zero)
