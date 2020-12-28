@@ -9,7 +9,7 @@
 package imagingbook.pub.lucaskanade.utils;
 
 import ij.process.ImageProcessor;
-import imagingbook.lib.image.ImageAccessor;
+import imagingbook.lib.image.access.ImageAccessor;
 import imagingbook.pub.geometry.basic.Pnt2d;
 import imagingbook.pub.geometry.basic.Pnt2d.PntInt;
 import imagingbook.pub.geometry.mappings.linear.AffineMapping2D;

@@ -10,7 +10,8 @@
 package imagingbook.pub.edgepreservingfilters;
 
 import imagingbook.lib.filters.GenericFilter;
-import imagingbook.lib.image.ImageAccessor;
+import imagingbook.lib.image.access.ImageAccessor;
+import imagingbook.lib.image.access.ScalarAccessor;
 import imagingbook.lib.math.Arithmetic;
 import imagingbook.lib.math.VectorNorm;
 import imagingbook.lib.math.VectorNorm.NormType;
@@ -80,7 +81,8 @@ public class BilateralFilter extends GenericFilter {
 		Hd = makeDomainKernel2D(params.sigmaD, K);
 	}
 	
-	public float filterPixel(ImageAccessor.Scalar I, int u, int v) {
+	@Override
+	public float filterScalar(ScalarAccessor I, int u, int v) {
 		float S = 0;			// sum of weighted pixel values
 		float W = 0;			// sum of weights
 		
@@ -99,7 +101,8 @@ public class BilateralFilter extends GenericFilter {
 		return S / W;
 	}
 	
-	public float[] filterPixel(ImageAccessor.Rgb I, int u, int v) {
+	@Override
+	public float[] filterVector(ImageAccessor I, int u, int v) {
 		float[] S = new float[3]; 	// sum of weighted RGB values
 		float W = 0;				// sum of weights
 		//int[] a = new int[3];

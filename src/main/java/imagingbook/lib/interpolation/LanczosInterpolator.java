@@ -9,13 +9,13 @@
 
 package imagingbook.lib.interpolation;
 
-import imagingbook.lib.image.ImageAccessor;
+import imagingbook.lib.image.access.ScalarAccessor;
 
 public class LanczosInterpolator extends PixelInterpolator {
 	
 	private final int order;	// order (tap count) of this interpolator
 	
-	public LanczosInterpolator(ImageAccessor.Scalar ia) {
+	public LanczosInterpolator(ScalarAccessor ia) {
 		this(2);
 	}
 	
@@ -25,7 +25,7 @@ public class LanczosInterpolator extends PixelInterpolator {
 	}
 	
 	@Override
-	public float getInterpolatedValue(ImageAccessor.Scalar ia, double x, double y) {
+	public float getInterpolatedValue(ScalarAccessor ia, double x, double y) {
 		final int u0 = (int) Math.floor(x);	//use floor to handle negative coordinates too
 		final int v0 = (int) Math.floor(y);
 		double q = 0;

@@ -8,7 +8,7 @@
  *******************************************************************************/
 
 package imagingbook.lib.interpolation;
-import imagingbook.lib.image.ImageAccessor;
+import imagingbook.lib.image.access.ScalarAccessor;
 
 
 public class NearestNeighborInterpolator extends PixelInterpolator {
@@ -17,7 +17,7 @@ public class NearestNeighborInterpolator extends PixelInterpolator {
 	}
 	
 	@Override
-	public float getInterpolatedValue(ImageAccessor.Scalar ia, double x, double y) {
+	public float getInterpolatedValue(ScalarAccessor ia, double x, double y) {
 		final int u = (int) Math.rint(x);
 		final int v = (int) Math.rint(y);
 		return ia.getVal(u, v);

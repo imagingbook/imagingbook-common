@@ -9,7 +9,7 @@
 
 package imagingbook.lib.interpolation;
 
-import imagingbook.lib.image.ImageAccessor;
+import imagingbook.lib.image.access.ScalarAccessor;
 
 public class BicubicInterpolator extends PixelInterpolator {
 	
@@ -24,7 +24,7 @@ public class BicubicInterpolator extends PixelInterpolator {
 	}
 	
 	@Override
-	public float getInterpolatedValue(ImageAccessor.Scalar ia, double x, double y) {
+	public float getInterpolatedValue(ScalarAccessor ia, double x, double y) {
 		final int u0 = (int) Math.floor(x);
 		final int v0 = (int) Math.floor(y);
 		double q = 0;

@@ -7,7 +7,7 @@
  * Visit http://imagingbook.com for additional details.
  *******************************************************************************/
 
-package imagingbook.lib.image;
+package imagingbook.lib.image.access;
 
 /**
  * Enumeration type representing the available strategies
@@ -16,16 +16,12 @@ package imagingbook.lib.image;
  * @author WB
  */
 public enum OutOfBoundsStrategy {
-	DefaultValue, 
+	/** Insert some predefined default pixel value. */
+	DefaultValue,
+	/** Insert the value of the nearest border pixel. */
 	NearestBorder,
+	/** Replicate the image by mirroring at its borders. */
 	MirrorImage,
+	/** Throws an exception when out-of-boundary coordinates are accessed. */
 	Exception;
-
-//	public static String[] getNames() {
-//		List<String> en = new LinkedList<String>();
-//		for (Enum<?> m : OutOfBoundsStrategy.values()) {
-//			en.add(m.name());
-//		}
-//		return en.toArray(new String[0]);
-//	}
 }

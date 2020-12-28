@@ -1,4 +1,4 @@
-package imagingbook.lib.image;
+package imagingbook.lib.image.access;
 
 import org.junit.Assert;
 import org.junit.Test;

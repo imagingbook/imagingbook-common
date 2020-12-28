@@ -9,7 +9,7 @@
 
 package imagingbook.lib.interpolation;
 
-import imagingbook.lib.image.ImageAccessor;
+import imagingbook.lib.image.access.ScalarAccessor;
 
 
 /**
@@ -20,7 +20,7 @@ import imagingbook.lib.image.ImageAccessor;
  */
 public abstract class PixelInterpolator {
 	
-	public static PixelInterpolator create(ImageAccessor.Scalar ia) {
+	public static PixelInterpolator create(ScalarAccessor ia) {
 		return create(ia.getInterpolationMethod());
 	}
 	
@@ -48,6 +48,6 @@ public abstract class PixelInterpolator {
 	 * @param y Continuous interpolation position (vert.)  
 	 * @return The interpolated pixel value at position (x,y).
 	 */
-	public abstract float getInterpolatedValue(ImageAccessor.Scalar ia, double x, double y);
+	public abstract float getInterpolatedValue(ScalarAccessor ia, double x, double y);
 	
 }

@@ -1,0 +1,223 @@
+/*******************************************************************************
+ * This software is provided as a supplement to the authors' textbooks on digital
+ *  image processing published by Springer-Verlag in various languages and editions.
+ * Permission to use and distribute this software is granted under the BSD 2-Clause 
+ * "Simplified" License (see http://opensource.org/licenses/BSD-2-Clause). 
+ * Copyright (c) 2006-2020 Wilhelm Burger, Mark J. Burge. All rights reserved. 
+ * Visit http://imagingbook.com for additional details.
+ *******************************************************************************/
+
+package imagingbook.lib.image.access;
+
+import ij.process.ColorProcessor;
+import ij.process.ImageProcessor;
+import imagingbook.lib.interpolation.InterpolationMethod;
+
+// TODO: make ImageAccessor vector-valued by default, eliminate VectorAccessor alltogether?
+
+
+/**
+ * This abstract class provides unified image access to all 4 types of images available in ImageJ:
+ * 8-bit, 16-bit, float, and color images.
+ * It is used as a wrapper around an instance of ImageJ's {@link ImageProcessor} type.
+ * <br>
+ * A generic {@link ImageAccessor} is created, e.g., by {@link #create(ImageProcessor)}, which
+ * returns an instance of {@link ByteAccessor}, {@link ShortAccessor}, {@link FloatAccessor} or
+ * {@link RgbAccessor}.
+ * {@link ImageAccessor} itself can access any ImageJ image using 
+ * the methods {@link #getPix(int, int)}, {@link #getPix(double, double)}
+ * for retrieving pixel values and {@link #setPix(int, int, float[])}
+ * to modify pixel values.
+ * All pixel values are of type {@code float[]}, either containing a single element (for
+ * scalar-valued images) or three elements (for color images).
+ * <br>
+ * In addition, the accessors for scalar-valued images ({@link ByteAccessor}, {@link ShortAccessor},
+ * {@link FloatAccessor}) provide the methods
+ * {@link ScalarAccessor#getVal(int, int)}, {@link ScalarAccessor#getVal(double, double)} and 
+ * {@link ScalarAccessor#setVal(int, int, float)}
+ * to read and write scalar-valued pixels passed as single {@code float} values.
+ * <br>
+ * The methods {@link #getPix(double, double)} and {@link ScalarAccessor#getVal(double, double)} perform interpolation at non-integer coordinates
+ * using the specified {@link InterpolationMethod}.
+ * <pre>
+ * 
+ * </pre>
+ * <br>
+ * See {@link imagingbook.lib.filters.GenericFilter} 
+ * and {@code Pixel_Interpolation.Interpolator_Demo} (in {@code imagingbook-plugins-all}) for a concrete usage examples.
+ * 
+ * @author W. Burger
+ * @version 2020/12/27
+ */
+public abstract class ImageAccessor {
+	
+	static final OutOfBoundsStrategy DefaultOutOfBoundsStrategy = OutOfBoundsStrategy.DefaultValue;
+	static final InterpolationMethod DefaultInterpolationMethod = InterpolationMethod.Bilinear;
+	
+	protected final ImageProcessor ip;
+	protected final int width;
+	protected final int height;
+	protected final PixelIndexer indexer;		// implements the specified OutOfBoundsStrategy
+	protected final OutOfBoundsStrategy outOfBoundsStrategy;
+	protected final InterpolationMethod interpolationMethod;
+	
+	/**
+	 * Creates a new {@code ImageAccessor} instance for the given image,
+	 * using the default out-of-bounds strategy and interpolation method.
+	 * The concrete type of the returned instance depends on the specified image
+	 * 
+	 * @param ip the source image
+	 * @return a new {@code ImageAccessor} instance
+	 */
+	public static final ImageAccessor create(ImageProcessor ip) {
+		return create(ip, DefaultOutOfBoundsStrategy, DefaultInterpolationMethod);
+	}
+	
+	/**
+	 * Convenience method.
+	 * Creates a new {@code ImageAccessor} instance for the given image,
+	 * using the specified out-of-bounds strategy and interpolation method.
+	 * The concrete type of the returned instance depends on the specified image
+	 * 
+	 * @param ip the source image
+	 * @param obs the out-of-bounds strategy (use {@code null} for default settings)
+	 * @param ipm the interpolation method (use {@code null} for default settings)
+	 * @return a new {@code ImageAccessor} instance
+	 */
+	public static ImageAccessor create(ImageProcessor ip,  OutOfBoundsStrategy obs, InterpolationMethod ipm) {
+		if (ip instanceof ColorProcessor) {
+			return new RgbAccessor((ColorProcessor)ip, obs, ipm);
+		}
+		else {
+			return ScalarAccessor.create(ip, obs, ipm);
+		}
+	}
+	
+	// constructor (used by all subtypes)
+	protected ImageAccessor(ImageProcessor ip, OutOfBoundsStrategy obs, InterpolationMethod ipm) {
+		this.ip = ip;
+		this.width  = ip.getWidth();
+		this.height = ip.getHeight();
+		this.outOfBoundsStrategy = (obs != null) ? obs : DefaultOutOfBoundsStrategy;
+		this.interpolationMethod = (ipm != null) ? ipm : DefaultInterpolationMethod;
+		this.indexer = PixelIndexer.create(width, height, this.outOfBoundsStrategy);
+	}
+	
+	public int getWidth() {
+		return this.width;
+	}
+	
+	public int getHeight() {
+		return this.height;
+	}
+	
+	/**
+	 * Returns the source {@link ImageProcessor} associated with this
+	 * {@link ImageAccessor}.
+	 * 
+	 * @return the image processor
+	 */
+	public ImageProcessor getProcessor() {
+		return this.ip;
+	}
+	
+	public abstract int getDepth();
+	
+	/**
+	 * Returns the {@link OutOfBoundsStrategy} specified for this
+	 * {@link ImageAccessor}.
+	 * 
+	 * @return the out-of-bounds strategy
+	 */
+	public OutOfBoundsStrategy getOutOfBoundsStrategy() {
+		return outOfBoundsStrategy;
+	}
+
+	/**
+	 * Returns the {@link InterpolationMethod} specified for this
+	 * {@link ImageAccessor}.
+	 * 
+	 * @return the interpolation method
+	 */
+	public InterpolationMethod getInterpolationMethod() {
+		return interpolationMethod;
+	}
+	
+	/**
+	 * Returns pixel value at the specified integer position as a
+	 * {@code float[]} with either 1 element for scalar-valued images
+	 * or 3 elements for RGB images.
+	 * @param u the x-coordinate
+	 * @param v the y-coordinate
+	 * @return the pixel value ({@code float[]})
+	 */
+	public abstract float[] getPix(int u, int v);
+	
+	/**
+	 * Returns pixel value at the specified floating-point position as a
+	 * {@code float[]} with either 1 for scalar-valued images
+	 * and or 3 elements for RGB images.
+	 * Interpolation is used non-integer coordinates.
+	 * 
+	 * @param x the x-coordinate
+	 * @param y the y-coordinate
+	 * @return the interpolated pixel value ({@code float[]})
+	 */
+	public abstract float[] getPix(double x, double y);		// returns interpolated pixel value at real position (x, y)
+	
+	/**
+	 * Sets the pixel value at the specified integer position.
+	 * The new value must be provided as {@code float[]} with 
+	 * 1 element for scalar-valued images or 3 elements for RGB images.
+	 * @param u the x-coordinate
+	 * @param v the y-coordinate
+	 * @param val the new pixel value ({@code float[]})
+	 */
+	public abstract void setPix(int u, int v, float[] val);
+	
+	/**
+	 * Returns the value of the pixel's k-th component at the
+	 * specified position. If the associated image is scalar-valued,
+	 * this is equivalent to component 0.
+	 * See also {@link #getDepth()}.
+	 * 
+	 * @param u the x-coordinate
+	 * @param v the y-coordinate
+	 * @param k the component index
+	 * @return the component value ({@code float})
+	 */
+	public abstract float getVal(int u, int v, int k);
+	
+	
+	/**
+	 * Returns the interpolated value of the pixel's k-th component at the
+	 * specified position. If the associated image is scalar-valued,
+	 * this is equivalent to component 0.
+	 * See also {@link #getDepth()}.
+	 * 
+	 * @param x the x-coordinate
+	 * @param y the y-coordinate
+	 * @param k the component index
+	 * @return the interpolated component value ({@code float[]})
+	 */
+	public abstract float getVal(double x, double y, int k);
+	
+	/**
+	 * Sets the value of the pixel's k-th component at the
+	 * specified position. If the associated image is scalar-valued,
+	 * this is equivalent to component 0.
+	 * See also {@link #getDepth()}.
+	 * 
+	 * @param u the x-coordinate
+	 * @param v the y-coordinate
+	 * @param k the component index
+	 * @param val the new component value
+	 */
+	public abstract void setVal(int u, int v, int k, float val);
+	
+	public abstract ScalarAccessor getComponentAccessor(int k);
+	
+	public abstract void setDefaultValue(float val);
+	public abstract void setDefaultValue(float[] vals);
+	
+}

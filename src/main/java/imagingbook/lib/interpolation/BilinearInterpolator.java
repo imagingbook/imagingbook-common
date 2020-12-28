@@ -8,7 +8,7 @@
  *******************************************************************************/
 
 package imagingbook.lib.interpolation;
-import imagingbook.lib.image.ImageAccessor;
+import imagingbook.lib.image.access.ScalarAccessor;
 
 public class BilinearInterpolator extends PixelInterpolator {
 	
@@ -16,7 +16,7 @@ public class BilinearInterpolator extends PixelInterpolator {
 	}
 
 	@Override
-	public float getInterpolatedValue(ImageAccessor.Scalar ia, double x, double y) {
+	public float getInterpolatedValue(ScalarAccessor ia, double x, double y) {
 		final int u = (int) Math.floor(x);
 		final int v = (int) Math.floor(y);
 		final double a = x - u;

@@ -10,7 +10,8 @@
 package imagingbook.pub.edgepreservingfilters;
 
 import imagingbook.lib.filters.GenericFilter;
-import imagingbook.lib.image.ImageAccessor;
+import imagingbook.lib.image.access.ImageAccessor;
+import imagingbook.lib.image.access.ScalarAccessor;
 
 /**
  * This class implements a 5x5 Nagao-Matsuyama filter, as described in
@@ -95,7 +96,7 @@ public class NagaoMatsuyamaFilter extends GenericFilter {
 	
 	// ------------------------------------------------------
 
-	public float filterPixel(ImageAccessor.Scalar image, int u, int v) {
+	public float filterScalar(ScalarAccessor image, int u, int v) {
 		minVariance = Float.MAX_VALUE;
 		evalSubregion(image, R1, u, v);
 		minVariance = minVariance - (float) params.varThreshold;
@@ -105,7 +106,7 @@ public class NagaoMatsuyamaFilter extends GenericFilter {
  		return minMean;
  	}
 	
-	void evalSubregion(ImageAccessor.Scalar ia, int[][] R, int u, int v) {
+	void evalSubregion(ScalarAccessor ia, int[][] R, int u, int v) {
 		float sum1 = 0; 
 		float sum2 = 0;
 		int n = 0;
@@ -127,7 +128,8 @@ public class NagaoMatsuyamaFilter extends GenericFilter {
 	
 	final float[] rgb = {0,0,0};
 	
-	public float[] filterPixel(ImageAccessor.Rgb ia, int u, int v) {
+	@Override
+	public float[] filterVector(ImageAccessor ia, int u, int v) {
 		minVariance = Float.MAX_VALUE;
 		evalSubregionColor(ia, R1, u, v);
 		minVariance = minVariance - (3 * (float) params.varThreshold);
@@ -140,7 +142,8 @@ public class NagaoMatsuyamaFilter extends GenericFilter {
  		return rgb;
  	}
 	
-	void evalSubregionColor(ImageAccessor.Rgb ia, int[][] R, int u, int v) {
+	
+	void evalSubregionColor(ImageAccessor ia, int[][] R, int u, int v) {
 		//final int[] cpix = {0,0,0};
 		int sum1R = 0; int sum2R = 0;
 		int sum1G = 0; int sum2G = 0;

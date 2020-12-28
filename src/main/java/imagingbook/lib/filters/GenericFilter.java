@@ -12,23 +12,28 @@ package imagingbook.lib.filters;
 import ij.IJ;
 import ij.process.ColorProcessor;
 import ij.process.ImageProcessor;
-import imagingbook.lib.image.ImageAccessor;
-import imagingbook.lib.image.OutOfBoundsStrategy;
+import imagingbook.lib.image.access.ImageAccessor;
+import imagingbook.lib.image.access.OutOfBoundsStrategy;
+import imagingbook.lib.image.access.ScalarAccessor;
+import imagingbook.lib.image.access.VectorAccessor;
 
 /**
  * This abstract class represents a generic filter that, when applied to 
  * an {@code ImageProcessor} object performs all pixel-level
  * iterations automatically.
- * Concrete implementations of this class need to define only two methods:<br>
- * {@code float filterPixel(ImageAccessor.Scalar, int, int)} and<br>
- * {@code float[] filterPixel(ImageAccessor.Rgb, int, int)}.<br>
+ * Concrete sub-classes of this class only need to override a single method:
+ * {@link #filterScalar(ScalarAccessor, int, int)},
+ * which defines how a scalar image component is filtered.
+ * <br>
+ * If the image has multiple components (e.g., an RGB image)
+ * the same scalar filter is applied to all components by default.
+ * To change this behavior, implementing classes should also override
+ * the method {@link #filterVector(ImageAccessor, int, int)}.
+ * <br>
  * See {@link LinearFilter} for a sample implementation.
  * 
- * <br>
- * Note that this is experimental code!
- * 
  * @author wilbur
- * @version 2016/11/01
+ * @version 2020/12/28
  * 
  */
 public abstract class GenericFilter {
@@ -36,80 +41,120 @@ public abstract class GenericFilter {
 	/* TODO: PASS THE IMAGE PROCESSOR of the original image and
 	 * set up width/height, accessors etc., then use apply without processor argument??
 	 * Allow source/target to be of different types?
-	 * Implement using interfaces (for gray/color)?
-	 * 
 	 */
 	
 	private OutOfBoundsStrategy obs = OutOfBoundsStrategy.NearestBorder;
+	private boolean showProgress = false;
+	
+	protected GenericFilter() {
+	}
 	
 	/**
-	 * Set the out-of-bounds strategy of this {@link GenericFilter}. See {@link OutOfBoundsStrategy}.
+	 * Sets the out-of-bounds strategy of this {@link GenericFilter}. 
+	 * See {@link OutOfBoundsStrategy}.
+	 * 
 	 * @param obs the out-of-bounds strategy
 	 */
 	public void setOutOfBoundsStrategy(OutOfBoundsStrategy obs) {
 		this.obs = obs;
 	}
 	
-	protected GenericFilter() {
-	}
+	/**
+	 * Turn on/off if filter progress should be displayed in 
+	 * ImageJ's progress bar. Turned off by default.
+	 * 
+	 * @param showProgress set true to turn on
+	 */
+ 	public void setShowProgress(boolean showProgress) {
+ 		this.showProgress = showProgress;
+ 	}
  	
 	/**
 	 * Calculates and returns the filter result for a single pixel
-	 * at the given position.
+	 * at the given position in a scalar-valued image.
+	 * Concrete filters must implement at least this method.
 	 * 
-	 * @param source the {@link ImageAccessor.Scalar} representing the source (scalar-valued) image
+	 * @param source the {@link ScalarAccessor} representing the source (scalar-valued) image
 	 * @param u the horizontal pixel position
 	 * @param v the vertical pixel position
 	 * @return the resulting (scalar) pixel value for the specified image position
 	 */
- 	public abstract float filterPixel(ImageAccessor.Scalar source, int u, int v);
+ 	public abstract float filterScalar(ScalarAccessor source, int u, int v);
  	
  	/**
 	 * Calculates and returns the filter result for a single pixel
-	 * at the given position.
+	 * at the given position in a vector-valued image. 
+	 * This also works if the image is scalar-valued, i.e., has only a single
+	 * component.
+	 * The method implements the default behavior, where the same filter
+	 * is applied to all component channels.
+	 * Concrete filter classes should override this method if a different
+	 * behavior is required.
 	 * 
-	 * @param source the {@link ImageAccessor.Rgb} representing the source (RGB) image
+	 * @param source the {@link VectorAccessor} representing the source (RGB) image
 	 * @param u the horizontal pixel position
 	 * @param v the vertical pixel position
 	 * @return the resulting (RGB) pixel value for the specified image position
 	 */
- 	public abstract float[] filterPixel(ImageAccessor.Rgb source, int u, int v);
+	public float[] filterVector(ImageAccessor source, int u, int v) {
+		float[] result = new float[source.getDepth()];
+		// DEFAULT: apply the same filter independently to all scalar-valued components:
+		for (int k = 0; k < 3; k++) {
+			result[k] = filterScalar(source.getComponentAccessor(k), u, v);
+		}
+		return result;
+ 	}
  	
  	/**
- 	 * Dispatch work depending on actual (runtime) type of processor.
- 	 * This is ugly but we want to avoid generic types (which would
- 	 * not be of much help in this case anyway).
+ 	 * Applies this filter to the given image, which is modified
+ 	 * by this operation.
  	 * 
  	 * @param ip the image this filter is applied to (destructively)
  	 */
- 	public void applyTo(ImageProcessor ip) {	// TODO: check for target == null?
+	public void applyTo(ImageProcessor ip) {
 		final int w = ip.getWidth();
 		final int h = ip.getHeight();
- 		ImageProcessor ipCopy = ip.duplicate();
+ 		final ImageProcessor ipCopy = ip.duplicate();
  
- 		if (ip instanceof ColorProcessor) {
- 	 		ImageAccessor.Rgb iaOrig = new ImageAccessor.Rgb((ColorProcessor)ip, obs, null);
- 	 		ImageAccessor.Rgb iaCopy = new ImageAccessor.Rgb((ColorProcessor)ipCopy, obs, null);
-			for (int v = 0; v < h; v++) {
-				for (int u = 0; u < w; u++) {
- 	            	//int p = (int) filterPixel(iaCopy, u, v);
- 	            	float[] rgb = filterPixel(iaCopy, u, v);
- 	            	iaOrig.setPix(u, v, rgb);
- 	            }
- 	            IJ.showProgress(v, h);
- 	        }
- 		}
- 		else {
- 			ImageAccessor.Scalar iaOrig = ImageAccessor.Scalar.create(ip, obs, null);
- 	 		ImageAccessor.Scalar iaCopy = ImageAccessor.Scalar.create(ipCopy, obs, null);
-			for (int v = 0; v < h; v++) {
-				for (int u = 0; u < w; u++) {
-					float p = filterPixel(iaCopy, u, v);
-					iaOrig.setVal(u, v, p);
-				}
-				IJ.showProgress(v, h);
+		ImageAccessor iaOrig = ImageAccessor.create(ip, obs, null);
+		ImageAccessor iaCopy = ImageAccessor.create(ipCopy, obs, null);
+		
+		for (int v = 0; v < h; v++) {
+			for (int u = 0; u < w; u++) {
+				float[] p = filterVector(iaCopy, u, v);
+				iaOrig.setPix(u, v, p);
 			}
- 		}
+			if (showProgress) IJ.showProgress(v, h);
+		}
  	}
+
+// 	public void applyTo(ImageProcessor ip) {
+//		final int w = ip.getWidth();
+//		final int h = ip.getHeight();
+// 		final ImageProcessor ipCopy = ip.duplicate();
+// 
+// 		if (ip instanceof ColorProcessor) {
+// 	 		RgbAccessor iaOrig = new RgbAccessor((ColorProcessor)ip, obs, null);
+// 	 		RgbAccessor iaCopy = new RgbAccessor((ColorProcessor)ipCopy, obs, null);
+//			for (int v = 0; v < h; v++) {
+//				for (int u = 0; u < w; u++) {
+// 	            	float[] rgb = filterPixel(iaCopy, u, v);
+// 	            	iaOrig.setPix(u, v, rgb);
+// 	            }
+//				if (showProgress) IJ.showProgress(v, h);
+// 	        }
+// 		}
+// 		else {
+// 			ScalarAccessor iaOrig = ScalarAccessor.create(ip, obs, null);
+// 	 		ScalarAccessor iaCopy = ScalarAccessor.create(ipCopy, obs, null);
+//			for (int v = 0; v < h; v++) {
+//				for (int u = 0; u < w; u++) {
+//					float p = filterPixel(iaCopy, u, v);
+//					iaOrig.setVal(u, v, p);
+//				}
+//				if (showProgress) IJ.showProgress(v, h);
+//			}
+// 		}
+// 	}
 
 }

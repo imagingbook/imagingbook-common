@@ -1,6 +1,7 @@
 package imagingbook.lib.image;
 
 import ij.process.ImageProcessor;
+import imagingbook.lib.image.access.ImageAccessor;
 import imagingbook.lib.interpolation.InterpolationMethod;
 import imagingbook.pub.geometry.basic.Pnt2d;
 import imagingbook.pub.geometry.basic.Pnt2d.PntInt;

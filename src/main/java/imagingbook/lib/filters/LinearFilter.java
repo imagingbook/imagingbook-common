@@ -9,7 +9,8 @@
 
 package imagingbook.lib.filters;
 
-import imagingbook.lib.image.ImageAccessor;
+import imagingbook.lib.image.access.ScalarAccessor;
+import imagingbook.lib.image.access.VectorAccessor;
 
 
 /**
@@ -19,7 +20,7 @@ import imagingbook.lib.image.ImageAccessor;
 public class LinearFilter extends GenericFilter {
 	
 	private final float[][] kernel2d;
-	private final float[] rgb = { 0, 0, 0 };
+	private final float[] rgb = new float[3];
 
 	private final int kernelWidth, kernelHeight;	// width/height of the kernel
 	private final int kernelCtrX, kernelCtrY;	// center coordinates of the kernel
@@ -35,7 +36,7 @@ public class LinearFilter extends GenericFilter {
 	// --------------------------------------------------------------
 	
 	@Override
-	public float filterPixel(ImageAccessor.Scalar ia, int u, int v) {
+	public float filterScalar(ScalarAccessor ia, int u, int v) {
 		float sum = 0;
 		for (int j = 0; j < kernelHeight; j++) {
 			int vj = v + j - kernelCtrY;
@@ -47,27 +48,33 @@ public class LinearFilter extends GenericFilter {
  		return sum;
 	}
 	
-	@Override
-	public float[] filterPixel(ImageAccessor.Rgb ia, int u, int v) {
-		float sumR = 0;	// sum of weighted red
-		float sumG = 0;	// sum of weighted green
-		float sumB = 0;	// sum of weighted blue
-		for (int j = 0; j < kernelHeight; j++) {
-			int vj = v + j - kernelCtrY;
-			for (int i = 0; i < kernelWidth; i++) {
-				int ui = u + i - kernelCtrX;
-				float[] val = ia.getPix(ui, vj);
-				float w = kernel2d[i][j];
-				sumR = sumR + val[0] * w;
-				sumG = sumG + val[1] * w;
-				sumB = sumB + val[2] * w;
-			}
-		}
-		rgb[0] = sumR;
-		rgb[1] = sumG;
-		rgb[2] = sumB;
-		return rgb;
- 	}
+//	@Override
+//	public float[] filterVector(ImageAccessor ia, int u, int v) {
+//		float sumR = 0;	// sum of weighted red
+//		float sumG = 0;	// sum of weighted green
+//		float sumB = 0;	// sum of weighted blue
+//		for (int j = 0; j < kernelHeight; j++) {
+//			int vj = v + j - kernelCtrY;
+//			for (int i = 0; i < kernelWidth; i++) {
+//				int ui = u + i - kernelCtrX;
+//				float[] val = ia.getPix(ui, vj);
+//				float w = kernel2d[i][j];
+//				sumR = sumR + val[0] * w;
+//				sumG = sumG + val[1] * w;
+//				sumB = sumB + val[2] * w;
+//			}
+//		}
+//		rgb[0] = sumR;
+//		rgb[1] = sumG;
+//		rgb[2] = sumB;
+//		return rgb;
+//		
+//		// apply the same filter independently to the 3 scalar-valued components:
+//		for (int k = 0; k < 3; k++) {
+//			rgb[k] = filterPixel(ia.getComponentAccessor(k), u, v);
+//		}
+//		return rgb;
+// 	}
 	
 	// --------------------------------------------------------------
 	
@@ -78,20 +85,4 @@ public class LinearFilter extends GenericFilter {
 	public float[][] getKernel() {
 		return this.kernel2d;
 	}
-
-	// --------------------------------------------------------------
-
-//	@Deprecated	// return a string instead
-//	public void listKernel() {
-//		for (int j = 0; j < kernelHeight; j++) {
-//			StringBuilder sb = new StringBuilder();
-//			Formatter fm = new Formatter(sb, Locale.US);
-//			for (int i = 0; i < kernelWidth; i++) {
-//				fm.format(" %.5f | ", kernel2d[i][j]);
-//			}
-//			fm.format("\n");
-//			IJ.log(fm.toString());
-//			fm.close();
-//		}
-//	}
 }

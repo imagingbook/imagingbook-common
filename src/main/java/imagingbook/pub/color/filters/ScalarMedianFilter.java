@@ -9,10 +9,11 @@
 
 package imagingbook.pub.color.filters;
 
-import imagingbook.lib.filters.GenericFilter;
-import imagingbook.lib.image.ImageAccessor;
-
 import java.util.Arrays;
+
+import imagingbook.lib.filters.GenericFilter;
+import imagingbook.lib.image.access.ImageAccessor;
+import imagingbook.lib.image.access.ScalarAccessor;
 
 /**
  * Ordinary (scalar) median filter for color images implemented
@@ -44,7 +45,8 @@ public class ScalarMedianFilter extends GenericFilter {
 		
 	//-------------------------------------------------------------------------------------
 
-	public float filterPixel(ImageAccessor.Scalar source, int u, int v) {
+	@Override
+	public float filterScalar(ScalarAccessor source, int u, int v) {
 		final int maskCount = mask.getCount();
 		final float[] p = new float[maskCount];
 		final int medianIndex = maskCount/2;
@@ -65,7 +67,8 @@ public class ScalarMedianFilter extends GenericFilter {
 		return p[medianIndex];
 	}
 
-	public float[] filterPixel(ImageAccessor.Rgb source, int u, int v) {
+	@Override
+	public float[] filterVector(ImageAccessor source, int u, int v) {
 		final int maskCount = mask.getCount();
 		final float[] pR = new float[maskCount];
 		final float[] pG = new float[maskCount];

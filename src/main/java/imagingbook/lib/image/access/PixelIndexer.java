@@ -7,8 +7,7 @@
  * Visit http://imagingbook.com for additional details.
  *******************************************************************************/
 
-package imagingbook.lib.image;
-
+package imagingbook.lib.image.access;
 
 /**
  * This class implements different schemes for accessing pixel values from

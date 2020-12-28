@@ -35,11 +35,11 @@ import java.util.stream.Stream;
  * Here is an example how to access the associated resources from some other class:
  * <pre>
  * ResourceLocation rd = new imagingbook.DATA.images.Resources();
- * Path path = rd.getResourcePath("boats.tif");</pre>
+ * Path path = rd.getResourcePath("boats.png");</pre>
  * 
  * Specifically, an image can be opened as follows:
  * <pre>
- * Path path = rd.getResourcePath("boats.tif");
+ * Path path = rd.getResourcePath("boats.png");
  * ImagePlus im = IjUtils.openImage(path);
  * ImageProcessor ip = im.getProcessor();
  * ...</pre>
@@ -48,12 +48,12 @@ import java.util.stream.Stream;
  * locations (package structure) are:
  * <pre>
  * src/main/java/imagingbook/DATA/images/Resources.java (the marker class extending {@link ResourceLocation})
- * src/main/resources/imagingbook/DATA/images/boats.tif ... (the actual resource files)</pre>
+ * src/main/resources/imagingbook/DATA/images/boats.png ... (the actual resource files)</pre>
  * 
  * or (if resources are used for testing only)
  * <pre>
  * src/test/java/imagingbook/DATA/images/Resources.java (the marker class extending {@link ResourceLocation})
- * src/test/resources/imagingbook/DATA/images/boats.tif ... (the actual resource files)</pre>
+ * src/test/resources/imagingbook/DATA/images/boats.png ... (the actual resource files)</pre>
  * 
  * <p>
  * Note: To avoid marker classes showing up in the JavaDoc documentation,

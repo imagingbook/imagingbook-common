@@ -9,13 +9,13 @@
 
 package imagingbook.pub.color.filters;
 
+import java.awt.Color;
+
 import imagingbook.lib.filters.GenericFilter;
-import imagingbook.lib.image.ImageAccessor;
-import imagingbook.lib.image.ImageAccessor.Scalar;
+import imagingbook.lib.image.access.ImageAccessor;
+import imagingbook.lib.image.access.ScalarAccessor;
 import imagingbook.lib.math.VectorNorm;
 import imagingbook.lib.math.VectorNorm.NormType;
-
-import java.awt.Color;
 
 /**
  * Basic vector median filter for color images implemented
@@ -68,12 +68,14 @@ public class VectorMedianFilter extends GenericFilter {
 		if (params.showMask) mask.show("Mask");
 	}
 	
-	public float filterPixel(Scalar source, int u, int v) {
-		throw new IllegalArgumentException("no filter for gray images");
+	@Override
+	public float filterScalar(ScalarAccessor source, int u, int v) {
+		throw new UnsupportedOperationException("no filter for gray images");
 	}
 	
 	// vector median filter for RGB color image
-	public float[] filterPixel(ImageAccessor.Rgb ia, int u, int v) {
+	@Override
+	public float[] filterVector(ImageAccessor ia, int u, int v) {
 		final int[] pCtr = new int[3];		// center pixel
 		final float[] pCtrf = ia.getPix(u, v);
 		copyRgb(pCtrf, pCtr);
@@ -109,7 +111,7 @@ public class VectorMedianFilter extends GenericFilter {
 		return pF;
  	}
 	
-	int[][] getSupportRegion(ImageAccessor.Rgb ia, int u, int v) {
+	int[][] getSupportRegion(ImageAccessor ia, int u, int v) {
 		//final int[] p = new int[3];
 		// fill 'supportRegion' for current mask position
 		int n = 0;

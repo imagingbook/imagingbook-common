@@ -9,14 +9,14 @@
 
 package imagingbook.lib.interpolation;
 
-import imagingbook.lib.image.ImageAccessor;
+import imagingbook.lib.image.access.ScalarAccessor;
 
 public class SplineInterpolator extends PixelInterpolator {
 	private final double a;	
 	private final double b;
 
 	
-	public SplineInterpolator(ImageAccessor.Scalar ia) {
+	public SplineInterpolator(ScalarAccessor ia) {
 		this(0.5, 0.0); // default is a Catmull-Rom spline
 	}
 	
@@ -28,7 +28,7 @@ public class SplineInterpolator extends PixelInterpolator {
 	
 	
 	@Override
-	public float getInterpolatedValue(ImageAccessor.Scalar ia, double x0, double y0) {
+	public float getInterpolatedValue(ScalarAccessor ia, double x0, double y0) {
 		final int u0 = (int) Math.floor(x0);	//use floor to handle negative coordinates too
 		final int v0 = (int) Math.floor(y0);
 		double q = 0;

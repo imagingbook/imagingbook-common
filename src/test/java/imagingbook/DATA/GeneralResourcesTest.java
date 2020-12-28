@@ -20,7 +20,7 @@ public class GeneralResourcesTest {
 	
 	@Test
 	public void testResourcesBasic() {
-		String name = "boats.tif";
+		String name = "boats.png";
 		Path path = null;
 		
 		ResourceLocation loc = new imagingbook.DATA.images.Resources();
@@ -40,7 +40,7 @@ public class GeneralResourcesTest {
 	
 	@Test
 	public void openBoatsImage() {
-		String name = "boats.tif";
+		String name = "boats.png";
 		
 		ResourceLocation loc = new imagingbook.DATA.images.Resources();
 		Path path = loc.getResourcePath(name);

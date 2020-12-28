@@ -10,7 +10,8 @@
 package imagingbook.pub.edgepreservingfilters;
 
 import ij.process.ImageProcessor;
-import imagingbook.lib.image.ImageAccessor;
+import imagingbook.lib.image.access.RgbAccessor;
+import imagingbook.lib.image.access.ScalarAccessor;
 
 /**
  * XY-Separated version of bilateral filter using Gaussian domain and 
@@ -57,7 +58,7 @@ public class BilateralFilterSeparable extends BilateralFilter {
 
 	// ------------------------------------------------------
 	
-	public float filterPixel(ImageAccessor.Scalar I, int u, int v) {
+	public float filterScalar(ScalarAccessor I, int u, int v) {
 		float a = I.getVal(u, v);
 		float S = 0;
 		float W = 0;
@@ -84,7 +85,7 @@ public class BilateralFilterSeparable extends BilateralFilter {
  		return S / W;
  	}
 	
-	public float[] filterPixel(ImageAccessor.Rgb I, int u, int v) {
+	public float[] filterPixel(RgbAccessor I, int u, int v) {
 		//final int[] a = new int[3];
 		//final int[] b = new int[3];
 		final float[] S = new float[3]; 	// sum of weighted RGB (initialized to zero)
