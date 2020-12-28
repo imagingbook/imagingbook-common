@@ -88,7 +88,7 @@
 <span class="sourceLineNo">078</span><a id="line.78">         * @param v the vertical pixel position</a>
 <span class="sourceLineNo">079</span><a id="line.79">         * @return the resulting (scalar) pixel value for the specified image position</a>
 <span class="sourceLineNo">080</span><a id="line.80">         */</a>
-<span class="sourceLineNo">081</span><a id="line.81">        public abstract float filterScalar(ScalarAccessor source, int u, int v);</a>
+<span class="sourceLineNo">081</span><a id="line.81">        protected abstract float filterScalar(ScalarAccessor source, int u, int v);</a>
 <span class="sourceLineNo">082</span><a id="line.82">        </a>
 <span class="sourceLineNo">083</span><a id="line.83">        /**</a>
 <span class="sourceLineNo">084</span><a id="line.84">         * Calculates and returns the filter result for a single pixel</a>
@@ -105,7 +105,7 @@
 <span class="sourceLineNo">095</span><a id="line.95">         * @param v the vertical pixel position</a>
 <span class="sourceLineNo">096</span><a id="line.96">         * @return the resulting (RGB) pixel value for the specified image position</a>
 <span class="sourceLineNo">097</span><a id="line.97">         */</a>
-<span class="sourceLineNo">098</span><a id="line.98">        public float[] filterVector(ImageAccessor source, int u, int v) {</a>
+<span class="sourceLineNo">098</span><a id="line.98">        protected float[] filterVector(ImageAccessor source, int u, int v) {</a>
 <span class="sourceLineNo">099</span><a id="line.99">                float[] result = new float[source.getDepth()];</a>
 <span class="sourceLineNo">100</span><a id="line.100">                // DEFAULT: apply the same filter independently to all scalar-valued components:</a>
 <span class="sourceLineNo">101</span><a id="line.101">                for (int k = 0; k &lt; 3; k++) {</a>
@@ -137,36 +137,37 @@
 <span class="sourceLineNo">127</span><a id="line.127">                }</a>
 <span class="sourceLineNo">128</span><a id="line.128">        }</a>
 <span class="sourceLineNo">129</span><a id="line.129"></a>
-<span class="sourceLineNo">130</span><a id="line.130">//      public void applyTo(ImageProcessor ip) {</a>
-<span class="sourceLineNo">131</span><a id="line.131">//              final int w = ip.getWidth();</a>
-<span class="sourceLineNo">132</span><a id="line.132">//              final int h = ip.getHeight();</a>
-<span class="sourceLineNo">133</span><a id="line.133">//              final ImageProcessor ipCopy = ip.duplicate();</a>
-<span class="sourceLineNo">134</span><a id="line.134">// </a>
-<span class="sourceLineNo">135</span><a id="line.135">//              if (ip instanceof ColorProcessor) {</a>
-<span class="sourceLineNo">136</span><a id="line.136">//                      RgbAccessor iaOrig = new RgbAccessor((ColorProcessor)ip, obs, null);</a>
-<span class="sourceLineNo">137</span><a id="line.137">//                      RgbAccessor iaCopy = new RgbAccessor((ColorProcessor)ipCopy, obs, null);</a>
-<span class="sourceLineNo">138</span><a id="line.138">//                      for (int v = 0; v &lt; h; v++) {</a>
-<span class="sourceLineNo">139</span><a id="line.139">//                              for (int u = 0; u &lt; w; u++) {</a>
-<span class="sourceLineNo">140</span><a id="line.140">//                      float[] rgb = filterPixel(iaCopy, u, v);</a>
-<span class="sourceLineNo">141</span><a id="line.141">//                      iaOrig.setPix(u, v, rgb);</a>
-<span class="sourceLineNo">142</span><a id="line.142">//                  }</a>
-<span class="sourceLineNo">143</span><a id="line.143">//                              if (showProgress) IJ.showProgress(v, h);</a>
-<span class="sourceLineNo">144</span><a id="line.144">//              }</a>
+<span class="sourceLineNo">130</span><a id="line.130"></a>
+<span class="sourceLineNo">131</span><a id="line.131">//      public void applyTo(ImageProcessor ip) {</a>
+<span class="sourceLineNo">132</span><a id="line.132">//              final int w = ip.getWidth();</a>
+<span class="sourceLineNo">133</span><a id="line.133">//              final int h = ip.getHeight();</a>
+<span class="sourceLineNo">134</span><a id="line.134">//              final ImageProcessor ipCopy = ip.duplicate();</a>
+<span class="sourceLineNo">135</span><a id="line.135">// </a>
+<span class="sourceLineNo">136</span><a id="line.136">//              if (ip instanceof ColorProcessor) {</a>
+<span class="sourceLineNo">137</span><a id="line.137">//                      RgbAccessor iaOrig = new RgbAccessor((ColorProcessor)ip, obs, null);</a>
+<span class="sourceLineNo">138</span><a id="line.138">//                      RgbAccessor iaCopy = new RgbAccessor((ColorProcessor)ipCopy, obs, null);</a>
+<span class="sourceLineNo">139</span><a id="line.139">//                      for (int v = 0; v &lt; h; v++) {</a>
+<span class="sourceLineNo">140</span><a id="line.140">//                              for (int u = 0; u &lt; w; u++) {</a>
+<span class="sourceLineNo">141</span><a id="line.141">//                      float[] rgb = filterPixel(iaCopy, u, v);</a>
+<span class="sourceLineNo">142</span><a id="line.142">//                      iaOrig.setPix(u, v, rgb);</a>
+<span class="sourceLineNo">143</span><a id="line.143">//                  }</a>
+<span class="sourceLineNo">144</span><a id="line.144">//                              if (showProgress) IJ.showProgress(v, h);</a>
 <span class="sourceLineNo">145</span><a id="line.145">//              }</a>
-<span class="sourceLineNo">146</span><a id="line.146">//              else {</a>
-<span class="sourceLineNo">147</span><a id="line.147">//                      ScalarAccessor iaOrig = ScalarAccessor.create(ip, obs, null);</a>
-<span class="sourceLineNo">148</span><a id="line.148">//                      ScalarAccessor iaCopy = ScalarAccessor.create(ipCopy, obs, null);</a>
-<span class="sourceLineNo">149</span><a id="line.149">//                      for (int v = 0; v &lt; h; v++) {</a>
-<span class="sourceLineNo">150</span><a id="line.150">//                              for (int u = 0; u &lt; w; u++) {</a>
-<span class="sourceLineNo">151</span><a id="line.151">//                                      float p = filterPixel(iaCopy, u, v);</a>
-<span class="sourceLineNo">152</span><a id="line.152">//                                      iaOrig.setVal(u, v, p);</a>
-<span class="sourceLineNo">153</span><a id="line.153">//                              }</a>
-<span class="sourceLineNo">154</span><a id="line.154">//                              if (showProgress) IJ.showProgress(v, h);</a>
-<span class="sourceLineNo">155</span><a id="line.155">//                      }</a>
-<span class="sourceLineNo">156</span><a id="line.156">//              }</a>
-<span class="sourceLineNo">157</span><a id="line.157">//      }</a>
-<span class="sourceLineNo">158</span><a id="line.158"></a>
-<span class="sourceLineNo">159</span><a id="line.159">}</a>
+<span class="sourceLineNo">146</span><a id="line.146">//              }</a>
+<span class="sourceLineNo">147</span><a id="line.147">//              else {</a>
+<span class="sourceLineNo">148</span><a id="line.148">//                      ScalarAccessor iaOrig = ScalarAccessor.create(ip, obs, null);</a>
+<span class="sourceLineNo">149</span><a id="line.149">//                      ScalarAccessor iaCopy = ScalarAccessor.create(ipCopy, obs, null);</a>
+<span class="sourceLineNo">150</span><a id="line.150">//                      for (int v = 0; v &lt; h; v++) {</a>
+<span class="sourceLineNo">151</span><a id="line.151">//                              for (int u = 0; u &lt; w; u++) {</a>
+<span class="sourceLineNo">152</span><a id="line.152">//                                      float p = filterPixel(iaCopy, u, v);</a>
+<span class="sourceLineNo">153</span><a id="line.153">//                                      iaOrig.setVal(u, v, p);</a>
+<span class="sourceLineNo">154</span><a id="line.154">//                              }</a>
+<span class="sourceLineNo">155</span><a id="line.155">//                              if (showProgress) IJ.showProgress(v, h);</a>
+<span class="sourceLineNo">156</span><a id="line.156">//                      }</a>
+<span class="sourceLineNo">157</span><a id="line.157">//              }</a>
+<span class="sourceLineNo">158</span><a id="line.158">//      }</a>
+<span class="sourceLineNo">159</span><a id="line.159"></a>
+<span class="sourceLineNo">160</span><a id="line.160">}</a>
 
 
 

@@ -80,13 +80,13 @@
 <span class="sourceLineNo">070</span><a id="line.70">        }</a>
 <span class="sourceLineNo">071</span><a id="line.71">        </a>
 <span class="sourceLineNo">072</span><a id="line.72">        @Override</a>
-<span class="sourceLineNo">073</span><a id="line.73">        public float filterScalar(ScalarAccessor source, int u, int v) {</a>
+<span class="sourceLineNo">073</span><a id="line.73">        protected float filterScalar(ScalarAccessor source, int u, int v) {</a>
 <span class="sourceLineNo">074</span><a id="line.74">                throw new UnsupportedOperationException("no filter for gray images");</a>
 <span class="sourceLineNo">075</span><a id="line.75">        }</a>
 <span class="sourceLineNo">076</span><a id="line.76">        </a>
 <span class="sourceLineNo">077</span><a id="line.77">        // vector median filter for RGB color image</a>
 <span class="sourceLineNo">078</span><a id="line.78">        @Override</a>
-<span class="sourceLineNo">079</span><a id="line.79">        public float[] filterVector(ImageAccessor ia, int u, int v) {</a>
+<span class="sourceLineNo">079</span><a id="line.79">        protected float[] filterVector(ImageAccessor ia, int u, int v) {</a>
 <span class="sourceLineNo">080</span><a id="line.80">                final int[] pCtr = new int[3];          // center pixel</a>
 <span class="sourceLineNo">081</span><a id="line.81">                final float[] pCtrf = ia.getPix(u, v);</a>
 <span class="sourceLineNo">082</span><a id="line.82">                copyRgbTo(pCtrf, pCtr);</a>

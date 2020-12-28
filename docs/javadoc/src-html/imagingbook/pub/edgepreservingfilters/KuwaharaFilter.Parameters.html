@@ -90,7 +90,7 @@
 <span class="sourceLineNo">080</span><a id="line.80">         * This method is used for all scalar-values images.</a>
 <span class="sourceLineNo">081</span><a id="line.81">         */</a>
 <span class="sourceLineNo">082</span><a id="line.82">        @Override</a>
-<span class="sourceLineNo">083</span><a id="line.83">        public float filterScalar(ScalarAccessor ia, int u, int v) {</a>
+<span class="sourceLineNo">083</span><a id="line.83">        protected float filterScalar(ScalarAccessor ia, int u, int v) {</a>
 <span class="sourceLineNo">084</span><a id="line.84">                Smin = Float.MAX_VALUE;</a>
 <span class="sourceLineNo">085</span><a id="line.85">                evalSubregionGray(ia, u, v);                                    // a centered subregion (not in original Kuwahara)</a>
 <span class="sourceLineNo">086</span><a id="line.86">                Smin = Smin - (float)params.tsigma * n;                 // tS * n because we use variance scaled by n</a>
@@ -127,7 +127,7 @@
 <span class="sourceLineNo">117</span><a id="line.117">        final float[] rgb = {0,0,0};</a>
 <span class="sourceLineNo">118</span><a id="line.118">        </a>
 <span class="sourceLineNo">119</span><a id="line.119">        @Override</a>
-<span class="sourceLineNo">120</span><a id="line.120">        public float[] filterVector(ImageAccessor ia, int u, int v) {</a>
+<span class="sourceLineNo">120</span><a id="line.120">        protected float[] filterVector(ImageAccessor ia, int u, int v) {</a>
 <span class="sourceLineNo">121</span><a id="line.121">                Smin = Float.MAX_VALUE;</a>
 <span class="sourceLineNo">122</span><a id="line.122">                evalSubregion(ia, u, v);                                                // centered subregion - different to original Kuwahara!</a>
 <span class="sourceLineNo">123</span><a id="line.123">                Smin = Smin - (3 * (float)params.tsigma * n);   // tS * n because we use variance scaled by n</a>

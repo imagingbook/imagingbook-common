@@ -92,7 +92,7 @@
 <span class="sourceLineNo">082</span><a id="line.82">        }</a>
 <span class="sourceLineNo">083</span><a id="line.83">        </a>
 <span class="sourceLineNo">084</span><a id="line.84">        @Override</a>
-<span class="sourceLineNo">085</span><a id="line.85">        public float filterScalar(ScalarAccessor I, int u, int v) {</a>
+<span class="sourceLineNo">085</span><a id="line.85">        protected float filterScalar(ScalarAccessor I, int u, int v) {</a>
 <span class="sourceLineNo">086</span><a id="line.86">                float S = 0;                    // sum of weighted pixel values</a>
 <span class="sourceLineNo">087</span><a id="line.87">                float W = 0;                    // sum of weights</a>
 <span class="sourceLineNo">088</span><a id="line.88">                </a>
@@ -112,7 +112,7 @@
 <span class="sourceLineNo">102</span><a id="line.102">        }</a>
 <span class="sourceLineNo">103</span><a id="line.103">        </a>
 <span class="sourceLineNo">104</span><a id="line.104">        @Override</a>
-<span class="sourceLineNo">105</span><a id="line.105">        public float[] filterVector(ImageAccessor I, int u, int v) {</a>
+<span class="sourceLineNo">105</span><a id="line.105">        protected float[] filterVector(ImageAccessor I, int u, int v) {</a>
 <span class="sourceLineNo">106</span><a id="line.106">                float[] S = new float[3];       // sum of weighted RGB values</a>
 <span class="sourceLineNo">107</span><a id="line.107">                float W = 0;                            // sum of weights</a>
 <span class="sourceLineNo">108</span><a id="line.108">                //int[] a = new int[3];</a>

@@ -106,88 +106,89 @@
 <span class="sourceLineNo">096</span><a id="line.96">        </a>
 <span class="sourceLineNo">097</span><a id="line.97">        // ------------------------------------------------------</a>
 <span class="sourceLineNo">098</span><a id="line.98"></a>
-<span class="sourceLineNo">099</span><a id="line.99">        public float filterScalar(ScalarAccessor image, int u, int v) {</a>
-<span class="sourceLineNo">100</span><a id="line.100">                minVariance = Float.MAX_VALUE;</a>
-<span class="sourceLineNo">101</span><a id="line.101">                evalSubregion(image, R1, u, v);</a>
-<span class="sourceLineNo">102</span><a id="line.102">                minVariance = minVariance - (float) params.varThreshold;</a>
-<span class="sourceLineNo">103</span><a id="line.103">                for (int[][] Rk : subRegions) {</a>
-<span class="sourceLineNo">104</span><a id="line.104">                        evalSubregion(image, Rk, u, v);</a>
-<span class="sourceLineNo">105</span><a id="line.105">                }</a>
-<span class="sourceLineNo">106</span><a id="line.106">                return minMean;</a>
-<span class="sourceLineNo">107</span><a id="line.107">        }</a>
-<span class="sourceLineNo">108</span><a id="line.108">        </a>
-<span class="sourceLineNo">109</span><a id="line.109">        void evalSubregion(ScalarAccessor ia, int[][] R, int u, int v) {</a>
-<span class="sourceLineNo">110</span><a id="line.110">                float sum1 = 0; </a>
-<span class="sourceLineNo">111</span><a id="line.111">                float sum2 = 0;</a>
-<span class="sourceLineNo">112</span><a id="line.112">                int n = 0;</a>
-<span class="sourceLineNo">113</span><a id="line.113">                for (int[] p : R) {</a>
-<span class="sourceLineNo">114</span><a id="line.114">                        float a = ia.getVal(u+p[0], v+p[1]);</a>
-<span class="sourceLineNo">115</span><a id="line.115">                        sum1 = sum1 + a;</a>
-<span class="sourceLineNo">116</span><a id="line.116">                        sum2 = sum2 + a * a;</a>
-<span class="sourceLineNo">117</span><a id="line.117">                        n = n + 1;</a>
-<span class="sourceLineNo">118</span><a id="line.118">                }</a>
-<span class="sourceLineNo">119</span><a id="line.119">                float nr = n;</a>
-<span class="sourceLineNo">120</span><a id="line.120">                float var = (sum2 - sum1 * sum1 / nr) / nr;     // = sigma^2</a>
-<span class="sourceLineNo">121</span><a id="line.121">                if (var &lt; minVariance) {</a>
-<span class="sourceLineNo">122</span><a id="line.122">                        minVariance = var;</a>
-<span class="sourceLineNo">123</span><a id="line.123">                        minMean = sum1 / nr; // mean</a>
-<span class="sourceLineNo">124</span><a id="line.124">                }</a>
-<span class="sourceLineNo">125</span><a id="line.125">        }</a>
-<span class="sourceLineNo">126</span><a id="line.126">        </a>
-<span class="sourceLineNo">127</span><a id="line.127">        // ------------------------------------------------------</a>
-<span class="sourceLineNo">128</span><a id="line.128">        </a>
-<span class="sourceLineNo">129</span><a id="line.129">        final float[] rgb = {0,0,0};</a>
-<span class="sourceLineNo">130</span><a id="line.130">        </a>
-<span class="sourceLineNo">131</span><a id="line.131">        @Override</a>
-<span class="sourceLineNo">132</span><a id="line.132">        public float[] filterVector(ImageAccessor ia, int u, int v) {</a>
-<span class="sourceLineNo">133</span><a id="line.133">                minVariance = Float.MAX_VALUE;</a>
-<span class="sourceLineNo">134</span><a id="line.134">                evalSubregionColor(ia, R1, u, v);</a>
-<span class="sourceLineNo">135</span><a id="line.135">                minVariance = minVariance - (3 * (float) params.varThreshold);</a>
-<span class="sourceLineNo">136</span><a id="line.136">                for (int[][] Rk : subRegions) {</a>
-<span class="sourceLineNo">137</span><a id="line.137">                        evalSubregionColor(ia, Rk, u, v);</a>
-<span class="sourceLineNo">138</span><a id="line.138">                }</a>
-<span class="sourceLineNo">139</span><a id="line.139">                rgb[0] = (int) Math.rint(minMeanR);</a>
-<span class="sourceLineNo">140</span><a id="line.140">                rgb[1] = (int) Math.rint(minMeanG);</a>
-<span class="sourceLineNo">141</span><a id="line.141">                rgb[2] = (int) Math.rint(minMeanB);</a>
-<span class="sourceLineNo">142</span><a id="line.142">                return rgb;</a>
-<span class="sourceLineNo">143</span><a id="line.143">        }</a>
-<span class="sourceLineNo">144</span><a id="line.144">        </a>
+<span class="sourceLineNo">099</span><a id="line.99">        @Override</a>
+<span class="sourceLineNo">100</span><a id="line.100">        protected float filterScalar(ScalarAccessor image, int u, int v) {</a>
+<span class="sourceLineNo">101</span><a id="line.101">                minVariance = Float.MAX_VALUE;</a>
+<span class="sourceLineNo">102</span><a id="line.102">                evalSubregion(image, R1, u, v);</a>
+<span class="sourceLineNo">103</span><a id="line.103">                minVariance = minVariance - (float) params.varThreshold;</a>
+<span class="sourceLineNo">104</span><a id="line.104">                for (int[][] Rk : subRegions) {</a>
+<span class="sourceLineNo">105</span><a id="line.105">                        evalSubregion(image, Rk, u, v);</a>
+<span class="sourceLineNo">106</span><a id="line.106">                }</a>
+<span class="sourceLineNo">107</span><a id="line.107">                return minMean;</a>
+<span class="sourceLineNo">108</span><a id="line.108">        }</a>
+<span class="sourceLineNo">109</span><a id="line.109">        </a>
+<span class="sourceLineNo">110</span><a id="line.110">        void evalSubregion(ScalarAccessor ia, int[][] R, int u, int v) {</a>
+<span class="sourceLineNo">111</span><a id="line.111">                float sum1 = 0; </a>
+<span class="sourceLineNo">112</span><a id="line.112">                float sum2 = 0;</a>
+<span class="sourceLineNo">113</span><a id="line.113">                int n = 0;</a>
+<span class="sourceLineNo">114</span><a id="line.114">                for (int[] p : R) {</a>
+<span class="sourceLineNo">115</span><a id="line.115">                        float a = ia.getVal(u+p[0], v+p[1]);</a>
+<span class="sourceLineNo">116</span><a id="line.116">                        sum1 = sum1 + a;</a>
+<span class="sourceLineNo">117</span><a id="line.117">                        sum2 = sum2 + a * a;</a>
+<span class="sourceLineNo">118</span><a id="line.118">                        n = n + 1;</a>
+<span class="sourceLineNo">119</span><a id="line.119">                }</a>
+<span class="sourceLineNo">120</span><a id="line.120">                float nr = n;</a>
+<span class="sourceLineNo">121</span><a id="line.121">                float var = (sum2 - sum1 * sum1 / nr) / nr;     // = sigma^2</a>
+<span class="sourceLineNo">122</span><a id="line.122">                if (var &lt; minVariance) {</a>
+<span class="sourceLineNo">123</span><a id="line.123">                        minVariance = var;</a>
+<span class="sourceLineNo">124</span><a id="line.124">                        minMean = sum1 / nr; // mean</a>
+<span class="sourceLineNo">125</span><a id="line.125">                }</a>
+<span class="sourceLineNo">126</span><a id="line.126">        }</a>
+<span class="sourceLineNo">127</span><a id="line.127">        </a>
+<span class="sourceLineNo">128</span><a id="line.128">        // ------------------------------------------------------</a>
+<span class="sourceLineNo">129</span><a id="line.129">        </a>
+<span class="sourceLineNo">130</span><a id="line.130">        final float[] rgb = {0,0,0};</a>
+<span class="sourceLineNo">131</span><a id="line.131">        </a>
+<span class="sourceLineNo">132</span><a id="line.132">        @Override</a>
+<span class="sourceLineNo">133</span><a id="line.133">        protected float[] filterVector(ImageAccessor ia, int u, int v) {</a>
+<span class="sourceLineNo">134</span><a id="line.134">                minVariance = Float.MAX_VALUE;</a>
+<span class="sourceLineNo">135</span><a id="line.135">                evalSubregionColor(ia, R1, u, v);</a>
+<span class="sourceLineNo">136</span><a id="line.136">                minVariance = minVariance - (3 * (float) params.varThreshold);</a>
+<span class="sourceLineNo">137</span><a id="line.137">                for (int[][] Rk : subRegions) {</a>
+<span class="sourceLineNo">138</span><a id="line.138">                        evalSubregionColor(ia, Rk, u, v);</a>
+<span class="sourceLineNo">139</span><a id="line.139">                }</a>
+<span class="sourceLineNo">140</span><a id="line.140">                rgb[0] = (int) Math.rint(minMeanR);</a>
+<span class="sourceLineNo">141</span><a id="line.141">                rgb[1] = (int) Math.rint(minMeanG);</a>
+<span class="sourceLineNo">142</span><a id="line.142">                rgb[2] = (int) Math.rint(minMeanB);</a>
+<span class="sourceLineNo">143</span><a id="line.143">                return rgb;</a>
+<span class="sourceLineNo">144</span><a id="line.144">        }</a>
 <span class="sourceLineNo">145</span><a id="line.145">        </a>
-<span class="sourceLineNo">146</span><a id="line.146">        void evalSubregionColor(ImageAccessor ia, int[][] R, int u, int v) {</a>
-<span class="sourceLineNo">147</span><a id="line.147">                //final int[] cpix = {0,0,0};</a>
-<span class="sourceLineNo">148</span><a id="line.148">                int sum1R = 0; int sum2R = 0;</a>
-<span class="sourceLineNo">149</span><a id="line.149">                int sum1G = 0; int sum2G = 0;</a>
-<span class="sourceLineNo">150</span><a id="line.150">                int sum1B = 0; int sum2B = 0;</a>
-<span class="sourceLineNo">151</span><a id="line.151">                int n = 0;</a>
-<span class="sourceLineNo">152</span><a id="line.152">                for (int[] p : R) {</a>
-<span class="sourceLineNo">153</span><a id="line.153">                        final float[] cpix = ia.getPix(u + p[0], v + p[1]);</a>
-<span class="sourceLineNo">154</span><a id="line.154">                        int red = (int) cpix[0];</a>
-<span class="sourceLineNo">155</span><a id="line.155">                        int grn = (int) cpix[1];</a>
-<span class="sourceLineNo">156</span><a id="line.156">                        int blu = (int) cpix[2];</a>
-<span class="sourceLineNo">157</span><a id="line.157">                        sum1R = sum1R + red;</a>
-<span class="sourceLineNo">158</span><a id="line.158">                        sum1G = sum1G + grn;</a>
-<span class="sourceLineNo">159</span><a id="line.159">                        sum1B = sum1B + blu;</a>
-<span class="sourceLineNo">160</span><a id="line.160">                        sum2R = sum2R + red * red;</a>
-<span class="sourceLineNo">161</span><a id="line.161">                        sum2G = sum2G + grn * grn;</a>
-<span class="sourceLineNo">162</span><a id="line.162">                        sum2B = sum2B + blu * blu;</a>
-<span class="sourceLineNo">163</span><a id="line.163">                        n = n + 1;</a>
-<span class="sourceLineNo">164</span><a id="line.164">                }</a>
-<span class="sourceLineNo">165</span><a id="line.165">                float nr = n;</a>
-<span class="sourceLineNo">166</span><a id="line.166">                // calculate variance for this subregion:</a>
-<span class="sourceLineNo">167</span><a id="line.167">                float varR = (sum2R - sum1R * sum1R / nr) / nr;</a>
-<span class="sourceLineNo">168</span><a id="line.168">                float varG = (sum2G - sum1G * sum1G / nr) / nr;</a>
-<span class="sourceLineNo">169</span><a id="line.169">                float varB = (sum2B - sum1B * sum1B / nr) / nr;</a>
-<span class="sourceLineNo">170</span><a id="line.170">                // total variance:</a>
-<span class="sourceLineNo">171</span><a id="line.171">                float totalVar = varR + varG + varB;    </a>
-<span class="sourceLineNo">172</span><a id="line.172">                if (totalVar &lt; minVariance) {</a>
-<span class="sourceLineNo">173</span><a id="line.173">                        minVariance = totalVar;</a>
-<span class="sourceLineNo">174</span><a id="line.174">                        minMeanR = sum1R / nr;</a>
-<span class="sourceLineNo">175</span><a id="line.175">                        minMeanG = sum1G / nr;</a>
-<span class="sourceLineNo">176</span><a id="line.176">                        minMeanB = sum1B / nr;</a>
-<span class="sourceLineNo">177</span><a id="line.177">                }</a>
-<span class="sourceLineNo">178</span><a id="line.178">        }</a>
-<span class="sourceLineNo">179</span><a id="line.179"></a>
-<span class="sourceLineNo">180</span><a id="line.180">}</a>
+<span class="sourceLineNo">146</span><a id="line.146">        </a>
+<span class="sourceLineNo">147</span><a id="line.147">        void evalSubregionColor(ImageAccessor ia, int[][] R, int u, int v) {</a>
+<span class="sourceLineNo">148</span><a id="line.148">                //final int[] cpix = {0,0,0};</a>
+<span class="sourceLineNo">149</span><a id="line.149">                int sum1R = 0; int sum2R = 0;</a>
+<span class="sourceLineNo">150</span><a id="line.150">                int sum1G = 0; int sum2G = 0;</a>
+<span class="sourceLineNo">151</span><a id="line.151">                int sum1B = 0; int sum2B = 0;</a>
+<span class="sourceLineNo">152</span><a id="line.152">                int n = 0;</a>
+<span class="sourceLineNo">153</span><a id="line.153">                for (int[] p : R) {</a>
+<span class="sourceLineNo">154</span><a id="line.154">                        final float[] cpix = ia.getPix(u + p[0], v + p[1]);</a>
+<span class="sourceLineNo">155</span><a id="line.155">                        int red = (int) cpix[0];</a>
+<span class="sourceLineNo">156</span><a id="line.156">                        int grn = (int) cpix[1];</a>
+<span class="sourceLineNo">157</span><a id="line.157">                        int blu = (int) cpix[2];</a>
+<span class="sourceLineNo">158</span><a id="line.158">                        sum1R = sum1R + red;</a>
+<span class="sourceLineNo">159</span><a id="line.159">                        sum1G = sum1G + grn;</a>
+<span class="sourceLineNo">160</span><a id="line.160">                        sum1B = sum1B + blu;</a>
+<span class="sourceLineNo">161</span><a id="line.161">                        sum2R = sum2R + red * red;</a>
+<span class="sourceLineNo">162</span><a id="line.162">                        sum2G = sum2G + grn * grn;</a>
+<span class="sourceLineNo">163</span><a id="line.163">                        sum2B = sum2B + blu * blu;</a>
+<span class="sourceLineNo">164</span><a id="line.164">                        n = n + 1;</a>
+<span class="sourceLineNo">165</span><a id="line.165">                }</a>
+<span class="sourceLineNo">166</span><a id="line.166">                float nr = n;</a>
+<span class="sourceLineNo">167</span><a id="line.167">                // calculate variance for this subregion:</a>
+<span class="sourceLineNo">168</span><a id="line.168">                float varR = (sum2R - sum1R * sum1R / nr) / nr;</a>
+<span class="sourceLineNo">169</span><a id="line.169">                float varG = (sum2G - sum1G * sum1G / nr) / nr;</a>
+<span class="sourceLineNo">170</span><a id="line.170">                float varB = (sum2B - sum1B * sum1B / nr) / nr;</a>
+<span class="sourceLineNo">171</span><a id="line.171">                // total variance:</a>
+<span class="sourceLineNo">172</span><a id="line.172">                float totalVar = varR + varG + varB;    </a>
+<span class="sourceLineNo">173</span><a id="line.173">                if (totalVar &lt; minVariance) {</a>
+<span class="sourceLineNo">174</span><a id="line.174">                        minVariance = totalVar;</a>
+<span class="sourceLineNo">175</span><a id="line.175">                        minMeanR = sum1R / nr;</a>
+<span class="sourceLineNo">176</span><a id="line.176">                        minMeanG = sum1G / nr;</a>
+<span class="sourceLineNo">177</span><a id="line.177">                        minMeanB = sum1B / nr;</a>
+<span class="sourceLineNo">178</span><a id="line.178">                }</a>
+<span class="sourceLineNo">179</span><a id="line.179">        }</a>
+<span class="sourceLineNo">180</span><a id="line.180"></a>
+<span class="sourceLineNo">181</span><a id="line.181">}</a>
 
 
 

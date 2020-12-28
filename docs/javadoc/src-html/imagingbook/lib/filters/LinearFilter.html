@@ -45,7 +45,7 @@
 <span class="sourceLineNo">035</span><a id="line.35">        // --------------------------------------------------------------</a>
 <span class="sourceLineNo">036</span><a id="line.36">        </a>
 <span class="sourceLineNo">037</span><a id="line.37">        @Override</a>
-<span class="sourceLineNo">038</span><a id="line.38">        public float filterScalar(ScalarAccessor ia, int u, int v) {</a>
+<span class="sourceLineNo">038</span><a id="line.38">        protected float filterScalar(ScalarAccessor ia, int u, int v) {</a>
 <span class="sourceLineNo">039</span><a id="line.39">                float sum = 0;</a>
 <span class="sourceLineNo">040</span><a id="line.40">                for (int j = 0; j &lt; kernelHeight; j++) {</a>
 <span class="sourceLineNo">041</span><a id="line.41">                        int vj = v + j - kernelCtrY;</a>
