@@ -36,7 +36,7 @@
 <span class="sourceLineNo">026</span><a id="line.26">        }</a>
 <span class="sourceLineNo">027</span><a id="line.27">        </a>
 <span class="sourceLineNo">028</span><a id="line.28">        private Direction direction;</a>
-<span class="sourceLineNo">029</span><a id="line.29">        private float[] Hr;                     // domain kernel is one-dimensional here!</a>
+<span class="sourceLineNo">029</span><a id="line.29">        private float[] Hd;                     // domain kernel is one-dimensional here!</a>
 <span class="sourceLineNo">030</span><a id="line.30">        </a>
 <span class="sourceLineNo">031</span><a id="line.31">        public BilateralFilterSeparable() {</a>
 <span class="sourceLineNo">032</span><a id="line.32">                super();</a>
@@ -53,7 +53,7 @@
 <span class="sourceLineNo">043</span><a id="line.43">        }</a>
 <span class="sourceLineNo">044</span><a id="line.44">        </a>
 <span class="sourceLineNo">045</span><a id="line.45">        private void initialize() {</a>
-<span class="sourceLineNo">046</span><a id="line.46">                Hr = makeDomainKernel1D(params.sigmaD, K);</a>
+<span class="sourceLineNo">046</span><a id="line.46">                Hd = makeDomainKernel1D(params.sigmaD, K);</a>
 <span class="sourceLineNo">047</span><a id="line.47">        }</a>
 <span class="sourceLineNo">048</span><a id="line.48">        </a>
 <span class="sourceLineNo">049</span><a id="line.49">        // overrides the corresponding method in GenericFilter</a>
@@ -76,7 +76,7 @@
 <span class="sourceLineNo">066</span><a id="line.66">                if (direction == Direction.Horizontal) {</a>
 <span class="sourceLineNo">067</span><a id="line.67">                        for (int m = -K; m &lt;= K; m++) {</a>
 <span class="sourceLineNo">068</span><a id="line.68">                                float b = I.getVal(u + m, v);</a>
-<span class="sourceLineNo">069</span><a id="line.69">                                float wd = Hr[m + K];                           // domain weight</a>
+<span class="sourceLineNo">069</span><a id="line.69">                                float wd = Hd[m + K];                           // domain weight</a>
 <span class="sourceLineNo">070</span><a id="line.70">                                float wr = similarityGauss(a, b);       // range weight</a>
 <span class="sourceLineNo">071</span><a id="line.71">                                float w = wd * wr;</a>
 <span class="sourceLineNo">072</span><a id="line.72">                                S = S + w * b;</a>
@@ -86,7 +86,7 @@
 <span class="sourceLineNo">076</span><a id="line.76">                else { // (direction == Direction.Vertical)</a>
 <span class="sourceLineNo">077</span><a id="line.77">                        for (int n = 0; n &lt;= K; n++) {</a>
 <span class="sourceLineNo">078</span><a id="line.78">                                float b = I.getVal(u, v + n);</a>
-<span class="sourceLineNo">079</span><a id="line.79">                                float wd = Hr[n + K];                           // domain weight</a>
+<span class="sourceLineNo">079</span><a id="line.79">                                float wd = Hd[n + K];                           // domain weight</a>
 <span class="sourceLineNo">080</span><a id="line.80">                                float wr = similarityGauss(a, b);       // range weight</a>
 <span class="sourceLineNo">081</span><a id="line.81">                                float w = wd * wr;</a>
 <span class="sourceLineNo">082</span><a id="line.82">                                S = S + w * b;</a>
@@ -96,7 +96,7 @@
 <span class="sourceLineNo">086</span><a id="line.86">                return S / W;</a>
 <span class="sourceLineNo">087</span><a id="line.87">        }</a>
 <span class="sourceLineNo">088</span><a id="line.88">        </a>
-<span class="sourceLineNo">089</span><a id="line.89">        @Override</a>
+<span class="sourceLineNo">089</span><a id="line.89">        @Override  // TODO: check if special methid is needed at all!</a>
 <span class="sourceLineNo">090</span><a id="line.90">        protected float[] filterVector(ImageAccessor I, int u, int v) {</a>
 <span class="sourceLineNo">091</span><a id="line.91">                //final int[] a = new int[3];</a>
 <span class="sourceLineNo">092</span><a id="line.92">                //final int[] b = new int[3];</a>
@@ -107,7 +107,7 @@
 <span class="sourceLineNo">097</span><a id="line.97">                if (direction == Direction.Horizontal) {</a>
 <span class="sourceLineNo">098</span><a id="line.98">                        for (int m = -K; m &lt;= K; m++) {</a>
 <span class="sourceLineNo">099</span><a id="line.99">                                final float[] b = I.getPix(u + m, v);</a>
-<span class="sourceLineNo">100</span><a id="line.100">                                float wd = Hr[m + K];</a>
+<span class="sourceLineNo">100</span><a id="line.100">                                float wd = Hd[m + K];</a>
 <span class="sourceLineNo">101</span><a id="line.101">                                float wr = similarityGauss(a, b);</a>
 <span class="sourceLineNo">102</span><a id="line.102">                                float w = wd * wr;</a>
 <span class="sourceLineNo">103</span><a id="line.103">                                S[0] = S[0] + w * b[0];</a>
@@ -119,7 +119,7 @@
 <span class="sourceLineNo">109</span><a id="line.109">                else { // (direction == Direction.Vertical)</a>
 <span class="sourceLineNo">110</span><a id="line.110">                        for (int n = -K; n &lt;= K; n++) {</a>
 <span class="sourceLineNo">111</span><a id="line.111">                                final float[] b = I.getPix(u, v + n);</a>
-<span class="sourceLineNo">112</span><a id="line.112">                                float wd = Hr[n + K];</a>
+<span class="sourceLineNo">112</span><a id="line.112">                                float wd = Hd[n + K];</a>
 <span class="sourceLineNo">113</span><a id="line.113">                                float wr = similarityGauss(a, b);</a>
 <span class="sourceLineNo">114</span><a id="line.114">                                float w = wd * wr;</a>
 <span class="sourceLineNo">115</span><a id="line.115">                                S[0] = S[0] + b[0] * w;</a>

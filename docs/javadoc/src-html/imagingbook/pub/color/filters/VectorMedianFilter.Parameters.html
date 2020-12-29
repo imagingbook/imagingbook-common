@@ -21,7 +21,7 @@
 <span class="sourceLineNo">011</span><a id="line.11"></a>
 <span class="sourceLineNo">012</span><a id="line.12">import java.awt.Color;</a>
 <span class="sourceLineNo">013</span><a id="line.13"></a>
-<span class="sourceLineNo">014</span><a id="line.14">import imagingbook.lib.filters.GenericFilter;</a>
+<span class="sourceLineNo">014</span><a id="line.14">import imagingbook.lib.filters.GenericFilter2D;</a>
 <span class="sourceLineNo">015</span><a id="line.15">import imagingbook.lib.image.access.ImageAccessor;</a>
 <span class="sourceLineNo">016</span><a id="line.16">import imagingbook.lib.image.access.ScalarAccessor;</a>
 <span class="sourceLineNo">017</span><a id="line.17">import imagingbook.lib.math.VectorNorm;</a>
@@ -29,12 +29,12 @@
 <span class="sourceLineNo">019</span><a id="line.19"></a>
 <span class="sourceLineNo">020</span><a id="line.20">/**</a>
 <span class="sourceLineNo">021</span><a id="line.21"> * Basic vector median filter for color images implemented</a>
-<span class="sourceLineNo">022</span><a id="line.22"> * by extending the {@link GenericFilter} class.</a>
+<span class="sourceLineNo">022</span><a id="line.22"> * by extending the {@link GenericFilter2D} class.</a>
 <span class="sourceLineNo">023</span><a id="line.23"> * </a>
 <span class="sourceLineNo">024</span><a id="line.24"> * @author W. Burger</a>
 <span class="sourceLineNo">025</span><a id="line.25"> * @version 2013/05/30</a>
 <span class="sourceLineNo">026</span><a id="line.26"> */</a>
-<span class="sourceLineNo">027</span><a id="line.27">public class VectorMedianFilter extends GenericFilter {</a>
+<span class="sourceLineNo">027</span><a id="line.27">public class VectorMedianFilter extends GenericFilter2D {</a>
 <span class="sourceLineNo">028</span><a id="line.28">        </a>
 <span class="sourceLineNo">029</span><a id="line.29">        public static class Parameters {</a>
 <span class="sourceLineNo">030</span><a id="line.30">                /** Filter radius */</a>
