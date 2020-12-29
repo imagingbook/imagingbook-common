@@ -29,13 +29,13 @@ import imagingbook.lib.image.access.VectorAccessor;
  * To change this behavior, implementing classes should also override
  * the method {@link #filterVector(ImageAccessor, int, int)}.
  * <br>
- * See {@link LinearFilter} for a sample implementation.
+ * See {@link LinearFilter2D} for a sample implementation.
  * 
  * @author wilbur
  * @version 2020/12/28
  * 
  */
-public abstract class GenericFilter {
+public abstract class GenericFilter2D {
 	
 	/* TODO: PASS THE IMAGE PROCESSOR of the original image and
 	 * set up width/height, accessors etc., then use apply without processor argument??
@@ -45,11 +45,11 @@ public abstract class GenericFilter {
 	private OutOfBoundsStrategy obs = OutOfBoundsStrategy.NearestBorder;
 	private boolean showProgress = false;
 	
-	protected GenericFilter() {
+	protected GenericFilter2D() {
 	}
 	
 	/**
-	 * Sets the out-of-bounds strategy of this {@link GenericFilter}. 
+	 * Sets the out-of-bounds strategy of this {@link GenericFilter2D}. 
 	 * See {@link OutOfBoundsStrategy}.
 	 * 
 	 * @param obs the out-of-bounds strategy
@@ -98,7 +98,7 @@ public abstract class GenericFilter {
 	protected float[] filterVector(ImageAccessor source, int u, int v) {
 		float[] result = new float[source.getDepth()];
 		// DEFAULT: apply the same filter independently to all scalar-valued components:
-		for (int k = 0; k < 3; k++) {
+		for (int k = 0; k < source.getDepth(); k++) {
 			result[k] = filterScalar(source.getComponentAccessor(k), u, v);
 		}
 		return result;
@@ -117,6 +117,16 @@ public abstract class GenericFilter {
  
 		ImageAccessor iaOrig = ImageAccessor.create(ip, obs, null);
 		ImageAccessor iaCopy = ImageAccessor.create(ipCopy, obs, null);
+		
+		if (iaOrig instanceof ScalarAccessor) {
+			for (int v = 0; v < h; v++) {
+				for (int u = 0; u < w; u++) {
+					float p = filterScalar((ScalarAccessor)iaCopy, u, v);
+					((ScalarAccessor)iaOrig).setVal(u, v, p);
+				}
+				if (showProgress) IJ.showProgress(v, h);
+			}
+		}
 		
 		for (int v = 0; v < h; v++) {
 			for (int u = 0; u < w; u++) {

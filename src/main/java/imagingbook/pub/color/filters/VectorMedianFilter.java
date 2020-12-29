@@ -11,7 +11,7 @@ package imagingbook.pub.color.filters;
 
 import java.awt.Color;
 
-import imagingbook.lib.filters.GenericFilter;
+import imagingbook.lib.filters.GenericFilter2D;
 import imagingbook.lib.image.access.ImageAccessor;
 import imagingbook.lib.image.access.ScalarAccessor;
 import imagingbook.lib.math.VectorNorm;
@@ -19,12 +19,12 @@ import imagingbook.lib.math.VectorNorm.NormType;
 
 /**
  * Basic vector median filter for color images implemented
- * by extending the {@link GenericFilter} class.
+ * by extending the {@link GenericFilter2D} class.
  * 
  * @author W. Burger
  * @version 2013/05/30
  */
-public class VectorMedianFilter extends GenericFilter {
+public class VectorMedianFilter extends GenericFilter2D {
 	
 	public static class Parameters {
 		/** Filter radius */

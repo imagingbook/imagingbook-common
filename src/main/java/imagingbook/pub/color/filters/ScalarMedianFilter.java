@@ -11,17 +11,17 @@ package imagingbook.pub.color.filters;
 
 import java.util.Arrays;
 
-import imagingbook.lib.filters.GenericFilter;
+import imagingbook.lib.filters.GenericFilter2D;
 import imagingbook.lib.image.access.ScalarAccessor;
 
 /**
  * Ordinary (scalar) median filter for color images implemented
- * by extending the {@link GenericFilter} class.
+ * by extending the {@link GenericFilter2D} class.
  * Color images are filtered individually in all channels.
  * @author W. Burger
  * @version 2020/12/28
  */
-public class ScalarMedianFilter extends GenericFilter {
+public class ScalarMedianFilter extends GenericFilter2D {
 	
 	public static class Parameters {
 		/** Filter radius */

@@ -9,7 +9,7 @@
 
 package imagingbook.pub.edgepreservingfilters;
 
-import imagingbook.lib.filters.GenericFilter;
+import imagingbook.lib.filters.GenericFilter2D;
 import imagingbook.lib.image.access.ImageAccessor;
 import imagingbook.lib.image.access.ScalarAccessor;
 
@@ -20,65 +20,71 @@ import imagingbook.lib.image.access.ScalarAccessor;
  * See algorithm 5.2 in Utics Vol. 3.
  * 
  * @author W. Burger
- * @version 2013/05/30
+ * @version 2020/12/29
  */
-public class KuwaharaFilter extends GenericFilter {
+public class KuwaharaFilter extends GenericFilter2D {
 	
 	public static class Parameters {
 		/** Radius of the filter (should be even) */
 		public int radius = 2;
 		/** Threshold on sigma to avoid banding in flat regions */
-		public double tsigma = 5.0; 	
+		public double tsigma = 5.0;
+		
+		public Parameters() {
+		}
+		
+		public Parameters(int radius, double tsigma) {
+			this.radius = radius;
+			this.tsigma = tsigma;
+		}
 	}
 	
-	private Parameters params;
+	private final Parameters params;
+	private final int n;			// fixed subregion size 
+	private final int dm;			// = d-
+	private final int dp;			// = d+
+
+
+	// constructor using default settings
+	public KuwaharaFilter() {
+		this(new Parameters());
+	}
 	
-	private int n;			// fixed subregion size 
-	private int dm;			// = d-
-	private int dp;			// = d+
+	public KuwaharaFilter(Parameters params) {
+		this.params = params;
+		//initialize();
+		int r = params.radius;
+		this.n = (r + 1) * (r + 1);	// size of complete filter
+		this.dm = (r/2) - r;			// d- = top/left center coordinate
+		this.dp = this.dm + r;			// d+ = bottom/right center coordinate
+	}
 	
+	public KuwaharaFilter(int r, double tsigma) {
+		this(new Parameters(r, tsigma));
+	}
+	
+//	private void initialize() {
+//		int r = params.radius;
+//		n = (r + 1) * (r + 1);	// size of complete filter
+//		dm = (r/2) - r;			// d- = top/left center coordinate
+//		dp = dm + r;			// d+ = bottom/right center coordinate
+//	}
+		
+//	private static int checkRadius(int radius) {
+//		assert radius >= 1 : "filter radius must be >= 1";
+//		return radius;
+//	}
+	
+	// ------------------------------------------------------
+
 	// these are used in calculation by several methods:
 	private float Smin;		// min. variance
 	private float Amin;		
 	private float AminR;
 	private float AminG;
 	private float AminB;
-
-	// constructor using default settings
-	public KuwaharaFilter() {
-		this.params = new Parameters();
-		initialize();
-	}
 	
-	public KuwaharaFilter(Parameters params) {
-		this.params = params;
-		initialize();
-	}
-	
-	public KuwaharaFilter(int r, double tsigma) {
-		this.params = new Parameters();
-		this.params.radius = r;
-		this.params.tsigma = tsigma;
-		initialize();
-	}
-	
-	void initialize() {
-		int r = params.radius;
-		n = (r + 1) * (r + 1);	// size of complete filter
-		dm = (r/2) - r;			// d- = top/left center coordinate
-		dp = dm + r;			// d+ = bottom/right center coordinate
-	}
-		
-	static int checkRadius(int radius) {
-		assert radius >= 1 : "filter radius must be >= 1";
-		return radius;
-	}
-	
-	// ------------------------------------------------------
-
-	/*
-	 * This method is used for all scalar-values images.
-	 */
+	// This method is used for all scalar-values images.
 	@Override
 	protected float filterScalar(ScalarAccessor ia, int u, int v) {
 		Smin = Float.MAX_VALUE;
@@ -91,10 +97,8 @@ public class KuwaharaFilter extends GenericFilter {
  		return Amin;
  	} 
 	
-	/*
-	 * sets the member variables Smin, Amin
-	 */
-	void evalSubregionGray(ScalarAccessor ia, int u, int v) {
+	// sets the member variables Smin, Amin
+	private void evalSubregionGray(ScalarAccessor ia, int u, int v) {
 		float S1 = 0; 
 		float S2 = 0;
 		for (int j = dm; j <= dp; j++) {
@@ -105,7 +109,7 @@ public class KuwaharaFilter extends GenericFilter {
 			}
 		}
 //		double s = (sum2 - sum1*sum1/nr)/nr;	// actual sigma^2
-		float s = S2 - S1*S1/n;	// s = n * sigma^2
+		float s = S2 - S1 * S1 / n;	// s = n * sigma^2
 		if (s < Smin) {
 			Smin = s;
 			Amin = S1 / n; // mean
@@ -114,7 +118,7 @@ public class KuwaharaFilter extends GenericFilter {
 	
 	// ------------------------------------------------------
 	
-	final float[] rgb = {0,0,0};
+	private final float[] rgb = {0,0,0};
 	
 	@Override
 	protected float[] filterVector(ImageAccessor ia, int u, int v) {
@@ -131,15 +135,15 @@ public class KuwaharaFilter extends GenericFilter {
  		return rgb;
  	}
 	
-	void evalSubregion(ImageAccessor ia, int u, int v) {
+	private void evalSubregion(ImageAccessor ia, int u, int v) {
 		// evaluate the subregion centered at (u,v)
 		//final int[] cpix = {0,0,0};
-		int S1R = 0; int S2R = 0;
-		int S1G = 0; int S2G = 0;
-		int S1B = 0; int S2B = 0;
+		int S1R = 0, S2R = 0;	// TODO: use float throughout?
+		int S1G = 0, S2G = 0;
+		int S1B = 0, S2B = 0;
 		for (int j = dm; j <= dp; j++) {
 			for (int i = dm; i <= dp; i++) {		
-				final float[] cpix = ia.getPix(u + i, v + j);
+				float[] cpix = ia.getPix(u + i, v + j);
 				int red = (int) cpix[0];
 				int grn = (int) cpix[1];
 				int blu = (int) cpix[2];

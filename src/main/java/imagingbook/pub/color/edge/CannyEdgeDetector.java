@@ -9,18 +9,18 @@
 
 package imagingbook.pub.color.edge;
 
+import java.awt.Point;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Stack;
+
 import ij.plugin.filter.Convolver;
 import ij.process.ByteProcessor;
 import ij.process.ColorProcessor;
 import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
-import imagingbook.lib.filters.GaussianFilter;
+import imagingbook.lib.filters.GaussianKernel1D;
 import imagingbook.lib.math.Eigensolver2x2;
-
-import java.awt.Point;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Stack;
 
 /**
  * This class implements a Canny edge detector for grayscale and RGB images.
@@ -94,7 +94,7 @@ public class CannyEdgeDetector extends ColorEdgeDetector {
 		FloatProcessor If = I.convertToFloatProcessor();	// always makes a copy
 				
 		// apply a separable Gaussian filter to I
-		float[] gaussKernel = GaussianFilter.makeGaussKernel1D(params.gSigma);
+		float[] gaussKernel = GaussianKernel1D.makeGaussKernel1D(params.gSigma);
 		Convolver conv = new Convolver();
 		conv.setNormalize(true);
 		conv.convolve(If, gaussKernel, gaussKernel.length, 1);
@@ -132,7 +132,7 @@ public class CannyEdgeDetector extends ColorEdgeDetector {
 		FloatProcessor[] Iyrgb = new FloatProcessor[3];
 		
 		// apply a separable Gaussian filter to each RGB channel
-		float[] gaussKernel = GaussianFilter.makeGaussKernel1D(params.gSigma);
+		float[] gaussKernel = GaussianKernel1D.makeGaussKernel1D(params.gSigma);
 		Convolver conv = new Convolver();
 		conv.setNormalize(true);
 		for (int i=0; i < Irgb.length; i++) {

@@ -9,7 +9,7 @@
 
 package imagingbook.pub.edgepreservingfilters;
 
-import imagingbook.lib.filters.GenericFilter;
+import imagingbook.lib.filters.GenericFilter2D;
 import imagingbook.lib.image.access.ImageAccessor;
 import imagingbook.lib.image.access.ScalarAccessor;
 
@@ -21,7 +21,7 @@ import imagingbook.lib.image.access.ScalarAccessor;
  * @version 2013/05/30
  */
 
-public class NagaoMatsuyamaFilter extends GenericFilter {
+public class NagaoMatsuyamaFilter extends GenericFilter2D {
 	
 	public static class Parameters {
 		/** Variance threshold */

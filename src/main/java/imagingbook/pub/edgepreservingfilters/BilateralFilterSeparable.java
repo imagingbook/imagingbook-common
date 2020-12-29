@@ -26,7 +26,7 @@ public class BilateralFilterSeparable extends BilateralFilter {
 	}
 	
 	private Direction direction;
-	private float[] Hr;			// domain kernel is one-dimensional here!
+	private float[] Hd;			// domain kernel is one-dimensional here!
 	
 	public BilateralFilterSeparable() {
 		super();
@@ -43,7 +43,7 @@ public class BilateralFilterSeparable extends BilateralFilter {
 	}
 	
 	private void initialize() {
-		Hr = makeDomainKernel1D(params.sigmaD, K);
+		Hd = makeDomainKernel1D(params.sigmaD, K);
 	}
 	
 	// overrides the corresponding method in GenericFilter
@@ -66,7 +66,7 @@ public class BilateralFilterSeparable extends BilateralFilter {
 		if (direction == Direction.Horizontal) {
 			for (int m = -K; m <= K; m++) {
 				float b = I.getVal(u + m, v);
-				float wd = Hr[m + K];				// domain weight
+				float wd = Hd[m + K];				// domain weight
 				float wr = similarityGauss(a, b);	// range weight
 				float w = wd * wr;
 				S = S + w * b;
@@ -76,7 +76,7 @@ public class BilateralFilterSeparable extends BilateralFilter {
 		else { // (direction == Direction.Vertical)
 			for (int n = 0; n <= K; n++) {
 				float b = I.getVal(u, v + n);
-				float wd = Hr[n + K];				// domain weight
+				float wd = Hd[n + K];				// domain weight
 				float wr = similarityGauss(a, b);	// range weight
 				float w = wd * wr;
 				S = S + w * b;
@@ -97,7 +97,7 @@ public class BilateralFilterSeparable extends BilateralFilter {
 		if (direction == Direction.Horizontal) {
 			for (int m = -K; m <= K; m++) {
 				final float[] b = I.getPix(u + m, v);
-				float wd = Hr[m + K];
+				float wd = Hd[m + K];
 				float wr = similarityGauss(a, b);
 				float w = wd * wr;
 				S[0] = S[0] + w * b[0];
@@ -109,7 +109,7 @@ public class BilateralFilterSeparable extends BilateralFilter {
 		else { // (direction == Direction.Vertical)
 			for (int n = -K; n <= K; n++) {
 				final float[] b = I.getPix(u, v + n);
-				float wd = Hr[n + K];
+				float wd = Hd[n + K];
 				float wr = similarityGauss(a, b);
 				float w = wd * wr;
 				S[0] = S[0] + b[0] * w;

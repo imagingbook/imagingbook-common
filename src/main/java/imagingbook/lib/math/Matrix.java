@@ -135,6 +135,28 @@ public abstract class Matrix {
 		return col;
 	}
 	
+	// Checking vector/matrix dimensions
+	
+	public static boolean isRectangular(float[][] A) {
+		final int nCols = A[0].length;
+		for (int i = 0; i < A.length; i++) {
+			if (A[i].length != nCols) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	public static boolean isRectangular(double[][] A) {
+		final int nCols = A[0].length;
+		for (int i = 0; i < A.length; i++) {
+			if (A[i].length != nCols) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
 	public static boolean isSquare(double[][] A) {
 		return A.length > 0 && A.length == A[0].length;
 	}
@@ -1297,5 +1319,12 @@ public abstract class Matrix {
 			super("vector length must be greater that 0");
 		}
 	}
+	
+//	public static void main(String[] args) {
+//		double s = Double.NaN;
+//		s = -1.0 / 1E-200; // / 1E-200;
+//		System.out.println(Double.isFinite(s));
+//		
+//	}
 
 }

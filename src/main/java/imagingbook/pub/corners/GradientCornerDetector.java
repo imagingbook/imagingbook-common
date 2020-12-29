@@ -17,7 +17,7 @@ import java.util.List;
 
 import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
-import imagingbook.lib.filters.GaussianFilter;
+import imagingbook.lib.filters.GaussianKernel1D;
 import imagingbook.lib.ij.Filter;
 import imagingbook.lib.image.ImageMath;
 import imagingbook.pub.corners.subpixel.SubpixelMaxInterpolator;
@@ -122,7 +122,7 @@ public abstract class GradientCornerDetector {
 		Ixy = ImageMath.mult(Ix, Iy);			// Ixy = Ix * Iy
 		
 		// blur the gradient components with a small Gaussian:
-		float[] gaussKernel = GaussianFilter.makeGaussKernel1D(params.sigma);
+		float[] gaussKernel = GaussianKernel1D.makeGaussKernel1D(params.sigma);
 		Filter.convolveXY(Ixx, gaussKernel);
 		Filter.convolveXY(Iyy, gaussKernel);
 		Filter.convolveXY(Ixy, gaussKernel);

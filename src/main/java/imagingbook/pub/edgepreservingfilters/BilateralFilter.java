@@ -9,7 +9,7 @@
 
 package imagingbook.pub.edgepreservingfilters;
 
-import imagingbook.lib.filters.GenericFilter;
+import imagingbook.lib.filters.GenericFilter2D;
 import imagingbook.lib.image.access.ImageAccessor;
 import imagingbook.lib.image.access.ScalarAccessor;
 import imagingbook.lib.math.Arithmetic;
@@ -23,10 +23,11 @@ import imagingbook.lib.math.VectorNorm.NormType;
  * Bombay, India.
  * The filter uses Gaussian domain and range kernels and can be applied to all 
  * image types.
+ * 
  * @author W. Burger
  * @version 2013/05/30
  */
-public class BilateralFilter extends GenericFilter {
+public class BilateralFilter extends GenericFilter2D {
 	
 	public static class Parameters {
 		/** Sigma (width) of domain filter */
@@ -53,7 +54,7 @@ public class BilateralFilter extends GenericFilter {
 	protected final Parameters params;
 	
 	private float[][] Hd;	// the domain kernel
-	protected final int K;
+	protected final int K;	// the kernel size [-K,...,K]
 	protected final float[] rgb = {0,0,0};
 	protected final double sigmaR2;
 	protected final VectorNorm colorNorm;
@@ -82,17 +83,17 @@ public class BilateralFilter extends GenericFilter {
 	}
 	
 	@Override
-	protected float filterScalar(ScalarAccessor I, int u, int v) {
+	protected float filterScalar(ScalarAccessor ia, int u, int v) {
 		float S = 0;			// sum of weighted pixel values
 		float W = 0;			// sum of weights
 		
-		float a = I.getVal(u, v); // value of the current center pixel
+		float a = ia.getVal(u, v); // value of the current center pixel
 		
 		for (int m = -K; m <= K; m++) {
 			for (int n = -K; n <= K; n++) {
-				float b = I.getVal(u + m, v + n);
-				float wd = Hd[m + K][n + K];
-				float wr = similarityGauss(a, b);
+				float b = ia.getVal(u + m, v + n);
+				float wd = Hd[m + K][n + K];		// domain weight
+				float wr = similarityGauss(a, b);	// range weight
 				float w = wd * wr;
 				S = S + w * b;
 				W = W + w;
@@ -102,19 +103,19 @@ public class BilateralFilter extends GenericFilter {
 	}
 	
 	@Override
-	protected float[] filterVector(ImageAccessor I, int u, int v) {
+	protected float[] filterVector(ImageAccessor ia, int u, int v) {
 		float[] S = new float[3]; 	// sum of weighted RGB values
 		float W = 0;				// sum of weights
 		//int[] a = new int[3];
 		//int[] b = new int[3];
 		
-		float[] a = I.getPix(u, v);			// value of the current center pixel
+		float[] a = ia.getPix(u, v);			// value of the current center pixel
 		
 		for (int m = -K; m <= K; m++) {
 			for (int n = -K; n <= K; n++) {
-				float[] b = I.getPix(u + m, v + n);
-				float wd = Hd[m + K][n + K];
-				float wr = similarityGauss(a, b);
+				float[] b = ia.getPix(u + m, v + n);
+				float wd = Hd[m + K][n + K];		// domain weight
+				float wr = similarityGauss(a, b);	// range weight
 				float w = wd * wr;
 				S[0] = S[0] + w * b[0];
 				S[1] = S[1] + w * b[1];
@@ -140,20 +141,7 @@ public class BilateralFilter extends GenericFilter {
 		double d2 = colorScale * colorNorm.distance2(a, b);
 		return (float) Math.exp(-d2 / (2 * sigmaR2));
 	}
-	
-	// Color distances need to be scaled to yield the same range of
-	// values. This method returns the scale factor for squared 
-	// distances, since this is what we use in the Gaussian.
-//	static double getColorDistanceScale(NormType norm) {
-//		double s = 1.0;
-//		switch (norm) {
-//		case L1 : s = 1/3.0; break;				// L1-dist is in [0,...,3*255*3]
-//		case L2:  s = Math.sqrt(1/3.0); break;	// L2-dist is in [0,...,sqrt(3*255^2)] = [0,...,sqrt(3)*255]
-//		case Linf: s = 1.0; break;				// Linf-dist is in [0,...,255]
-//		default: break;
-//		}
-//		return s * s;	// scale factor for the squared distance
-//	}
+
 
 	// ------------------------------------------------------
 
@@ -172,7 +160,7 @@ public class BilateralFilter extends GenericFilter {
 		return domainKernel;
 	}
 	
-	// TODO: check if/why this method is unused!
+	@SuppressWarnings("unused")
 	private float[] makeRangeKernel(double sigma, int K) {
 		int size = K + 1 + K;
 		float[] rangeKernel = new float[size]; //center cell = kernel[K]
