@@ -19,10 +19,10 @@ public abstract class PixelIndexer {
 	
 	public static PixelIndexer create(int width, int height, OutOfBoundsStrategy mode) {
 		switch (mode) {
-		case DefaultValue 	: return new DefaultValueIndexer(width, height);
-		case NearestBorder	: return new NearestBorderIndexer(width, height);
-		case MirrorImage	: return new MirrorImageIndexer(width, height);
-		case Exception		: return new ExceptionIndexer(width, height);
+		case ZERO 					: return new DefaultValueIndexer(width, height);
+		case NEAREST_BORDER			: return new NearestBorderIndexer(width, height);
+		case MIRROR_IMAGE			: return new MirrorImageIndexer(width, height);
+		case THROW_EXCEPTION		: return new ExceptionIndexer(width, height);
 		}
 		return null;
 	}

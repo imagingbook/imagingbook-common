@@ -21,7 +21,7 @@ public class ScalarAccessorDefaultValuesTest {
 	
 	int width = 300;
 	int height = 200;
-	int defaultVal = 77;
+	int defaultVal = 0;
 
 	@Test
 	public void testDefaultValueByte() {
@@ -39,8 +39,8 @@ public class ScalarAccessorDefaultValuesTest {
 	}
 	
 	private void run(ImageProcessor ip) {
-		ScalarAccessor ia = ScalarAccessor.create(ip, OutOfBoundsStrategy.DefaultValue, null);
-		ia.setDefaultValue(defaultVal);
+		ScalarAccessor ia = ScalarAccessor.create(ip, OutOfBoundsStrategy.ZERO, null);
+//		ia.setDefaultValue(defaultVal);
 		assertEquals(defaultVal, ia.getVal(-1, 10), TOL);
 		assertEquals(defaultVal, ia.getVal(width, 10), TOL);
 		assertEquals(defaultVal, ia.getVal(3, -1), TOL);

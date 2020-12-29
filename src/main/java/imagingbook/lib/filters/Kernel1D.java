@@ -1,7 +1,5 @@
 package imagingbook.lib.filters;
 
-import static imagingbook.lib.math.Arithmetic.sqr;
-
 import imagingbook.lib.math.Matrix;
 
 /**

@@ -7,21 +7,23 @@
  * Visit http://imagingbook.com for additional details.
  *******************************************************************************/
 
-package imagingbook.lib.image.access;
+package imagingbook.lib.filters;
 
 /**
- * Enumeration type representing the available strategies
- * for accessing pixel locations outside the image bounds.
+ * This class implements a separable 2D Gaussian filter by extending
+ * {@link LinearFilter2DSeparable}.
  * 
  * @author WB
+ * @version 2020/12/29
  */
-public enum OutOfBoundsStrategy {
-	/** Insert zero values. */
-	ZERO,
-	/** Insert the value of the nearest border pixel. */
-	NEAREST_BORDER,
-	/** Replicate the image by mirroring at its borders. */
-	MIRROR_IMAGE,
-	/** Throws an exception when out-of-boundary coordinates are accessed. */
-	THROW_EXCEPTION;
+public class GaussianFilterSeparable extends LinearFilter2DSeparable {
+
+	public GaussianFilterSeparable(double sigma) {
+		super(new GaussianKernel1D(sigma), new GaussianKernel1D(sigma));
+	}
+	
+	public GaussianFilterSeparable(double sigmaX, double sigmaY) {
+		super(new GaussianKernel1D(sigmaX), new GaussianKernel1D(sigmaY));
+	}
+	
 }

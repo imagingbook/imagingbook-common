@@ -13,7 +13,7 @@ package imagingbook.lib.filters;
  * This class implements a 2D Gaussian filter by extending
  * {@link LinearFilter2D}.
  * 
- * @author wilbur
+ * @author WB
  * @version 2020/12/29
  */
 public class GaussianFilter extends LinearFilter2D {

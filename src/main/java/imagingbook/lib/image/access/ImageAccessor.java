@@ -48,7 +48,7 @@ import imagingbook.lib.interpolation.InterpolationMethod;
  */
 public abstract class ImageAccessor {
 	
-	static final OutOfBoundsStrategy DefaultOutOfBoundsStrategy = OutOfBoundsStrategy.DefaultValue;
+	static final OutOfBoundsStrategy DefaultOutOfBoundsStrategy = OutOfBoundsStrategy.ZERO;
 	static final InterpolationMethod DefaultInterpolationMethod = InterpolationMethod.Bilinear;
 	
 	protected final ImageProcessor ip;
@@ -236,23 +236,23 @@ public abstract class ImageAccessor {
 	 */
 	public abstract ScalarAccessor getComponentAccessor(int k);
 	
-	/**
-	 * Sets the default value (returned when accessing out-of-bounds 
-	 * pixel coordinates) common to all image components.
-	 * 
-	 * @param val the default value.
-	 */
-	public abstract void setDefaultValue(float val);
+//	/**
+//	 * Sets the default value (returned when accessing out-of-bounds 
+//	 * pixel coordinates) common to all image components.
+//	 * 
+//	 * @param val the default value.
+//	 */
+//	public abstract void setDefaultValue(float val);
 	
 	
-	/**
-	 * Sets the default values (returned when accessing out-of-bounds 
-	 * pixel coordinates) for all image components.
-	 * The length of the passed array must match the component
-	 * count. See also {@link #getDepth()}.
-	 * 
-	 * @param vals an array of default values.
-	 */
-	public abstract void setDefaultValue(float[] vals);
+//	/**
+//	 * Sets the default values (returned when accessing out-of-bounds 
+//	 * pixel coordinates) for all image components.
+//	 * The length of the passed array must match the component
+//	 * count. See also {@link #getDepth()}.
+//	 * 
+//	 * @param vals an array of default values.
+//	 */
+//	public abstract void setDefaultValue(float[] vals);
 	
 }

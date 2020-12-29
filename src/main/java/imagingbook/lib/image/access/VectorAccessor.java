@@ -63,22 +63,22 @@ public abstract class VectorAccessor extends ImageAccessor {
 	
 	// ---------------------------------------------------------------------
 	
-	@Override
-	public void setDefaultValue(float val) {
-		for (int k = 0; k < depth; k++) {
-			componentAccessors[k].setDefaultValue(val);
-		}
-	}
+//	@Override
+//	public void setDefaultValue(float val) {
+//		for (int k = 0; k < depth; k++) {
+//			componentAccessors[k].setDefaultValue(val);
+//		}
+//	}
 	
-	@Override
-	public void setDefaultValue(float[] vals) {
-		if (vals.length != depth) {
-			throw new IllegalArgumentException("default values must be of length " + depth);
-		}
-		for (int k = 0; k < depth; k++) {
-			componentAccessors[k].setDefaultValue(vals[k]);
-		}
-	}
+//	@Override
+//	public void setDefaultValue(float[] vals) {
+//		if (vals.length != depth) {
+//			throw new IllegalArgumentException("default values must be of length " + depth);
+//		}
+//		for (int k = 0; k < depth; k++) {
+//			componentAccessors[k].setDefaultValue(vals[k]);
+//		}
+//	}
 	
 	protected void checkComponentIndex(int k) {
 		if (k < 0 || k >= depth) {

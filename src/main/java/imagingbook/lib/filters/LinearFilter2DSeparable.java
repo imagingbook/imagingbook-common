@@ -12,7 +12,7 @@ package imagingbook.lib.filters;
 import imagingbook.lib.image.access.ScalarAccessor;
 
 /**
- * Generic linear convolution filter implemented
+ * Separable linear convolution filter implemented
  * by extending the {@link GenericFilter2D} class.
  * If applied to a vector-valued image (e.g. an RGB image) this
  * scalar filter is applied to each component, which is
@@ -23,22 +23,24 @@ import imagingbook.lib.image.access.ScalarAccessor;
  * @author WB
  * @version 2020/12/29
  */
-public class LinearFilter2D extends GenericFilter2D {
+public class LinearFilter2DSeparable extends GenericFilter2D {
 	
-	private final float[][] H;		// the kernel
+	private final float[] Hx;				// the horizontal kernel
+	private final float[] Hy;				// the vertical kernel
 	private final int width, height;		// width/height of the kernel
-	private final int xc, yc;		// 'hot spot' coordinates
+	private final int xc, yc;				// 'hot spot' coordinates
 	
 	/**
 	 * The preferred constructor.
 	 * @param kernel the 2D filter (convolution) kernel
 	 */
-	public LinearFilter2D(Kernel2D kernel) {
-		this.H = kernel.getH();
-		this.width = kernel.getWidth();
-		this.height = kernel.getHeight();
-		this.xc = kernel.getXc();
-		this.yc = kernel.getYc();
+	public LinearFilter2DSeparable(Kernel1D kernelX, Kernel1D kernelY) {
+		this.Hx = kernelX.getH();
+		this.Hy = kernelY.getH();
+		this.width = kernelX.getWidth();
+		this.height = kernelY.getWidth();
+		this.xc = kernelX.getXc();
+		this.yc = kernelY.getXc();
 	}
 	
 	// --------------------------------------------------------------
@@ -46,12 +48,15 @@ public class LinearFilter2D extends GenericFilter2D {
 	@Override
 	protected float filterScalar(ScalarAccessor ia, final int u, final int v) {
 		float sum = 0;
+		// perform horizontal 1D convolution in row v
+		for (int i = 0; i < width; i++) {
+			int ui = u + i - xc;
+			sum = sum + ia.getVal(ui, v) * Hx[i];
+		}
+		// perform vertical 1D convolution in column u
 		for (int j = 0; j < height; j++) {
 			int vj = v + j - yc;
-			for (int i = 0; i < width; i++) {
-				int ui = u + i - xc;
-				sum = sum + ia.getVal(ui, vj) * H[i][j];
-			}
+			sum = sum + ia.getVal(u, vj) * Hy[j];
 		}
  		return sum;
 	}
@@ -59,13 +64,22 @@ public class LinearFilter2D extends GenericFilter2D {
 	// --------------------------------------------------------------
 	
 	/**
-	 * Returns the kernel of this filter as a 2D {@code float} array.
-	 * Provided for sub-classes who create their own kernel
-	 * (e.g., {@link GaussianFilter}).
+	 * Returns the horizontal kernel of this filter as a 1D {@code float} array.
+	 * Provided for sub-classes who create their own kernel.
 	 * 
-	 * @return the filter kernel (no copy)
+	 * @return the horizontal filter kernel (no copy)
 	 */
-	public float[][] getKernel() {
-		return this.H;
+	public float[] getKernelX() {
+		return this.Hx;
+	}
+	
+	/**
+	 * Returns the vertical kernel of this filter as a 1D {@code float} array.
+	 * Provided for sub-classes who create their own kernel.
+	 * 
+	 * @return the vertical filter kernel (no copy)
+	 */
+	public float[] getKernelY() {
+		return this.Hy;
 	}
 }

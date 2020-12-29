@@ -17,20 +17,19 @@ public class RgbAccessorDefaultValuesTest {
 	int width = 300;
 	int height = 200;
 	ImageProcessor ip = new ColorProcessor(width, height);
-	ImageAccessor ia = ImageAccessor.create(ip, OutOfBoundsStrategy.DefaultValue, null);
+	ImageAccessor ia = ImageAccessor.create(ip, OutOfBoundsStrategy.ZERO, null);
 	
-	int defVal = 77;
-	int defR = 33;
-	int defG = 45;
-	int defB = 99;
+	int defVal = 0;
+	int defR = 0;
+	int defG = 0;
+	int defB = 0;
 	
 //	Path path = new imagingbook.DATA.images.Resources().getResourcePath("clown.png");
 //	ImageProcessor ip = IjUtils.openImage(path).getProcessor();
 	
 	@Test
 	public void testRgbDefaultValueSingle() {
-		ia.setDefaultValue(defVal);
-		
+//		ia.setDefaultValue(defVal);
 		assertEquals(defVal, ia.getPix(-1, 10)[0], TOL);
 		assertEquals(defVal, ia.getPix(-1, 10)[1], TOL);
 		assertEquals(defVal, ia.getPix(-1, 10)[2], TOL);
@@ -42,7 +41,7 @@ public class RgbAccessorDefaultValuesTest {
 	
 	@Test
 	public void testRgbDefaultValueAll() {	
-		ia.setDefaultValue(new float[] {defR, defG, defB});
+//		ia.setDefaultValue(new float[] {defR, defG, defB});
 		assertEquals(defR, ia.getPix(-1, 10)[0], TOL);
 		assertEquals(defG, ia.getPix(-1, 10)[1], TOL);
 		assertEquals(defB, ia.getPix(-1, 10)[2], TOL);

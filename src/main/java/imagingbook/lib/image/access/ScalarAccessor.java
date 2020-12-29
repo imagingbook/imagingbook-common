@@ -134,17 +134,17 @@ public abstract class ScalarAccessor extends ImageAccessor {
 	
 	// ---------------------------------------------------------------------
 	
-	@Override
-	public void setDefaultValue(float val) {
-		this.defaultValue = val;
-	}
+//	@Override
+//	public void setDefaultValue(float val) {
+//		this.defaultValue = val;
+//	}
 	
-	public void setDefaultValue(float[] vals) {
-		if (vals.length != 1) {
-			throw new IllegalArgumentException("default values must be of length " + 1);
-		}
-		this.setDefaultValue(vals[0]);
-	}
+//	public void setDefaultValue(float[] vals) {
+//		if (vals.length != 1) {
+//			throw new IllegalArgumentException("default values must be of length " + 1);
+//		}
+//		this.setDefaultValue(vals[0]);
+//	}
 	
 	protected void checkComponentIndex(int k) {
 		if (k != 0) {
