@@ -13,6 +13,8 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
+import imagingbook.lib.color.Rgb;
+
 /**
  * This class implements color quantization based on the octree method. It is a
  * re-factored version of an implementation (OctTreeOpImage.java) used in Sun's JAI 
@@ -107,7 +109,7 @@ public class OctreeQuantizer extends ColorQuantizer {
 		// walk the tree to depth, increasing the number_pixels count in each node
 		Node node = root;
 		node.nPixels++;
-		int[] rgb = intToRgb(p);
+		int[] rgb = Rgb.intToRgb(p);
 		for (int level = 1; level <= depth; level++) {
 			int id = node.getChildId(rgb);
 			if (node.childs[id] == null) {
@@ -375,7 +377,7 @@ public class OctreeQuantizer extends ColorQuantizer {
 	 * @return
 	 */
 	private int getNodeIndex(int p) {
-		int[] rgb = intToRgb(p);
+		int[] rgb = Rgb.intToRgb(p);
 		Node node = root;
 		while(true) {
 			int id = node.getChildId(rgb);

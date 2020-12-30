@@ -4,6 +4,7 @@ import java.awt.image.IndexColorModel;
 
 import ij.process.ByteProcessor;
 import ij.process.ColorProcessor;
+import imagingbook.lib.color.Rgb;
 
 public abstract class ColorQuantizer {
 	
@@ -86,7 +87,7 @@ public abstract class ColorQuantizer {
 		int red = colormap[idx][0];
 		int grn = colormap[idx][1];
 		int blu = colormap[idx][2];
-		return rgbToInt(red, grn, blu);
+		return Rgb.rgbToInt(red, grn, blu);
 	}
 	
 	/**
@@ -100,7 +101,7 @@ public abstract class ColorQuantizer {
 	 */
 	protected int findColorIndex(int p) {
 		int[][] colormap = getColorMap();
-		int[] rgb = intToRgb(p);
+		int[] rgb = Rgb.intToRgb(p);
 		int n = colormap.length;
 		int minD2 = Integer.MAX_VALUE;
 		int minIdx = -1;
@@ -137,17 +138,6 @@ public abstract class ColorQuantizer {
 	
 	protected int sqr(int k) {
 		return k * k;
-	}
-	
-	protected int[] intToRgb(int rgb) {
-		int red   = ((rgb >> 16) & 0xFF);
-		int grn = ((rgb >> 8) & 0xFF);
-		int blu  = (rgb & 0xFF);
-		return new int[] {red, grn, blu};
-	}
-
-	protected int rgbToInt(int red, int grn, int blu) {
-		return ((red & 0xff)<<16) | ((grn & 0xff)<<8) | blu & 0xff;
 	}
 
 }

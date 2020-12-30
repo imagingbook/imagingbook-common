@@ -17,6 +17,7 @@ import java.util.List;
 
 import ij.IJ;
 import ij.process.ColorProcessor;
+import imagingbook.lib.color.Rgb;
 import imagingbook.pub.color.statistics.ColorHistogram;
 
 /**
@@ -195,7 +196,7 @@ public class MedianCutQuantizer extends ColorQuantizer {
 		
 		ColorNode (int rgb, int cnt) {
 			this.rgb = (rgb & 0xFFFFFF);
-			int[] c = intToRgb(rgb);
+			int[] c = Rgb.intToRgb(rgb);
 			this.red = c[0];
 			this.grn = c[1];
 			this.blu = c[2];
@@ -203,7 +204,7 @@ public class MedianCutQuantizer extends ColorQuantizer {
 		}
 		
 		ColorNode (int red, int grn, int blu, int cnt) {
-			this.rgb = rgbToInt(red, grn, blu);
+			this.rgb = Rgb.rgbToInt(red, grn, blu);
 			this.red = red;
 			this.grn = grn;
 			this.blu = blu;
