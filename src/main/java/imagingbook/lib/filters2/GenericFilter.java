@@ -2,35 +2,55 @@ package imagingbook.lib.filters2;
 
 import ij.process.ImageProcessor;
 
-public abstract class GenericFilter {
+public abstract class GenericFilter implements AutoCloseable {
 	
-	int passes = 5;	// defined by the concrete filter type
+	protected int pass = 0;
+	ImageProcessor ip;  // no reference needed?
 	
 	protected GenericFilter() {
+		this.ip = null;
 	}
 	
-	public void applyTo(ImageProcessor ip) {
-		
+	protected GenericFilter(ImageProcessor ip) {
+		this.ip = ip;
+	}
+	
+	public ImageProcessor apply() {
 		float[][] sources = makeSources(ip); // one pixel array for each component
-		float[][] targets = new float[sources.length][sources[0].length]; 
-		
-		for (int pass = 0; pass < passes; pass++) {	// use something like 'morePassesNeeded()'
-			applyTo(sources, targets, 0);	
-			copyBack(sources, ip);
-		}
+		pass = 0;
+		do {
+			applyTo(sources);
+			pass++;
+		} while (morePasses());
+		ImageProcessor result = makeResultIp(sources);
+		return result;	
 	}
 	
 	private float[][] makeSources(ImageProcessor ip) {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	// limits the necessary number of passes, which may not be known at initialization.
+	// multi-pass filters must override this method.
+	protected boolean morePasses() {
+		return false;
+	}
 
-	private void copyBack(float[][] sources, ImageProcessor ip) {
-		// TODO Auto-generated method stub
+
+	private ImageProcessor makeResultIp(float[][] sources) {
+		// TODO create the image processor to return
+		return null;
 	}
 	
 	// ----------------------------------------------------
 
-	protected abstract void applyTo(float[][] sources, float[][] targets, int pass);
+	protected abstract void applyTo(float[][] sources);
+	
+	@Override
+	public void close() throws Exception {
+		// TODO close all allocated resources of this filter
+		this.ip = null;
+	}
 
 }
