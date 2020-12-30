@@ -10,19 +10,26 @@
 package imagingbook.lib.image.access;
 
 /**
- * This class implements different schemes for accessing pixel values from
- * a 2D image that is contained in a 1D array.
+ * Instances of this class perform the transformation between 2D image coordinates 
+ * and indexes into the associated 1D pixel array and vice versa.
+ * 
  * The key method {@link #getIndex(int, int)} returns the 1D array index
- * for a pair of image coordinates. 
+ * for a pair of image coordinates.
+ * It throws an exception when trying to access out-of-image coordinates.
+ * 
+ * The subclasses {@link ZeroValueIndexer}, {@link MirrorImageIndexer} and
+ * {@link NearestBorderIndexer} implement different behaviors for accessing
+ * out-of-image coordinates.
+ * 
  */
-public abstract class PixelIndexer {
+public class PixelIndexer {
 	
 	public static PixelIndexer create(int width, int height, OutOfBoundsStrategy mode) {
 		switch (mode) {
-		case ZERO 					: return new DefaultValueIndexer(width, height);
+		case ZERO_VALUE 			: return new ZeroValueIndexer(width, height);
 		case NEAREST_BORDER			: return new NearestBorderIndexer(width, height);
 		case MIRROR_IMAGE			: return new MirrorImageIndexer(width, height);
-		case THROW_EXCEPTION		: return new ExceptionIndexer(width, height);
+		case THROW_EXCEPTION		: return new PixelIndexer(width, height);
 		}
 		return null;
 	}
@@ -36,21 +43,31 @@ public abstract class PixelIndexer {
 	}
 	
 	/**
-	 * Returns the 1D array index for a given pair of image coordinates. 
+	 * Returns the 1D array index for a given pair of image coordinates.
+	 * Throws an exception when applied to out-of-image coordinates.
+	 * Subclasses override this method.
+	 * 
 	 * @param u x-coordinate
 	 * @param v y-coordinate
 	 * @return 1D array index
 	 */
-	public abstract int getIndex(int u, int v);
+	public int getIndex(int u, int v) throws OutOfImageException {
+		if (u < 0 || u >= width || v < 0 || v >= height) {
+			throw new OutOfImageException(
+					String.format("out-of-image position [%d,%d]", u, v));
+		}
+		else 
+			return this.insideBoundsIndex(u, v);
+	}
 	
-	private int defaultIndex(int u, int v) {
+	private int insideBoundsIndex(int u, int v) {
 		return width * v + u;
 	}
 	
 	// ---------------------------------------------------------
 
 	/** 
-	 * This indexer returns out of bounds pixel values that
+	 * This indexer returns out-of-bounds pixels that
 	 * are taken from the closest border pixel. This is the
 	 * most common method.
 	 */
@@ -74,12 +91,12 @@ public abstract class PixelIndexer {
 			else if (v >= height) {
 				v = height - 1;
 			}
-			return super.defaultIndex(u, v);
+			return super.insideBoundsIndex(u, v);
 		}
 	}
 	
 	/** 
-	 * This index returns out of bound pixels taken from
+	 * This indexer returns out-of-bound pixels taken from
 	 * the mirrored image.
 	 */
 	public static class MirrorImageIndexer extends PixelIndexer {
@@ -99,17 +116,17 @@ public abstract class PixelIndexer {
 			if (v < 0) {
 				v = v + height; 
 			}
-			return super.defaultIndex(u, v);
+			return super.insideBoundsIndex(u, v);
 		}
 	}
 	
 	/** 
-	 * This indexer returns -1 for out of bounds pixels to
+	 * This indexer returns -1 for out-of-bounds coordinates to
 	 * indicate that a (predefined) default value should be used.
 	 */
-	public static class DefaultValueIndexer extends PixelIndexer {
+	public static class ZeroValueIndexer extends PixelIndexer {
 		
-		DefaultValueIndexer(int width, int height) {
+		ZeroValueIndexer(int width, int height) {
 			super(width, height);
 		}
 
@@ -119,28 +136,38 @@ public abstract class PixelIndexer {
 				return -1;
 			}
 			else {
-				return super.defaultIndex(u, v);
+				return super.insideBoundsIndex(u, v);
 			}
 		}
 	}
 	
-	/**
-	 * This indexer throws an exception if out of bounds pixels
-	 * are accessed.
-	 */
-	public static class ExceptionIndexer extends PixelIndexer {
+//	/**
+//	 * This indexer throws an exception if out of bounds pixels
+//	 * are accessed.
+//	 */
+//	public static class ExceptionIndexer extends PixelIndexer {
+//		
+//		ExceptionIndexer(int width, int height) {
+//			super(width, height);
+//		}
+//
+//		@Override
+//		public int getIndex(int u, int v) {
+//			if (u < 0 || u >= width || v < 0 || v >= height) {
+//				throw new ArrayIndexOutOfBoundsException();
+//			}
+//			else 
+//				return super.insideBoundsIndex(u, v);
+//		}
+//	}
+	
+	// -----------------------------------------------------------
+	
+	public static class OutOfImageException extends RuntimeException {
+		private static final long serialVersionUID = 1L;
 		
-		ExceptionIndexer(int width, int height) {
-			super(width, height);
-		}
-
-		@Override
-		public int getIndex(int u, int v) {
-			if (u < 0 || u >= width || v < 0 || v >= height) {
-				throw new ArrayIndexOutOfBoundsException();
-			}
-			else 
-				return super.defaultIndex(u, v);
+		public OutOfImageException(String message) {
+			super(message);
 		}
 	}
 

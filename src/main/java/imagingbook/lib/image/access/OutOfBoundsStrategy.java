@@ -17,7 +17,7 @@ package imagingbook.lib.image.access;
  */
 public enum OutOfBoundsStrategy {
 	/** Insert zero values. */
-	ZERO,
+	ZERO_VALUE,
 	/** Insert the value of the nearest border pixel. */
 	NEAREST_BORDER,
 	/** Replicate the image by mirroring at its borders. */

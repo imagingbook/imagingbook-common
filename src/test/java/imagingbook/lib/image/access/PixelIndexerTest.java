@@ -10,7 +10,7 @@ public class PixelIndexerTest {
 
 	@Test
 	public void testDefaultValue() {
-		OutOfBoundsStrategy strategy = OutOfBoundsStrategy.ZERO;
+		OutOfBoundsStrategy strategy = OutOfBoundsStrategy.ZERO_VALUE;
 		PixelIndexer pi = PixelIndexer.create(W, H, strategy);
 		Assert.assertEquals(15070, pi.getIndex(70, 50));
 		Assert.assertEquals(-1, pi.getIndex(W + 10, 50));
@@ -48,28 +48,28 @@ public class PixelIndexerTest {
 		Assert.assertEquals(15070, pi.getIndex(70, 50));
 	}
 	
-	@Test (expected = ArrayIndexOutOfBoundsException.class)
+	@Test (expected = PixelIndexer.OutOfImageException.class)
 	public void testException2() {
 		OutOfBoundsStrategy strategy = OutOfBoundsStrategy.THROW_EXCEPTION;
 		PixelIndexer pi = PixelIndexer.create(W, H, strategy);
 		pi.getIndex(W + 10, 50);
 	}
 	
-	@Test (expected = ArrayIndexOutOfBoundsException.class)
+	@Test (expected = PixelIndexer.OutOfImageException.class)
 	public void testException3() {
 		OutOfBoundsStrategy strategy = OutOfBoundsStrategy.THROW_EXCEPTION;
 		PixelIndexer pi = PixelIndexer.create(W, H, strategy);
 		pi.getIndex(-4, 50);
 	}
 	
-	@Test (expected = ArrayIndexOutOfBoundsException.class)
+	@Test (expected = PixelIndexer.OutOfImageException.class)
 	public void testException4() {
 		OutOfBoundsStrategy strategy = OutOfBoundsStrategy.THROW_EXCEPTION;
 		PixelIndexer pi = PixelIndexer.create(W, H, strategy);
 		pi.getIndex(70, H);
 	}
 	
-	@Test (expected = ArrayIndexOutOfBoundsException.class)
+	@Test (expected = PixelIndexer.OutOfImageException.class)
 	public void testException5() {
 		OutOfBoundsStrategy strategy = OutOfBoundsStrategy.THROW_EXCEPTION;
 		PixelIndexer pi = PixelIndexer.create(W, H, strategy);

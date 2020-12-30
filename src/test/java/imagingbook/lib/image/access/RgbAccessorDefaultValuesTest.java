@@ -17,7 +17,7 @@ public class RgbAccessorDefaultValuesTest {
 	int width = 300;
 	int height = 200;
 	ImageProcessor ip = new ColorProcessor(width, height);
-	ImageAccessor ia = ImageAccessor.create(ip, OutOfBoundsStrategy.ZERO, null);
+	ImageAccessor ia = ImageAccessor.create(ip, OutOfBoundsStrategy.ZERO_VALUE, null);
 	
 	int defVal = 0;
 	int defR = 0;

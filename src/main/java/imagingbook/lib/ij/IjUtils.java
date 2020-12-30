@@ -276,10 +276,24 @@ public abstract class IjUtils {
 	
 	// Methods for checking/comparing images (primarily used for testing)  ---------------------
 	
+	/**
+	 * Checks if two images are of the same type.
+	 * 
+	 * @param ip1 the first image
+	 * @param ip2 the second image
+	 * @return true if both images have the same type
+	 */
 	public static boolean sameType(ImageProcessor ip1, ImageProcessor ip2) {
 		return ip1.getClass().equals(ip2.getClass());
 	}
 	
+	/**
+	 * Checks if two images have the same size.
+	 * 
+	 * @param ip1 the first image
+	 * @param ip2 the second image
+	 * @return true if both images have the same size
+	 */
 	public static boolean sameSize(ImageProcessor ip1, ImageProcessor ip2) {
 		return ip1.getWidth() == ip2.getWidth() && ip1.getHeight() == ip2.getHeight();
 	}
@@ -319,12 +333,29 @@ public abstract class IjUtils {
 		return binary;
 	}
 	
-	static final double DefaultMatchTolerance = 1E-6;
+	public static final double DefaultMatchTolerance = 1E-6;
 	
+	/**
+	 * Checks if two images have the same type, size and content (using 
+	 * {@link #DefaultMatchTolerance}).
+	 * 
+	 * @param ip1 the first image
+	 * @param ip2 the second image
+	 * @return true if both images have the same type and content
+	 */
 	public static boolean match(ImageProcessor ip1, ImageProcessor ip2) {
 		return match(ip1, ip2, DefaultMatchTolerance);
 	}
 	
+	/**
+	 * Checks if two images have the same type, size and content (using 
+	 * the specified tolerance). 
+	 * 
+	 * @param ip1 the first image
+	 * @param ip2 the second image
+	 * @param tolerance the matching tolerance
+	 * @return true if both images have the same type, size and content
+	 */
 	public static boolean match(ImageProcessor ip1, ImageProcessor ip2, double tolerance) {
 		if (!sameType(ip1, ip2)) {
 			return false;
