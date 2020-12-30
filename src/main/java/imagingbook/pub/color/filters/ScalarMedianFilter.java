@@ -45,7 +45,7 @@ public class ScalarMedianFilter extends GenericFilter2D {
 	//-------------------------------------------------------------------------------------
 
 	@Override
-	protected float filterScalar(ScalarAccessor source, int u, int v) {
+	protected void filterScalar(ScalarAccessor source, ScalarAccessor target, int u, int v) {
 		final int maskCount = mask.getCount();
 		final float[] p = new float[maskCount];
 		final int medianIndex = maskCount/2;
@@ -63,7 +63,8 @@ public class ScalarMedianFilter extends GenericFilter2D {
 			}
 		}
 		Arrays.sort(p);
-		return p[medianIndex];
+		target.setVal(u, v, p[medianIndex]);
+		//return p[medianIndex];
 	}
 
 //	@Override

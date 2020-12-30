@@ -59,7 +59,7 @@ public class BilateralFilterSeparable extends BilateralFilter {
 	// ------------------------------------------------------
 	
 	@Override
-	protected float filterScalar(ScalarAccessor I, int u, int v) {
+	protected void filterScalar(ScalarAccessor I, ScalarAccessor target, int u, int v) {
 		float a = I.getVal(u, v);
 		float S = 0;
 		float W = 0;
@@ -83,11 +83,12 @@ public class BilateralFilterSeparable extends BilateralFilter {
 				W = W + w;
 			}
 		}
- 		return S / W;
+		target.setVal(u, v, S / W);
+ 		//return S / W;
  	}
 	
 	@Override  // TODO: check if special methid is needed at all!
-	protected float[] filterVector(ImageAccessor I, int u, int v) {
+	protected void filterVector(ImageAccessor I, ImageAccessor target, int u, int v) {
 		//final int[] a = new int[3];
 		//final int[] b = new int[3];
 		final float[] S = new float[3]; 	// sum of weighted RGB (initialized to zero)
@@ -118,10 +119,13 @@ public class BilateralFilterSeparable extends BilateralFilter {
 				W = W + w;
 			}
 		}
+		target.getComponentAccessor(0).setVal(u, v, S[0] / W);
+		target.getComponentAccessor(1).setVal(u, v, S[1] / W);
+		target.getComponentAccessor(2).setVal(u, v, S[2] / W);
 		rgb[0] = Math.round(S[0] / W);
-		rgb[1] = Math.round(S[1] / W);
-		rgb[2] = Math.round(S[2] / W);
- 		return rgb;
+//		rgb[1] = Math.round(S[1] / W);
+//		rgb[2] = Math.round(S[2] / W);
+// 		return rgb;
  	}
 	
 	// ------------------------------------------------------

@@ -86,7 +86,7 @@ public class KuwaharaFilter extends GenericFilter2D {
 	
 	// This method is used for all scalar-values images.
 	@Override
-	protected float filterScalar(ScalarAccessor ia, int u, int v) {
+	protected void filterScalar(ScalarAccessor ia, ScalarAccessor target, int u, int v) {
 		Smin = Float.MAX_VALUE;
 		evalSubregionGray(ia, u, v);					// a centered subregion (not in original Kuwahara)
 		Smin = Smin - (float)params.tsigma * n;			// tS * n because we use variance scaled by n
@@ -94,7 +94,9 @@ public class KuwaharaFilter extends GenericFilter2D {
 		evalSubregionGray(ia, u + dm, v + dp);
 		evalSubregionGray(ia, u + dp, v + dm);
 		evalSubregionGray(ia, u + dp, v + dp);
- 		return Amin;
+		
+		target.setVal(u, v, Amin);
+ 		//return Amin;
  	} 
 	
 	// sets the member variables Smin, Amin
@@ -121,7 +123,7 @@ public class KuwaharaFilter extends GenericFilter2D {
 	private final float[] rgb = {0,0,0};
 	
 	@Override
-	protected float[] filterVector(ImageAccessor ia, int u, int v) {
+	protected void filterVector(ImageAccessor ia, ImageAccessor target, int u, int v) {
 		Smin = Float.MAX_VALUE;
 		evalSubregion(ia, u, v);						// centered subregion - different to original Kuwahara!
 		Smin = Smin - (3 * (float)params.tsigma * n);	// tS * n because we use variance scaled by n
@@ -132,7 +134,8 @@ public class KuwaharaFilter extends GenericFilter2D {
 		rgb[0] = (int) Math.rint(AminR);
 		rgb[1] = (int) Math.rint(AminG);
 		rgb[2] = (int) Math.rint(AminB);
- 		return rgb;
+		target.setPix(u, v, rgb);
+ 		//return rgb;
  	}
 	
 	private void evalSubregion(ImageAccessor ia, int u, int v) {

@@ -97,14 +97,15 @@ public class NagaoMatsuyamaFilter extends GenericFilter2D {
 	// ------------------------------------------------------
 
 	@Override
-	protected float filterScalar(ScalarAccessor image, int u, int v) {
+	protected void filterScalar(ScalarAccessor image, ScalarAccessor target, int u, int v) {
 		minVariance = Float.MAX_VALUE;
 		evalSubregion(image, R1, u, v);
 		minVariance = minVariance - (float) params.varThreshold;
 		for (int[][] Rk : subRegions) {
 			evalSubregion(image, Rk, u, v);
 		}
- 		return minMean;
+		target.setVal(u, v, minMean);
+ 		//return minMean;
  	}
 	
 	void evalSubregion(ScalarAccessor ia, int[][] R, int u, int v) {
@@ -130,7 +131,7 @@ public class NagaoMatsuyamaFilter extends GenericFilter2D {
 	final float[] rgb = {0,0,0};
 	
 	@Override
-	protected float[] filterVector(ImageAccessor ia, int u, int v) {
+	protected void filterVector(ImageAccessor ia, ImageAccessor target, int u, int v) {
 		minVariance = Float.MAX_VALUE;
 		evalSubregionColor(ia, R1, u, v);
 		minVariance = minVariance - (3 * (float) params.varThreshold);
@@ -140,7 +141,8 @@ public class NagaoMatsuyamaFilter extends GenericFilter2D {
 		rgb[0] = (int) Math.rint(minMeanR);
 		rgb[1] = (int) Math.rint(minMeanG);
 		rgb[2] = (int) Math.rint(minMeanB);
- 		return rgb;
+		target.setPix(u, v, rgb);
+ 		//return rgb;
  	}
 	
 	

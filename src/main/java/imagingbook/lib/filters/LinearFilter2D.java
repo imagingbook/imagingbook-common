@@ -18,7 +18,7 @@ import imagingbook.lib.image.access.ScalarAccessor;
  * scalar filter is applied to each component, which is
  * automatically handled by {@link GenericFilter2D}.
  * Thus only the scalar version of the filter needs to be defined
- * (see  {@link #filterScalar(ScalarAccessor, int, int)}).
+ * (see  {@link #filterScalar(ScalarAccessor, ScalarAccessor, int, int)}).
  * 
  * @author WB
  * @version 2020/12/29
@@ -46,8 +46,8 @@ public class LinearFilter2D extends GenericFilter2D  implements HasKernel2D {
 	// --------------------------------------------------------------
 	
 	@Override
-	protected float filterScalar(ScalarAccessor ia, final int u, final int v) {
-		float sum = 0;
+	protected void filterScalar(ScalarAccessor ia, ScalarAccessor target, final int u, final int v) {
+		double sum = 0;
 		for (int j = 0; j < height; j++) {
 			int vj = v + j - yc;
 			for (int i = 0; i < width; i++) {
@@ -55,7 +55,8 @@ public class LinearFilter2D extends GenericFilter2D  implements HasKernel2D {
 				sum = sum + ia.getVal(ui, vj) * H[i][j];
 			}
 		}
- 		return sum;
+		target.setVal(u, v, (float)sum);
+ 		//return (float)sum;
 	}
 	
 	// --------------------------------------------------------------

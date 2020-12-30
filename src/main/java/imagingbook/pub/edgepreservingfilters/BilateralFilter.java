@@ -83,7 +83,7 @@ public class BilateralFilter extends GenericFilter2D {
 	}
 	
 	@Override
-	protected float filterScalar(ScalarAccessor ia, int u, int v) {
+	protected void filterScalar(ScalarAccessor ia, ScalarAccessor target, int u, int v) {
 		float S = 0;			// sum of weighted pixel values
 		float W = 0;			// sum of weights
 		
@@ -99,11 +99,11 @@ public class BilateralFilter extends GenericFilter2D {
 				W = W + w;
 			}
 		}
-		return S / W;
+		target.setVal(u, v, S / W);
 	}
 	
 	@Override
-	protected float[] filterVector(ImageAccessor ia, int u, int v) {
+	protected void filterVector(ImageAccessor ia, ImageAccessor target, int u, int v) {
 		float[] S = new float[3]; 	// sum of weighted RGB values
 		float W = 0;				// sum of weights
 		//int[] a = new int[3];
@@ -123,10 +123,13 @@ public class BilateralFilter extends GenericFilter2D {
 				W = W + w;
 			}
 		}
-		rgb[0] = Math.round(S[0] / W);
-		rgb[1] = Math.round(S[1] / W);
-		rgb[2] = Math.round(S[2] / W);
- 		return rgb;
+		target.getComponentAccessor(0).setVal(u, v, S[0] / W);
+		target.getComponentAccessor(1).setVal(u, v, S[1] / W);
+		target.getComponentAccessor(2).setVal(u, v, S[2] / W);
+//		rgb[0] = Math.round(S[0] / W);
+//		rgb[1] = Math.round(S[1] / W);
+//		rgb[2] = Math.round(S[2] / W);
+// 		return rgb;
  	}
 	
 	// ------------------------------------------------------

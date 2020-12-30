@@ -70,13 +70,13 @@ public class VectorMedianFilter extends GenericFilter2D {
 	}
 	
 	@Override
-	protected float filterScalar(ScalarAccessor source, int u, int v) {
+	protected void filterScalar(ScalarAccessor source, ScalarAccessor target, int u, int v) {
 		throw new UnsupportedOperationException("no filter for gray images");
 	}
 	
 	// vector median filter for RGB color image
 	@Override
-	protected float[] filterVector(ImageAccessor ia, int u, int v) {
+	protected void filterVector(ImageAccessor ia, ImageAccessor target, int u, int v) {
 		final int[] pCtr = new int[3];		// center pixel
 		final float[] pCtrf = ia.getPix(u, v);
 		copyRgbTo(pCtrf, pCtr);
@@ -109,7 +109,8 @@ public class VectorMedianFilter extends GenericFilter2D {
 		else {	// keep the original pixel value
 			copyRgbTo(pCtr, pF);
 		}
-		return pF;
+		target.setPix(u, v, pF);
+		//return pF;
  	}
 	
 	private int[][] getSupportRegion(ImageAccessor ia, int u, int v) {

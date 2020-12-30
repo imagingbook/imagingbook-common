@@ -21,13 +21,13 @@ import imagingbook.lib.image.access.VectorAccessor;
  * an {@code ImageProcessor} object performs all pixel-level
  * iterations automatically.
  * Concrete sub-classes of this class only need to override a single method:
- * {@link #filterScalar(ScalarAccessor, int, int)},
+ * {@link #filterScalar(ScalarAccessor, ScalarAccessor, int, int)},
  * which defines how a scalar image component is filtered.
  * <br>
  * If the image has multiple components (e.g., an RGB image)
  * the same scalar filter is applied to all components by default.
  * To change this behavior, implementing classes should also override
- * the method {@link #filterVector(ImageAccessor, int, int)}.
+ * the method {@link #filterVector(ImageAccessor, ImageAccessor, int, int)}.
  * <br>
  * See {@link LinearFilter2D} for a sample implementation.
  * 
@@ -76,11 +76,11 @@ public abstract class GenericFilter2D {
 	 * Concrete filters must implement at least this method.
 	 * 
 	 * @param source the {@link ScalarAccessor} representing the source (scalar-valued) image
+	 * @param target TODO
 	 * @param u the horizontal pixel position
 	 * @param v the vertical pixel position
-	 * @return the resulting (scalar) pixel value for the specified image position
 	 */
- 	protected abstract float filterScalar(ScalarAccessor source, int u, int v);
+ 	protected abstract void filterScalar(ScalarAccessor source, ScalarAccessor target, int u, int v);
  	
  	/**
 	 * Calculates and returns the filter result for a single pixel
@@ -93,17 +93,18 @@ public abstract class GenericFilter2D {
 	 * behavior is required.
 	 * 
 	 * @param source the {@link VectorAccessor} representing the source (RGB) image
-	 * @param u the horizontal pixel position
-	 * @param v the vertical pixel position
-	 * @return the resulting (RGB) pixel value for the specified image position
+ 	 * @param target TODO
+ 	 * @param u the horizontal pixel position
+ 	 * @param v the vertical pixel position
 	 */
-	protected float[] filterVector(ImageAccessor source, int u, int v) {
-		float[] result = new float[source.getDepth()];
+	protected void filterVector(ImageAccessor source, ImageAccessor target, int u, int v) {
+		//float[] result = new float[source.getDepth()];
 		// DEFAULT: apply the same filter independently to all scalar-valued components:
 		for (int k = 0; k < source.getDepth(); k++) {
-			result[k] = filterScalar(source.getComponentAccessor(k), u, v);
+			//result[k] = filterScalar(source.getComponentAccessor(k), null, u, v);
+			filterScalar(source.getComponentAccessor(k), target.getComponentAccessor(k), u, v);
 		}
-		return result;
+		//return result;
  	}
  	
  	/**
@@ -123,8 +124,9 @@ public abstract class GenericFilter2D {
 		if (iaOrig instanceof ScalarAccessor) {
 			for (int v = 0; v < h; v++) {
 				for (int u = 0; u < w; u++) {
-					float p = filterScalar((ScalarAccessor)iaCopy, u, v);
-					((ScalarAccessor)iaOrig).setVal(u, v, p);
+					//float p = 
+					filterScalar((ScalarAccessor)iaCopy, (ScalarAccessor)iaOrig, u, v);
+					//((ScalarAccessor)iaOrig).setVal(u, v, p);
 				}
 				if (showProgress) IJ.showProgress(v, h);
 			}
@@ -132,8 +134,9 @@ public abstract class GenericFilter2D {
 		
 		for (int v = 0; v < h; v++) {
 			for (int u = 0; u < w; u++) {
-				float[] p = filterVector(iaCopy, u, v);
-				iaOrig.setPix(u, v, p);
+				//float[] p = 
+				filterVector(iaCopy, iaOrig, u, v);
+				//iaOrig.setPix(u, v, p);
 			}
 			if (showProgress) IJ.showProgress(v, h);
 		}
