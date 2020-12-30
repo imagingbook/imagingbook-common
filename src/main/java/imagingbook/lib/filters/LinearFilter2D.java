@@ -23,8 +23,9 @@ import imagingbook.lib.image.access.ScalarAccessor;
  * @author WB
  * @version 2020/12/29
  */
-public class LinearFilter2D extends GenericFilter2D {
+public class LinearFilter2D extends GenericFilter2D  implements HasKernel2D {
 	
+	private final Kernel2D kernel;
 	private final float[][] H;		// the kernel
 	private final int width, height;		// width/height of the kernel
 	private final int xc, yc;		// 'hot spot' coordinates
@@ -34,6 +35,7 @@ public class LinearFilter2D extends GenericFilter2D {
 	 * @param kernel the 2D filter (convolution) kernel
 	 */
 	public LinearFilter2D(Kernel2D kernel) {
+		this.kernel = kernel;
 		this.H = kernel.getH();
 		this.width = kernel.getWidth();
 		this.height = kernel.getHeight();
@@ -58,14 +60,8 @@ public class LinearFilter2D extends GenericFilter2D {
 	
 	// --------------------------------------------------------------
 	
-	/**
-	 * Returns the kernel of this filter as a 2D {@code float} array.
-	 * Provided for sub-classes who create their own kernel
-	 * (e.g., {@link GaussianFilter}).
-	 * 
-	 * @return the filter kernel (no copy)
-	 */
-	public float[][] getKernel() {
-		return this.H;
+	@Override
+	public Kernel2D getKernel() {
+		return this.kernel;
 	}
 }

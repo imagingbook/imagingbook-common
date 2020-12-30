@@ -42,6 +42,41 @@ public class Kernel2D {
 		validate();
 	}
 	
+	/**
+	 * Creates the effective 2D kernel from two 1D kernels.
+	 * 
+	 * @param Hx the 1D kernel for the x-direction
+	 * @param Hy the 1D kernel for the y-direction
+	 * @param normalize if true the kernel is normalized (to sum = 1)
+	 */
+	public Kernel2D(Kernel1D Hx, Kernel1D Hy, boolean normalize) {
+		this(getEffectiveKernel(Hx, Hy), Hx.getXc(), Hy.getXc(), normalize);
+	}
+	
+	/**
+	 * Calculates the effective 2D kernel array from two 1D kernels
+	 * assumed to be applied in x- and y-direction, respectively.
+	 * The result is not normalized.
+	 * Use the constructor {@link #Kernel2D(Kernel1D, Kernel1D, boolean)}
+	 * to create the equivalent (optionally normalized) 2D kernel.
+	 * 
+	 * @param Hx the 1D kernel for the x-direction
+	 * @param Hy the 1D kernel for the y-direction
+	 * @return the effective 2D kernel matrix
+	 */
+	public static float[][] getEffectiveKernel(Kernel1D Hx, Kernel1D Hy) {
+		float[] kernelX = Hx.getH();
+		float[] kernelY = Hy.getH();
+		
+		float[][] kernel = new float[kernelX.length][kernelY.length];
+		for (int y = 0; y < kernelY.length; y++) {
+			for (int x = 0; x < kernelX.length; x++) {
+				kernel[y][x] = kernelX[x] * kernelY[y];
+			}
+		}
+		return kernel;
+	}
+	
 	private void validate() {
 		if (!Matrix.isRectangular(H))
 			throw new IllegalArgumentException("non-rectangular filter kernel");
@@ -79,7 +114,7 @@ public class Kernel2D {
 	 */
 	public static float[][] normalize(float[][] A) throws ArithmeticException {
 		float s = (float) (1.0 / Matrix.sum(A));
-		if (!Double.isFinite(s))	// isZero(s)
+		if (!Double.isFinite(s))
 			throw new ArithmeticException("zero kernel sum, cannot normalize");
 		return Matrix.multiply(s, A);
 	}

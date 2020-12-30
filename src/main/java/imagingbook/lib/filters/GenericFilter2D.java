@@ -42,7 +42,9 @@ public abstract class GenericFilter2D {
 	 * Allow source/target to be of different types?
 	 */
 	
-	private OutOfBoundsStrategy obs = OutOfBoundsStrategy.NEAREST_BORDER;
+	public static final OutOfBoundsStrategy DefaultOutOfBoundsStrategy = OutOfBoundsStrategy.NEAREST_BORDER;
+	
+	private OutOfBoundsStrategy obs = DefaultOutOfBoundsStrategy;
 	private boolean showProgress = false;
 	
 	protected GenericFilter2D() {

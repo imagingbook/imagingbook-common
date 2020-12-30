@@ -24,30 +24,39 @@ public class ImageTests {
 		int height = ip1.getHeight();
 		
 		if (ip1 instanceof ColorProcessor) {
+			ColorProcessor cp1 = (ColorProcessor) ip1;
+			ColorProcessor cp2 = (ColorProcessor) ip2;
+			int[] rgb1 = new int[3];
+			int[] rgb2 = new int[3];
 			for (int v = 0; v < height; v++) {
 				for (int u = 0; u < width; u++) {
-					int v1 = ip1.get(u, v);
-					int v2 = ip2.get(u, v);
-					if (v1 != v2) {
-						fail(msgRgb(u, v, v1, v2));
+					cp1.getPixel(u, v, rgb1);
+					cp2.getPixel(u, v, rgb2);
+					for (int i = 0; i < 3; i++) {
+						int v1 = rgb1[i];
+						int v2 = rgb2[i];
+						if (Math.abs(rgb1[0] - rgb2[0]) > tolerance) {
+							fail(msgRgb(u, v, v1, v2));
+						}
 					}
 				}
 			}
 		}
 		
-		else if (ip1 instanceof ByteProcessor || ip1 instanceof ShortProcessor) {
-			for (int v = 0; v < height; v++) {
-				for (int u = 0; u < width; u++) {
-					int v1 = ip1.get(u, v);
-					int v2 = ip2.get(u, v);
-					if (v1 != v2) {
-						fail(msgInt(u, v, v1, v2));
-					}
-				}
-			}
-		}
+//		else 
+//			if (ip1 instanceof ByteProcessor || ip1 instanceof ShortProcessor) {
+//			for (int v = 0; v < height; v++) {
+//				for (int u = 0; u < width; u++) {
+//					int v1 = ip1.get(u, v);
+//					int v2 = ip2.get(u, v);
+//					if (v1 != v2) {
+//						fail(msgInt(u, v, v1, v2));
+//					}
+//				}
+//			}
+//		}
 		
-		else if (ip1 instanceof FloatProcessor) {
+		else if (ip1 instanceof ByteProcessor || ip1 instanceof ShortProcessor || ip1 instanceof FloatProcessor) {
 			final float toleranceF = (float) tolerance;
 			for (int v = 0; v < height; v++) {
 				for (int u = 0; u < width; u++) {

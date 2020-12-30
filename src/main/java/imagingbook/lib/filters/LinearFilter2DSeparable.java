@@ -9,6 +9,7 @@
 
 package imagingbook.lib.filters;
 
+import ij.process.ImageProcessor;
 import imagingbook.lib.image.access.ScalarAccessor;
 
 /**
@@ -23,10 +24,10 @@ import imagingbook.lib.image.access.ScalarAccessor;
  * @author WB
  * @version 2020/12/29
  */
-public class LinearFilter2DSeparable extends GenericFilter2D {
+public class LinearFilter2DSeparable extends GenericFilter2D implements HasKernel2D {
 	
-	private final float[] Hx;				// the horizontal kernel
-	private final float[] Hy;				// the vertical kernel
+	private final Kernel1D kernelX, kernelY;
+	private final float[] hX, hY;			// the horizontal/vertical kernel arrays
 	private final int width, height;		// width/height of the kernel
 	private final int xc, yc;				// 'hot spot' coordinates
 	
@@ -35,8 +36,10 @@ public class LinearFilter2DSeparable extends GenericFilter2D {
 	 * @param kernel the 2D filter (convolution) kernel
 	 */
 	public LinearFilter2DSeparable(Kernel1D kernelX, Kernel1D kernelY) {
-		this.Hx = kernelX.getH();
-		this.Hy = kernelY.getH();
+		this.kernelX = kernelX;
+		this.kernelY = kernelY;
+		this.hX = kernelX.getH();
+		this.hY = kernelY.getH();
 		this.width = kernelX.getWidth();
 		this.height = kernelY.getWidth();
 		this.xc = kernelX.getXc();
@@ -47,39 +50,26 @@ public class LinearFilter2DSeparable extends GenericFilter2D {
 	
 	@Override
 	protected float filterScalar(ScalarAccessor ia, final int u, final int v) {
-		float sum = 0;
-		// perform horizontal 1D convolution in row v
-		for (int i = 0; i < width; i++) {
-			int ui = u + i - xc;
-			sum = sum + ia.getVal(ui, v) * Hx[i];
-		}
-		// perform vertical 1D convolution in column u
+		double sumXY = 0;
 		for (int j = 0; j < height; j++) {
 			int vj = v + j - yc;
-			sum = sum + ia.getVal(u, vj) * Hy[j];
+			// perform horizontal 1D convolution in row v
+			double sumX = 0;
+			for (int i = 0; i < width; i++) {
+				int ui = u + i - xc;
+				sumX = sumX + ia.getVal(ui, vj) * hX[i];
+			}
+			sumXY = sumXY + sumX * hY[j];
 		}
- 		return sum;
+ 		return (float)sumXY;
 	}
+	
+
 	
 	// --------------------------------------------------------------
-	
-	/**
-	 * Returns the horizontal kernel of this filter as a 1D {@code float} array.
-	 * Provided for sub-classes who create their own kernel.
-	 * 
-	 * @return the horizontal filter kernel (no copy)
-	 */
-	public float[] getKernelX() {
-		return this.Hx;
-	}
-	
-	/**
-	 * Returns the vertical kernel of this filter as a 1D {@code float} array.
-	 * Provided for sub-classes who create their own kernel.
-	 * 
-	 * @return the vertical filter kernel (no copy)
-	 */
-	public float[] getKernelY() {
-		return this.Hy;
+
+	@Override
+	public Kernel2D getKernel() {
+		return new Kernel2D(kernelX, kernelY, false);
 	}
 }
