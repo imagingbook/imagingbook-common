@@ -25,6 +25,10 @@ public abstract class GenericFilter {
 	// -----------------------------------------------------------------------------------
 	
 	public ImageProcessor apply() {
+		return apply(false);
+	}
+	
+	public ImageProcessor apply(boolean createNew) {
 		FloatPixelPack source = new FloatPixelPack(ip, obs);
 		if (pass > 0) {
 			throw new IllegalStateException("filter has already been applied");
@@ -33,7 +37,7 @@ public abstract class GenericFilter {
 			filterAll(source);
 			pass++;
 		} while (doMorePasses());
-		return source.toImageProcessor();
+		return source.toImageProcessor((createNew) ? ip.duplicate() : ip);
 	}
 	
 	// limits the necessary number of passes, which may not be known at initialization.

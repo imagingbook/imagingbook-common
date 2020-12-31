@@ -10,7 +10,9 @@ import imagingbook.lib.color.Rgb;
 // TODO: Merge with image accessors
 public class FloatPixelPack {
 	
+	@SuppressWarnings("unused")
 	private final ImageProcessor ip;
+	
 	private final float[][] pixels;
 	private final int length;
 	private final int depth;
@@ -80,19 +82,11 @@ public class FloatPixelPack {
 	public int getDepth() {
 		return this.depth;
 	}
-
 	
-//	public ImageProcessor updateProcessor() {
-//		copyToImageProcessor(this.pixels, this.ip);
-//		return ip;
-//	}
-	
-	public ImageProcessor toImageProcessor() {
-		ImageProcessor ip2 = ip.duplicate();
-		copyToImageProcessor(this.pixels, ip2);
-		return ip2;
+	public ImageProcessor toImageProcessor(ImageProcessor ip2) {
+		return copyToImageProcessor(this.pixels, ip2);
 	}
-	
+
 	
 	// -------------------------------------------------------------------
 	

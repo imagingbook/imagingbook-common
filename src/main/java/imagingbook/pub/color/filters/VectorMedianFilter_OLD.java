@@ -11,23 +11,20 @@ package imagingbook.pub.color.filters;
 
 import java.awt.Color;
 
-import ij.process.ImageProcessor;
-import imagingbook.lib.filter.GenericFilterVector;
-import imagingbook.lib.image.access.FloatPixelPack;
-import imagingbook.lib.image.access.OutOfBoundsStrategy;
+import imagingbook.lib.filtersOBSOLETE.GenericFilter2D;
+import imagingbook.lib.image.access.ImageAccessor;
+import imagingbook.lib.image.access.ScalarAccessor;
 import imagingbook.lib.math.VectorNorm;
 import imagingbook.lib.math.VectorNorm.NormType;
 
 /**
  * Basic vector median filter for color images implemented
- * by extending the {@link GenericFilterVector} class.
+ * by extending the {@link GenericFilter2D} class.
  * 
  * @author W. Burger
- * @version 2020/12/31
+ * @version 2013/05/30
  */
-public class VectorMedianFilter extends GenericFilterVector {
-	
-	public static Color ModifiedColor = Color.black;
+public class VectorMedianFilter_OLD extends GenericFilter2D {
 	
 	public static class Parameters {
 		/** Filter radius */
@@ -38,41 +35,52 @@ public class VectorMedianFilter extends GenericFilterVector {
 		public boolean markModifiedPixels = false;
 		/** For testing only */
 		public boolean showMask = false;
-		/** Out-of-bounds strategy */
-		public OutOfBoundsStrategy obs = OutOfBoundsStrategy.NEAREST_BORDER;
 	}
 	
-	private final Parameters params;
-	private final int[] modColor = {ModifiedColor.getRed(), ModifiedColor.getGreen(), ModifiedColor.getBlue()};
-	private final FilterMask mask;
-	private final int[][] supportRegion;		// supportRegion[i][c] with index i, color component c
-	private final VectorNorm vNorm;
+	final Parameters params;
 	
-	public int modifiedCount = 0; // for debugging??
+	public static Color modifiedColor = Color.black;
+	final int[] modColor = {modifiedColor.getRed(), modifiedColor.getGreen(), modifiedColor.getBlue()};
+	public int modifiedCount = 0;
+	
+	final FilterMask mask;
+	final int[][] supportRegion;		// supportRegion[i][c] with index i, color component c
+	final VectorNorm vNorm;
 	
 	//-------------------------------------------------------------------------------------
 	
-	public VectorMedianFilter(ImageProcessor ip) {	
-		this(ip, new Parameters());
+	// uses default parameters:
+	public VectorMedianFilter_OLD() {	
+		this(new Parameters());
 	}
 	
-	public VectorMedianFilter(ImageProcessor ip, Parameters params) {
-		super(ip, params.obs);
+	// accepts parameter object:
+	public VectorMedianFilter_OLD(Parameters params) {
 		this.params = params;
-		this.mask = new FilterMask(params.radius);
-		this.supportRegion = new int[mask.getCount()][3];
-		this.vNorm = params.distanceNorm.create();
+		mask = new FilterMask(params.radius);
+		supportRegion = new int[mask.getCount()][3];
+		vNorm = params.distanceNorm.create();
+		initialize();
+	}
+	
+	//-------------------------------------------------------------------------------------
+	
+	void initialize() {
 		if (params.showMask) mask.show("Mask");
 	}
 	
-	//-------------------------------------------------------------------------------------
-	
 	@Override
-	protected float[] filterPixel(FloatPixelPack sources, int u, int v) {
+	protected void filterScalar(ScalarAccessor source, ScalarAccessor target, int u, int v) {
+		throw new UnsupportedOperationException("no filter for gray images");
+	}
+	
+	// vector median filter for RGB color image
+	@Override
+	protected void filterVector(ImageAccessor ia, ImageAccessor target, int u, int v) {
 		final int[] pCtr = new int[3];		// center pixel
-		final float[] pCtrf = sources.getPixel(u, v);
+		final float[] pCtrf = ia.getPix(u, v);
 		copyRgbTo(pCtrf, pCtr);
-		getSupportRegion(sources, u, v);	// TODO: check method!
+		getSupportRegion(ia, u, v);	// TODO: check method!
 		double dCtr = aggregateDistance(pCtr, supportRegion); 
 		double dMin = Double.MAX_VALUE;
 		int jMin = -1;
@@ -101,10 +109,11 @@ public class VectorMedianFilter extends GenericFilterVector {
 		else {	// keep the original pixel value
 			copyRgbTo(pCtr, pF);
 		}
-		return pF;
-	}
+		target.setPix(u, v, pF);
+		//return pF;
+ 	}
 	
-	private int[][] getSupportRegion(FloatPixelPack src, int u, int v) {
+	private int[][] getSupportRegion(ImageAccessor ia, int u, int v) {
 		//final int[] p = new int[3];
 		// fill 'supportRegion' for current mask position
 		int n = 0;
@@ -115,7 +124,7 @@ public class VectorMedianFilter extends GenericFilterVector {
 			for (int j = 0; j < maskArray[0].length; j++) {
 				if (maskArray[i][j] > 0) {
 					int vj = v + j - maskCenter;
-					final float[] p = src.getPixel(ui, vj);
+					final float[] p = ia.getPix(ui, vj);
 					copyRgbTo(p, supportRegion[n]);
 					n = n + 1;
 				}
@@ -129,6 +138,13 @@ public class VectorMedianFilter extends GenericFilterVector {
 		target[1] = (int) source[1];
 		target[2] = (int) source[2];
 	}
+	
+//	private void copyRgbTo(float[] source, float[] target) {
+//		target[0] = source[0];
+//		target[1] = source[1];
+//		target[2] = source[2];
+//	}
+	
 	
 	private void copyRgbTo(int[] source, float[] target) {
 		target[0] = source[0];
