@@ -50,11 +50,11 @@ public class VectorMedianFilterSharpen extends GenericFilterVector {
 	private final int maskCount;
 	private final int[][] maskArray;
 	private final int maskCenter;
-	private final int[][] supportRegion;		// supportRegion[i][c] with index i, color component c
+	private final float[][] supportRegion;		// supportRegion[i][c] with index i, color component c
 	private final VectorNorm vNorm;
 	private final int a;						// a = 2,...,n
 	private final Parameters params;
-	private final int[] modColor;
+	private final float[] modColor;
 	
 	/** For testing only */
 	public int modifiedCount = 0;
@@ -70,36 +70,34 @@ public class VectorMedianFilterSharpen extends GenericFilterVector {
 		this.maskCount = mask.getCount();
 		this.maskArray = mask.getMask();
 		this.maskCenter = mask.getCenter();
-		this.supportRegion = new int[maskCount][3];
+		this.supportRegion = new float[maskCount][];
 		this.a = (int) Math.round(maskCount - params.sharpen * (maskCount - 2));
 		this.vNorm = params.distanceNorm.create();
-		this.modColor = new int[] {params.modifiedColor.getRed(), params.modifiedColor.getGreen(), params.modifiedColor.getBlue()};
+		this.modColor = new float[] {params.modifiedColor.getRed(), params.modifiedColor.getGreen(), params.modifiedColor.getBlue()};
 		
 		if (params.showMask) mask.show("Mask");
 	}
 	
 	@Override
 	protected float[] filterPixel(FloatPixelPack sources, int u, int v) {
-		final int[] pCtr = new int[3];		// center pixel
-		final float[] pCtrf = sources.getPixel(u, v);
-		copyRgbTo(pCtrf, pCtr);			// TODO: check, not elegant
+		float[] pCtr = sources.getPixel(u, v);
 		getSupportRegion(sources, u, v);
 		double dCtr = trimmedAggregateDistance(pCtr, supportRegion, a); 
 		double dMin = Double.MAX_VALUE;
 		int jMin = -1;
 		for (int j = 0; j < supportRegion.length; j++) {
-			int[] p = supportRegion[j];
-			double d = trimmedAggregateDistance(p, supportRegion, a);
+			//float[] p = supportRegion[j];
+			double d = trimmedAggregateDistance(supportRegion[j], supportRegion, a);
 			if (d < dMin) {
 				jMin = j;
 				dMin = d;
 			}
 		}
-		int[] pmin = supportRegion[jMin];
+		float[] pmin = supportRegion[jMin];
 		// modify this pixel only if the min aggregate distance of some
 		// other pixel in the filter region is smaller
 		// than the aggregate distance of the original center pixel:
-		final float[] pF = new float[3];			// the returned color tupel
+		float[] pF = new float[3];			// the returned color tupel
 		if (dCtr - dMin > params.threshold * a) {	// modify this pixel
 			if (params.markModifiedPixels) {
 				copyRgbTo(modColor, pF);
@@ -115,38 +113,33 @@ public class VectorMedianFilterSharpen extends GenericFilterVector {
 		return pF;
 	}
 	
-	private int[][] getSupportRegion(FloatPixelPack src, int u, int v) {
+	private float[][] getSupportRegion(FloatPixelPack src, int u, int v) {
 		//final int[] p = new int[3];
 		// fill 'supportRegion' for current mask position
 		int n = 0;
-
 		for (int i = 0; i < maskArray.length; i++) {
 			int ui = u + i - maskCenter;
 			for (int j = 0; j < maskArray[0].length; j++) {
 				if (maskArray[i][j] > 0) {
 					int vj = v + j - maskCenter;
-					final float[] p = src.getPixel(ui, vj);
-					copyRgbTo(p, supportRegion[n]);
+//					float[] p = src.getPixel(ui, vj);
+//					copyRgbTo(p, supportRegion[n]);
+					supportRegion[n] = src.getPixel(ui, vj);	// TODO: check!!
 					n = n + 1;
 				}
 			}
 		}
 		return supportRegion;
 	}
+
 	
-	private void copyRgbTo(float[] source, int[] target) {
-		target[0] = (int) source[0];
-		target[1] = (int) source[1];
-		target[2] = (int) source[2];
-	}
-	
-	private void copyRgbTo(int[] source, float[] target) {
+	private void copyRgbTo(float[] source, float[] target) {
 		target[0] = source[0];
 		target[1] = source[1];
 		target[2] = source[2];
 	}
 	
-	private double trimmedAggregateDistance(int[] p, int[][] P, int a) {
+	private double trimmedAggregateDistance(float[] p, float[][] P, int a) {
 		if (a <= 1) {
 			return 0;	// aggregate distance of rank 1 is always zero
 		}
