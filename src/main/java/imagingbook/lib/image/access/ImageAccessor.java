@@ -40,7 +40,7 @@ import imagingbook.lib.interpolation.InterpolationMethod;
  * The methods {@link #getPix(double, double)} and {@link ScalarAccessor#getVal(double, double)} perform interpolation at non-integer coordinates
  * using the specified {@link InterpolationMethod}.
  * <br>
- * See {@link imagingbook.lib.filters.GenericFilter2D} 
+ * See {@link imagingbook.lib.filtersOBSOLETE.GenericFilter2D} 
  * and {@code Pixel_Interpolation.Interpolator_Demo} (in {@code imagingbook-plugins-all}) for a concrete usage examples.
  * 
  * @author W. Burger
@@ -236,23 +236,8 @@ public abstract class ImageAccessor {
 	 */
 	public abstract ScalarAccessor getComponentAccessor(int k);
 	
-//	/**
-//	 * Sets the default value (returned when accessing out-of-bounds 
-//	 * pixel coordinates) common to all image components.
-//	 * 
-//	 * @param val the default value.
-//	 */
-//	public abstract void setDefaultValue(float val);
+	// -------------------------------------------------------------------------
 	
-	
-//	/**
-//	 * Sets the default values (returned when accessing out-of-bounds 
-//	 * pixel coordinates) for all image components.
-//	 * The length of the passed array must match the component
-//	 * count. See also {@link #getDepth()}.
-//	 * 
-//	 * @param vals an array of default values.
-//	 */
-//	public abstract void setDefaultValue(float[] vals);
+
 	
 }

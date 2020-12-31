@@ -7,7 +7,7 @@
  * Visit http://imagingbook.com for additional details.
  *******************************************************************************/
 
-package imagingbook.lib.filters;
+package imagingbook.lib.filtersOBSOLETE;
 
 import ij.IJ;
 import ij.process.ImageProcessor;

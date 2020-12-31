@@ -7,23 +7,23 @@
  * Visit http://imagingbook.com for additional details.
  *******************************************************************************/
 
-package imagingbook.lib.filters;
+package imagingbook.lib.filtersOBSOLETE;
 
 /**
- * This class implements a separable 2D Gaussian filter by extending
- * {@link LinearFilter2DSeparable}.
+ * This class implements a 2D Gaussian filter by extending
+ * {@link LinearFilter2D}.
  * 
  * @author WB
  * @version 2020/12/29
  */
-public class GaussianFilterSeparable extends LinearFilter2DSeparable {
+public class GaussianFilter extends LinearFilter2D {
 
-	public GaussianFilterSeparable(double sigma) {
-		super(new GaussianKernel1D(sigma), new GaussianKernel1D(sigma));
+	public GaussianFilter(double sigma) {
+		super(new GaussianKernel2D(sigma));
 	}
 	
-	public GaussianFilterSeparable(double sigmaX, double sigmaY) {
-		super(new GaussianKernel1D(sigmaX), new GaussianKernel1D(sigmaY));
+	public GaussianFilter(double sigmaX, double sigmaY) {
+		super(new GaussianKernel2D(sigmaX, sigmaY));
 	}
 	
 }

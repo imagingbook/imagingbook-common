@@ -10,8 +10,7 @@
 package imagingbook.pub.sift.scalespace;
 
 import ij.process.FloatProcessor;
-//import imagingbook.pub.sift.filters.GaussianFilter;
-import imagingbook.lib.filters.GaussianFilter;
+import imagingbook.lib.filtersOBSOLETE.GaussianFilter;
 
 /**
  * Represents a single scale level. Just a special kind of FloatProcessor

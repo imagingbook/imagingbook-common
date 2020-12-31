@@ -1,4 +1,6 @@
-package imagingbook.lib.filters;
+package imagingbook.lib.filtersOBSOLETE;
+
+import imagingbook.lib.filter.kernel.Kernel2D;
 
 public interface HasKernel2D {
 	

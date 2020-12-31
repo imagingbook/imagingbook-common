@@ -2,11 +2,16 @@ package imagingbook.lib.color;
 
 public abstract class Rgb {
 
-	public static int[] intToRgb(int rgb) {
-		int red = ((rgb >> 16) & 0xFF);
-		int grn = ((rgb >> 8) & 0xFF);
-		int blu  = (rgb & 0xFF);
-		return new int[] {red, grn, blu};
+	public static int[] intToRgb(int p) {
+		int[] RGB = new int[3];
+		intToRgb(p, RGB);
+		return RGB;
+	}
+	
+	public static void intToRgb(int p, int[] RGB) {
+		RGB[0] = ((p >> 16) & 0xFF);
+		RGB[1] = ((p >> 8) & 0xFF);
+		RGB[2] = (p & 0xFF);
 	}
 
 	public static int rgbToInt(int red, int grn, int blu) {

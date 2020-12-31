@@ -7,8 +7,10 @@
  * Visit http://imagingbook.com for additional details.
  *******************************************************************************/
 
-package imagingbook.lib.filters;
+package imagingbook.lib.filtersOBSOLETE;
 
+import imagingbook.lib.filter.kernel.Kernel1D;
+import imagingbook.lib.filter.kernel.Kernel2D;
 import imagingbook.lib.image.access.ScalarAccessor;
 
 /**

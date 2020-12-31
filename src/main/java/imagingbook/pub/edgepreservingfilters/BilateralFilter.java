@@ -9,7 +9,7 @@
 
 package imagingbook.pub.edgepreservingfilters;
 
-import imagingbook.lib.filters.GenericFilter2D;
+import imagingbook.lib.filtersOBSOLETE.GenericFilter2D;
 import imagingbook.lib.image.access.ImageAccessor;
 import imagingbook.lib.image.access.ScalarAccessor;
 import imagingbook.lib.math.Arithmetic;

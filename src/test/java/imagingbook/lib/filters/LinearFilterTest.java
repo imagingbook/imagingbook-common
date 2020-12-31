@@ -7,6 +7,8 @@ import java.nio.file.Path;
 import org.junit.Test;
 
 import ij.process.ImageProcessor;
+import imagingbook.lib.filter.kernel.Kernel2D;
+import imagingbook.lib.filtersOBSOLETE.LinearFilter2D;
 import imagingbook.lib.ij.IjUtils;
 import imagingbook.lib.image.access.OutOfBoundsStrategy;
 import imagingbook.testutils.ImageTests;
