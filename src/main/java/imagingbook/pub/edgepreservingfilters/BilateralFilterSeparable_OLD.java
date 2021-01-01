@@ -19,7 +19,7 @@ import imagingbook.lib.image.access.ScalarAccessor;
  * @author W. Burger
  * @version 2013/05/30
  */
-public class BilateralFilterSeparable extends BilateralFilter {
+public class BilateralFilterSeparable_OLD extends BilateralFilter_OLD {
 	
 	enum Direction {
 		Horizontal, Vertical
@@ -28,16 +28,16 @@ public class BilateralFilterSeparable extends BilateralFilter {
 	private Direction direction;
 	private float[] Hd;			// domain kernel is one-dimensional here!
 	
-	public BilateralFilterSeparable() {
+	public BilateralFilterSeparable_OLD() {
 		super();
 	}
 	
-	public BilateralFilterSeparable(double sigmaD, double sigmaR) {
+	public BilateralFilterSeparable_OLD(double sigmaD, double sigmaR) {
 		super(sigmaD, sigmaR);
 		initialize();
 	}
 	
-	public BilateralFilterSeparable(Parameters params) {
+	public BilateralFilterSeparable_OLD(Parameters params) {
 		super(params);
 		initialize();
 	}
