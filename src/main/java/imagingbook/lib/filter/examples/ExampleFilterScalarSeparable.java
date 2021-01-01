@@ -9,30 +9,20 @@ public class ExampleFilterScalarSeparable extends GenericFilterScalar {
 
 	protected ExampleFilterScalarSeparable(ImageProcessor ip, OutOfBoundsStrategy obs) {
 		super(ip, obs);
-		// TODO Auto-generated constructor stub
 	}
 
-//	@Override
-//	protected float filterPixel(float[] source, int u, int v) {
-//		switch (pass) {
-//		case 0: return filterPixelX(source, u, v);
-//		case 1: return filterPixelY(source, u, v);
-//		}
-//		return 0; 
-//	}
-	
 	@Override
 	protected float filterPixel(Slice source, int u, int v) {
-		switch (pass) {
+		switch (getPass()) {
 		case 0: return filterPixelX(source, u, v);
 		case 1: return filterPixelY(source, u, v);
+		default: throw new RuntimeException("invalid pass number " + getPass());
 		}
-		return 0; 
 	}
 	
 	@Override
-	protected boolean doMorePasses() {
-		return (pass < 2);	// this filter needs 2 passes
+	protected int passesNeeded() {
+		return 2;	// this filter needs 2 passes
 	}
 
 	private float filterPixelX(Slice source, int u, int v) {

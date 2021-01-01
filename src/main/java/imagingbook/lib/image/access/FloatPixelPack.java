@@ -102,8 +102,8 @@ public class FloatPixelPack {
 	// -------------------------------------------------------------------
 	
 	public class Slice {
-		final int idx;
-		final float[] vals;
+		private final int idx;
+		private final float[] vals;
 		
 		Slice(int idx) {
 			this.idx = idx;
@@ -127,8 +127,16 @@ public class FloatPixelPack {
 			}
 		}
 		
+		public int getIndex() {
+			return idx;
+		}
+		
 		public float[] getPixels() {
 			return vals;
+		}
+		
+		public int getLength() {
+			return vals.length;
 		}
 		
 		public void copyTo(Slice other) {
@@ -187,6 +195,10 @@ public class FloatPixelPack {
 			B[i] = RGB[2];
 		}
 		return new float[][] {R, G, B};
+	}
+	
+	public static int getDepth(ImageProcessor ip) {
+		return (ip instanceof ColorProcessor) ? 3 : 1;
 	}
 	
 	// --------------------------------------------------------------------

@@ -23,8 +23,8 @@ public abstract class GenericFilterScalar extends GenericFilter {
 	}
 	
 	protected void filterSlice(Slice source, Slice target) {
-		for (int v = 0; v < this.imageHeight; v++) {
-			for (int u = 0; u < this.imageWidth; u++) {
+		for (int v = 0; v < this.imgHeight; v++) {
+			for (int u = 0; u < this.imgWidth; u++) {
 				target.setVal(u, v, filterPixel(source, u, v));
 			}
 		}

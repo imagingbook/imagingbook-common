@@ -1,27 +1,36 @@
 package imagingbook.lib.filter;
 
+import static imagingbook.lib.image.access.FloatPixelPack.getDepth;
+
 import ij.process.ImageProcessor;
 import imagingbook.lib.image.access.FloatPixelPack;
 import imagingbook.lib.image.access.OutOfBoundsStrategy;
 
-
 public abstract class GenericFilter {
 	
 	public static final OutOfBoundsStrategy DefaultOutOfBoundsStrategy = OutOfBoundsStrategy.NEAREST_BORDER;
+	public static final int MaximumPasses = 10;
 	
-	protected int pass = 0;
 	protected ImageProcessor ip;  // we need a reference to create the result processor
-	protected final int imageWidth, imageHeight;
+	protected final int imgWidth;
+	protected final int imgHeight;
+	protected final int imgDepth;
 	protected final OutOfBoundsStrategy obs;
 
+	private int pass = 0;
 	
 	protected GenericFilter(ImageProcessor ip, OutOfBoundsStrategy obs) {
 		this.ip = ip;
-		this.imageWidth = ip.getWidth();
-		this.imageHeight = ip.getHeight();
+		this.imgWidth = ip.getWidth();
+		this.imgHeight = ip.getHeight(); 
+		this.imgDepth = getDepth(ip);
 		this.obs = (obs != null) ? obs : DefaultOutOfBoundsStrategy;
 	}
 	
+	protected int getPass() {
+		return pass;
+		
+	}
 	// -----------------------------------------------------------------------------------
 	
 	public ImageProcessor apply() {
@@ -33,18 +42,22 @@ public abstract class GenericFilter {
 		if (pass > 0) {
 			throw new IllegalStateException("filter has already been applied");
 		}
-		do {
+		pass = 0;
+		while (pass < this.passesNeeded() && pass < MaximumPasses) {
 			filterAll(source);
 			pass++;
-		} while (doMorePasses());
+		}
+		if (pass == MaximumPasses) {
+			throw new RuntimeException("maximum number of filter passes exceeded - runaway?");
+		}
 		return source.toImageProcessor((createNew) ? ip.duplicate() : ip);
 	}
 	
 	// limits the necessary number of passes, which may not be known at initialization.
 	// multi-pass filters must override this method.
-	protected boolean doMorePasses() {
-		return false;
-	}	
+	protected int passesNeeded() {
+		return 1;
+	}
 
 	protected abstract void filterAll(FloatPixelPack source);
 	

@@ -23,17 +23,19 @@ public class LinearFilterSeparable extends GenericFilterScalar {
 
 	@Override
 	protected float filterPixel(Slice source, int u, int v) {
-		switch (pass) {
+		switch (getPass()) {
 		case 0: return filterPixelX(source, u, v);
 		case 1: return filterPixelY(source, u, v);
 		}
-		throw new RuntimeException("invalid pass number " + pass);
+		throw new RuntimeException("invalid pass number " + getPass());
 	}
 	
 	@Override
-	protected boolean doMorePasses() {
-		return (pass < 2);	// this filter needs 2 passes
+	protected int passesNeeded() {
+		return 2;	// this filter needs 2 passes
 	}
+	
+	// ------------------------------------------------------------------------
 
 	// 1D convolution in x-direction
 	private float filterPixelX(Slice source, int u, int v) {

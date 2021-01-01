@@ -13,8 +13,8 @@ public abstract class GenericFilterVector extends GenericFilter {
 	@Override 
 	protected void filterAll(FloatPixelPack sources) {
 		FloatPixelPack targets = sources.getEmptyCopy();
-		for (int v = 0; v < this.imageHeight; v++) {
-			for (int u = 0; u < this.imageWidth; u++) {
+		for (int v = 0; v < this.imgHeight; v++) {
+			for (int u = 0; u < this.imgWidth; u++) {
 				targets.setPixel(u, v, filterPixel(sources, u, v)); // single pixel operation
 			}
 		}
