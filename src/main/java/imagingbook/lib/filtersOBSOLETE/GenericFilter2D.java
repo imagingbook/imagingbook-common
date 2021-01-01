@@ -29,10 +29,11 @@ import imagingbook.lib.image.access.VectorAccessor;
  * To change this behavior, implementing classes should also override
  * the method {@link #filterVector(ImageAccessor, ImageAccessor, int, int)}.
  * <br>
- * See {@link LinearFilter2D} for a sample implementation.
+ * 
  * 
  * @author wilbur
  * @version 2020/12/28
+ * @deprecated
  * 
  */
 public abstract class GenericFilter2D {

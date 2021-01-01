@@ -9,7 +9,6 @@ import imagingbook.lib.image.access.OutOfBoundsStrategy;
 public abstract class GenericFilter {
 	
 	public static final OutOfBoundsStrategy DefaultOutOfBoundsStrategy = OutOfBoundsStrategy.NEAREST_BORDER;
-	public static final int MaximumPasses = 10;
 	
 	protected ImageProcessor ip;  // we need a reference to create the result processor
 	protected final int imgWidth;
@@ -42,13 +41,11 @@ public abstract class GenericFilter {
 		if (pass > 0) {
 			throw new IllegalStateException("filter has already been applied");
 		}
+		int maxPasses = passesNeeded();
 		pass = 0;
-		while (pass < this.passesNeeded() && pass < MaximumPasses) {
+		while (pass < maxPasses) {
 			filterAll(source);
 			pass++;
-		}
-		if (pass == MaximumPasses) {
-			throw new RuntimeException("maximum number of filter passes exceeded - runaway?");
 		}
 		return source.toImageProcessor((createNew) ? ip.duplicate() : ip);
 	}

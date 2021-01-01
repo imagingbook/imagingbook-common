@@ -7,23 +7,29 @@
  * Visit http://imagingbook.com for additional details.
  *******************************************************************************/
 
-package imagingbook.lib.filtersOBSOLETE;
+package imagingbook.lib.filter;
+
+import ij.process.ImageProcessor;
+import imagingbook.lib.filter.kernel.GaussianKernel1D;
+import imagingbook.lib.image.access.OutOfBoundsStrategy;
 
 /**
  * This class implements a separable 2D Gaussian filter by extending
- * {@link LinearFilter2DSeparable}.
+ * {@link LinearFilterSeparable}.
  * 
  * @author WB
  * @version 2020/12/29
  */
-public class GaussianFilterSeparable extends LinearFilter2DSeparable {
+public class GaussianFilterSeparable extends LinearFilterSeparable {
+	
+	public static final OutOfBoundsStrategy OBS = OutOfBoundsStrategy.NEAREST_BORDER;
 
-	public GaussianFilterSeparable(double sigma) {
-		super(new GaussianKernel1D(sigma), new GaussianKernel1D(sigma));
+	public GaussianFilterSeparable(ImageProcessor ip, double sigma) {
+		super(ip, new GaussianKernel1D(sigma), OBS);
 	}
 	
-	public GaussianFilterSeparable(double sigmaX, double sigmaY) {
-		super(new GaussianKernel1D(sigmaX), new GaussianKernel1D(sigmaY));
+	public GaussianFilterSeparable(ImageProcessor ip, double sigmaX, double sigmaY) {
+		super(ip, new GaussianKernel1D(sigmaX), new GaussianKernel1D(sigmaY), OBS);
 	}
 	
 }

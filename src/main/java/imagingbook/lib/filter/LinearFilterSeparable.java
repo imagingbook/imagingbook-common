@@ -11,6 +11,10 @@ public class LinearFilterSeparable extends GenericFilterScalar {
 	private final int width, height;		// width/height of the kernel
 	private final int xc, yc;				// 'hot spot' coordinates
 	
+	public LinearFilterSeparable(ImageProcessor ip, Kernel1D kernelXY, OutOfBoundsStrategy obs) {
+		this(ip, kernelXY, kernelXY, obs);
+	}
+	
 	public LinearFilterSeparable(ImageProcessor ip, Kernel1D kernelX, Kernel1D kernelY, OutOfBoundsStrategy obs) {
 		super(ip, obs);
 		this.hX = kernelX.getH();
@@ -26,8 +30,8 @@ public class LinearFilterSeparable extends GenericFilterScalar {
 		switch (getPass()) {
 		case 0: return filterPixelX(source, u, v);
 		case 1: return filterPixelY(source, u, v);
+		default: throw new RuntimeException("invalid pass number " + getPass());
 		}
-		throw new RuntimeException("invalid pass number " + getPass());
 	}
 	
 	@Override
@@ -40,23 +44,23 @@ public class LinearFilterSeparable extends GenericFilterScalar {
 	// 1D convolution in x-direction
 	private float filterPixelX(Slice source, int u, int v) {
 		final int vj = v; // - yc;
-		float sum = 0;
+		double sum = 0;
 		for (int i = 0; i < width; i++) {
 			int ui = u + i - xc;
 			sum = sum + source.getVal(ui, vj) * hX[i];
 		}
-		return sum;
+		return (float)sum;
 	}
 	
 	// 1D convolution in y-direction
 	private float filterPixelY(Slice source, int u, int v) {
 		final int ui = u; // - xc;
-		float sum = 0;
+		double sum = 0;
 		for (int j = 0; j < height; j++) {
 			int vj = v + j - yc;
 			sum = sum + source.getVal(ui, vj) * hY[j];
 		}
-		return sum;
+		return (float) sum;
 	}
 	
 

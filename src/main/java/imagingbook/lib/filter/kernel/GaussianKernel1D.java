@@ -1,8 +1,6 @@
-package imagingbook.lib.filtersOBSOLETE;
+package imagingbook.lib.filter.kernel;
 
 import static imagingbook.lib.math.Arithmetic.sqr;
-
-import imagingbook.lib.filter.kernel.Kernel1D;
 
 /**
  * This class represents a 2D filter kernel.

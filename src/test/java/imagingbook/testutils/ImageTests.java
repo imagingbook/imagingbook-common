@@ -11,7 +11,6 @@ import ij.process.ColorProcessor;
 import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
 import ij.process.ShortProcessor;
-import imagingbook.lib.color.Rgb;
 import imagingbook.lib.ij.IjUtils;
 
 
@@ -32,11 +31,11 @@ public class ImageTests {
 				for (int u = 0; u < width; u++) {
 					cp1.getPixel(u, v, rgb1);
 					cp2.getPixel(u, v, rgb2);
-					for (int i = 0; i < 3; i++) {
-						int v1 = rgb1[i];
-						int v2 = rgb2[i];
-						if (Math.abs(rgb1[0] - rgb2[0]) > tolerance) {
-							fail(msgRgb(u, v, v1, v2));
+					for (int k = 0; k < 3; k++) {
+						int c1 = rgb1[k];
+						int c2 = rgb2[k];
+						if (Math.abs(c1 - c2) > tolerance) {
+							fail(msgRgb(u, v, rgb1, rgb2));
 						}
 					}
 				}
@@ -75,9 +74,7 @@ public class ImageTests {
 		return true;
 	}
 		
-	private static String msgRgb(int u, int v, int v1, int v2) {
-		int[] rgb1 = Rgb.intToRgb(v1);
-		int[] rgb2 = Rgb.intToRgb(v2);
+	private static String msgRgb(int u, int v, int[] rgb1, int[] rgb2) {
 		return String.format(Locale.US, "different pixel values at pos. (%d, %d) : %s vs. %s", u, v,
 				Arrays.toString(rgb1), Arrays.toString(rgb2));
 	}

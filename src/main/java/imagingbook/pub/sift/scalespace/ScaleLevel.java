@@ -10,7 +10,8 @@
 package imagingbook.pub.sift.scalespace;
 
 import ij.process.FloatProcessor;
-import imagingbook.lib.filtersOBSOLETE.GaussianFilter;
+import imagingbook.lib.filter.GaussianFilter;
+
 
 /**
  * Represents a single scale level. Just a special kind of FloatProcessor
@@ -54,8 +55,7 @@ public class ScaleLevel extends FloatProcessor {	// TODO: make IJ independent, u
 	// ------------------------------
 
 	public void filterGaussian(double sigma) {
-		GaussianFilter gf = new GaussianFilter(sigma);
-		gf.applyTo(this);
+		new GaussianFilter(this, sigma).apply();
 	}
 	
 	public ScaleLevel duplicate() {

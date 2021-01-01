@@ -1,4 +1,4 @@
-package imagingbook.lib.filters2.util;
+package imagingbook.lib.image.access;
 
 import static org.junit.Assert.*;
 
@@ -15,7 +15,7 @@ import imagingbook.testutils.ImageTests;
  * @author WB
  *
  */
-public class FloatArraysTest {
+public class FloatPixelPackTest {	// TODO: needs to be adapted to FloatPixelPack!
 	
 	Path path1 = new imagingbook.DATA.images.Resources().getResourcePath("monastery-small.png");
 	Path path2 = new imagingbook.DATA.images.Resources().getResourcePath("clown.png");
@@ -28,7 +28,7 @@ public class FloatArraysTest {
 //    	FloatArrays.copyToImageProcessor(sources, ip2);
 //    	assertTrue(ImageTests.match(ip1, ip2, 1E-6));
 //	}
-//	
+	
 //	@Test
 //	public void testShortImage() {
 //		ImageProcessor ip1 = IjUtils.openImage(path1).getProcessor().convertToShortProcessor();
