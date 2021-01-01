@@ -7,12 +7,13 @@
  * Visit http://imagingbook.com for additional details.
  *******************************************************************************/
 
-package imagingbook.pub.color.filters;
+package imagingbook.pub.color.filters.OLD;
 
 import java.util.Arrays;
 
 import imagingbook.lib.filtersOBSOLETE.GenericFilter2D;
 import imagingbook.lib.image.access.ScalarAccessor;
+import imagingbook.pub.color.filters.CircularMask;
 
 /**
  * Ordinary (scalar) median filter for color images implemented
@@ -29,7 +30,7 @@ public class ScalarMedianFilter_OLD extends GenericFilter2D {
 	}
 	
 	final Parameters params;
-	FilterMask mask;
+	CircularMask mask;
 
 	//-------------------------------------------------------------------------------------
 	
@@ -39,7 +40,7 @@ public class ScalarMedianFilter_OLD extends GenericFilter2D {
 	
 	public ScalarMedianFilter_OLD(Parameters params) {
 		this.params = params;
-		this.mask = new FilterMask(params.radius);
+		this.mask = new CircularMask(params.radius);
 	}
 		
 	//-------------------------------------------------------------------------------------

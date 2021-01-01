@@ -21,6 +21,10 @@ public abstract class GenericFilterVector extends GenericFilter {
 		targets.copyTo(sources);	// copy targets back to sources
 	}
 	
+	
+	public void copyPixel(float[] source, float[] target) {
+		System.arraycopy(source, 0, target, 0, source.length);
+	}
 
 	// calculate the result vector for a single pixel
 	protected abstract float[] filterPixel(FloatPixelPack sources, int u, int v);

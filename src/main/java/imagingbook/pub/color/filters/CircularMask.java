@@ -9,17 +9,13 @@
 
 package imagingbook.pub.color.filters;
 
-import ij.ImagePlus;
-import ij.process.FloatProcessor;
-import ij.process.ImageProcessor;
-
-public class FilterMask {
+public class CircularMask {
 	
 	private final int center;			// mask center position
 	private final int count;			// number of nonzero mask elements
 	private final int[][] mask;			// mask[x][y]  specifies the support region
 		
-	public FilterMask(double radius) {
+	public CircularMask(double radius) {
 		center = Math.max((int) Math.ceil(radius), 1);
 		//IJ.log("mask radius = " + center);
 		int mWidth = 2 * center + 1;		// width/height of mask array
@@ -49,18 +45,6 @@ public class FilterMask {
 	
 	public int[][] getMask() {
 		return mask;
-	}
-	
-	public ImagePlus getImagePlus(String title) {
-		FloatProcessor fp = new FloatProcessor(mask);
-		ImageProcessor bp = fp.convertToByte(false);
-		bp.threshold(0);
-		//bp.multiply(255);
-		return new ImagePlus(title, bp);
-	}
-	
-	public void show(String title) {
-		getImagePlus(title).show();
 	}
 
 }

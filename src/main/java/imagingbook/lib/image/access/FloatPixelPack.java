@@ -1,5 +1,7 @@
 package imagingbook.lib.image.access;
 
+import java.util.Arrays;
+
 import ij.process.ByteProcessor;
 import ij.process.ColorProcessor;
 import ij.process.FloatProcessor;
@@ -34,10 +36,19 @@ public class FloatPixelPack {
 		this.indexer = orig.indexer;
 	}
 	
+	// returns a new pixel array
 	public float[] getPixel(int u, int v) {
-		float[] vals = new float[depth];
+		return getPixel(u, v, new float[depth]);
+	}
+	
+	// fills in and returns an existing pixels array
+	public float[] getPixel(int u, int v, float[] vals) {
+		//float[] vals = new float[depth];
 		final int i = indexer.getIndex(u, v);
-		if (i >= 0) {	// i = -1 --> default value (zero)
+		if (i < 0) {	// i = -1 --> default value (zero)
+			Arrays.fill(vals, 0);
+		}
+		else {	
 			for (int k = 0; k < depth; k++) {
 				vals[k] = pixels[k][i];
 			}

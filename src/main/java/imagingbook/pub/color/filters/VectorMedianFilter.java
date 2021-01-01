@@ -14,7 +14,6 @@ import java.awt.Color;
 import ij.process.ImageProcessor;
 import imagingbook.lib.filter.GenericFilterVector;
 import imagingbook.lib.image.access.FloatPixelPack;
-import imagingbook.lib.image.access.OutOfBoundsStrategy;
 import imagingbook.lib.math.VectorNorm;
 import imagingbook.lib.math.VectorNorm.NormType;
 
@@ -27,28 +26,30 @@ import imagingbook.lib.math.VectorNorm.NormType;
  */
 public class VectorMedianFilter extends GenericFilterVector {
 	
-	public static Color ModifiedColor = Color.black;
-	
-	public static class Parameters {
-		/** Filter radius */
-		public double radius = 3.0;
+	public static class Parameters extends ScalarMedianFilter.Parameters {
 		/** Distance norm to use */
 		public NormType distanceNorm = NormType.L1;
+		
+		/** For testing only */
+		public boolean showMask = false;
 		/** For testing only */
 		public boolean markModifiedPixels = false;
 		/** For testing only */
-		public boolean showMask = false;
-		/** Out-of-bounds strategy */
-		public OutOfBoundsStrategy obs = OutOfBoundsStrategy.NEAREST_BORDER;
+		public Color modifiedColor = Color.black;
+		
 	}
 	
 	private final Parameters params;
-	private final int[] modColor = {ModifiedColor.getRed(), ModifiedColor.getGreen(), ModifiedColor.getBlue()};
-	private final FilterMask mask;
-	private final int[][] supportRegion;		// supportRegion[i][c] with index i, color component c
+	private final CircularMask mask;
+	private final int maskCount;
+	final int[][] maskArray;
+	final int xc, yc;
+	private final float[][] supportRegion;		// supportRegion[i][c] with index i, color component c
 	private final VectorNorm vNorm;
+	private final float[] pTmp = new float[3];	// check, adapt to depth
+	private final float[] modColor;
 	
-	public int modifiedCount = 0; // for debugging??
+	public int modifiedCount = 0; // for debugging only
 	
 	//-------------------------------------------------------------------------------------
 	
@@ -59,91 +60,76 @@ public class VectorMedianFilter extends GenericFilterVector {
 	public VectorMedianFilter(ImageProcessor ip, Parameters params) {
 		super(ip, params.obs);
 		this.params = params;
-		this.mask = new FilterMask(params.radius);
-		this.supportRegion = new int[mask.getCount()][3];
+		this.mask = new CircularMask(params.radius);
+		this.maskCount = mask.getCount();
+		this.maskArray = mask.getMask();
+		this.xc = this.yc = mask.getCenter();
+		this.supportRegion = new float[maskCount][3];
 		this.vNorm = params.distanceNorm.create();
-		if (params.showMask) mask.show("Mask");
+		
+		this.modColor = params.modifiedColor.getRGBColorComponents(null);
+		if (params.showMask) Utils.showMask(this.mask, "Mask-" + this.getClass().getSimpleName());
 	}
 	
 	//-------------------------------------------------------------------------------------
 	
 	@Override
 	protected float[] filterPixel(FloatPixelPack sources, int u, int v) {
-		final int[] pCtr = new int[3];		// center pixel
-		final float[] pCtrf = sources.getPixel(u, v);
-		copyRgbTo(pCtrf, pCtr);
-		getSupportRegion(sources, u, v);	// TODO: check method!
-		double dCtr = aggregateDistance(pCtr, supportRegion); 
+		final float[] pCtr = sources.getPixel(u, v);
+		getSupportRegion(sources, u, v);
+		double dCtr = aggregateDistance(pCtr); 
 		double dMin = Double.MAX_VALUE;
 		int jMin = -1;
 		for (int j = 0; j < supportRegion.length; j++) {
-			int[] p = supportRegion[j];
-			double d = aggregateDistance(p, supportRegion);
+			float[] p = supportRegion[j];
+			double d = aggregateDistance(p);
 			if (d < dMin) {
 				jMin = j;
 				dMin = d;
 			}
 		}
-		int[] pmin = supportRegion[jMin];
+		float[] pmin = supportRegion[jMin];
 		// modify this pixel only if the min aggregate distance of some
 		// other pixel in the filter region is smaller
 		// than the aggregate distance of the original center pixel:
 		final float[] pF = new float[3];	// the returned color tupel
 		if (dMin < dCtr) {	// modify this pixel
 			if (params.markModifiedPixels) {
-				copyRgbTo(modColor, pF);
+				copyPixel(modColor, pF);
 				modifiedCount++;
 			}
 			else {
-				copyRgbTo(pmin, pF);
+				copyPixel(pmin, pF);
 			}
 		}
 		else {	// keep the original pixel value
-			copyRgbTo(pCtr, pF);
+			copyPixel(pCtr, pF);
 		}
 		return pF;
 	}
 	
-	private int[][] getSupportRegion(FloatPixelPack src, int u, int v) {
-		//final int[] p = new int[3];
+	private void getSupportRegion(FloatPixelPack src, int u, int v) {
 		// fill 'supportRegion' for current mask position
-		int n = 0;
-		final int[][] maskArray = mask.getMask();
-		final int maskCenter = mask.getCenter();
+		int k = 0;
 		for (int i = 0; i < maskArray.length; i++) {
-			int ui = u + i - maskCenter;
+			int ui = u + i - xc;
 			for (int j = 0; j < maskArray[0].length; j++) {
 				if (maskArray[i][j] > 0) {
-					int vj = v + j - maskCenter;
-					final float[] p = src.getPixel(ui, vj);
-					copyRgbTo(p, supportRegion[n]);
-					n = n + 1;
+					int vj = v + j - yc;
+					copyPixel(src.getPixel(ui, vj, pTmp), supportRegion[k]);
+					k = k + 1;
 				}
 			}
 		}
-		return supportRegion;
-	}
-	
-	private void copyRgbTo(float[] source, int[] target) {
-		target[0] = (int) source[0];
-		target[1] = (int) source[1];
-		target[2] = (int) source[2];
-	}
-	
-	private void copyRgbTo(int[] source, float[] target) {
-		target[0] = source[0];
-		target[1] = source[1];
-		target[2] = source[2];
 	}
 	
 	// find the color with the smallest summed distance to all others.
 	// brute force and thus slow
-	private double aggregateDistance(int[] p, int[][] P) {
+	private double aggregateDistance(float[] p) {
 		double d = 0;
-		for (int i = 0; i < P.length; i++) {
-			d = d + vNorm.distance(p, P[i]);
+		for (int i = 0; i < supportRegion.length; i++) {
+			d = d + vNorm.distance(p, supportRegion[i]);
 		}
 		return d;
 	}
-
 }

@@ -28,12 +28,13 @@ import imagingbook.lib.image.access.OutOfBoundsStrategy;
 public class ScalarMedianFilter extends GenericFilterScalar {
 	
 	final Parameters params;
-	final FilterMask mask;
+	final CircularMask mask;
 	final int maskCount;
-	final float[] p;
-	final int medianIndex;
-	final int maskCenter;
+	final int xc, yc;
 	final int[][] maskArray;
+	final float[] supportRegion;
+	final int medianIndex;
+	
 	
 	public ScalarMedianFilter(ImageProcessor ip) {
 		this(ip, new Parameters());
@@ -42,12 +43,12 @@ public class ScalarMedianFilter extends GenericFilterScalar {
 	public ScalarMedianFilter(ImageProcessor ip, Parameters params) {
 		super(ip, params.obs);
 		this.params = params;
-		this.mask = new FilterMask(params.radius);
+		this.mask = new CircularMask(params.radius);
 		this.maskCount = mask.getCount();
-		this.p = new float[maskCount];
-		this.medianIndex = maskCount/2;
-		this.maskCenter = mask.getCenter();
+		this.xc = this.yc = mask.getCenter();
 		this.maskArray = mask.getMask();
+		this.supportRegion = new float[maskCount];
+		this.medianIndex = maskCount/2;
 	}
 
 	public static class Parameters {
@@ -63,17 +64,16 @@ public class ScalarMedianFilter extends GenericFilterScalar {
 	protected float filterPixel(Slice source, int u, int v) {
 		int k = 0;
 		for (int i = 0; i < maskArray.length; i++) {
-			int ui = u + i - maskCenter;
+			int ui = u + i - xc;
 			for (int j = 0; j < maskArray[0].length; j++) {
 				if (maskArray[i][j] > 0) {
-					int vj = v + j - maskCenter;
-					p[k] = source.getVal(ui, vj);
+					int vj = v + j - yc;
+					supportRegion[k] = source.getVal(ui, vj);
 					k = k + 1;
 				}
 			}
 		}
-		Arrays.sort(p);
-		return p[medianIndex];
+		Arrays.sort(supportRegion);
+		return supportRegion[medianIndex];
 	}
-
 }
