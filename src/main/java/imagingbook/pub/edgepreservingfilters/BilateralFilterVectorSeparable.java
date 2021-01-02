@@ -11,14 +11,14 @@ package imagingbook.pub.edgepreservingfilters;
 
 import ij.process.ColorProcessor;
 import imagingbook.lib.filter.GenericFilterVector;
-import imagingbook.lib.filter.kernel.GaussianKernel2D;
+import imagingbook.lib.filter.kernel.GaussianKernel1D;
 import imagingbook.lib.image.access.PixelPack;
 import imagingbook.lib.math.Arithmetic;
 import imagingbook.lib.math.VectorNorm;
-import imagingbook.lib.math.VectorNorm.NormType;
+import imagingbook.pub.edgepreservingfilters.BilateralFilterVector.Parameters;
 
 /**
- * Vector version, for RGB images only (accepts {@link ColorProcessor} only).
+ * Separable vector version, for RGB images only (accepts {@link ColorProcessor} only).
  * This class implements a bilateral filter as proposed in
  * C. Tomasi and R. Manduchi, "Bilateral Filtering for Gray and Color Images",
  * Proceedings of the 1998 IEEE International Conference on Computer Vision,
@@ -29,27 +29,22 @@ import imagingbook.lib.math.VectorNorm.NormType;
  * @author W. Burger
  * @version 2021/01/01
  */
-public class BilateralFilterVector extends GenericFilterVector {
+public class BilateralFilterVectorSeparable extends GenericFilterVector {
 	
-	public static class Parameters extends BilateralFilterScalar.Parameters {
-		/** Distance norm to use between color vectors */
-		public NormType colorNormType = NormType.L2;
-	}
-	
-	private final float[][] Hd;	// the domain kernel
+	private final float[] Hd;	// the 1D domain kernel
 	private final int K;		// the domain kernel size [-K,...,K]
 	private final double sigmaR2;
 	private final VectorNorm colorNorm;
 	private final double colorScale;
 	
 	
-	public BilateralFilterVector(ColorProcessor ip) {
+	public BilateralFilterVectorSeparable(ColorProcessor ip) {
 		this(ip, new Parameters());
 	}
 	
-	public BilateralFilterVector(ColorProcessor ip, Parameters params) {
+	public BilateralFilterVectorSeparable(ColorProcessor ip, Parameters params) {
 		super(ip, params.obs);
-		GaussianKernel2D kernel = new GaussianKernel2D(params.sigmaD);
+		GaussianKernel1D kernel = new GaussianKernel1D(params.sigmaD);
 		this.Hd = kernel.getH();
 		this.K = kernel.getXc();
 		this.sigmaR2 = params.sigmaR * params.sigmaR;
@@ -59,27 +54,57 @@ public class BilateralFilterVector extends GenericFilterVector {
 	
 	@Override
 	protected float[] filterPixel(PixelPack source, int u, int v) {
-		float[] S = new float[3]; 	// sum of weighted RGB values
-		float W = 0;				// sum of weights
-		float[] a = source.getPixel(u, v);			// value of the current center pixel
-		
+		switch (getPass()) {
+		case 0: return filterPixelX(source, u, v);
+		case 1: return filterPixelY(source, u, v);
+		default: throw new RuntimeException("invalid pass number " + getPass());
+		}
+ 	}
+	
+	private float[] filterPixelX(PixelPack source, int u, int v) {
+		float[] S = new float[3]; 	// sum of weighted RGB (initialized to zero)
+		float W = 0;						// sum of weights
+		float[] a = source.getPixel(u, v);
 		for (int m = -K; m <= K; m++) {
-			for (int n = -K; n <= K; n++) {
-				float[] b = source.getPixel(u + m, v + n);
-				float wd = Hd[m + K][n + K];		// domain weight
-				float wr = similarityGauss(a, b);	// range weight
-				float w = wd * wr;
-				S[0] = S[0] + w * b[0];
-				S[1] = S[1] + w * b[1];
-				S[2] = S[2] + w * b[2];
-				W = W + w;
-			}
+			final float[] b = source.getPixel(u + m, v);
+			float wd = Hd[m + K];
+			float wr = similarityGauss(a, b);
+			float w = wd * wr;
+			S[0] = S[0] + w * b[0];
+			S[1] = S[1] + w * b[1];
+			S[2] = S[2] + w * b[2];
+			W = W + w;
 		}
 		S[0] = S[0] / W;
 		S[1] = S[1] / W;
 		S[2] = S[2] / W;
- 		return S;
- 	}
+		return S;
+	}
+
+	private float[] filterPixelY(PixelPack source, int u, int v) {
+		float[] S = new float[3]; 	// sum of weighted RGB (initialized to zero)
+		float W = 0;						// sum of weights
+		float[] a = source.getPixel(u, v);
+		for (int n = -K; n <= K; n++) {
+			final float[] b = source.getPixel(u, v + n);
+			float wd = Hd[n + K];
+			float wr = similarityGauss(a, b);
+			float w = wd * wr;
+			S[0] = S[0] + b[0] * w;
+			S[1] = S[1] + b[1] * w;
+			S[2] = S[2] + b[2] * w;
+			W = W + w;
+		}
+		S[0] = S[0] / W;
+		S[1] = S[1] / W;
+		S[2] = S[2] / W;
+		return S;
+	}
+
+	@Override
+	protected int passesNeeded() {
+		return 2;	// this filter needs 2 passes
+	}
 	
 	// ------------------------------------------------------
 	
@@ -89,33 +114,5 @@ public class BilateralFilterVector extends GenericFilterVector {
 		return (float) Math.exp(-d2 / (2 * sigmaR2));
 	}
 
-	// ------------------------------------------------------
-
-//	private float[][] makeDomainKernel2D(double sigma, int K) {
-//		int size = K + 1 + K;
-//		float[][] domainKernel = new float[size][size]; //center cell = kernel[K][K]
-//		double sigma2 = sigma * sigma;
-//		double scale = 1.0 / (2 * Math.PI * sigma2);
-//		for (int i = 0; i < size; i++) {
-//			double x = K - i;
-//			for (int j = 0; j < size; j++) {
-//				double y = K - j;
-//				domainKernel[i][j] =  (float) (scale * Math.exp(-0.5 * (x*x + y*y) / sigma2));
-//			}
-//		}
-//		return domainKernel;
-//	}
-	
-//	@SuppressWarnings("unused")
-//	private float[] makeRangeKernel(double sigma, int K) {
-//		int size = K + 1 + K;
-//		float[] rangeKernel = new float[size]; //center cell = kernel[K]
-//		double sigma2 = sigma * sigma;
-//		for (int i = 0; i < size; i++) {
-//			double x = K - i;
-//			rangeKernel[i] =  (float) Math.exp(-0.5 * (x*x) / sigma2);
-//		}
-//		return rangeKernel;
-//	}
 
 }
