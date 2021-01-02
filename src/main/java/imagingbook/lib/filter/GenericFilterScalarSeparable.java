@@ -26,8 +26,8 @@ public abstract class GenericFilterScalarSeparable extends GenericFilterScalar {
 	}
 	
 	@Override
-	protected final int passesNeeded() {
-		return 2;	// this filter needs 2 passes
+	protected final boolean finished() {
+		return (getPass() >= 2);	// do exactly 2 passes
 	}
 	
 	// ------------------------------------------------------------------------
