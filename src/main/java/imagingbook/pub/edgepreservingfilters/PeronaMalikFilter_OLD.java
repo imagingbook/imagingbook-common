@@ -32,7 +32,7 @@ import imagingbook.pub.color.image.sRgbUtil;
  * @author W. Burger
  * @version 2013/05/30
  */
-public class PeronaMalikFilter {
+public class PeronaMalikFilter_OLD {
 	
 	public static enum ColorMode  {
 		SeparateChannels, 
@@ -63,12 +63,12 @@ public class PeronaMalikFilter {
 	private int N;		// image height
 	
 	// constructor - using default parameters
-	public PeronaMalikFilter () {
+	public PeronaMalikFilter_OLD () {
 		this(new Parameters());
 	}
 	
 	// constructor - use this version to set all parameters
-	public PeronaMalikFilter (Parameters params) {
+	public PeronaMalikFilter_OLD (Parameters params) {
 		this.params = params;
 		T = params.iterations;
 		g = (params.smoothRegions) ? g2 : g1;
