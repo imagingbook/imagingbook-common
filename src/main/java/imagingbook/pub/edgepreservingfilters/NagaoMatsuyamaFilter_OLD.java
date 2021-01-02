@@ -21,7 +21,7 @@ import imagingbook.lib.image.access.ScalarAccessor;
  * @version 2013/05/30
  */
 
-public class NagaoMatsuyamaFilter extends GenericFilter2D {
+public class NagaoMatsuyamaFilter_OLD extends GenericFilter2D {
 	
 	public static class Parameters {
 		/** Variance threshold */
@@ -80,11 +80,11 @@ public class NagaoMatsuyamaFilter extends GenericFilter2D {
 	
 	// ------------------------------------------------------
 	
-	public NagaoMatsuyamaFilter() {
+	public NagaoMatsuyamaFilter_OLD() {
 		this(new Parameters());
 	}
 	
-	public NagaoMatsuyamaFilter(Parameters params) {
+	public NagaoMatsuyamaFilter_OLD(Parameters params) {
 		this.params = params;
 	}
 	
