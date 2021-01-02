@@ -1,7 +1,7 @@
 package imagingbook.lib.filter.examples;
 
 import ij.process.ImageProcessor;
-import imagingbook.lib.image.access.FloatPixelPack.Slice;
+import imagingbook.lib.image.access.PixelPack.PixelSlice;
 import imagingbook.lib.filter.GenericFilterScalar;
 import imagingbook.lib.image.access.OutOfBoundsStrategy;
 
@@ -22,7 +22,7 @@ public class ExampleFilterScalar extends GenericFilterScalar {
 			{1, 2, 1}};
 	
 	@Override
-	protected float filterPixel(Slice source, int u, int v) {
+	protected float filterPixel(PixelSlice source, int u, int v) {
 		float sum = 0;
 		for (int j = 0; j < height; j++) {
 			int vj = v + j - yc;

@@ -10,7 +10,7 @@ import ij.process.ShortProcessor;
 import imagingbook.lib.color.Rgb;
 
 // TODO: Merge with image accessors
-public class FloatPixelPack {
+public class PixelPack {
 	
 	@SuppressWarnings("unused")
 	private final ImageProcessor ip;
@@ -20,7 +20,7 @@ public class FloatPixelPack {
 	private final int depth;
 	private final PixelIndexer indexer;
 	
-	public FloatPixelPack(ImageProcessor ip, OutOfBoundsStrategy obs) {
+	public PixelPack(ImageProcessor ip, OutOfBoundsStrategy obs) {
 		this.ip = ip;
 		this.pixels = fromImageProcessor(ip);
 		this.depth = pixels.length;
@@ -28,7 +28,7 @@ public class FloatPixelPack {
 		this.indexer = PixelIndexer.create(ip.getWidth(), ip.getHeight(), obs);
 	}
 	
-	public FloatPixelPack(FloatPixelPack orig) {
+	public PixelPack(PixelPack orig) {
 		this.ip = null;
 		this.pixels = new float[orig.depth][orig.length];
 		this.depth = orig.depth;
@@ -65,25 +65,25 @@ public class FloatPixelPack {
 		}
 	}
 	
-	public FloatPixelPack getEmptyCopy() {
-		return new FloatPixelPack(this);
+	public PixelPack getEmptyCopy() {
+		return new PixelPack(this);
 	}
 	
-	public void copyTo(FloatPixelPack other) {
+	public void copyTo(PixelPack other) {
 		for (int k = 0; k < this.depth; k++) {
 			System.arraycopy(this.pixels[k], 0, other.pixels[k], 0, this.length);
 		}
 	}
 	
-	public Slice getSlice(int k) {
+	public PixelSlice getSlice(int k) {
 		if (k < 0 || k >= depth) {
 			throw new IllegalArgumentException("illegal slice number " + k);
 		}
-		return new Slice(k);
+		return new PixelSlice(k);
 	}
 	
-	public Slice getEmptySlice() {
-		return new Slice();
+	public PixelSlice getEmptySlice() {
+		return new PixelSlice();
 	}
 	
 	public float[][] getPixels() {
@@ -101,16 +101,16 @@ public class FloatPixelPack {
 	
 	// -------------------------------------------------------------------
 	
-	public class Slice {
+	public class PixelSlice {
 		private final int idx;
 		private final float[] vals;
 		
-		Slice(int idx) {
+		PixelSlice(int idx) {
 			this.idx = idx;
 			this.vals = pixels[idx];
 		}
 		
-		Slice() {
+		PixelSlice() {
 			this.idx = -1;
 			this.vals = new float[length];
 		}
@@ -139,7 +139,7 @@ public class FloatPixelPack {
 			return vals.length;
 		}
 		
-		public void copyTo(Slice other) {
+		public void copyTo(PixelSlice other) {
 			System.arraycopy(this.vals, 0, other.vals, 0, this.vals.length);
 		}
 	}

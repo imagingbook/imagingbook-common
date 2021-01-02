@@ -12,7 +12,7 @@ package imagingbook.pub.edgepreservingfilters;
 import ij.process.ColorProcessor;
 import ij.process.ImageProcessor;
 import imagingbook.lib.filter.GenericFilterScalar;
-import imagingbook.lib.image.access.FloatPixelPack.Slice;
+import imagingbook.lib.image.access.PixelPack.PixelSlice;
 import imagingbook.lib.image.access.OutOfBoundsStrategy;
 
 /**
@@ -78,7 +78,7 @@ public class BilateralFilterScalar extends GenericFilterScalar {
 	}
 	
 	@Override
-	protected float filterPixel(Slice source, int u, int v) {
+	protected float filterPixel(PixelSlice source, int u, int v) {
 		float S = 0;			// sum of weighted pixel values
 		float W = 0;			// sum of weights		
 		float a = source.getVal(u, v); // value of the current center pixel

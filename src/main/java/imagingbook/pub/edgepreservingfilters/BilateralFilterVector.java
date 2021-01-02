@@ -11,12 +11,13 @@ package imagingbook.pub.edgepreservingfilters;
 
 import ij.process.ColorProcessor;
 import imagingbook.lib.filter.GenericFilterVector;
-import imagingbook.lib.image.access.FloatPixelPack;
+import imagingbook.lib.image.access.PixelPack;
 import imagingbook.lib.math.Arithmetic;
 import imagingbook.lib.math.VectorNorm;
 import imagingbook.lib.math.VectorNorm.NormType;
 
 /**
+ * Vector version, for RGB images only (accepts {@link ColorProcessor} only).
  * This class implements a bilateral filter as proposed in
  * C. Tomasi and R. Manduchi, "Bilateral Filtering for Gray and Color Images",
  * Proceedings of the 1998 IEEE International Conference on Computer Vision,
@@ -74,7 +75,7 @@ public class BilateralFilterVector extends GenericFilterVector {
 	}
 	
 	@Override
-	protected float[] filterPixel(FloatPixelPack source, int u, int v) {
+	protected float[] filterPixel(PixelPack source, int u, int v) {
 		float[] S = new float[3]; 	// sum of weighted RGB values
 		float W = 0;				// sum of weights
 		float[] a = source.getPixel(u, v);			// value of the current center pixel

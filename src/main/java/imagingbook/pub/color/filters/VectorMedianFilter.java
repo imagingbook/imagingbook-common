@@ -13,7 +13,7 @@ import java.awt.Color;
 
 import ij.process.ImageProcessor;
 import imagingbook.lib.filter.GenericFilterVector;
-import imagingbook.lib.image.access.FloatPixelPack;
+import imagingbook.lib.image.access.PixelPack;
 import imagingbook.lib.math.VectorNorm;
 import imagingbook.lib.math.VectorNorm.NormType;
 
@@ -74,7 +74,7 @@ public class VectorMedianFilter extends GenericFilterVector {
 	//-------------------------------------------------------------------------------------
 	
 	@Override
-	protected float[] filterPixel(FloatPixelPack sources, int u, int v) {
+	protected float[] filterPixel(PixelPack sources, int u, int v) {
 		final float[] pCtr = sources.getPixel(u, v);
 		getSupportRegion(sources, u, v);
 		double dCtr = aggregateDistance(pCtr); 
@@ -108,7 +108,7 @@ public class VectorMedianFilter extends GenericFilterVector {
 		return pF;
 	}
 	
-	private void getSupportRegion(FloatPixelPack src, int u, int v) {
+	private void getSupportRegion(PixelPack src, int u, int v) {
 		// fill 'supportRegion' for current mask position
 		int k = 0;
 		for (int i = 0; i < maskArray.length; i++) {

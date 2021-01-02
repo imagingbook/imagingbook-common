@@ -1,7 +1,7 @@
 package imagingbook.lib.filter;
 
 import ij.process.ImageProcessor;
-import imagingbook.lib.image.access.FloatPixelPack.Slice;
+import imagingbook.lib.image.access.PixelPack.PixelSlice;
 import imagingbook.lib.filter.kernel.Kernel1D;
 import imagingbook.lib.image.access.OutOfBoundsStrategy;
 
@@ -26,7 +26,7 @@ public class LinearFilterSeparable extends GenericFilterScalar {
 	}
 
 	@Override
-	protected float filterPixel(Slice source, int u, int v) {
+	protected float filterPixel(PixelSlice source, int u, int v) {
 		switch (getPass()) {
 		case 0: return filterPixelX(source, u, v);
 		case 1: return filterPixelY(source, u, v);
@@ -42,7 +42,7 @@ public class LinearFilterSeparable extends GenericFilterScalar {
 	// ------------------------------------------------------------------------
 
 	// 1D convolution in x-direction
-	private float filterPixelX(Slice source, int u, int v) {
+	private float filterPixelX(PixelSlice source, int u, int v) {
 		final int vj = v; // - yc;
 		double sum = 0;
 		for (int i = 0; i < width; i++) {
@@ -53,7 +53,7 @@ public class LinearFilterSeparable extends GenericFilterScalar {
 	}
 	
 	// 1D convolution in y-direction
-	private float filterPixelY(Slice source, int u, int v) {
+	private float filterPixelY(PixelSlice source, int u, int v) {
 		final int ui = u; // - xc;
 		double sum = 0;
 		for (int j = 0; j < height; j++) {

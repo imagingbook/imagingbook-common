@@ -3,7 +3,7 @@ package imagingbook.lib.filter.examples;
 import ij.process.ImageProcessor;
 import imagingbook.lib.filter.GenericFilterScalar;
 import imagingbook.lib.image.access.OutOfBoundsStrategy;
-import imagingbook.lib.image.access.FloatPixelPack.Slice;
+import imagingbook.lib.image.access.PixelPack.PixelSlice;
 
 public class ExampleFilterScalarSeparable extends GenericFilterScalar {
 
@@ -12,7 +12,7 @@ public class ExampleFilterScalarSeparable extends GenericFilterScalar {
 	}
 
 	@Override
-	protected float filterPixel(Slice source, int u, int v) {
+	protected float filterPixel(PixelSlice source, int u, int v) {
 		switch (getPass()) {
 		case 0: return filterPixelX(source, u, v);
 		case 1: return filterPixelY(source, u, v);
@@ -25,12 +25,12 @@ public class ExampleFilterScalarSeparable extends GenericFilterScalar {
 		return 2;	// this filter needs 2 passes
 	}
 
-	private float filterPixelX(Slice source, int u, int v) {
+	private float filterPixelX(PixelSlice source, int u, int v) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 	
-	private float filterPixelY(Slice source, int u, int v) {
+	private float filterPixelY(PixelSlice source, int u, int v) {
 		// TODO Auto-generated method stub
 		return 0;
 	}

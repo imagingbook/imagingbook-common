@@ -2,7 +2,7 @@ package imagingbook.lib.filter.examples;
 
 import ij.process.ImageProcessor;
 import imagingbook.lib.filter.GenericFilterVector;
-import imagingbook.lib.image.access.FloatPixelPack;
+import imagingbook.lib.image.access.PixelPack;
 import imagingbook.lib.image.access.OutOfBoundsStrategy;
 
 public class ExampleFilterVector extends GenericFilterVector {
@@ -22,7 +22,7 @@ public class ExampleFilterVector extends GenericFilterVector {
 			{1, 2, 1}};
 	
 	@Override
-	protected float[] filterPixel(FloatPixelPack sources, int u, int v) {
+	protected float[] filterPixel(PixelPack sources, int u, int v) {
 		int depth = sources.getDepth();
 		float[] sum = new float[depth];
 		for (int j = 0; j < height; j++) {

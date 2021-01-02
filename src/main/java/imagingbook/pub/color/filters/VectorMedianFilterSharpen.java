@@ -14,7 +14,7 @@ import java.util.Arrays;
 
 import ij.process.ImageProcessor;
 import imagingbook.lib.filter.GenericFilterVector;
-import imagingbook.lib.image.access.FloatPixelPack;
+import imagingbook.lib.image.access.PixelPack;
 import imagingbook.lib.math.VectorNorm;
 
 /**
@@ -73,7 +73,7 @@ public class VectorMedianFilterSharpen extends GenericFilterVector {
 	}
 	
 	@Override
-	protected float[] filterPixel(FloatPixelPack sources, int u, int v) {
+	protected float[] filterPixel(PixelPack sources, int u, int v) {
 		float[] pCtr = sources.getPixel(u, v);
 		getSupportRegion(sources, u, v);
 		double dCtr = trimmedAggregateDistance(pCtr, a); 
@@ -107,7 +107,7 @@ public class VectorMedianFilterSharpen extends GenericFilterVector {
 		return pF;
 	}
 	
-	private void getSupportRegion(FloatPixelPack src, int u, int v) {
+	private void getSupportRegion(PixelPack src, int u, int v) {
 		//final int[] p = new int[3];
 		// fill 'supportRegion' for current mask position
 		int k = 0;

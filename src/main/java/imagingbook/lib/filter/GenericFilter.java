@@ -1,9 +1,9 @@
 package imagingbook.lib.filter;
 
-import static imagingbook.lib.image.access.FloatPixelPack.getDepth;
+import static imagingbook.lib.image.access.PixelPack.getDepth;
 
 import ij.process.ImageProcessor;
-import imagingbook.lib.image.access.FloatPixelPack;
+import imagingbook.lib.image.access.PixelPack;
 import imagingbook.lib.image.access.OutOfBoundsStrategy;
 
 public abstract class GenericFilter {
@@ -37,7 +37,7 @@ public abstract class GenericFilter {
 	}
 	
 	public ImageProcessor apply(boolean createNew) {
-		FloatPixelPack source = new FloatPixelPack(ip, obs);
+		PixelPack source = new PixelPack(ip, obs);
 		if (pass > 0) {
 			throw new IllegalStateException("filter has already been applied");
 		}
@@ -56,7 +56,7 @@ public abstract class GenericFilter {
 		return 1;
 	}
 
-	protected abstract void filterAll(FloatPixelPack source);
+	protected abstract void filterAll(PixelPack source);
 	
 
 }

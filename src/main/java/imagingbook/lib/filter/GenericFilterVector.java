@@ -1,7 +1,7 @@
 package imagingbook.lib.filter;
 
 import ij.process.ImageProcessor;
-import imagingbook.lib.image.access.FloatPixelPack;
+import imagingbook.lib.image.access.PixelPack;
 import imagingbook.lib.image.access.OutOfBoundsStrategy;
 
 public abstract class GenericFilterVector extends GenericFilter {
@@ -11,8 +11,8 @@ public abstract class GenericFilterVector extends GenericFilter {
 	}
 
 	@Override 
-	protected void filterAll(FloatPixelPack sources) {
-		FloatPixelPack targets = sources.getEmptyCopy();
+	protected void filterAll(PixelPack sources) {
+		PixelPack targets = sources.getEmptyCopy();
 		for (int v = 0; v < this.imgHeight; v++) {
 			for (int u = 0; u < this.imgWidth; u++) {
 				targets.setPixel(u, v, filterPixel(sources, u, v)); // single pixel operation
@@ -27,6 +27,6 @@ public abstract class GenericFilterVector extends GenericFilter {
 	}
 
 	// calculate the result vector for a single pixel
-	protected abstract float[] filterPixel(FloatPixelPack sources, int u, int v);
+	protected abstract float[] filterPixel(PixelPack sources, int u, int v);
 
 }

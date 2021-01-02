@@ -3,7 +3,7 @@ package imagingbook.lib.filter;
 import ij.process.ImageProcessor;
 import imagingbook.lib.filter.kernel.Kernel2D;
 import imagingbook.lib.image.access.OutOfBoundsStrategy;
-import imagingbook.lib.image.access.FloatPixelPack.Slice;
+import imagingbook.lib.image.access.PixelPack.PixelSlice;
 
 public class LinearFilter extends GenericFilterScalar {
 
@@ -21,7 +21,7 @@ public class LinearFilter extends GenericFilterScalar {
 	}
 
 	@Override
-	protected float filterPixel(Slice source, int u, int v) {
+	protected float filterPixel(PixelSlice source, int u, int v) {
 		double sum = 0;
 		for (int j = 0; j < height; j++) {
 			int vj = v + j - yc;
