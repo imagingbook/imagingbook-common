@@ -5,7 +5,7 @@ import imagingbook.lib.image.access.PixelPack.PixelSlice;
 import imagingbook.lib.filter.kernel.Kernel1D;
 import imagingbook.lib.image.access.OutOfBoundsStrategy;
 
-public class LinearFilterSeparable extends GenericFilterScalar {
+public class LinearFilterSeparable extends GenericFilterScalarSeparable {
 
 	private final float[] hX, hY;			// the horizontal/vertical kernel arrays
 	private final int width, height;		// width/height of the kernel
@@ -25,24 +25,11 @@ public class LinearFilterSeparable extends GenericFilterScalar {
 		this.yc = kernelY.getXc();
 	}
 
-	@Override
-	protected float filterPixel(PixelSlice source, int u, int v) {
-		switch (getPass()) {
-		case 0: return filterPixelX(source, u, v);
-		case 1: return filterPixelY(source, u, v);
-		default: throw new RuntimeException("invalid pass number " + getPass());
-		}
-	}
-	
-	@Override
-	protected int passesNeeded() {
-		return 2;	// this filter needs 2 passes
-	}
-	
 	// ------------------------------------------------------------------------
 
 	// 1D convolution in x-direction
-	private float filterPixelX(PixelSlice source, int u, int v) {
+	@Override
+	protected float filterPixelX(PixelSlice source, int u, int v) {
 		final int vj = v; // - yc;
 		double sum = 0;
 		for (int i = 0; i < width; i++) {
@@ -52,8 +39,9 @@ public class LinearFilterSeparable extends GenericFilterScalar {
 		return (float)sum;
 	}
 	
+	@Override
 	// 1D convolution in y-direction
-	private float filterPixelY(PixelSlice source, int u, int v) {
+	protected float filterPixelY(PixelSlice source, int u, int v) {
 		final int ui = u; // - xc;
 		double sum = 0;
 		for (int j = 0; j < height; j++) {
@@ -62,7 +50,5 @@ public class LinearFilterSeparable extends GenericFilterScalar {
 		}
 		return (float) sum;
 	}
-	
-
 
 }

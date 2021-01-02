@@ -10,7 +10,7 @@
 package imagingbook.pub.edgepreservingfilters;
 
 import ij.process.ColorProcessor;
-import imagingbook.lib.filter.GenericFilterVector;
+import imagingbook.lib.filter.GenericFilterVectorSeparable;
 import imagingbook.lib.filter.kernel.GaussianKernel1D;
 import imagingbook.lib.image.access.PixelPack;
 import imagingbook.lib.math.Arithmetic;
@@ -29,7 +29,7 @@ import imagingbook.pub.edgepreservingfilters.BilateralFilterVector.Parameters;
  * @author W. Burger
  * @version 2021/01/01
  */
-public class BilateralFilterVectorSeparable extends GenericFilterVector {
+public class BilateralFilterVectorSeparable extends GenericFilterVectorSeparable {
 	
 	private final float[] Hd;	// the 1D domain kernel
 	private final int K;		// the domain kernel size [-K,...,K]
@@ -52,21 +52,21 @@ public class BilateralFilterVectorSeparable extends GenericFilterVector {
 		this.colorScale = Arithmetic.sqr(colorNorm.getScale(3));
 	}
 	
-	@Override
-	protected float[] filterPixel(PixelPack source, int u, int v) {
-		switch (getPass()) {
-		case 0: return filterPixelX(source, u, v);
-		case 1: return filterPixelY(source, u, v);
-		default: throw new RuntimeException("invalid pass number " + getPass());
-		}
- 	}
 	
-	private float[] filterPixelX(PixelPack source, int u, int v) {
+	protected float[] filterPixelX(PixelPack source, int u, int v) {
+		return filterPixelXY(source, u, v, true);
+	}
+
+	protected float[] filterPixelY(PixelPack source, int u, int v) {
+		return filterPixelXY(source, u, v, false);
+	}
+	
+	private float[] filterPixelXY(PixelPack source, int u, int v, boolean isX) {
 		float[] S = new float[3]; 	// sum of weighted RGB (initialized to zero)
 		float W = 0;						// sum of weights
 		float[] a = source.getPixel(u, v);
 		for (int m = -K; m <= K; m++) {
-			final float[] b = source.getPixel(u + m, v);
+			final float[] b = (isX) ? source.getPixel(u + m, v) : source.getPixel(u, v + m);
 			float wd = Hd[m + K];
 			float wr = similarityGauss(a, b);
 			float w = wd * wr;
@@ -79,31 +79,6 @@ public class BilateralFilterVectorSeparable extends GenericFilterVector {
 		S[1] = S[1] / W;
 		S[2] = S[2] / W;
 		return S;
-	}
-
-	private float[] filterPixelY(PixelPack source, int u, int v) {
-		float[] S = new float[3]; 	// sum of weighted RGB (initialized to zero)
-		float W = 0;						// sum of weights
-		float[] a = source.getPixel(u, v);
-		for (int n = -K; n <= K; n++) {
-			final float[] b = source.getPixel(u, v + n);
-			float wd = Hd[n + K];
-			float wr = similarityGauss(a, b);
-			float w = wd * wr;
-			S[0] = S[0] + b[0] * w;
-			S[1] = S[1] + b[1] * w;
-			S[2] = S[2] + b[2] * w;
-			W = W + w;
-		}
-		S[0] = S[0] / W;
-		S[1] = S[1] / W;
-		S[2] = S[2] / W;
-		return S;
-	}
-
-	@Override
-	protected int passesNeeded() {
-		return 2;	// this filter needs 2 passes
 	}
 	
 	// ------------------------------------------------------
