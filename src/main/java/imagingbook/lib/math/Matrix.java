@@ -277,31 +277,77 @@ public abstract class Matrix {
 	
 	// Element-wise arithmetic -------------------------------
 	
+	// non-destructive
 	public static double[] add(final double[] a, final double[] b) throws IncompatibleDimensionsException {
-		if (!sameSize(a, b))
-			throw new IncompatibleDimensionsException();
-		final int n = a.length;
-		double[] c = new double[n];
-		for (int i = 0; i < n; i++) {
-			c[i] = a[i] + b[i];
-		}
+		double[] c = b.clone();
+		addD(a, c);
 		return c;
 	}
-
-	public static double[][] add(final double[][] A, final double[][] B) throws IncompatibleDimensionsException {
-		if (!sameSize(A, B))
+	
+	// destructive, b is modified
+	public static void addD(final double[] a, final double[] b) throws IncompatibleDimensionsException {
+		if (!sameSize(a, b))
 			throw new IncompatibleDimensionsException();
-		final int m = A.length;
-		final int n = A[0].length;
-		double[][] C = new double[m][n];
-		for (int i = 0; i < m; i++) {
-			for (int j = 0; j < n; j++) {
-				C[i][j] = A[i][j] + B[i][j];
-			}
+		for (int i = 0; i < a.length; i++) {
+			b[i] = a[i] + b[i];
 		}
+	}
+	
+	// non-destructive
+	public static float[] add(final float[] a, final float[] b) throws IncompatibleDimensionsException {
+		float[] c = b.clone();
+		addD(a, c);
+		return c;
+	}
+	
+	// destructive, b is modified
+	public static void addD(final float[] a, final float[] b) throws IncompatibleDimensionsException {
+		if (!sameSize(a, b))
+			throw new IncompatibleDimensionsException();
+		for (int i = 0; i < a.length; i++) {
+			b[i] = a[i] + b[i];
+		}
+	}
+
+	// non-destructive
+	public static double[][] add(final double[][] A, final double[][] B) throws IncompatibleDimensionsException {
+		double[][] C = duplicate(B);
+		addD(A, C);
 		return C;
 	}
 	
+	// destructive, B is modified
+	public static void addD(final double[][] A, final double[][] B) throws IncompatibleDimensionsException {
+		if (!sameSize(A, B))
+			throw new IncompatibleDimensionsException();
+		for (int i = 0; i < A.length; i++) {
+			for (int j = 0; j < A[j].length; j++) {
+				B[i][j] = A[i][j] + B[i][j];
+			}
+		}
+	}
+	
+	// non-destructive
+	public static float[][] add(final float[][] A, final float[][] B) throws IncompatibleDimensionsException {
+		float[][] C = duplicate(B);
+		addD(A, C);
+		return C;
+	}
+	
+	// destructive, B is modified
+	public static void addD(final float[][] A, final float[][] B) throws IncompatibleDimensionsException {
+		if (!sameSize(A, B))
+			throw new IncompatibleDimensionsException();
+		for (int i = 0; i < A.length; i++) {
+			for (int j = 0; j < A[j].length; j++) {
+				B[i][j] = A[i][j] + B[i][j];
+			}
+		}
+	}
+	
+	// ------------------------------------------------
+	
+	// non-destructive
 	public static double[] subtract(final double[] a, final double[] b) throws IncompatibleDimensionsException {
 		if (!sameSize(a, b))
 			throw new IncompatibleDimensionsException();
