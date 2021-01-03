@@ -10,7 +10,7 @@ public abstract class GenericFilter {
 	
 	public static final OutOfBoundsStrategy DefaultOutOfBoundsStrategy = OutOfBoundsStrategy.NEAREST_BORDER;
 	
-	protected ImageProcessor ip;  // we need a reference to create the result processor
+	private final ImageProcessor ip;  // we need a reference to create the result processor
 	protected final int imgWidth;
 	protected final int imgHeight;
 	protected final int imgDepth;
@@ -28,8 +28,12 @@ public abstract class GenericFilter {
 	
 	protected int getPass() {
 		return pass;
-		
 	}
+	
+	protected  ImageProcessor getImageProcessor() {
+		return this.ip;
+	}
+	
 	// -----------------------------------------------------------------------------------
 	
 	public ImageProcessor apply() {

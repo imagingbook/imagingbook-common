@@ -14,10 +14,13 @@ import ij.plugin.filter.Convolver;
 import ij.process.ColorProcessor;
 import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
+import imagingbook.lib.filter.GenericFilterVector;
+import imagingbook.lib.image.access.PixelPack;
 
 // TODO: convert to subclass of GenericFilter using ImageAccessor (see BilateralFilter)
 
 /**
+ * Vector version for ColorProcessor only
  * This class implements the Anisotropic Diffusion filter proposed by David Tschumperle 
  * in D. Tschumperle and R. Deriche, "Diffusion PDEs on vector-valued images", 
  * IEEE Signal Processing Magazine, vol. 19, no. 5, pp. 16-25 (Sep. 2002). It is based 
@@ -32,7 +35,7 @@ import ij.process.ImageProcessor;
  * @version 2013/05/30
  */
 
-public class TschumperleDericheFilter {
+public class TschumperleDericheFilter extends GenericFilterVector {
 	
 	public static class Parameters {
 		/** Number of smoothing iterations */
@@ -54,67 +57,133 @@ public class TschumperleDericheFilter {
 	private final Parameters params;
 	private final int T;			// number of iterations
 	
-	private int M;	// image width
-	private int N;	// image height
-	private int K;	// number of color channels, k = 0,...,K-1
+	private final int M;	// image width
+	private final int N;	// image height
+	private final int K;	// number of color channels, k = 0,...,K-1
 
-	private float[][][] I;		// float image data: 		I[k][u][v] for color channel k
-	private float[][][] Dx; 	// image x-gradient: 		Dx[k][u][v] for color channel k
-	private float[][][] Dy; 	// image y-gradient: 		Dx[k][u][v] for color channel k
-	private float[][][] G; 		// 2x2 structure tensor: 	G[i][u][v], i=0,1,2 (only 3 elements because of symmetry)
-	private float[][][] A;		// 2x2 tensor field: 	 	A[i][u][v], i=0,1,2 (only 3 elements because of symmetry)
-	private float[][][] B;		// scalar local velocity:   B[k][u][v]  for channel k (== beta_k)
-//	private float[][][] Hk;  	// Hessian matrix for channel k: Hk[i][u][v], i=0,1,2
-	FloatProcessor tmpFp;		// used as temporary storage for blurring
+	private float[][][] I;			// float image data: 		I[k][u][v] for color channel k
+	private final float[][][] Dx; 	// image x-gradient: 		Dx[k][u][v] for color channel k
+	private final float[][][] Dy; 	// image y-gradient: 		Dx[k][u][v] for color channel k
+	private final float[][][] G; 	// 2x2 structure tensor: 	G[i][u][v], i=0,1,2 (only 3 elements because of symmetry)
+	private final float[][][] A;	// 2x2 tensor field: 	 	A[i][u][v], i=0,1,2 (only 3 elements because of symmetry)
+	private final float[][][] B;	// scalar local velocity:   B[k][u][v]  for channel k (== beta_k)
+//	private final float[][][] Hk;  	// Hessian matrix for channel k: Hk[i][u][v], i=0,1,2
+	FloatProcessor tmpFp;			// used as temporary storage for blurring
 	
 	private float initial_max;
 	private float initial_min;
 	
 	// constructor - uses only default settings:
-	public TschumperleDericheFilter() {
-		this(new Parameters());
+	public TschumperleDericheFilter(ColorProcessor ip) {
+		this(ip, new Parameters());
 	}
 	
 	// constructor - use for setting individual parameters:
-	public TschumperleDericheFilter(Parameters params) {
+	public TschumperleDericheFilter(ColorProcessor ip, Parameters params) {
+		super(ip, null);
 		this.params = params;
-		T = params.iterations;
+		this.T = params.iterations;
+		this.M = ip.getWidth(); 
+		this.N = ip.getHeight(); 
+		this.K = (ip instanceof ColorProcessor) ? 3 : 1;
+		this.I  = new float[K][M][N];
+		this.Dx  = new float[K][M][N];
+		this.Dy  = new float[K][M][N];
+		this.G = new float[3][M][N];
+		this.A = new float[3][M][N];
+		this.B = new float[K][M][N];
+//		this.Hk = new float[3][M][N];
+		initialize(ip);
 	}
 	
-	/* This method applies the filter to the given image (ip). 
-	 * Note that ip is destructively modified.
-	 */
-	public void applyTo(ImageProcessor ip) {	
-		initialize(ip);
-		// main iteration loop
-		for (int n = 1; n <= T; n++) {
-			IJ.showProgress(n, T);
-			
-			// Step 1:
-			calculateGradients(I, Dx, Dy);
-			
-			// Step 2:
-			smoothGradients(Dx, Dy);
-			
-			// Step 3: Hessian matrix is only calculated locally as part of Step 8.
-			
-			// Step 4:
-			calculateStructureMatrix(Dx, Dy, G);
-			// Step 5:
-			smoothStructureMatrix(G);
+	// ------------------------------------------------------------------------------------
+	
+	protected void setupFilter(PixelPack source) {
+		// does nothing by default
+	}
+	
+	@Override
+	protected void setupPass(PixelPack source) {
+		// Step 1:
+		calculateGradients(I, Dx, Dy);
 
-			// Step 6-7:
-			calculateGeometryMatrix(G, A);
-			
-			// Step 8:
-			float maxVelocity = calculateVelocities(I, A, B);
-			
-			double alpha = params.dt / maxVelocity;
-			updateImage(I, B, alpha);
-		}
-		copyResultToImage(ip);
-		cleanUp();
-	} 
+		// Step 2:
+		smoothGradients(Dx, Dy);
+
+		// Step 3: Hessian matrix is only calculated locally as part of Step 8.
+
+		// Step 4:
+		calculateStructureMatrix(Dx, Dy, G);
+		// Step 5:
+		smoothStructureMatrix(G);
+
+		// Step 6-7:
+		calculateGeometryMatrix(G, A);
+
+		// Step 8:
+		float maxVelocity = calculateVelocities(I, A, B);
+
+		double alpha = params.dt / maxVelocity;
+		updateImage(I, B, alpha);
+	}
+	
+	@Override
+	protected float[] filterPixel(PixelPack sources, int u, int v) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	protected void closeFilter() {
+		copyResultToImage(getImageProcessor());
+	}
+
+	
+	@Override
+	protected final boolean finished() {
+		return (getPass() >= T);	// this filter needs T passes
+	}
+	
+	// ------------------------------------------------------------------------------------
+	
+	
+	
+	
+	
+	
+//	/* This method applies the filter to the given image (ip). 
+//	 * Note that ip is destructively modified.
+//	 */
+//	public void applyTo(ImageProcessor ip) {	
+//		initialize(ip);
+//		// main iteration loop
+//		for (int n = 1; n <= T; n++) {
+//			IJ.showProgress(n, T);
+//			
+//			// Step 1:
+//			calculateGradients(I, Dx, Dy);
+//			
+//			// Step 2:
+//			smoothGradients(Dx, Dy);
+//			
+//			// Step 3: Hessian matrix is only calculated locally as part of Step 8.
+//			
+//			// Step 4:
+//			calculateStructureMatrix(Dx, Dy, G);
+//			// Step 5:
+//			smoothStructureMatrix(G);
+//
+//			// Step 6-7:
+//			calculateGeometryMatrix(G, A);
+//			
+//			// Step 8:
+//			float maxVelocity = calculateVelocities(I, A, B);
+//			
+//			double alpha = params.dt / maxVelocity;
+//			updateImage(I, B, alpha);
+//		}
+//		copyResultToImage(ip);
+////		cleanUp();
+//	} 
 	
 	// -------------------------------------------------------------------------
 	
@@ -123,16 +192,16 @@ public class TschumperleDericheFilter {
 	 * initial image statistics (all in one pass).
 	 */
 	private void initialize(ImageProcessor ip) {
-		M = ip.getWidth(); 
-		N = ip.getHeight(); 
-		K = (ip instanceof ColorProcessor) ? 3 : 1;
-		I  = new float[K][M][N];
-		Dx  = new float[K][M][N];
-		Dy  = new float[K][M][N];
-		G = new float[3][M][N];
-		A = new float[3][M][N];
-		B = new float[K][M][N];
-//		Hk = new float[3][M][N];
+//		M = ip.getWidth(); 
+//		N = ip.getHeight(); 
+//		K = (ip instanceof ColorProcessor) ? 3 : 1;
+//		I  = new float[K][M][N];
+//		Dx  = new float[K][M][N];
+//		Dy  = new float[K][M][N];
+//		G = new float[3][M][N];
+//		A = new float[3][M][N];
+//		B = new float[K][M][N];
+////		Hk = new float[3][M][N];
 
 		if (ip instanceof ColorProcessor) {
 			final int[] pixel = new int[K];	
@@ -172,12 +241,12 @@ public class TschumperleDericheFilter {
 		initial_min = min;
 	}
 	
-	void cleanUp() {
-		I  = null;		Dx = null;		Dy = null;
-		G = null;		A = null;		B = null;
-//		Hk = null;		
-		tmpFp = null;
-	}
+//	void cleanUp() {
+//		I  = null;		Dx = null;		Dy = null;
+//		G = null;		A = null;		B = null;
+////		Hk = null;		
+//		tmpFp = null;
+//	}
 	
 	void calculateGradients(float[][][] I, float[][][] Dx, float[][][] Dy) {
 		// these Gradient kernels produce reduced artifacts
@@ -580,6 +649,7 @@ public class TschumperleDericheFilter {
 			Math.pow((nc + 0.055)/1.055, 2.4) :
 			(nc / 12.92);
     }
+
 
 }
 
