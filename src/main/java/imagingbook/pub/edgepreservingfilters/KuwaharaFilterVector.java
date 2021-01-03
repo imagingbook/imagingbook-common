@@ -15,10 +15,10 @@ import static imagingbook.lib.math.Arithmetic.sqr;
 import ij.process.ColorProcessor;
 import imagingbook.lib.filter.GenericFilterVector;
 import imagingbook.lib.image.access.PixelPack;
-import imagingbook.pub.edgepreservingfilters.KuwaharaFilterScalar.Parameters;
+import imagingbook.pub.edgepreservingfilters.KuwaharaF.Parameters;
 
 /**
- * Vector version, applicable to ColorProcessor only.
+ * Vector version (applicable to ColorProcessor only).
  * This class implements a Kuwahara-type filter, similar to the filter suggested in 
  * Tomita and Tsuji (1977). It structures the filter region into five overlapping, 
  * square subregions (including a center region) of size (r+1) x (r+1). 
@@ -43,7 +43,7 @@ public class KuwaharaFilterVector extends GenericFilterVector {
 		super(ip, params.obs);
 		int r = params.radius;
 		this.n = sqr(r + 1);	// size of complete filter
-		this.dm = (r/2) - r;			// d- = top/left center coordinate
+		this.dm = (r / 2) - r;			// d- = top/left center coordinate
 		this.dp = this.dm + r;			// d+ = bottom/right center coordinate
 		this.tsigma = (float)params.tsigma;
 	}

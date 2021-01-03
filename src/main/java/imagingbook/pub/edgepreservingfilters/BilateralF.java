@@ -3,9 +3,9 @@ package imagingbook.pub.edgepreservingfilters;
 import imagingbook.lib.image.access.OutOfBoundsStrategy;
 import imagingbook.lib.math.VectorNorm.NormType;
 
-public abstract class BilateralFilter {
+public abstract class BilateralF {
 	
-	private BilateralFilter() {
+	private BilateralF() {
 	}
 	
 	public static class Parameters {

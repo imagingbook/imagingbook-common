@@ -10,13 +10,13 @@
 package imagingbook.pub.edgepreservingfilters;
 
 import static imagingbook.lib.math.Arithmetic.sqr;
-import static imagingbook.pub.edgepreservingfilters.NagaoMatsuyamaFilterScalar.R0;
-import static imagingbook.pub.edgepreservingfilters.NagaoMatsuyamaFilterScalar.subRegions;
+import static imagingbook.pub.edgepreservingfilters.NagaoMatsuyamaF.R0;
+import static imagingbook.pub.edgepreservingfilters.NagaoMatsuyamaF.SubRegions;
 
 import ij.process.ColorProcessor;
 import imagingbook.lib.filter.GenericFilterVector;
 import imagingbook.lib.image.access.PixelPack;
-import imagingbook.pub.edgepreservingfilters.NagaoMatsuyamaFilterScalar.Parameters;
+import imagingbook.pub.edgepreservingfilters.NagaoMatsuyamaF.Parameters;
 
 /**
  * Vector version.
@@ -52,7 +52,7 @@ public class NagaoMatsuyamaFilterVector extends GenericFilterVector {
 		minVariance = Float.MAX_VALUE;
 		evalSubregionColor(ia, R0, u, v);
 		minVariance = minVariance - 3 * varThreshold;
-		for (int[][] Rk : subRegions) {
+		for (int[][] Rk : SubRegions) {
 			evalSubregionColor(ia, Rk, u, v);
 		}
 		this.copyPixel(minMean, rgb);

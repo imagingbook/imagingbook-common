@@ -12,8 +12,8 @@ package imagingbook.pub.edgepreservingfilters;
 import ij.process.ImageProcessor;
 import imagingbook.lib.filter.GenericFilterScalar;
 import imagingbook.lib.image.access.PixelPack.PixelSlice;
-import imagingbook.pub.edgepreservingfilters.PeronaMalik.ConductanceFunction;
-import imagingbook.pub.edgepreservingfilters.PeronaMalik.Parameters;
+import imagingbook.pub.edgepreservingfilters.PeronaMalikF.ConductanceFunction;
+import imagingbook.pub.edgepreservingfilters.PeronaMalikF.Parameters;
 
 
 /**

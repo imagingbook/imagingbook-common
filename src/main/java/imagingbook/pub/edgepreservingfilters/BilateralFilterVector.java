@@ -16,7 +16,7 @@ import imagingbook.lib.filter.GenericFilterVector;
 import imagingbook.lib.filter.kernel.GaussianKernel2D;
 import imagingbook.lib.image.access.PixelPack;
 import imagingbook.lib.math.VectorNorm;
-import imagingbook.pub.edgepreservingfilters.BilateralFilter.Parameters;
+import imagingbook.pub.edgepreservingfilters.BilateralF.Parameters;
 
 /**
  * Vector version, for RGB images only (accepts {@link ColorProcessor} only).

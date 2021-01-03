@@ -4,7 +4,7 @@ import imagingbook.lib.image.access.OutOfBoundsStrategy;
 
 import static imagingbook.lib.math.Arithmetic.sqr;
 
-public abstract class PeronaMalik {
+public abstract class PeronaMalikF {
 	
 	public static class Parameters {
 		/** Number of iterations to perform */

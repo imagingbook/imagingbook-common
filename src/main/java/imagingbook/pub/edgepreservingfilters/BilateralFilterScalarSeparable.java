@@ -10,13 +10,13 @@
 package imagingbook.pub.edgepreservingfilters;
 
 import static imagingbook.lib.math.Arithmetic.sqr;
-import static imagingbook.pub.edgepreservingfilters.BilateralFilter.gauss;
+import static imagingbook.pub.edgepreservingfilters.BilateralF.gauss;
 
 import ij.process.ImageProcessor;
 import imagingbook.lib.filter.GenericFilterScalarSeparable;
 import imagingbook.lib.filter.kernel.GaussianKernel1D;
 import imagingbook.lib.image.access.PixelPack.PixelSlice;
-import imagingbook.pub.edgepreservingfilters.BilateralFilter.Parameters;
+import imagingbook.pub.edgepreservingfilters.BilateralF.Parameters;
 
 /**
  * Scalar version, applicable to all image types.

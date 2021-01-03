@@ -7,7 +7,7 @@
  * Visit http://imagingbook.com for additional details.
  *******************************************************************************/
 
-package imagingbook.pub.edgepreservingfilters;
+package imagingbook.pub.edgepreservingfilters.OLD;
 
 import ij.IJ;
 import ij.ImagePlus;
