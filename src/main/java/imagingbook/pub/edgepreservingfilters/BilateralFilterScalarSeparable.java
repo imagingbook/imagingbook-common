@@ -9,12 +9,14 @@
 
 package imagingbook.pub.edgepreservingfilters;
 
+import static imagingbook.lib.math.Arithmetic.sqr;
+import static imagingbook.pub.edgepreservingfilters.BilateralFilter.gauss;
+
 import ij.process.ImageProcessor;
-import imagingbook.lib.filter.GenericFilterScalar;
 import imagingbook.lib.filter.GenericFilterScalarSeparable;
 import imagingbook.lib.filter.kernel.GaussianKernel1D;
 import imagingbook.lib.image.access.PixelPack.PixelSlice;
-import imagingbook.pub.edgepreservingfilters.BilateralFilterScalar.Parameters;
+import imagingbook.pub.edgepreservingfilters.BilateralFilter.Parameters;
 
 /**
  * Scalar version, applicable to all image types.
@@ -45,18 +47,22 @@ public class BilateralFilterScalarSeparable extends GenericFilterScalarSeparable
 		GaussianKernel1D kernel = new GaussianKernel1D(params.sigmaD);
 		this.Hd = kernel.getH();
 		this.K = kernel.getXc();
-		this.sigmaR2 = params.sigmaR * params.sigmaR;
+		this.sigmaR2 = sqr(params.sigmaR);
 	}
 	
 	// 1D filter in x-direction
+	@Override
 	protected float filterPixelX(PixelSlice source, int u, int v) {
 		return filterXY(source, u, v, true);
 	}
 	
 	// 1D filter in y-direction
+	@Override
 	protected float filterPixelY(PixelSlice source, int u, int v) {
 		return filterXY(source, u, v, false);
 	}
+	
+	// -----------------------------------------------------------------
 	
 	private float filterXY(PixelSlice source, int u, int v, boolean isX) {
 		float a = source.getVal(u, v);
@@ -65,7 +71,7 @@ public class BilateralFilterScalarSeparable extends GenericFilterScalarSeparable
 		for (int m = -K; m <= K; m++) {
 			float b = (isX) ? source.getVal(u + m, v) : source.getVal(u, v + m);
 			float wd = Hd[m + K];				// domain weight
-			float wr = similarityGauss(a, b);	// range weight
+			float wr = gauss(a - b, sigmaR2);	// range weight
 			float w = wd * wr;
 			S = S + w * b;
 			W = W + w;
@@ -73,13 +79,4 @@ public class BilateralFilterScalarSeparable extends GenericFilterScalarSeparable
 		return S / W;
 	}
 	
-	// ------------------------------------------------------
-	
-	// TODO: use common method
-	// This returns the weights for a Gaussian range kernel (scalar version):
-	private float similarityGauss(float a, float b) {
-		double dI = a - b;
-		return (float) Math.exp(-(dI * dI) / (2 * sigmaR2));
-	}
-
 }

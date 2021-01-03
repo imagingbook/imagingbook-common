@@ -9,13 +9,15 @@
 
 package imagingbook.pub.edgepreservingfilters;
 
+import static imagingbook.lib.math.Arithmetic.sqr;
+
+import ij.IJ;
 import ij.process.ColorProcessor;
 import imagingbook.lib.filter.GenericFilterVectorSeparable;
 import imagingbook.lib.filter.kernel.GaussianKernel1D;
 import imagingbook.lib.image.access.PixelPack;
-import imagingbook.lib.math.Arithmetic;
 import imagingbook.lib.math.VectorNorm;
-import imagingbook.pub.edgepreservingfilters.BilateralFilterVector.Parameters;
+import imagingbook.pub.edgepreservingfilters.BilateralFilter.Parameters;
 
 /**
  * Separable vector version, for RGB images only (accepts {@link ColorProcessor} only).
@@ -35,8 +37,7 @@ public class BilateralFilterVectorSeparable extends GenericFilterVectorSeparable
 	private final int K;		// the domain kernel size [-K,...,K]
 	private final double sigmaR2;
 	private final VectorNorm colorNorm;
-	private final double colorScale;
-	
+	private final double colorScale2;
 	
 	public BilateralFilterVectorSeparable(ColorProcessor ip) {
 		this(ip, new Parameters());
@@ -47,19 +48,27 @@ public class BilateralFilterVectorSeparable extends GenericFilterVectorSeparable
 		GaussianKernel1D kernel = new GaussianKernel1D(params.sigmaD);
 		this.Hd = kernel.getH();
 		this.K = kernel.getXc();
-		this.sigmaR2 = params.sigmaR * params.sigmaR;
+		this.sigmaR2 = sqr(params.sigmaR);
 		this.colorNorm = params.colorNormType.create();
-		this.colorScale = Arithmetic.sqr(colorNorm.getScale(3));
+		this.colorScale2 = sqr(colorNorm.getScale(3));
 	}
 	
-	
+	@Override
 	protected float[] filterPixelX(PixelPack source, int u, int v) {
 		return filterPixelXY(source, u, v, true);
 	}
 
+	@Override
 	protected float[] filterPixelY(PixelPack source, int u, int v) {
 		return filterPixelXY(source, u, v, false);
 	}
+	
+	@Override
+	protected void setupPass(PixelPack ignored) {
+		IJ.log("running " + this.getClass().getSimpleName());
+	}
+	
+	// ------------------------------------------------------------------
 	
 	private float[] filterPixelXY(PixelPack source, int u, int v, boolean isX) {
 		float[] S = new float[3]; 	// sum of weighted RGB (initialized to zero)
@@ -67,7 +76,7 @@ public class BilateralFilterVectorSeparable extends GenericFilterVectorSeparable
 		float[] a = source.getPixel(u, v);
 		for (int m = -K; m <= K; m++) {
 			final float[] b = (isX) ? source.getPixel(u + m, v) : source.getPixel(u, v + m);
-			float wd = Hd[m + K];
+			float wd = Hd[m + K];												// domain weight
 			float wr = similarityGauss(a, b);
 			float w = wd * wr;
 			S[0] = S[0] + w * b[0];
@@ -85,9 +94,8 @@ public class BilateralFilterVectorSeparable extends GenericFilterVectorSeparable
 	
 	// This returns the weights for a Gaussian range kernel (color vector version):
 	private float similarityGauss(float[] A, float[] B) {
-		double d2 = colorScale * colorNorm.distance2(A, B);
+		double d2 = colorScale2 * colorNorm.distance2(A, B);
 		return (float) Math.exp(-d2 / (2 * sigmaR2));
 	}
-
 
 }

@@ -9,11 +9,14 @@
 
 package imagingbook.pub.edgepreservingfilters;
 
+import static imagingbook.pub.edgepreservingfilters.BilateralFilter.gauss;
+import static imagingbook.lib.math.Arithmetic.sqr;
+
 import ij.process.ImageProcessor;
 import imagingbook.lib.filter.GenericFilterScalar;
 import imagingbook.lib.filter.kernel.GaussianKernel2D;
-import imagingbook.lib.image.access.OutOfBoundsStrategy;
 import imagingbook.lib.image.access.PixelPack.PixelSlice;
+import imagingbook.pub.edgepreservingfilters.BilateralFilter.Parameters;
 
 /**
  * Scalar version, applicable to all image types.
@@ -30,19 +33,9 @@ import imagingbook.lib.image.access.PixelPack.PixelSlice;
  */
 public class BilateralFilterScalar extends GenericFilterScalar {
 	
-	public static class Parameters {
-		/** Sigma (width) of domain filter */
-		public double sigmaD = 2; 		
-		/** Sigma (width) of range filter */
-		public double sigmaR = 50;
-		/** Out-of-bounds strategy */
-		public OutOfBoundsStrategy obs = OutOfBoundsStrategy.NEAREST_BORDER;
-	}
-	
 	private final float[][] Hd;	// the domain kernel
 	private final int K;		// the domain kernel size [-K,...,K]
 	private final double sigmaR2;
-	
 	
 	public BilateralFilterScalar(ImageProcessor ip) {
 		this(ip, new Parameters());
@@ -53,7 +46,7 @@ public class BilateralFilterScalar extends GenericFilterScalar {
 		GaussianKernel2D kernel = new GaussianKernel2D(params.sigmaD);
 		this.Hd = kernel.getH();
 		this.K = kernel.getXc();
-		this.sigmaR2 = params.sigmaR * params.sigmaR;
+		this.sigmaR2 = sqr(params.sigmaR);
 	}
 	
 	@Override
@@ -66,7 +59,7 @@ public class BilateralFilterScalar extends GenericFilterScalar {
 			for (int n = -K; n <= K; n++) {
 				float b = source.getVal(u + m, v + n);
 				float wd = Hd[m + K][n + K];		// domain weight
-				float wr = similarityGauss(a, b);	// range weight
+				float wr = gauss(a - b, sigmaR2);	// range weight
 				float w = wd * wr;
 				S = S + w * b;
 				W = W + w;
@@ -74,25 +67,5 @@ public class BilateralFilterScalar extends GenericFilterScalar {
 		}
 		return S / W;
 	}
-	
-	// ------------------------------------------------------
-	// This returns the weights for a Gaussian range kernel (scalar version):
-	private float similarityGauss(float a, float b) {
-		double dI = a - b;
-		return (float) Math.exp(-(dI * dI) / (2 * sigmaR2));
-	}
-	
-//	@SuppressWarnings("unused")
-//	// for better efficiency: pre-tabulated version of the range kernel - CHECK!
-//	private float[] makeRangeKernel(double sigma, int K) {
-//		int size = K + 1 + K;
-//		float[] rangeKernel = new float[size]; //center cell = kernel[K]
-//		double sigma2 = sigma * sigma;
-//		for (int i = 0; i < size; i++) {
-//			double x = K - i;
-//			rangeKernel[i] =  (float) Math.exp(-0.5 * (x*x) / sigma2);
-//		}
-//		return rangeKernel;
-//	}
 
 }

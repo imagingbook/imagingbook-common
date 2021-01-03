@@ -47,8 +47,9 @@ public abstract class GenericFilter {
 			filterAll(source);
 			pass++;
 		}
+		ImageProcessor result = source.toImageProcessor((createNew) ? ip.duplicate() : ip);
 		closeFilter();
-		return source.toImageProcessor((createNew) ? ip.duplicate() : ip);
+		return result;
 	}
 	
 	// concrete sub-classes should override to setup or

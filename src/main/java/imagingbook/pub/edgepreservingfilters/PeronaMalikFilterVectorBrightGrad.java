@@ -9,13 +9,12 @@
 
 package imagingbook.pub.edgepreservingfilters;
 
-import static imagingbook.lib.math.Arithmetic.sqr;
-
-import ij.process.ImageProcessor;
+import ij.process.ColorProcessor;
 import imagingbook.lib.filter.GenericFilterVector;
 import imagingbook.lib.image.access.PixelPack;
 import imagingbook.pub.edgepreservingfilters.PeronaMalik.ConductanceFunction;
 import imagingbook.pub.edgepreservingfilters.PeronaMalik.Parameters;
+
 
 /**
  * Vector version.
@@ -30,8 +29,8 @@ import imagingbook.pub.edgepreservingfilters.PeronaMalik.Parameters;
  * 
  * @author W. Burger
  * @version 2021/01/02
- */
-public class PeronaMalikFilterVectorColorGrad extends GenericFilterVector {
+ */	
+public class PeronaMalikFilterVectorBrightGrad extends GenericFilterVector {
 	
 	private final float alpha;
 	private final int T; 		// number of iterations
@@ -40,20 +39,21 @@ public class PeronaMalikFilterVectorColorGrad extends GenericFilterVector {
 	private final int M;		// image width
 	private final int N;		// image height
 
+	private final float[][] B;		// B[u][v] (brightness image)
+	
 	private float[][][] Ix;			// Ix[c][u][v] = I[c][u+1][v] - I[c][u][v]
 	private float[][][] Iy;			// Iy[c][u][v] = I[c][u][v+1] - I[c][u][v]
-
-	private final float[][] Sx;	// color gradient
-	private final float[][] Sy;
 	
+	private float[][] Bx = null;	// color gradient
+	private float[][] By = null;
 	
 	// constructor - using default parameters
-	public PeronaMalikFilterVectorColorGrad (ImageProcessor ip) {
+	public PeronaMalikFilterVectorBrightGrad (ColorProcessor ip) {
 		this(ip, new Parameters());
 	}
 	
 	// constructor - use this version to set all parameters
-	public PeronaMalikFilterVectorColorGrad (ImageProcessor ip, Parameters params) {
+	public PeronaMalikFilterVectorBrightGrad (ColorProcessor ip, Parameters params) {
 		super(ip, params.obs);
 		this.M = ip.getWidth();
 		this.N = ip.getHeight();
@@ -61,66 +61,61 @@ public class PeronaMalikFilterVectorColorGrad extends GenericFilterVector {
 		this.alpha = params.alpha;
 		this.g = ConductanceFunction.get(params.smoothRegions, params.kappa);
 		
+		this.B  = new float[M][N];		// brightness
 		this.Ix = new float[3][M][N];	// local differences in R,G,B (x-direction)
 		this.Iy = new float[3][M][N]; 	// local differences in R,G,B (y-direction)
-		
-		this.Sx = new float[M][N];		// color gradients
-		this.Sy = new float[M][N];
+		this.Bx = new float[M][N];		// local differences in brightness  (x-direction)
+		this.By = new float[M][N];		// local differences in brightness  (y-direction)
 	}
 	
 	// ------------------------------------------------------
 	
 	@Override
 	protected void setupPass(PixelPack source) {
-		// recalculate gradients:
+		// re-calculate local brightness:
 		for (int v = 0; v < N; v++) {	
 			for (int u = 0; u < M; u++) {
-				float Rx = 0, Gx = 0, Bx = 0;	// cleanup!
-    			float Ry = 0, Gy = 0, By = 0;
-    			float[] pA = source.getPixel(u+1, v);
-    			float[] pB = source.getPixel(u, v);
-    			if (u < M) {	// remove!
-    				Rx = pA[0] - pB[0];
-    				Gx = pA[1] - pB[1];
-    				Bx = pA[2] - pB[2];
-    			}
-    			pA = source.getPixel(u, v+1);
-    			if (v < N) {	// remove!
-    				Ry = pA[0] - pB[0];
-    				Gy = pA[1] - pB[1];
-    				By = pA[2] - pB[2];
-    			}    			
-    			Ix[0][u][v] = Rx; Ix[1][u][v] = Gx; Ix[2][u][v] = Bx;
-    			Iy[0][u][v] = Ry; Iy[1][u][v] = Gy; Iy[2][u][v] = By;
-    			// Di Zenzo color contrast along X/Y-axes
-				Sx[u][v] = (float) Math.sqrt(sqr(Rx) + sqr(Gx) + sqr(Bx));
-				Sy[u][v] = (float) Math.sqrt(sqr(Ry) + sqr(Gy) + sqr(By));
+				float[] p = source.getPixel(u, v);
+				B[u][v] = getBrightness(p);
 			}
-		}
+		}		
+		// re-calculate local color differences and brightness gradient in X and Y direction:
+		for (int v = 0; v < N; v++) {	
+			for (int u = 0; u < M; u++) {
+				float[] pA = source.getPixel(u+1, v);
+				float[] pB = source.getPixel(u, v);
+				Ix[0][u][v] = pA[0] - pB[0];	// do these need to be recalculated in every pass?
+				Ix[1][u][v] = pA[1] - pB[1];
+				Ix[2][u][v] = pA[2] - pB[2];
+    			Bx[u][v] = (u < M-1) ? B[u+1][v] - B[u][v] : 0;
+    			
+    			pA = source.getPixel(u, v+1);
+    			Iy[0][u][v] = pA[0] - pB[0];
+				Iy[1][u][v] = pA[1] - pB[1];
+				Iy[2][u][v] = pA[2] - pB[2];   			
+    			By[u][v] = (v < N-1) ? B[u][v+1] - B[u][v] : 0;
+			}
+		}	
+
 	}
 	
 	@Override
 	protected float[] filterPixel(PixelPack sources, int u, int v) {
-		// color gradients:
-		float s0 = Sx[u][v];  
-		float s1 = Sy[u][v];  
-		float s2 = (u > 0) ? Sx[u - 1][v] : 0;
-		float s3 = (v > 0) ? Sy[u][v - 1] : 0;
-		// calculate neighborhood conductance
-		float c0 = g.eval(s0);
-		float c1 = g.eval(s1);
-		float c2 = g.eval(s2);
-		float c3 = g.eval(s3);
-		// update all color channels using the same neighborhood conductance
+		// brightness gradients:
+		float dw = (u > 0) ? -Bx[u - 1][v] : 0;
+		float de = Bx[u][v];
+		float dn = (v > 0) ? -By[u][v - 1] : 0;
+		float ds = By[u][v];
+		// update all color channels
 		float[] I = sources.getPixel(u, v);
 		float[] result = new float[3];
 		for (int i = 0; i < 3; i++) {
-			// differences in color channel i
-			float d0 = Ix[i][u][v];
-			float d1 = Iy[i][u][v];
-			float d2 = (u>0) ? -Ix[i][u-1][v] : 0;			
-			float d3 = (v>0) ? -Iy[i][u][v-1] : 0;				
-			result[i] = I[i] + alpha * (c0*d0 + c1*d1 + c2*d2 + c3*d3);
+			float dWrgb = (u > 0) ? -Ix[i][u - 1][v] : 0;
+			float dErgb = Ix[i][u][v];
+			float dNrgb = (v > 0) ? -Iy[i][u][v - 1] : 0;
+			float dSrgb = Iy[i][u][v];
+			result[i] = I[i] +
+					alpha * (g.eval(dn) * dNrgb + g.eval(ds) * dSrgb + g.eval(de) * dErgb + g.eval(dw) * dWrgb);
 		}
 		return result;
 	}
@@ -128,6 +123,10 @@ public class PeronaMalikFilterVectorColorGrad extends GenericFilterVector {
 	@Override
 	protected final boolean finished() {
 		return (getPass() >= T);	// this filter needs T passes
+	}
+	
+	private final float getBrightness(float[] p) {
+		return 0.299f * p[0] + 0.587f * p[1] + 0.114f * p[2];
 	}
 	
 }
