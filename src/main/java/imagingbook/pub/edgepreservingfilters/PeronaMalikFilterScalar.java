@@ -79,21 +79,23 @@ public class PeronaMalikFilterScalar extends GenericFilterScalar {
 //		float d1 = Dy[u][v];
 //		float d2 = (u > 0) ? -Dx[u - 1][v] : 0;
 //		float d3 = (v > 0) ? -Dy[u][v - 1] : 0;
-		/*
-		 *      p4
-		 *   p3 p0 p1
-		 *      p2
+		/*   
+		 *  NH pixels:      directions:
+		 *      I4              d3
+		 *   I3 I0 I1        d2 x d0
+		 *      I2              d1
 		 */
-		float p0 = source.getVal(u, v);
-		float p1 = source.getVal(u+1, v);
-		float p2 = source.getVal(u, v+1);
-		float p3 = source.getVal(u-1, v);
-		float p4 = source.getVal(u, v-1);
+		float[] I = new float[5];
+		I[0] = source.getVal(u, v);
+		I[1] = source.getVal(u+1, v);
+		I[2] = source.getVal(u, v+1);
+		I[3] = source.getVal(u-1, v);
+		I[4] = source.getVal(u, v-1);
 		
-		float d0 = p1 - p0;		// A:  Dx[u][v] = I[u+1][v] - I[u][v]
-		float d1 = p2 - p0;		// B:  Dy[u][v] = I[u][v+1] - I[u][v]
-		float d2 = p3 - p0;		// C: -Dx[u-1][v] = -(I[u][v] - I[u-1][v]) = I[u-1][v] - I[u][v]
-		float d3 = p4 - p0;		// D: -Dy[u][v-1] = -(I[u][v] - I[u][v-1]) = I[u][v-1] - I[u][v]
+		float d0 = I[1] - I[0];		// A:  Dx[u][v] = I[u+1][v] - I[u][v]
+		float d1 = I[2] - I[0];		// B:  Dy[u][v] = I[u][v+1] - I[u][v]
+		float d2 = I[3] - I[0];		// C: -Dx[u-1][v] = -(I[u][v] - I[u-1][v]) = I[u-1][v] - I[u][v]
+		float d3 = I[4] - I[0];		// D: -Dy[u][v-1] = -(I[u][v] - I[u][v-1]) = I[u][v-1] - I[u][v]
 		return source.getVal(u, v) +
 				alpha * (g.eval(d0) * d0 + g.eval(d1) * d1 + g.eval(d2) * d2 + g.eval(d3) * d3);
 	}
