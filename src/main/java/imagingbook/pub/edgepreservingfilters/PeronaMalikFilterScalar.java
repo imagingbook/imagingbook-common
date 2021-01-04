@@ -33,14 +33,9 @@ import imagingbook.pub.edgepreservingfilters.PeronaMalikF.Parameters;
  */
 public class PeronaMalikFilterScalar extends GenericFilterScalar {
 	
-//	private final int M;		// image width
-//	private final int N;		// image height
 	private final int T; 		// number of iterations
 	private final float alpha;
 	private final ConductanceFunction g;
-	
-//	private final float[][] Dx;		// Dx[u][v] = I[u+1][v] - I[u][v]
-//	private final float[][] Dy;		// Dy[u][v] = I[u][v+1] - I[u][v]
 	
 	// constructor - using default parameters
 	public PeronaMalikFilterScalar (ImageProcessor ip) {
@@ -50,65 +45,37 @@ public class PeronaMalikFilterScalar extends GenericFilterScalar {
 	// constructor - use this version to set all parameters
 	public PeronaMalikFilterScalar (ImageProcessor ip, Parameters params) {
 		super(ip, params.obs);
-//		this.M = ip.getWidth();
-//		this.N = ip.getHeight();
 		this.T = params.iterations;
 		this.alpha = params.alpha;
 		this.g = ConductanceFunction.get(params.smoothRegions, params.kappa);
-//		this.Dx = new float[M][N];
-//		this.Dy = new float[M][N];	
 	}
 	
 	// ------------------------------------------------------
 	
-//	@Override
-//	protected void setupPass(PixelSlice source) {
-//		// re-calculate gradients in X and Y direction:
-//		for (int u = 0; u < M; u++) {
-//			for (int v = 0; v < N; v++) {
-//				float I_uv = source.getVal(u,v);
-//				Dx[u][v] = source.getVal(u + 1, v) - I_uv;
-//				Dy[u][v] = source.getVal(u, v + 1) - I_uv;
-//			}
-//		}
-//	}
-	
 	@Override
 	protected float filterPixel(PixelSlice source, int u, int v) {
-//		float d0 = Dx[u][v];
-//		float d1 = Dy[u][v];
-//		float d2 = (u > 0) ? -Dx[u - 1][v] : 0;
-//		float d3 = (v > 0) ? -Dy[u][v - 1] : 0;
 		/*   
 		 *  NH pixels:      directions:
-		 *      I4              d3
-		 *   I3 I0 I1        d2 x d0
-		 *      I2              d1
+		 *      p4              3
+		 *   p3 p0 p1        2  x  0
+		 *      p2              1
 		 */
 		float[] p = new float[5];
 		p[0] = source.getVal(u, v);
-		p[1] = source.getVal(u+1, v);
-		p[2] = source.getVal(u, v+1);
-		p[3] = source.getVal(u-1, v);
-		p[4] = source.getVal(u, v-1);
+		p[1] = source.getVal(u + 1, v);
+		p[2] = source.getVal(u, v + 1);
+		p[3] = source.getVal(u - 1, v);
+		p[4] = source.getVal(u, v - 1);
+			
+		float result = p[0];
+		for (int i = 1; i <= 4; i++) {
+			float d = p[i] - p[0];
+			result = result + alpha * (g.eval(Math.abs(d))) * (d);
+		}
 		
-		float d0 = p[1] - p[0];		// A:  Dx[u][v] = I[u+1][v] - I[u][v]
-		float d1 = p[2] - p[0];		// B:  Dy[u][v] = I[u][v+1] - I[u][v]
-		float d2 = p[3] - p[0];		// C: -Dx[u-1][v] = -(I[u][v] - I[u-1][v]) = I[u-1][v] - I[u][v]
-		float d3 = p[4] - p[0];		// D: -Dy[u][v-1] = -(I[u][v] - I[u][v-1]) = I[u][v-1] - I[u][v]
-		return source.getVal(u, v) +
-				alpha * (g.eval(d0) * d0 + g.eval(d1) * d1 + g.eval(d2) * d2 + g.eval(d3) * d3);
+		return result;
 	}
-	
-//	private float getGradientX(PixelSlice source, int u, int v) {
-//		return source.getVal(u + 1, v) - source.getVal(u,v);
-//	}
-//	
-//	private float getGradientY(PixelSlice source, int u, int v) {
-//		return source.getVal(u, v + 1) - source.getVal(u,v);
-//	}
-	
-	
+
 	@Override
 	protected final boolean finished() {
 		return (getPass() >= T);	// this filter needs T passes

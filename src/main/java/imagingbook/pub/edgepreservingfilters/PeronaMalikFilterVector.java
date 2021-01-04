@@ -9,15 +9,18 @@
 
 package imagingbook.pub.edgepreservingfilters;
 
+import static imagingbook.lib.math.Matrix.subtract;
+
 import ij.process.ColorProcessor;
 import imagingbook.lib.filter.GenericFilterVector;
 import imagingbook.lib.image.access.PixelPack;
+import imagingbook.lib.math.Matrix;
+import imagingbook.pub.edgepreservingfilters.PeronaMalikF.ColorMode;
 import imagingbook.pub.edgepreservingfilters.PeronaMalikF.ConductanceFunction;
 import imagingbook.pub.edgepreservingfilters.PeronaMalikF.Parameters;
 
-
 /**
- * Vector version with greatly reduced memory requirements.
+ * Vector simplified version with greatly reduced memory requirements.
  * This code is based on the Anisotropic Diffusion filter proposed by Perona and Malik,
  * as proposed in Pietro Perona and Jitendra Malik, "Scale-space and edge detection 
  * using anisotropic diffusion", IEEE Transactions on Pattern Analysis 
@@ -30,23 +33,25 @@ import imagingbook.pub.edgepreservingfilters.PeronaMalikF.Parameters;
  * @author W. Burger
  * @version 2021/01/04
  */	
-public class PeronaMalikFilterVectorBrightGrad extends GenericFilterVector {
+public class PeronaMalikFilterVector extends GenericFilterVector {
 	
 	private final float alpha;
 	private final int T; 		// number of iterations
 	private final ConductanceFunction g;
+	private ColorMode colorMode;
 	
 	// constructor - using default parameters
-	public PeronaMalikFilterVectorBrightGrad (ColorProcessor ip) {
+	public PeronaMalikFilterVector (ColorProcessor ip) {
 		this(ip, new Parameters());
 	}
 	
 	// constructor - use this version to set all parameters
-	public PeronaMalikFilterVectorBrightGrad (ColorProcessor ip, Parameters params) {
+	public PeronaMalikFilterVector (ColorProcessor ip, Parameters params) {
 		super(ip, params.obs);
 		this.T = params.iterations;
 		this.alpha = params.alpha;
 		this.g = ConductanceFunction.get(params.smoothRegions, params.kappa);
+		this.colorMode = params.colorMode;
 	}
 	
 	// ------------------------------------------------------
@@ -55,9 +60,9 @@ public class PeronaMalikFilterVectorBrightGrad extends GenericFilterVector {
 	protected float[] filterPixel(PixelPack sources, int u, int v) {
 		/*   
 		 *  NH pixels:      directions:
-		 *      I4              d3
-		 *   I3 I0 I1        d2 x d0
-		 *      I2              d1
+		 *      p4              3
+		 *   p3 p0 p1         2 x 0
+		 *      p2              1
 		 */
 		float[][] p = new float[5][];	// p[i][k]: 5 pixels from the 3x3 neigborhood
 		p[0] = sources.getPixel(u, v);
@@ -66,33 +71,33 @@ public class PeronaMalikFilterVectorBrightGrad extends GenericFilterVector {
 		p[3] = sources.getPixel(u - 1, v);
 		p[4] = sources.getPixel(u, v - 1);
 		
-		// calculate the brightness for the 5 pixels :
-		float[] b = new float[5];
-		for (int i = 0; i < p.length; i++) {
-			b[i] = getBrightness(p[i]);
+		float[] result = p[0].clone();
+		
+		switch (colorMode) {
+		case BrightnessGradient:
+			float b0 = getBrightness(p[0]);
+			for (int i = 1; i <= 4; i++) {
+				float bi = getBrightness(p[i]);
+				for (int k = 0; k < 3; k++) {
+					float gi = g.eval(Math.abs(bi - b0));
+					result[k] = result[k] + alpha * gi * (p[i][k] - p[0][k]);
+				}
+			}
+			break;
+		case ColorGradient:
+			for (int i = 1; i <= 4; i++) {
+				float[] D = subtract(p[i], p[0]);
+				float gi = g.eval(Matrix.normL2(D));	// g applied to color gradient magnitude
+				for (int k = 0; k < 3; k++) {
+					result[k] = result[k] + alpha * gi * D[k];
+				}
+			}
+			break;
+		default:
+			throw new RuntimeException("color mode option " + colorMode.name() +
+					" not implemented in class " + this.getClass().getSimpleName());
 		}
 		
-		// brightness differences in 4 directions:
-		float[] db = new float[4];
-		db[0] = b[1] - b[0];		// A:  Dx[u][v] = I[u+1][v] - I[u][v]
-		db[1] = b[2] - b[0];		// B:  Dy[u][v] = I[u][v+1] - I[u][v]
-		db[2] = b[3] - b[0];		// C: -Dx[u-1][v] = -(I[u][v] - I[u-1][v]) = I[u-1][v] - I[u][v]
-		db[3] = b[4] - b[0];		// D: -Dy[u][v-1] = -(I[u][v] - I[u][v-1]) = I[u][v-1] - I[u][v]
-
-		float[] result = new float[3];
-		// color differences in 4 directions i (for one component k)
-		float[] dcol = new float[4];	
-		for (int k = 0; k < 3; k++) {
-			dcol[0] = p[1][k] - p[0][k]; 	// Ix[k][u][v];		
-			dcol[1] = p[2][k] - p[0][k]; 	// Iy[k][u][v];
-			dcol[2] = p[3][k] - p[0][k]; 	// (u > 0) ? -Ix[k][u - 1][v] : 0;
-			dcol[3] = p[4][k] - p[0][k]; 	// (v > 0) ? -Iy[k][u][v - 1] : 0;		
-			result[k] = p[0][k] +
-					alpha * (g.eval(db[0]) * dcol[0] + 
-							 g.eval(db[1]) * dcol[1] + 
-							 g.eval(db[2]) * dcol[2] + 
-							 g.eval(db[3]) * dcol[3]);
-		}
 		return result;
 	}
 

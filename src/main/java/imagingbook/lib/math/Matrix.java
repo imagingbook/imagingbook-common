@@ -347,12 +347,24 @@ public abstract class Matrix {
 	
 	// ------------------------------------------------
 	
-	// non-destructive
+	// non-destructive a - b
 	public static double[] subtract(final double[] a, final double[] b) throws IncompatibleDimensionsException {
 		if (!sameSize(a, b))
 			throw new IncompatibleDimensionsException();
 		final int n = a.length;
 		double[] c = new double[n];
+		for (int i = 0; i < n; i++) {
+			c[i] = a[i] - b[i];
+		}
+		return c;
+	}
+	
+	// non-destructive a - b
+	public static float[] subtract(final float[] a, final float[] b) throws IncompatibleDimensionsException {
+		if (!sameSize(a, b))
+			throw new IncompatibleDimensionsException();
+		final int n = a.length;
+		float[] c = new float[n];
 		for (int i = 0; i < n; i++) {
 			c[i] = a[i] - b[i];
 		}
