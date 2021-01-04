@@ -142,6 +142,16 @@ public class PixelPack {
 		public void copyTo(PixelSlice other) {
 			System.arraycopy(this.vals, 0, other.vals, 0, this.vals.length);
 		}
+		
+		public void get3x3Neighborhood(int uc, int vc, float[][] nh) {
+			for (int i = 0; i < 3; i++) {
+				int u = uc - 1 + i;
+				for (int j = 0; j < 3; j++) {
+					int v = vc - 1 + j;
+					nh[i][j] = getVal(u, v);
+				}
+			}
+		}
 	}
 	
 	// -------------------------------------------------------------------

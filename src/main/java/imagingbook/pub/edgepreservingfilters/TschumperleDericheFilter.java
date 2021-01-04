@@ -20,7 +20,12 @@ import imagingbook.lib.image.access.PixelPack;
 // TODO: convert to subclass of GenericFilter using ImageAccessor (see BilateralFilter)
 
 /**
- * Vector version for ColorProcessor only
+ * Vector version for ColorProcessor only.
+ * This is an initial port from the original implementation.
+ * It does not use much of GenericFilter's capabilities.
+ * TODO: Check if the massive aux. data structures are necessay and how much
+ * of the calculations can be done in the main u/v loop.
+ * 
  * This class implements the Anisotropic Diffusion filter proposed by David Tschumperle 
  * in D. Tschumperle and R. Deriche, "Diffusion PDEs on vector-valued images", 
  * IEEE Signal Processing Magazine, vol. 19, no. 5, pp. 16-25 (Sep. 2002). It is based 
@@ -104,6 +109,7 @@ public class TschumperleDericheFilter extends GenericFilterVector {
 	
 	@Override
 	protected void setupPass(PixelPack source) {
+		
 		// Step 1:
 		calculateGradients(I, Dx, Dy);
 
