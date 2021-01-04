@@ -59,17 +59,17 @@ public class PeronaMalikFilterVectorBrightGrad extends GenericFilterVector {
 		 *   I3 I0 I1        d2 x d0
 		 *      I2              d1
 		 */
-		float[][] I = new float[5][];	// p[i][k]: 5 pixels from the 3x3 neigborhood
-		I[0] = sources.getPixel(u, v);
-		I[1] = sources.getPixel(u + 1, v);
-		I[2] = sources.getPixel(u, v + 1);
-		I[3] = sources.getPixel(u - 1, v);
-		I[4] = sources.getPixel(u, v - 1);
+		float[][] p = new float[5][];	// p[i][k]: 5 pixels from the 3x3 neigborhood
+		p[0] = sources.getPixel(u, v);
+		p[1] = sources.getPixel(u + 1, v);
+		p[2] = sources.getPixel(u, v + 1);
+		p[3] = sources.getPixel(u - 1, v);
+		p[4] = sources.getPixel(u, v - 1);
 		
 		// calculate the brightness for the 5 pixels :
 		float[] b = new float[5];
-		for (int i = 0; i < I.length; i++) {
-			b[i] = getBrightness(I[i]);
+		for (int i = 0; i < p.length; i++) {
+			b[i] = getBrightness(p[i]);
 		}
 		
 		// brightness differences in 4 directions:
@@ -83,11 +83,11 @@ public class PeronaMalikFilterVectorBrightGrad extends GenericFilterVector {
 		// color differences in 4 directions i (for one component k)
 		float[] dcol = new float[4];	
 		for (int k = 0; k < 3; k++) {
-			dcol[0] = I[1][k] - I[0][k]; 	// Ix[k][u][v];		
-			dcol[1] = I[2][k] - I[0][k]; 	// Iy[k][u][v];
-			dcol[2] = I[3][k] - I[0][k]; 	// (u > 0) ? -Ix[k][u - 1][v] : 0;
-			dcol[3] = I[4][k] - I[0][k]; 	// (v > 0) ? -Iy[k][u][v - 1] : 0;		
-			result[k] = I[0][k] +
+			dcol[0] = p[1][k] - p[0][k]; 	// Ix[k][u][v];		
+			dcol[1] = p[2][k] - p[0][k]; 	// Iy[k][u][v];
+			dcol[2] = p[3][k] - p[0][k]; 	// (u > 0) ? -Ix[k][u - 1][v] : 0;
+			dcol[3] = p[4][k] - p[0][k]; 	// (v > 0) ? -Iy[k][u][v - 1] : 0;		
+			result[k] = p[0][k] +
 					alpha * (g.eval(db[0]) * dcol[0] + 
 							 g.eval(db[1]) * dcol[1] + 
 							 g.eval(db[2]) * dcol[2] + 
