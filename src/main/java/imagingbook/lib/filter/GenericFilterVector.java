@@ -34,6 +34,7 @@ public abstract class GenericFilterVector extends GenericFilter {
 	
 	// -----------------------------------------------------------------
 	
+	// helper method for copying vector pixels
 	public void copyPixel(float[] source, float[] target) {
 		System.arraycopy(source, 0, target, 0, source.length);
 	}

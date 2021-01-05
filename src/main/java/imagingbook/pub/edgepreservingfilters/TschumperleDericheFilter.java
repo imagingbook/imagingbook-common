@@ -109,38 +109,53 @@ public class TschumperleDericheFilter extends GenericFilterVector {
 	
 	@Override
 	protected void setupPass(PixelPack source) {
-		
+		IJ.log("setupPass starting " + getPass());
 		// Step 1:
+		IJ.log("Step 1");
 		calculateGradients(I, Dx, Dy);
 
 		// Step 2:
+		IJ.log("Step 2");
 		smoothGradients(Dx, Dy);
 
 		// Step 3: Hessian matrix is only calculated locally as part of Step 8.
 
 		// Step 4:
+		IJ.log("Step 4");
 		calculateStructureMatrix(Dx, Dy, G);
+		
 		// Step 5:
+		IJ.log("Step 5");
 		smoothStructureMatrix(G);
 
 		// Step 6-7:
+		IJ.log("Step 6-7");
 		calculateGeometryMatrix(G, A);
 
 		// Step 8:
+		IJ.log("Step 8");
 		float maxVelocity = calculateVelocities(I, A, B);
 
+		IJ.log("updateImage");
 		double alpha = params.dt / maxVelocity;
 		updateImage(I, B, alpha);
+		IJ.log("updateImage done");
+		
+		IJ.log("setupPass done" + getPass());
 	}
+	
+	float[] tmpPix = new float[3];
 	
 	@Override
 	protected float[] filterPixel(PixelPack sources, int u, int v) {
 		// TODO Auto-generated method stub
-		return null;
+		return tmpPix;
 	}
 
 	protected void closeFilter() {
+		IJ.log("closeFilter");
 		copyResultToImage(getImageProcessor());
+		IJ.log("done.");
 	}
 
 	
