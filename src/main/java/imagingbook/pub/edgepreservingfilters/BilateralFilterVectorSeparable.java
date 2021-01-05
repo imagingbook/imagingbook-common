@@ -14,7 +14,7 @@ import static imagingbook.lib.math.Arithmetic.sqr;
 import ij.IJ;
 import ij.process.ColorProcessor;
 import imagingbook.lib.filter.GenericFilterVectorSeparable;
-import imagingbook.lib.filter.kernel.GaussianKernel1D;
+import imagingbook.lib.filter.linear.GaussianKernel1D;
 import imagingbook.lib.image.access.PixelPack;
 import imagingbook.lib.math.VectorNorm;
 import imagingbook.pub.edgepreservingfilters.BilateralF.Parameters;

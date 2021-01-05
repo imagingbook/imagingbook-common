@@ -7,8 +7,8 @@ import java.nio.file.Path;
 import org.junit.Test;
 
 import ij.process.ImageProcessor;
-import imagingbook.lib.filter.LinearFilter;
-import imagingbook.lib.filter.kernel.Kernel2D;
+import imagingbook.lib.filter.linear.Kernel2D;
+import imagingbook.lib.filter.linear.LinearFilter;
 import imagingbook.lib.ij.IjUtils;
 import imagingbook.lib.image.access.OutOfBoundsStrategy;
 import imagingbook.lib.image.access.PixelPack;

@@ -1,4 +1,4 @@
-package imagingbook.lib.filter.kernel;
+package imagingbook.lib.filter.linear;
 
 import imagingbook.lib.math.Matrix;
 

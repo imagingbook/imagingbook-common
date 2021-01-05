@@ -1,6 +1,6 @@
-package imagingbook.lib.filter;
+package imagingbook.lib.filter.linear;
 
-import imagingbook.lib.filter.kernel.Kernel2D;
+import imagingbook.lib.filter.GenericFilterScalar;
 import imagingbook.lib.image.access.PixelPack;
 import imagingbook.lib.image.access.PixelPack.PixelSlice;
 

@@ -19,7 +19,7 @@ import ij.process.ByteProcessor;
 import ij.process.ColorProcessor;
 import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
-import imagingbook.lib.filter.kernel.GaussianKernel1D;
+import imagingbook.lib.filter.linear.GaussianKernel1D;
 import imagingbook.lib.math.Eigensolver2x2;
 
 /**

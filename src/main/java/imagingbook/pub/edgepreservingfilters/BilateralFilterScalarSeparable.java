@@ -14,7 +14,7 @@ import static imagingbook.pub.edgepreservingfilters.BilateralF.gauss;
 
 import ij.process.ImageProcessor;
 import imagingbook.lib.filter.GenericFilterScalarSeparable;
-import imagingbook.lib.filter.kernel.GaussianKernel1D;
+import imagingbook.lib.filter.linear.GaussianKernel1D;
 import imagingbook.lib.image.access.PixelPack;
 import imagingbook.lib.image.access.PixelPack.PixelSlice;
 import imagingbook.pub.edgepreservingfilters.BilateralF.Parameters;

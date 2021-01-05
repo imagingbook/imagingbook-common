@@ -7,11 +7,9 @@
  * Visit http://imagingbook.com for additional details.
  *******************************************************************************/
 
-package imagingbook.lib.filter;
+package imagingbook.lib.filter.linear;
 
 import ij.process.ImageProcessor;
-import imagingbook.lib.filter.kernel.GaussianKernel1D;
-import imagingbook.lib.filter.kernel.Kernel2D;
 import imagingbook.lib.image.access.OutOfBoundsStrategy;
 import imagingbook.lib.image.access.PixelPack;
 

@@ -17,7 +17,7 @@ import java.util.List;
 
 import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
-import imagingbook.lib.filter.kernel.GaussianKernel1D;
+import imagingbook.lib.filter.linear.GaussianKernel1D;
 import imagingbook.lib.ij.Filter;
 import imagingbook.lib.image.ImageMath;
 import imagingbook.pub.corners.subpixel.SubpixelMaxInterpolator;

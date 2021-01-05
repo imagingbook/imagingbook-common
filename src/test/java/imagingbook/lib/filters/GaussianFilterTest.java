@@ -7,8 +7,8 @@ import java.nio.file.Path;
 import org.junit.Test;
 
 import ij.process.ImageProcessor;
-import imagingbook.lib.filter.GaussianFilter;
-import imagingbook.lib.filter.GaussianFilterSeparable;
+import imagingbook.lib.filter.linear.GaussianFilter;
+import imagingbook.lib.filter.linear.GaussianFilterSeparable;
 import imagingbook.lib.ij.IjUtils;
 import imagingbook.testutils.ImageTests;
 

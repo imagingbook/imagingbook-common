@@ -14,7 +14,7 @@ import static imagingbook.lib.math.Arithmetic.sqr;
 
 import ij.process.ImageProcessor;
 import imagingbook.lib.filter.GenericFilterScalar;
-import imagingbook.lib.filter.kernel.GaussianKernel2D;
+import imagingbook.lib.filter.linear.GaussianKernel2D;
 import imagingbook.lib.image.access.PixelPack;
 import imagingbook.lib.image.access.PixelPack.PixelSlice;
 import imagingbook.pub.edgepreservingfilters.BilateralF.Parameters;

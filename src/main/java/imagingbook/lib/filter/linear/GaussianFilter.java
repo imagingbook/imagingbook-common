@@ -1,7 +1,6 @@
-package imagingbook.lib.filter;
+package imagingbook.lib.filter.linear;
 
 import ij.process.ImageProcessor;
-import imagingbook.lib.filter.kernel.GaussianKernel2D;
 import imagingbook.lib.image.access.OutOfBoundsStrategy;
 import imagingbook.lib.image.access.PixelPack;
 

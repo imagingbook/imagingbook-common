@@ -10,7 +10,7 @@
 package imagingbook.pub.sift.scalespace;
 
 import ij.process.FloatProcessor;
-import imagingbook.lib.filter.GaussianFilter;
+import imagingbook.lib.filter.linear.GaussianFilter;
 
 
 /**
