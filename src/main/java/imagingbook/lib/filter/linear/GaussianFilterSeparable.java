@@ -23,13 +23,21 @@ import imagingbook.lib.image.access.PixelPack;
 public class GaussianFilterSeparable extends LinearFilterSeparable {
 	
 	public static final OutOfBoundsStrategy OBS = OutOfBoundsStrategy.NEAREST_BORDER;
+	
+	public GaussianFilterSeparable(PixelPack pp, double sigma) {
+		super(pp, new GaussianKernel1D(sigma));
+	}
+	
+	public GaussianFilterSeparable(PixelPack pp, double sigmaX, double sigmaY) {
+		super(pp, new GaussianKernel1D(sigmaX), new GaussianKernel1D(sigmaY));
+	}
 
 	public GaussianFilterSeparable(ImageProcessor ip, double sigma) {
-		super(PixelPack.fromImageProcessor(ip, OBS), new GaussianKernel1D(sigma));
+		this(PixelPack.fromImageProcessor(ip, OBS), sigma);
 	}
 	
 	public GaussianFilterSeparable(ImageProcessor ip, double sigmaX, double sigmaY) {
-		super(PixelPack.fromImageProcessor(ip, OBS), new GaussianKernel1D(sigmaX), new GaussianKernel1D(sigmaY));
+		this(PixelPack.fromImageProcessor(ip, OBS), sigmaX, sigmaY);
 	}
 	
 }

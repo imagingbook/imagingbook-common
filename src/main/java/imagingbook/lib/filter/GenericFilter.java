@@ -58,6 +58,7 @@ public abstract class GenericFilter {
 	protected boolean finished() {
 		return (getPass() >= 1);	// do exactly 1 pass
 	}
+	
 
 	protected abstract void filterAll(PixelPack source);
 	

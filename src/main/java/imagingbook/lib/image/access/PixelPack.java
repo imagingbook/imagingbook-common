@@ -124,6 +124,26 @@ public class PixelPack {
 		return getPixel(u, v, new float[depth]);
 	}
 	
+	public void zero() {
+		for (int k = 0; k < depth; k++) {
+			getSlice(k).zero();
+		}
+	}
+	
+	// returns nh[x][y][k]
+	public float[][][] get3x3Neighborhood(int uc, int vc, float[][][] nh) {
+		if (nh == null) 
+			nh = new float[3][3][depth];
+		for (int i = 0; i < 3; i++) {
+			int u = uc - 1 + i;
+			for (int j = 0; j < 3; j++) {
+				int v = vc - 1 + j;
+				nh[i][j] = getPixel(u, v);
+			}
+		}
+		return nh;
+	}
+	
 	public ImageProcessor toImageProcessor(ImageProcessor ip2) {
 		return copyToImageProcessor(this.pixels, ip2);
 	}
@@ -177,11 +197,18 @@ public class PixelPack {
 			return PixelPack.this.getHeight();
 		}
 		
+		public void zero() {
+			Arrays.fill(this.vals, 0);
+		}
+		
 		public void copyTo(PixelSlice other) {
 			System.arraycopy(this.vals, 0, other.vals, 0, this.vals.length);
 		}
 		
-		public void get3x3Neighborhood(int uc, int vc, float[][] nh) {
+		// returns nh[x][y]
+		public float[][] get3x3Neighborhood(int uc, int vc, float[][] nh) {
+			if (nh == null) 
+				nh = new float[3][3];
 			for (int i = 0; i < 3; i++) {
 				int u = uc - 1 + i;
 				for (int j = 0; j < 3; j++) {
@@ -189,6 +216,7 @@ public class PixelPack {
 					nh[i][j] = getVal(u, v);
 				}
 			}
+			return nh;
 		}
 	}
 	
