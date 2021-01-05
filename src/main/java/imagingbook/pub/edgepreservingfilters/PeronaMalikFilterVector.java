@@ -50,7 +50,7 @@ public class PeronaMalikFilterVector extends GenericFilterVector {
 		super(ip, params.obs);
 		this.T = params.iterations;
 		this.alpha = params.alpha;
-		this.g = ConductanceFunction.get(params.smoothRegions, params.kappa);
+		this.g = ConductanceFunction.get(params.conductanceFunType, params.kappa);
 		this.colorMode = params.colorMode;
 	}
 	

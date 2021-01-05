@@ -13,8 +13,8 @@ public abstract class PeronaMalikF {
 		public float alpha = 0.20f; 			
 		/** Smoothness parameter (kappa) */
 		public float kappa = 25;
-		/** Specify the type of conductivity function c() */
-		public boolean smoothRegions = true;
+		/** Specify the type of conductance function g(d) */
+		public ConductanceFunction.Type conductanceFunType = ConductanceFunction.Type.g1;
 		/** Specify the color mode */
 		public ColorMode colorMode = ColorMode.SeparateChannels;
 		/** Out-of-bounds strategy */
@@ -23,25 +23,30 @@ public abstract class PeronaMalikF {
 	
 	public enum ColorMode  {
 		SeparateChannels, 
-		BrightnessGradient, 
+		BrightnessGradient,
 		ColorGradient;
 	}
 	
-	protected interface ConductanceFunction {
+	public interface ConductanceFunction {
 		float eval(float d);
-
-//		static ConductanceFunction G1(final float kappa) {
-//			return (d) -> (float) Math.exp(-sqr(d/kappa));
-//		}
-//		
-//		static ConductanceFunction G2(final float kappa) {
-//			return (d) -> 1.0f / (1.0f + sqr(d/kappa));
-//		}
 		
-		static ConductanceFunction get(boolean smooth, float kappa) {
-			return (smooth) ? 
-					(d) -> (float) Math.exp(-sqr(d/kappa)) :	// = g2(d)
-					(d) -> 1.0f / (1.0f + sqr(d/kappa)); 		// = g1(d)
+		public enum Type {
+			g1, g2, g3, g4;
+		}
+		
+		static ConductanceFunction get(Type type, float kappa) {
+			switch (type) {
+			case g1:
+				return (d) -> (float) Math.exp(-sqr(d/kappa));
+			case g2:
+				return (d) -> 1.0f / (1.0f + sqr(d/kappa));
+			case g3:
+				return (d) -> (float) (1.0 / Math.sqrt(1.0f + sqr(d/kappa)));
+			case g4:
+				return (d) -> 
+				(d <= 2 * kappa) ? sqr(1.0f - sqr(d / (2 * kappa))) : 0.0f;
+			}
+			return null;
 		}
 	}
 
