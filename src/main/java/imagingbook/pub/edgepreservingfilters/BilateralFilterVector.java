@@ -44,7 +44,7 @@ public class BilateralFilterVector extends GenericFilterVector {
 	}
 	
 	public BilateralFilterVector(ColorProcessor ip, Parameters params) {
-		super(ip, params.obs);
+		super(PixelPack.fromImageProcessor(ip, params.obs));
 		GaussianKernel2D kernel = new GaussianKernel2D(params.sigmaD);
 		this.Hd = kernel.getH();
 		this.K = kernel.getXc();

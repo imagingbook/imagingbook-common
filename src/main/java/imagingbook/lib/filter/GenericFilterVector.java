@@ -1,25 +1,25 @@
 package imagingbook.lib.filter;
 
-import ij.process.ImageProcessor;
-import imagingbook.lib.image.access.OutOfBoundsStrategy;
 import imagingbook.lib.image.access.PixelPack;
 
 public abstract class GenericFilterVector extends GenericFilter {
-	
-	protected GenericFilterVector(ImageProcessor ip, OutOfBoundsStrategy obs) {
-		super(ip, obs);
+
+	public GenericFilterVector(PixelPack pp) {
+		super(pp);
 	}
 
 	@Override 
-	protected void filterAll(PixelPack sources) {
-		PixelPack targets = sources.getEmptyCopy();
-		setupPass(sources);
-		for (int v = 0; v < this.imgHeight; v++) {
-			for (int u = 0; u < this.imgWidth; u++) {
-				targets.setPixel(u, v, filterPixel(sources, u, v)); // single pixel operation
+	protected void filterAll(PixelPack source) {
+		PixelPack target = source.getEmptyCopy();
+		setupPass(source);
+		final int width = source.getWidth();
+		final int height = source.getHeight();
+		for (int v = 0; v < height; v++) {
+			for (int u = 0; u < width; u++) {
+				target.setPixel(u, v, filterPixel(source, u, v)); // single pixel operation
 			}
 		}
-		targets.copyTo(sources);	// copy targets back to sources
+		target.copyTo(source);	// copy targets back to sources
 	}
 	
 	

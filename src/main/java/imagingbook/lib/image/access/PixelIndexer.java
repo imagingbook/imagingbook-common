@@ -22,10 +22,13 @@ package imagingbook.lib.image.access;
  * out-of-image coordinates.
  * 
  */
-public class PixelIndexer {
+public class PixelIndexer implements Cloneable {
 	
-	public static PixelIndexer create(int width, int height, OutOfBoundsStrategy mode) {
-		switch (mode) {
+	public static final OutOfBoundsStrategy DefaultOutOfBoundsStrategy = OutOfBoundsStrategy.NEAREST_BORDER;
+	
+	public static PixelIndexer create(int width, int height, OutOfBoundsStrategy obs) {
+		obs = (obs != null) ? obs : DefaultOutOfBoundsStrategy;
+		switch (obs) {
 		case ZERO_VALUE 			: return new ZeroValueIndexer(width, height);
 		case NEAREST_BORDER			: return new NearestBorderIndexer(width, height);
 		case MIRROR_IMAGE			: return new MirrorImageIndexer(width, height);

@@ -1,48 +1,30 @@
 package imagingbook.lib.filter;
 
-import static imagingbook.lib.image.access.PixelPack.getDepth;
-
 import ij.process.ImageProcessor;
 import imagingbook.lib.image.access.PixelPack;
-import imagingbook.lib.image.access.OutOfBoundsStrategy;
 
 public abstract class GenericFilter {
 	
-	public static final OutOfBoundsStrategy DefaultOutOfBoundsStrategy = OutOfBoundsStrategy.NEAREST_BORDER;
-	
-	private final ImageProcessor ip;  // we need a reference to create the result processor
-	protected final int imgWidth;
-	protected final int imgHeight;
-	protected final int imgDepth;
-	protected final OutOfBoundsStrategy obs;
-
+	protected final PixelPack source;
 	private int pass = 0;
 	
-	protected GenericFilter(ImageProcessor ip, OutOfBoundsStrategy obs) {
-		this.ip = ip;
-		this.imgWidth = ip.getWidth();
-		this.imgHeight = ip.getHeight(); 
-		this.imgDepth = getDepth(ip);
-		this.obs = (obs != null) ? obs : DefaultOutOfBoundsStrategy;
+	protected GenericFilter(PixelPack source) {
+		this.source = source;
 	}
 	
 	protected int getPass() {
 		return pass;
 	}
 	
-	protected  ImageProcessor getImageProcessor() {
-		return this.ip;
+	// needed?
+	protected  ImageProcessor getIp() {
+		return this.source.getIp();
 	}
 	
 	// -----------------------------------------------------------------------------------
 	
-	public ImageProcessor apply() {
-		return apply(false);
-	}
-	
-	public ImageProcessor apply(boolean createNew) {
-		PixelPack source = new PixelPack(ip, obs);
-		setupFilter(source);
+	public void apply() {
+		setupFilter(source);	// need to pass?
 		if (pass > 0) {
 			throw new IllegalStateException("filter has already been applied");
 		}
@@ -51,9 +33,12 @@ public abstract class GenericFilter {
 			filterAll(source);
 			pass++;
 		}
-		ImageProcessor result = source.toImageProcessor((createNew) ? ip.duplicate() : ip);
+		
+		ImageProcessor ip = source.getIp();
+		if (ip != null) {	// source has an IP attached, so we need to copy back
+			source.toImageProcessor(ip);
+		}
 		closeFilter();
-		return result;
 	}
 	
 	// concrete sub-classes should override to setup or

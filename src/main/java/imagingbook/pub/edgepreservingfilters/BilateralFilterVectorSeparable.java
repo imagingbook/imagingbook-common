@@ -44,7 +44,7 @@ public class BilateralFilterVectorSeparable extends GenericFilterVectorSeparable
 	}
 	
 	public BilateralFilterVectorSeparable(ColorProcessor ip, Parameters params) {
-		super(ip, params.obs);
+		super(PixelPack.fromImageProcessor(ip, params.obs));
 		GaussianKernel1D kernel = new GaussianKernel1D(params.sigmaD);
 		this.Hd = kernel.getH();
 		this.K = kernel.getXc();

@@ -7,8 +7,9 @@ import imagingbook.lib.image.access.OutOfBoundsStrategy;
 
 public class ExampleFilterVector extends GenericFilterVector {
 
+
 	public ExampleFilterVector(ImageProcessor ip, OutOfBoundsStrategy obs) {
-		super(ip, obs);
+		super(PixelPack.fromImageProcessor(ip, obs));
 	}
 
 	int width = 3;

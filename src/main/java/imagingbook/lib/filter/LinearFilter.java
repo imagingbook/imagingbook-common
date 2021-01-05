@@ -1,33 +1,42 @@
 package imagingbook.lib.filter;
 
-import ij.process.ImageProcessor;
 import imagingbook.lib.filter.kernel.Kernel2D;
-import imagingbook.lib.image.access.OutOfBoundsStrategy;
+import imagingbook.lib.image.access.PixelPack;
 import imagingbook.lib.image.access.PixelPack.PixelSlice;
 
 public class LinearFilter extends GenericFilterScalar {
 
-	private final float[][] H;			// the kernel matrix
-	private final int width, height;	// width/height of the kernel
+	private final float[][] H;			// the kernel matrix, note H[y][x]!
 	private final int xc, yc;			// 'hot spot' coordinates
 	
-	public LinearFilter(ImageProcessor ip, Kernel2D kernel, OutOfBoundsStrategy obs) {
-		super(ip, obs);
+	public LinearFilter(PixelPack pp, Kernel2D kernel) {
+		super(pp);
 		this.H = kernel.getH();
-		this.width = kernel.getWidth();
-		this.height = kernel.getHeight();
 		this.xc = kernel.getXc();
 		this.yc = kernel.getYc();
 	}
-
+	
 	@Override
 	protected float filterPixel(PixelSlice source, int u, int v) {
 		double sum = 0;
-		for (int j = 0; j < height; j++) {
+		for (int j = 0; j < H.length; j++) {
 			int vj = v + j - yc;
-			for (int i = 0; i < width; i++) {
+			for (int i = 0; i < H[j].length; i++) {
 				int ui = u + i - xc;
-				sum = sum + source.getVal(ui, vj) * H[i][j];
+				sum = sum + source.getVal(ui, vj) * H[j][i];
+			}
+		}
+ 		return (float)sum;
+//		return convolve(source, H, u, v, xc, yc);
+	}
+	
+	public static float convolve(PixelSlice source, float[][] H, int u, int v, int xc, int yc) {
+		double sum = 0;
+		for (int j = 0; j < H.length; j++) {
+			int vj = v + j - yc;
+			for (int i = 0; i < H[j].length; i++) {
+				int ui = u + i - xc;
+				sum = sum + source.getVal(ui, vj) * H[j][i];
 			}
 		}
  		return (float)sum;

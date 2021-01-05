@@ -1,7 +1,5 @@
 package imagingbook.lib.filter;
 
-import ij.process.ImageProcessor;
-import imagingbook.lib.image.access.OutOfBoundsStrategy;
 import imagingbook.lib.image.access.PixelPack;
 
 /**
@@ -10,10 +8,9 @@ import imagingbook.lib.image.access.PixelPack;
  * @version 2021/01/02
  */
 public abstract class GenericFilterVectorSeparable extends GenericFilterVector {
-
-
-	public GenericFilterVectorSeparable(ImageProcessor ip, OutOfBoundsStrategy obs) {
-		super(ip, obs);
+	
+	public GenericFilterVectorSeparable(PixelPack pp) {
+		super(pp);
 	}
 
 	@Override

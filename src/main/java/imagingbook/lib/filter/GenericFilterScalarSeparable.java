@@ -1,7 +1,6 @@
 package imagingbook.lib.filter;
 
-import ij.process.ImageProcessor;
-import imagingbook.lib.image.access.OutOfBoundsStrategy;
+import imagingbook.lib.image.access.PixelPack;
 import imagingbook.lib.image.access.PixelPack.PixelSlice;
 
 /**
@@ -11,9 +10,8 @@ import imagingbook.lib.image.access.PixelPack.PixelSlice;
  */
 public abstract class GenericFilterScalarSeparable extends GenericFilterScalar {
 
-
-	public GenericFilterScalarSeparable(ImageProcessor ip, OutOfBoundsStrategy obs) {
-		super(ip, obs);
+	public GenericFilterScalarSeparable(PixelPack pp) {
+		super(pp);
 	}
 
 	@Override

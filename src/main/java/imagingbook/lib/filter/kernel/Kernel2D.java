@@ -10,7 +10,7 @@ import imagingbook.lib.math.Matrix;
  */
 public class Kernel2D {
 	
-	private final float[][] H;
+	private final float[][] H;	// H[y][x] !!
 	private final int xc, yc;
 	private final int width, height;
 	

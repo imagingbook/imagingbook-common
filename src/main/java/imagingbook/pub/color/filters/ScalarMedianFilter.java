@@ -16,6 +16,7 @@ import imagingbook.lib.filter.GenericFilter;
 import imagingbook.lib.filter.GenericFilterScalar;
 import imagingbook.lib.image.access.PixelPack.PixelSlice;
 import imagingbook.lib.image.access.OutOfBoundsStrategy;
+import imagingbook.lib.image.access.PixelPack;
 
 /**
  * Ordinary (scalar) median filter for color images implemented
@@ -41,7 +42,7 @@ public class ScalarMedianFilter extends GenericFilterScalar {
 	}
 	
 	public ScalarMedianFilter(ImageProcessor ip, Parameters params) {
-		super(ip, params.obs);
+		super(PixelPack.fromImageProcessor(ip, params.obs));
 		this.params = params;
 		this.mask = new CircularMask(params.radius);
 		this.maskCount = mask.getCount();

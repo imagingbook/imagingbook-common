@@ -58,7 +58,7 @@ public class VectorMedianFilterSharpen extends GenericFilterVector {
 	}
 	
 	public VectorMedianFilterSharpen(ImageProcessor ip, Parameters params) {
-		super(ip, params.obs);
+		super(PixelPack.fromImageProcessor(ip, params.obs));
 		this.params = params;
 		this.mask = new CircularMask(params.radius);
 		this.maskCount = mask.getCount();

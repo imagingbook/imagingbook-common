@@ -15,6 +15,7 @@ import static imagingbook.lib.math.Arithmetic.sqr;
 import ij.process.ImageProcessor;
 import imagingbook.lib.filter.GenericFilterScalar;
 import imagingbook.lib.filter.kernel.GaussianKernel2D;
+import imagingbook.lib.image.access.PixelPack;
 import imagingbook.lib.image.access.PixelPack.PixelSlice;
 import imagingbook.pub.edgepreservingfilters.BilateralF.Parameters;
 
@@ -42,7 +43,7 @@ public class BilateralFilterScalar extends GenericFilterScalar {
 	}
 	
 	public BilateralFilterScalar(ImageProcessor ip, Parameters params) {
-		super(ip, params.obs);
+		super(PixelPack.fromImageProcessor(ip, params.obs));
 		GaussianKernel2D kernel = new GaussianKernel2D(params.sigmaD);
 		this.Hd = kernel.getH();
 		this.K = kernel.getXc();

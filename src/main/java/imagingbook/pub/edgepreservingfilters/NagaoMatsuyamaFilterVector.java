@@ -41,7 +41,7 @@ public class NagaoMatsuyamaFilterVector extends GenericFilterVector {
 	}
 	
 	public NagaoMatsuyamaFilterVector(ColorProcessor ip, Parameters params) {
-		super(ip, params.obs);
+		super(PixelPack.fromImageProcessor(ip, params.obs));
 		this.varThreshold = (float) params.varThreshold;
 	}
 	

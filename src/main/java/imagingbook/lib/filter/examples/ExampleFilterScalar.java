@@ -4,11 +4,12 @@ import ij.process.ImageProcessor;
 import imagingbook.lib.image.access.PixelPack.PixelSlice;
 import imagingbook.lib.filter.GenericFilterScalar;
 import imagingbook.lib.image.access.OutOfBoundsStrategy;
+import imagingbook.lib.image.access.PixelPack;
 
 public class ExampleFilterScalar extends GenericFilterScalar {
 	
 	public ExampleFilterScalar(ImageProcessor ip, OutOfBoundsStrategy obs) {
-		super(ip, obs);
+		super(PixelPack.fromImageProcessor(ip, obs));
 	}
 
 	int width = 3;

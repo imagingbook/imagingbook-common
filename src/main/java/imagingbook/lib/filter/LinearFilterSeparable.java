@@ -1,9 +1,8 @@
 package imagingbook.lib.filter;
 
-import ij.process.ImageProcessor;
-import imagingbook.lib.image.access.PixelPack.PixelSlice;
 import imagingbook.lib.filter.kernel.Kernel1D;
-import imagingbook.lib.image.access.OutOfBoundsStrategy;
+import imagingbook.lib.image.access.PixelPack;
+import imagingbook.lib.image.access.PixelPack.PixelSlice;
 
 public class LinearFilterSeparable extends GenericFilterScalarSeparable {
 
@@ -11,12 +10,12 @@ public class LinearFilterSeparable extends GenericFilterScalarSeparable {
 	private final int width, height;		// width/height of the kernel
 	private final int xc, yc;				// 'hot spot' coordinates
 	
-	public LinearFilterSeparable(ImageProcessor ip, Kernel1D kernelXY, OutOfBoundsStrategy obs) {
-		this(ip, kernelXY, kernelXY, obs);
+	public LinearFilterSeparable(PixelPack pp, Kernel1D kernelXY) {
+		this(pp, kernelXY, kernelXY);
 	}
 	
-	public LinearFilterSeparable(ImageProcessor ip, Kernel1D kernelX, Kernel1D kernelY, OutOfBoundsStrategy obs) {
-		super(ip, obs);
+	public LinearFilterSeparable(PixelPack pp, Kernel1D kernelX, Kernel1D kernelY) {
+		super(pp);
 		this.hX = kernelX.getH();
 		this.hY = kernelY.getH();
 		this.width = kernelX.getWidth();

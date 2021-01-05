@@ -11,6 +11,7 @@ package imagingbook.pub.edgepreservingfilters;
 
 import ij.process.ImageProcessor;
 import imagingbook.lib.filter.GenericFilterScalar;
+import imagingbook.lib.image.access.PixelPack;
 import imagingbook.lib.image.access.PixelPack.PixelSlice;
 import imagingbook.pub.edgepreservingfilters.NagaoMatsuyamaF.Parameters;
 
@@ -37,7 +38,7 @@ public class NagaoMatsuyamaFilterScalar extends GenericFilterScalar {
 	}
 	
 	public NagaoMatsuyamaFilterScalar(ImageProcessor ip, Parameters params) {
-		super(ip, params.obs);
+		super(PixelPack.fromImageProcessor(ip, params.obs));
 		this.varThreshold = (float) params.varThreshold;
 	}
 	
