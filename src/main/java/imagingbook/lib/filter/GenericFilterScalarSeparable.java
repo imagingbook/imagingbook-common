@@ -1,6 +1,5 @@
 package imagingbook.lib.filter;
 
-import imagingbook.lib.image.access.PixelPack;
 import imagingbook.lib.image.access.PixelPack.PixelSlice;
 
 /**
@@ -10,8 +9,8 @@ import imagingbook.lib.image.access.PixelPack.PixelSlice;
  */
 public abstract class GenericFilterScalarSeparable extends GenericFilterScalar {
 
-	public GenericFilterScalarSeparable(PixelPack pp) {
-		super(pp);
+	public GenericFilterScalarSeparable() {
+		super();
 	}
 
 	@Override

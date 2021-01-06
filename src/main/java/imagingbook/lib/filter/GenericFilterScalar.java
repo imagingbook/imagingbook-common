@@ -16,6 +16,10 @@ public abstract class GenericFilterScalar extends GenericFilter {
 //		return this.source;
 //	}
 	
+	public GenericFilterScalar() {
+		super();
+	}
+
 	@Override
 	protected void makeTarget() {
 		this.target = super.source.getEmptySlice();

@@ -9,7 +9,7 @@ import imagingbook.lib.image.access.PixelPack.PixelSlice;
 public class ExampleFilterScalarSeparable extends GenericFilterScalar {
 
 	protected ExampleFilterScalarSeparable(ImageProcessor ip, OutOfBoundsStrategy obs) {
-		super(PixelPack.fromImageProcessor(ip, obs));
+		super(PixelPack.pack(ip, obs));
 	}
 
 	@Override

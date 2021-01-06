@@ -22,27 +22,29 @@ package imagingbook.lib.image.access;
  * out-of-image coordinates.
  * 
  */
-public class PixelIndexer implements Cloneable {
+public abstract class PixelIndexer implements Cloneable {
 	
 	public static final OutOfBoundsStrategy DefaultOutOfBoundsStrategy = OutOfBoundsStrategy.NEAREST_BORDER;
 	
 	public static PixelIndexer create(int width, int height, OutOfBoundsStrategy obs) {
 		obs = (obs != null) ? obs : DefaultOutOfBoundsStrategy;
 		switch (obs) {
-		case ZERO_VALUE 			: return new ZeroValueIndexer(width, height);
-		case NEAREST_BORDER			: return new NearestBorderIndexer(width, height);
-		case MIRROR_IMAGE			: return new MirrorImageIndexer(width, height);
-		case THROW_EXCEPTION		: return new PixelIndexer(width, height);
+		case ZERO_VALUE 		: return new ZeroValueIndexer(width, height);
+		case NEAREST_BORDER		: return new NearestBorderIndexer(width, height);
+		case MIRROR_IMAGE		: return new MirrorImageIndexer(width, height);
+		case THROW_EXCEPTION	: return new ExceptionIndexer(width, height);
 		}
 		return null;
 	}
 	
 	protected final int width;
 	protected final int height;
+	protected final OutOfBoundsStrategy obs;
 
-	private PixelIndexer(int width, int height) {
+	private PixelIndexer(int width, int height, OutOfBoundsStrategy obs) {
 		this.width = width;
 		this.height = height;
+		this.obs = obs;
 	}
 	
 	/**
@@ -54,16 +56,9 @@ public class PixelIndexer implements Cloneable {
 	 * @param v y-coordinate
 	 * @return 1D array index
 	 */
-	public int getIndex(int u, int v) throws OutOfImageException {
-		if (u < 0 || u >= width || v < 0 || v >= height) {
-			throw new OutOfImageException(
-					String.format("out-of-image position [%d,%d]", u, v));
-		}
-		else 
-			return this.insideBoundsIndex(u, v);
-	}
+	public abstract int getIndex(int u, int v);
 	
-	private int insideBoundsIndex(int u, int v) {
+	private int getWithinBoundsIndex(int u, int v) {
 		return width * v + u;
 	}
 	
@@ -77,7 +72,7 @@ public class PixelIndexer implements Cloneable {
 	public static class NearestBorderIndexer extends PixelIndexer {
 		
 		NearestBorderIndexer(int width, int height) {
-			super(width, height);
+			super(width, height, OutOfBoundsStrategy.NEAREST_BORDER);
 		}
 
 		@Override
@@ -94,7 +89,7 @@ public class PixelIndexer implements Cloneable {
 			else if (v >= height) {
 				v = height - 1;
 			}
-			return super.insideBoundsIndex(u, v);
+			return super.getWithinBoundsIndex(u, v);
 		}
 	}
 	
@@ -105,7 +100,7 @@ public class PixelIndexer implements Cloneable {
 	public static class MirrorImageIndexer extends PixelIndexer {
 		
 		MirrorImageIndexer(int width, int height) {
-			super(width, height);
+			super(width, height, OutOfBoundsStrategy.MIRROR_IMAGE);
 		}
 
 		@Override
@@ -119,7 +114,7 @@ public class PixelIndexer implements Cloneable {
 			if (v < 0) {
 				v = v + height; 
 			}
-			return super.insideBoundsIndex(u, v);
+			return super.getWithinBoundsIndex(u, v);
 		}
 	}
 	
@@ -130,7 +125,7 @@ public class PixelIndexer implements Cloneable {
 	public static class ZeroValueIndexer extends PixelIndexer {
 		
 		ZeroValueIndexer(int width, int height) {
-			super(width, height);
+			super(width, height, OutOfBoundsStrategy.ZERO_VALUE);
 		}
 
 		@Override
@@ -139,30 +134,31 @@ public class PixelIndexer implements Cloneable {
 				return -1;
 			}
 			else {
-				return super.insideBoundsIndex(u, v);
+				return super.getWithinBoundsIndex(u, v);
 			}
 		}
 	}
 	
-//	/**
-//	 * This indexer throws an exception if out of bounds pixels
-//	 * are accessed.
-//	 */
-//	public static class ExceptionIndexer extends PixelIndexer {
-//		
-//		ExceptionIndexer(int width, int height) {
-//			super(width, height);
-//		}
-//
-//		@Override
-//		public int getIndex(int u, int v) {
-//			if (u < 0 || u >= width || v < 0 || v >= height) {
-//				throw new ArrayIndexOutOfBoundsException();
-//			}
-//			else 
-//				return super.insideBoundsIndex(u, v);
-//		}
-//	}
+	/**
+	 * This indexer throws an exception if out of bounds pixels
+	 * are accessed.
+	 */
+	public static class ExceptionIndexer extends PixelIndexer {
+		
+		ExceptionIndexer(int width, int height) {
+			super(width, height, OutOfBoundsStrategy.THROW_EXCEPTION);
+		}
+
+		@Override
+		public int getIndex(int u, int v) throws OutOfImageException {
+			if (u < 0 || u >= width || v < 0 || v >= height) {
+				throw new OutOfImageException(
+						String.format("out-of-image position [%d,%d]", u, v));
+			}
+			else 
+				return super.getWithinBoundsIndex(u, v);
+		}
+	}
 	
 	// -----------------------------------------------------------
 	

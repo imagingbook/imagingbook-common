@@ -11,7 +11,6 @@ package imagingbook.pub.edgepreservingfilters;
 
 import static imagingbook.lib.math.Arithmetic.sqr;
 
-import ij.IJ;
 import ij.process.ColorProcessor;
 import imagingbook.lib.filter.GenericFilterVectorSeparable;
 import imagingbook.lib.filter.linear.GaussianKernel1D;
@@ -44,7 +43,7 @@ public class BilateralFilterVectorSeparable extends GenericFilterVectorSeparable
 	}
 	
 	public BilateralFilterVectorSeparable(ColorProcessor ip, Parameters params) {
-		super(PixelPack.fromImageProcessor(ip, params.obs));
+		super(PixelPack.pack(ip, params.obs));
 		GaussianKernel1D kernel = new GaussianKernel1D(params.sigmaD);
 		this.Hd = kernel.getH();
 		this.K = kernel.getXc();

@@ -47,7 +47,7 @@ public class PeronaMalikFilterVector extends GenericFilterVector {
 	
 	// constructor - use this version to set all parameters
 	public PeronaMalikFilterVector (ColorProcessor ip, Parameters params) {
-		super(PixelPack.fromImageProcessor(ip, params.obs));
+		super(PixelPack.pack(ip, params.obs));
 		this.T = params.iterations;
 		this.alpha = params.alpha;
 		this.g = ConductanceFunction.get(params.conductanceFunType, params.kappa);

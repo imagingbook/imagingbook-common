@@ -9,17 +9,17 @@ public abstract class GenericFilter {
 		private static final long serialVersionUID = 1L;
 	}
 	
-	protected final PixelPack source;
+	protected PixelPack source = null;
 	private int pass = 0;
 	
+	@Deprecated
 	protected GenericFilter(PixelPack source) {
 		this.source = source;
 	}
 	
-//	protected <T extends PixelPack> PixelPack getSource() {
-//		return this.source;
-//	}
-	
+	public GenericFilter() {
+	}
+
 	protected int getPass() {
 		return pass;
 	}
@@ -30,10 +30,9 @@ public abstract class GenericFilter {
 	}
 	
 	// -----------------------------------------------------------------------------------
-	
+	@Deprecated
 	public void apply() {
 		makeTarget();
-		setupFilter();
 		if (pass > 0) {
 			throw new IllegalStateException("filter has already been applied");
 		}
@@ -53,11 +52,23 @@ public abstract class GenericFilter {
 		closeFilter();
 	}
 	
-	// concrete sub-classes should override to setup or
-	// pre-calculate specific data structures once at the beginning
-	protected void setupFilter() {
-		// does nothing by default
+	public void applyTo(PixelPack source) {
+		this.source = source;
+		makeTarget();
+		try {
+			pass = 0;
+			while (!finished()) {
+				setupPass();
+				doPass();
+				pass++;
+			}
+		} catch (AbortFilterException e) {};
+		// the filter's result is to be found in 'source'
+		source.updateImageProcessor();
+		closeFilter();
 	}
+
+	// -----------------------------------------------------------------------------------
 	
 	protected abstract void makeTarget();
 	

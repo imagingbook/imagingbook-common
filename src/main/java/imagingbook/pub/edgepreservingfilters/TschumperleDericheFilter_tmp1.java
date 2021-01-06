@@ -59,6 +59,7 @@ public class TschumperleDericheFilter_tmp1 extends GenericFilterVector {
 		public boolean useLinearRgb = false;
 	}
 	
+	private ImageProcessor imgProc;
 	private final Parameters params;
 	private final int T;			// number of iterations
 	
@@ -85,8 +86,9 @@ public class TschumperleDericheFilter_tmp1 extends GenericFilterVector {
 	
 	// constructor - use for setting individual parameters:
 	public TschumperleDericheFilter_tmp1(ColorProcessor ip, Parameters params) {
-		super(PixelPack.fromImageProcessor(ip, null));
+		super(PixelPack.pack(ip, null));
 		this.params = params;
+		this.imgProc = ip;
 		this.T = params.iterations;
 		this.M = ip.getWidth(); 
 		this.N = ip.getHeight(); 
@@ -154,7 +156,7 @@ public class TschumperleDericheFilter_tmp1 extends GenericFilterVector {
 
 	protected void closeFilter() {
 		IJ.log("closeFilter");
-		copyResultToImage(getIp());
+		copyResultToImage(this.imgProc);
 		IJ.log("done.");
 	}
 

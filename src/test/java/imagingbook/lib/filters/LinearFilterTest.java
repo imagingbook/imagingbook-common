@@ -39,7 +39,7 @@ public class LinearFilterTest {
 		ImageProcessor ipA = IjUtils.openImage(path1A).getProcessor();
 		float[][] H = H1;
 		ImageProcessor ipAf = ipA.duplicate();
-		new LinearFilter(PixelPack.fromImageProcessor(ipAf, OBS), new Kernel2D(H)).apply();
+		new LinearFilter(new Kernel2D(H)).applyTo(PixelPack.pack(ipAf, OBS));
 		assertTrue(ImageTests.match(ipAf, ipA, 1E-6));
 	}
 	
@@ -49,7 +49,7 @@ public class LinearFilterTest {
 		ImageProcessor ipB = IjUtils.openImage(path1B).getProcessor();
 		float[][] H = H2;
 		ImageProcessor ipAf = ipA.duplicate();
-		new LinearFilter(PixelPack.fromImageProcessor(ipAf, OBS), new Kernel2D(H)).apply();
+		new LinearFilter(new Kernel2D(H)).applyTo(PixelPack.pack(ipAf, OBS));
 		assertTrue(ImageTests.match(ipAf, ipB, 1E-6));
 	}
 	
@@ -59,7 +59,7 @@ public class LinearFilterTest {
 		ImageProcessor ipB = IjUtils.openImage(path1B).getProcessor();
 		float[][] H = H2;
 		ImageProcessor ipAf = ipA.convertToFloatProcessor();
-		new LinearFilter(PixelPack.fromImageProcessor(ipAf, OBS), new Kernel2D(H)).apply();
+		new LinearFilter(new Kernel2D(H)).applyTo(PixelPack.pack(ipAf, OBS));
 		assertTrue(ImageTests.match(ipAf, ipB.convertToFloatProcessor(), 0.5f));
 	}
 	
@@ -70,7 +70,7 @@ public class LinearFilterTest {
 		float[][] H = H2;
 		
 		ImageProcessor ipAf = ipA.duplicate();
-		new LinearFilter(PixelPack.fromImageProcessor(ipAf, OBS), new Kernel2D(H)).apply();
+		new LinearFilter(new Kernel2D(H)).applyTo(PixelPack.pack(ipAf, OBS));
 		assertTrue(ImageTests.match(ipAf, ipB, 1E-6));
 	}
 

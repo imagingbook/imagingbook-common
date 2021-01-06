@@ -40,7 +40,7 @@ public class KuwaharaFilterVector extends GenericFilterVector {
 	}
 	
 	public KuwaharaFilterVector(ColorProcessor ip, Parameters params) {
-		super(PixelPack.fromImageProcessor(ip, params.obs));
+		super(PixelPack.pack(ip, params.obs));
 		int r = params.radius;
 		this.n = sqr(r + 1);	// size of complete filter
 		this.dm = (r / 2) - r;			// d- = top/left center coordinate

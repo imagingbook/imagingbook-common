@@ -44,7 +44,7 @@ public class PeronaMalikFilterScalar extends GenericFilterScalar {
 	
 	// constructor - use this version to set all parameters
 	public PeronaMalikFilterScalar (ImageProcessor ip, Parameters params) {
-		super(PixelPack.fromImageProcessor(ip, params.obs));
+		super(PixelPack.pack(ip, params.obs));
 		this.T = params.iterations;
 		this.alpha = params.alpha;
 		this.g = ConductanceFunction.get(params.conductanceFunType, params.kappa);

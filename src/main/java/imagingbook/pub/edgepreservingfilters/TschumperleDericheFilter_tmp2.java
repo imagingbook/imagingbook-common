@@ -120,7 +120,7 @@ public class TschumperleDericheFilter_tmp2 extends GenericFilterVector {
 	
 	// constructor - use for setting individual parameters:
 	public TschumperleDericheFilter_tmp2(ColorProcessor ip, Parameters params) {
-		super(PixelPack.fromImageProcessor(ip, null));
+		super(PixelPack.pack(ip, null));
 		this.params = params;
 		this.T = params.iterations;
 		this.M = ip.getWidth(); 
@@ -160,10 +160,10 @@ public class TschumperleDericheFilter_tmp2 extends GenericFilterVector {
 		// Step 1: Calculate gradients and smooth
 		source.copyTo(DxPack);
 		source.copyTo(DyPack);
-		new LinearFilter(DxPack, kernelDx).apply();
-		new LinearFilter(DyPack, kernelDy).apply();
-		new GaussianFilterSeparable(DxPack, params.sigmaG).apply();
-		new GaussianFilterSeparable(DyPack, params.sigmaG).apply();
+		new LinearFilter(kernelDx).applyTo(DxPack);
+		new LinearFilter(kernelDy).applyTo(DyPack);
+		new GaussianFilterSeparable(params.sigmaG).applyTo(DxPack);
+		new GaussianFilterSeparable(params.sigmaG).applyTo(DyPack);
 		
 //		if (getPass() == 0) {
 //			int w = source.getWidth();
@@ -205,7 +205,7 @@ public class TschumperleDericheFilter_tmp2 extends GenericFilterVector {
 //			new ImagePlus("G-2n", new FloatProcessor(w, h, Gpack.getSlice(2).getPixels().clone())).show();
 //		}
 		
-		new GaussianFilterSeparable(Gpack, params.sigmaS).apply();
+		new GaussianFilterSeparable(params.sigmaS).applyTo(Gpack);
 		
 		maxV = Float.MIN_VALUE;
 		minV = Float.MAX_VALUE;

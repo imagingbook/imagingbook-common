@@ -15,7 +15,6 @@ import static imagingbook.pub.edgepreservingfilters.BilateralF.gauss;
 import ij.process.ImageProcessor;
 import imagingbook.lib.filter.GenericFilterScalarSeparable;
 import imagingbook.lib.filter.linear.GaussianKernel1D;
-import imagingbook.lib.image.access.PixelPack;
 import imagingbook.lib.image.access.PixelPack.PixelSlice;
 import imagingbook.pub.edgepreservingfilters.BilateralF.Parameters;
 
@@ -44,7 +43,6 @@ public class BilateralFilterScalarSeparable extends GenericFilterScalarSeparable
 	}
 	
 	public BilateralFilterScalarSeparable(ImageProcessor ip, Parameters params) {
-		super(PixelPack.fromImageProcessor(ip, params.obs));
 		GaussianKernel1D kernel = new GaussianKernel1D(params.sigmaD);
 		this.Hd = kernel.getH();
 		this.K = kernel.getXc();

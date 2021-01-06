@@ -43,6 +43,7 @@ public abstract class GenericFilter2D {
 	 * Allow source/target to be of different types?
 	 */
 	
+	@Deprecated
 	public static final OutOfBoundsStrategy DefaultOutOfBoundsStrategy = OutOfBoundsStrategy.NEAREST_BORDER;
 	
 	private OutOfBoundsStrategy obs = DefaultOutOfBoundsStrategy;

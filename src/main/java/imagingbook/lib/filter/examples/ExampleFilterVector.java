@@ -9,7 +9,7 @@ public class ExampleFilterVector extends GenericFilterVector {
 
 
 	public ExampleFilterVector(ImageProcessor ip, OutOfBoundsStrategy obs) {
-		super(PixelPack.fromImageProcessor(ip, obs));
+		super(PixelPack.pack(ip, obs));
 	}
 
 	int width = 3;

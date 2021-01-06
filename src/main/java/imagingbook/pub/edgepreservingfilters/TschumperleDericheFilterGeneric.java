@@ -91,7 +91,6 @@ public class TschumperleDericheFilterGeneric extends GenericFilter {
 	
 	// constructor - use for setting individual parameters:
 	public TschumperleDericheFilterGeneric(ImageProcessor ip, Parameters params) {
-		super(PixelPack.fromImageProcessor(ip, null));
 		this.params = params;
 		this.T = params.iterations;
 		this.M = source.getWidth(); 
@@ -144,10 +143,10 @@ public class TschumperleDericheFilterGeneric extends GenericFilter {
 	private void calculateGradients() {
 		source.copyTo(Dx);	// TODO: make new option 'filter.apply(source, target)' to eliminate intermediate copies
 		source.copyTo(Dy);
-		new LinearFilter(Dx, kernelDx).apply();
-		new LinearFilter(Dy, kernelDy).apply();
-		new GaussianFilterSeparable(Dx, params.sigmaG).apply();
-		new GaussianFilterSeparable(Dy, params.sigmaG).apply();
+		new LinearFilter(kernelDx).applyTo(Dx);
+		new LinearFilter(kernelDy).applyTo(Dy);
+		new GaussianFilterSeparable(params.sigmaG).applyTo(Dx);
+		new GaussianFilterSeparable(params.sigmaG).applyTo(Dy);
 	}
 	
 	private void calculateStructureMatrix() {
@@ -167,7 +166,7 @@ public class TschumperleDericheFilterGeneric extends GenericFilter {
 				G.setPixel(u, v, a, b, c);
 			}
 		}
-		new GaussianFilterSeparable(G, params.sigmaS).apply();
+		new GaussianFilterSeparable(params.sigmaS).applyTo(G);
 	}
 
 	// creates array A

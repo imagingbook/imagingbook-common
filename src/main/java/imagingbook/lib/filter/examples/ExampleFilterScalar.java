@@ -8,7 +8,7 @@ import imagingbook.lib.image.access.PixelPack;
 public class ExampleFilterScalar extends GenericFilterScalar {
 	
 	public ExampleFilterScalar(ImageProcessor ip, OutOfBoundsStrategy obs) {
-		super(PixelPack.fromImageProcessor(ip, obs));
+		super(PixelPack.pack(ip, obs));
 	}
 
 	int width = 3;

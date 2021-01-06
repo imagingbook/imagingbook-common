@@ -1,7 +1,6 @@
 package imagingbook.lib.filter.linear;
 
 import imagingbook.lib.filter.GenericFilterScalar;
-import imagingbook.lib.image.access.PixelPack;
 import imagingbook.lib.image.access.PixelPack.PixelSlice;
 
 public class LinearFilter extends GenericFilterScalar {
@@ -9,13 +8,13 @@ public class LinearFilter extends GenericFilterScalar {
 	private final float[][] H;			// the kernel matrix, note H[y][x]!
 	private final int xc, yc;			// 'hot spot' coordinates
 	
-	public LinearFilter(PixelPack pp, Kernel2D kernel) {
-		super(pp);
+	public LinearFilter(Kernel2D kernel) {
+		super();
 		this.H = kernel.getH();
 		this.xc = kernel.getXc();
 		this.yc = kernel.getYc();
 	}
-	
+
 	@Override
 	protected float doPixel(int u, int v) {
 		double sum = 0;
