@@ -10,18 +10,22 @@
 package imagingbook.pub.edgepreservingfilters;
 
 import ij.IJ;
-import ij.process.ColorProcessor;
+import ij.process.ImageProcessor;
 import imagingbook.lib.filter.GenericFilter;
 import imagingbook.lib.filter.linear.GaussianFilterSeparable;
 import imagingbook.lib.filter.linear.Kernel2D;
 import imagingbook.lib.filter.linear.LinearFilter;
 import imagingbook.lib.image.access.PixelPack;
 import imagingbook.lib.image.access.PixelPack.PixelSlice;
+import imagingbook.lib.math.Eigensolver2x2;
+import imagingbook.lib.math.Matrix;
 
 // TODO: convert to subclass of GenericFilter using ImageAccessor (see BilateralFilter)
 
 /**
  * Complete rewrite from scratch
+ * 
+ * @version 2021/01/06
  */
 
 public class TschumperleDericheFilterGeneric extends GenericFilter {
@@ -44,6 +48,8 @@ public class TschumperleDericheFilterGeneric extends GenericFilter {
 	}
 	
 	// ---------------------------------------------------------------------------------
+	
+	private static float INITIAL_ALPHA = 0.5f;
 	
 	private static final float C1 = (float) (2 - Math.sqrt(2.0)) / 4;
 	private static final float C2 = (float) (Math.sqrt(2.0) - 1) / 2;
@@ -69,22 +75,22 @@ public class TschumperleDericheFilterGeneric extends GenericFilter {
 	private final PixelPack Dx, Dy;
 	private Kernel2D kernelDx = new Kernel2D(Hdx, 1, 1, false);
 	private Kernel2D kernelDy = new Kernel2D(Hdy, 1, 1, false);
-	private final PixelPack G;
-	private final PixelPack A;
+	private final PixelPack G;		// structure matrix as (u,v) with 3 elements
+	private final PixelPack A;		// geometry matrix at (u,v) with 3 elements
 	private final float[][][] B;
 	
-	private float initial_max;
-	private float initial_min;
+//	private float initial_max;
+//	private float initial_min;
 	
-	
+	private float alpha = INITIAL_ALPHA;
 	
 	// constructor - uses only default settings:
-	public TschumperleDericheFilterGeneric(ColorProcessor ip) {
+	public TschumperleDericheFilterGeneric(ImageProcessor ip) {
 		this(ip, new Parameters());
 	}
 	
 	// constructor - use for setting individual parameters:
-	public TschumperleDericheFilterGeneric(ColorProcessor ip, Parameters params) {
+	public TschumperleDericheFilterGeneric(ImageProcessor ip, Parameters params) {
 		super(PixelPack.fromImageProcessor(ip, null));
 		this.params = params;
 		this.T = params.iterations;
@@ -93,14 +99,16 @@ public class TschumperleDericheFilterGeneric extends GenericFilter {
 		this.K = source.getDepth();
 		this.Dx = this.source.getEmptyCopy();
 		this.Dy = this.source.getEmptyCopy();
-		this.G = new PixelPack(M, N, 3, null);
-		this.A = new PixelPack(M, N, 3, null);
+		this.G = new PixelPack(M, N, 3, null);	// structure matrix as (u,v) with 3 elements
+		this.A = new PixelPack(M, N, 3, null);	// geometry matrix at (u,v) with 3 elements
 		
 		this.B = new float[K][M][N];	// temporary, eliminate!
-		getImageMinMax();
+//		getImageMinMax();
 	}
 	
 	// ----------------------------------------------------------------------------------
+	
+	private float maxVelocity = 0;
 	
 	@Override
 	protected void doPass() {
@@ -115,11 +123,12 @@ public class TschumperleDericheFilterGeneric extends GenericFilter {
 		calculateGeometryMatrix();
 		 
 		// Step 8: calculate max velocity and update the image
-		float maxVelocity = calculateVelocities();
-		double alpha = params.dt / maxVelocity;
-		IJ.log("NEW: alpha = " + alpha);
+		calculateVelocities();	// updates B and maxVelocity
 		
+		this.alpha = (float) params.dt / maxVelocity;
+		System.out.format("maxVelocity=%.2f, alpha=%.2f\n", maxVelocity, alpha);
 		updateImage(alpha);
+		
 		IJ.log("done with iteratation " + this.getPass());
 	}
 	
@@ -131,7 +140,7 @@ public class TschumperleDericheFilterGeneric extends GenericFilter {
 	// ------------------------------------------------------------
 	
 	private void calculateGradients() {
-		source.copyTo(Dx);
+		source.copyTo(Dx);	// TODO: make new option 'filter.apply(source, target)' to eliminate intermediate copies
 		source.copyTo(Dy);
 		new LinearFilter(Dx, kernelDx).apply();
 		new LinearFilter(Dy, kernelDy).apply();
@@ -140,56 +149,47 @@ public class TschumperleDericheFilterGeneric extends GenericFilter {
 	}
 	
 	private void calculateStructureMatrix() {
-		G.zero();
 		for (int u = 0; u < M; u++) {
 			for (int v = 0; v < N; v++) {
-				float[] DDx = Dx.getPixel(u, v);
-				float[] DDy = Dy.getPixel(u, v);
-				float[] g = G.getPixel(u, v);
+				float[] dx = Dx.getPixel(u, v);
+				float[] dy = Dy.getPixel(u, v);
+				float a = 0; float b = 0; float c = 0;
 				for (int k = 0; k < K; k++) {
 					//version 0.2 normalization
-					float fx = DDx[k]; // Dx[k][u][v];
-					float fy = DDy[k]; // Dy[k][u][v];
-					g[0] += fx * fx;
-					g[1] += fx * fy;
-					g[2] += fy * fy;
+					float fx = dx[k]; // Dx[k][u][v];
+					float fy = dy[k]; // Dy[k][u][v];
+					a += fx * fx;
+					b += fx * fy;
+					c += fy * fy;
 				}
-				G.setPixel(u, v, g);
+				G.setPixel(u, v, a, b, c);
 			}
 		}
 		new GaussianFilterSeparable(G, params.sigmaS).apply();
 	}
 
+	// creates array A
 	private void calculateGeometryMatrix() {
-		double[] lambda12 = new double[2]; 	// eigenvalues
-		double[] e1 = new double[2];			// eigenvectors
-		double[] e2 = new double[2];
+		double[] lambda12 = new double[2]; 		// eigenvalues
+		double[] e1 = new double[2];			// eigenvector x1
 		double a1 = params.a1;
 		double a2 = params.a2;
 		for (int u = 0; u < M; u++) {
 			for (int v = 0; v < N; v++) {
-				float[] Guv = G.getPixel(u, v);
-				final double G0 = Guv[0];	// elements of local geometry matrix (2x2)
-				final double G1 = Guv[1];
-				final double G2 = Guv[2];
-				// calculate eigenvalues:
-				if (!realEigenValues2x2(G0, G1, G1, G2, lambda12, e1, e2)) {
-					throw new RuntimeException("eigenvalues undefined in " + 
-								TschumperleDericheFilter_tmp2.class.getSimpleName());
-				}
-				final double val1 = lambda12[0];
-				final double val2 = lambda12[1];
-				final double arg = 1.0 + val1 + val2;
-				final float c1 = (float) Math.pow(arg, -a1);
-				final float c2 = (float) Math.pow(arg, -a2);
+				float[] Guv = G.getPixel(u, v); // 3 elements of local geometry matrix (2x2)
+				// calculate the 2 eigenvalues lambda1, lambda2 and the greater eigenvector e1
+				getEigenValues2x2(Guv[0], Guv[1], Guv[1], Guv[2], lambda12, e1);
+				double arg = 1.0 + lambda12[0] + lambda12[1];	// 1 + lambda_1 + lambda_2
+				float c1 = (float) Math.pow(arg, -a1);
+				float c2 = (float) Math.pow(arg, -a2);
 				
 				// calculate eigenvectors:
 				normalize(e1);
-				final float ex = (float) e1[0];
-				final float ey = (float) e1[1];
-				final float exx = ex * ex;
-				final float exy = ex * ey;
-				final float eyy = ey * ey;
+				float ex = (float) e1[0];
+				float ey = (float) e1[1];
+				float exx = ex * ex;
+				float exy = ex * ey;
+				float eyy = ey * ey;
 				
 				float A0 = c1 * eyy + c2 * exx;
 				float A1 = (c2 - c1)* exy;
@@ -199,34 +199,33 @@ public class TschumperleDericheFilterGeneric extends GenericFilter {
 		}
 	}
 	
-	private float calculateVelocities() {	// I, A --> B
+	private void calculateVelocities() {	// I, A --> B
 		float maxV = Float.MIN_VALUE;
-		float minV = Float.MAX_VALUE;
-		final float[] Hkuv = new float[3];
-		for (int k = 0; k < K; k++) {
-			for (int u = 0; u < M; u++) {
-				for (int v = 0; v < N; v++) {
-					//calculateHessianMatrix(I[k], u, v, Hkuv);	// TODO!
-					getHessian(k, u, v, Hkuv);
-					float[] Auv = A.getPixel(u, v);
-					final float a = Auv[0];
-					final float b = Auv[1];
-					final float c = Auv[2];					
-					final float ixx = Hkuv[0]; 
-					final float ixy = Hkuv[1]; 
-					final float iyy = Hkuv[2];
-					final float vel = a * ixx + 2 * b * ixy + c * iyy; 
-					// find min/max velocity for time-step adaptation
-					if (vel > maxV) maxV = vel;
-					if (vel < minV) minV = vel;
+		final float[] H = new float[3];			// 3 elements of the local Hessian
+		for (int u = 0; u < M; u++) {
+			for (int v = 0; v < N; v++) {
+				
+				float[] Auv = A.getPixel(u, v);
+				final float A0 = Auv[0];
+				final float A1 = Auv[1];
+				final float A2 = Auv[2];	
+				
+				for (int k = 0; k < K; k++) {
+					getHessian(k, u, v, H);	// Hessian for channel k at pos u,v		
+					final float H0 = H[0]; 
+					final float H1 = H[1]; 
+					final float H2 = H[2];
+					final float vel = A0 * H0 + 2 * A1 * H1 + A2 * H2; // = trace (A*H)
 					B[k][u][v] = vel;
+					// find max velocity for time-step adaptation
+					maxV = Math.max(maxV, Math.abs(vel));
 				}
 			}
 		}
-		return Math.max(Math.abs(maxV), Math.abs(minV));
+		this.maxVelocity = maxV; // Math.max(Math.abs(maxV), Math.abs(minV));
 	}
 	
-	// Calculate the Hessian matrix Hk for a single position (u,v) in image Ik.
+	// Calculate the Hessian matrix Hk for channel k at position (u,v)
 	void getHessian(int k, int u, int v, float[] Hk) {
 		PixelSlice Ik = source.getSlice(k);
 		float icc = Ik.getVal(u, v);
@@ -236,17 +235,16 @@ public class TschumperleDericheFilterGeneric extends GenericFilter {
 	}
 	
 	
-	void updateImage(double alpha) {	// float[][][] I, float[][][] B, double alpha
-		final float alphaF = (float) alpha;
+	void updateImage(float alpha) {	// float[][][] I, float[][][] B, double alpha
 		for (int u = 0; u < M; u++) {
 			for (int v = 0; v < N; v++) {
-				float[] Iuv = source.getPixel(u, v);
-				float[] Inew = new float[Iuv.length];
+				float[] I = source.getPixel(u, v);
+				float[] Inew = new float[I.length];
 				for (int k = 0; k < K; k++) {
-					float inew = Iuv[k] + alphaF * B[k][u][v];
+					float inew = I[k] + alpha * B[k][u][v];
 					// clamp image to the original range (brute!)
-					if (inew < initial_min) inew = initial_min;
-					if (inew > initial_max) inew = initial_max;
+//					if (inew < initial_min) inew = initial_min;
+//					if (inew > initial_max) inew = initial_max;
 					Inew[k] = inew;	// I[k][u][v] = inew;
 				}
 				source.setPixel(u, v, Inew);
@@ -255,65 +253,54 @@ public class TschumperleDericheFilterGeneric extends GenericFilter {
 	}
 	// --------------------------------------------------------------------------
 	
+	//Eigensolver2x2
 	
-	
-	private boolean realEigenValues2x2 (
+	private void getEigenValues2x2 (
 			double A, double B, double C, double D, 
-			double[] lam12, double[] x1, double[] x2) {
-		final double R = (A + D) / 2;
-		final double S = (A - D) / 2;
-		final double V = S * S + B * C;
-		if (V < 0) 
-			return false; // matrix has no real eigenvalues
+			double[] lam12, double[] x1) {
+		Eigensolver2x2 solver = new Eigensolver2x2(A, B, C, D);
+		if (solver.isReal()) {
+			copyFromTo(solver.getEigenvalues(), lam12);
+			double[][] evecs = solver.getEigenvectors();
+			copyFromTo(evecs[0], x1);
+			//copyFromTo(evecs[1], x2);
+		}
 		else {
-			double T = Math.sqrt(V);
-			lam12[0] = R + T;	// lambda_1
-			lam12[1] = R - T;	// lambda_2
-			if ((A - D) >= 0) {
-				x1[0] = S + T;	//e_1x
-				x1[1] = C;		//e_1y			
-				x2[0] = B;		//e_2x
-				x2[1] = -S - T;	//e_2y		
-			} 
-			else {
-				x1[0] = B;		//e_1x
-				x1[1] = -S + T;	//e_1y	
-				x2[0] = S - T;	//e_2x
-				x2[1] = C;		//e_2y	
-			}
-			return true;
+			throw new RuntimeException("eigenvalues undefined in " + 
+					this.getClass().getSimpleName());
 		}
 	}
+	
+	private void copyFromTo(double[] a, double[] b) {
+		System.arraycopy(a, 0, b, 0, a.length);
+	}
+	
 	
 	private void normalize(double[] vec) {
-		double sum = 0;
-		for (double v : vec) {
-			sum = sum + v * v;
-		}
-		if (sum > 0.000001) {
-			double s = 1 / Math.sqrt(sum);
+		double norm = Matrix.normL2(vec);
+		if (norm > 0.000001) {
 			for (int i = 0; i < vec.length; i++) {
-				vec[i] = vec[i] * s;
+				vec[i] = vec[i] / norm;
 			}
 		}
 	}
 	
-	private void getImageMinMax() {
-		float max = Float.MIN_VALUE;
-		float min = Float.MAX_VALUE;
-		for (int u = 0; u < M; u++) {
-			for (int v = 0; v < N; v++) {
-				float[] I = source.getPixel(u, v);
-				for (int k = 0; k < K; k++) {
-					float p = I[k];
-					if (p > max) max = p;
-					if (p < min) min = p;
-				}
-			}
-		}
-		initial_max = max;
-		initial_min = min;
-	}
+//	private void getImageMinMax() {
+//		float max = Float.MIN_VALUE;
+//		float min = Float.MAX_VALUE;
+//		for (int u = 0; u < M; u++) {
+//			for (int v = 0; v < N; v++) {
+//				float[] I = source.getPixel(u, v);
+//				for (int k = 0; k < K; k++) {
+//					float p = I[k];
+//					if (p > max) max = p;
+//					if (p < min) min = p;
+//				}
+//			}
+//		}
+//		initial_max = max;
+//		initial_min = min;
+//	}
 
 	@Override
 	protected void makeTarget() {
