@@ -45,7 +45,7 @@ public class NagaoMatsuyamaFilterScalar extends GenericFilterScalar {
 	// ------------------------------------------------------
 
 	@Override
-	protected float filterPixel(PixelSlice source, int u, int v) {
+	protected float doPixel(int u, int v) {
 		minVariance = Float.MAX_VALUE;
 		evalSubregion(source, R0, u, v);
 		minVariance = minVariance - varThreshold;

@@ -12,7 +12,6 @@ package imagingbook.pub.edgepreservingfilters;
 import ij.process.ImageProcessor;
 import imagingbook.lib.filter.GenericFilterScalar;
 import imagingbook.lib.image.access.PixelPack;
-import imagingbook.lib.image.access.PixelPack.PixelSlice;
 import imagingbook.pub.edgepreservingfilters.PeronaMalikF.ConductanceFunction;
 import imagingbook.pub.edgepreservingfilters.PeronaMalikF.Parameters;
 
@@ -54,7 +53,7 @@ public class PeronaMalikFilterScalar extends GenericFilterScalar {
 	// ------------------------------------------------------
 	
 	@Override
-	protected float filterPixel(PixelSlice source, int u, int v) {
+	protected float doPixel(int u, int v) {
 		/*   
 		 *  NH pixels:      directions:
 		 *      p4              3

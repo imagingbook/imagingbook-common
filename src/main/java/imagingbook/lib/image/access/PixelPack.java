@@ -65,10 +65,19 @@ public class PixelPack {
 		return vals;
 	}
 	
-	public void setPixel(int u, int v, float[] vals) {
+//	public void setPixel(int u, int v, float[] vals) {
+//		final int i = indexer.getIndex(u, v);
+//		if (i >= 0) {
+//			for (int k = 0; k < depth; k++) {
+//				pixels[k][i] = vals[k];
+//			}
+//		}
+//	}
+	
+	public void setPixel(int u, int v, float ... vals) {
 		final int i = indexer.getIndex(u, v);
 		if (i >= 0) {
-			for (int k = 0; k < depth; k++) {
+			for (int k = 0; k < depth && k < vals.length; k++) {
 				pixels[k][i] = vals[k];
 			}
 		}
@@ -144,8 +153,8 @@ public class PixelPack {
 		return nh;
 	}
 	
-	public ImageProcessor toImageProcessor(ImageProcessor ip2) {
-		return copyToImageProcessor(this.pixels, ip2);
+	public void copyToIp(ImageProcessor ip2) {
+		copyToImageProcessor(this.pixels, ip2);
 	}
 
 	

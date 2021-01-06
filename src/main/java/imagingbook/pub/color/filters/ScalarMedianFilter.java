@@ -14,7 +14,6 @@ import java.util.Arrays;
 import ij.process.ImageProcessor;
 import imagingbook.lib.filter.GenericFilter;
 import imagingbook.lib.filter.GenericFilterScalar;
-import imagingbook.lib.image.access.PixelPack.PixelSlice;
 import imagingbook.lib.image.access.OutOfBoundsStrategy;
 import imagingbook.lib.image.access.PixelPack;
 
@@ -62,7 +61,7 @@ public class ScalarMedianFilter extends GenericFilterScalar {
 	//-------------------------------------------------------------------------------------
 	
 	@Override
-	protected float filterPixel(PixelSlice source, int u, int v) {
+	protected float doPixel(int u, int v) {
 		int k = 0;
 		for (int i = 0; i < maskArray.length; i++) {
 			int ui = u + i - xc;

@@ -23,14 +23,14 @@ public class ExampleFilterVector extends GenericFilterVector {
 			{1, 2, 1}};
 	
 	@Override
-	protected float[] filterPixel(PixelPack sources, int u, int v) {
-		int depth = sources.getDepth();
+	protected float[] doPixel(int u, int v) {
+		int depth = source.getDepth();
 		float[] sum = new float[depth];
 		for (int j = 0; j < height; j++) {
 			int vj = v + j - yc;
 			for (int i = 0; i < width; i++) {
 				int ui = u + i - xc;
-				float[] p = sources.getPixel(ui, vj);
+				float[] p = source.getPixel(ui, vj);
 				for (int k = 0; k < depth; k++) {
 					sum[k] = sum[k] + (p[k] * H[i][j]) / 16;
 				}

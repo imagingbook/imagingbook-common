@@ -13,7 +13,7 @@ public class ExampleFilterScalarSeparable extends GenericFilterScalar {
 	}
 
 	@Override
-	protected float filterPixel(PixelSlice source, int u, int v) {
+	protected float doPixel(int u, int v) {
 		switch (getPass()) {
 		case 0: return filterPixelX(source, u, v);
 		case 1: return filterPixelY(source, u, v);

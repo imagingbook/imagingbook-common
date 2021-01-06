@@ -5,12 +5,20 @@ import imagingbook.lib.image.access.PixelPack;
 
 public abstract class GenericFilter {
 	
+	private class AbortFilterException extends RuntimeException {
+		private static final long serialVersionUID = 1L;
+	}
+	
 	protected final PixelPack source;
 	private int pass = 0;
 	
 	protected GenericFilter(PixelPack source) {
 		this.source = source;
 	}
+	
+//	protected <T extends PixelPack> PixelPack getSource() {
+//		return this.source;
+//	}
 	
 	protected int getPass() {
 		return pass;
@@ -24,26 +32,38 @@ public abstract class GenericFilter {
 	// -----------------------------------------------------------------------------------
 	
 	public void apply() {
-		setupFilter(source);	// need to pass?
+		makeTarget();
+		setupFilter();
 		if (pass > 0) {
 			throw new IllegalStateException("filter has already been applied");
 		}
-		pass = 0;
-		while (!finished()) {
-			filterAll(source);
-			pass++;
-		}
-		
+		try {
+			pass = 0;
+			while (!finished()) {
+				setupPass();
+				doPass();
+				pass++;
+			}
+		} catch (AbortFilterException e) {};
+		// the filter's result is to be found in 'source'
 		ImageProcessor ip = source.getIp();
 		if (ip != null) {	// source has an IP attached, so we need to copy back
-			source.toImageProcessor(ip);
+			source.copyToIp(ip);
 		}
 		closeFilter();
 	}
 	
 	// concrete sub-classes should override to setup or
 	// pre-calculate specific data structures once at the beginning
-	protected void setupFilter(PixelPack source) {
+	protected void setupFilter() {
+		// does nothing by default
+	}
+	
+	protected abstract void makeTarget();
+	
+	// called before every pass. override to perform
+	// operations at the beginning of tasks.
+	protected void setupPass() {
 		// does nothing by default
 	}
 	
@@ -59,8 +79,12 @@ public abstract class GenericFilter {
 		return (getPass() >= 1);	// do exactly 1 pass
 	}
 	
+	// call this method to abort the filter
+	protected final void abort() {
+		throw new AbortFilterException();
+	}
 
-	protected abstract void filterAll(PixelPack source);
+	protected abstract void doPass();
 	
 
 }

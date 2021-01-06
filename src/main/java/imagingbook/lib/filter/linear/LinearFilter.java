@@ -17,7 +17,7 @@ public class LinearFilter extends GenericFilterScalar {
 	}
 	
 	@Override
-	protected float filterPixel(PixelSlice source, int u, int v) {
+	protected float doPixel(int u, int v) {
 		double sum = 0;
 		for (int j = 0; j < H.length; j++) {
 			int vj = v + j - yc;

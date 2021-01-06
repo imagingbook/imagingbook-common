@@ -74,9 +74,9 @@ public class VectorMedianFilter extends GenericFilterVector {
 	//-------------------------------------------------------------------------------------
 	
 	@Override
-	protected float[] filterPixel(PixelPack sources, int u, int v) {
-		final float[] pCtr = sources.getPixel(u, v);
-		getSupportRegion(sources, u, v);
+	protected float[] doPixel(int u, int v) {
+		final float[] pCtr = source.getPixel(u, v);
+		getSupportRegion(source, u, v);
 		double dCtr = aggregateDistance(pCtr); 
 		double dMin = Double.MAX_VALUE;
 		int jMin = -1;

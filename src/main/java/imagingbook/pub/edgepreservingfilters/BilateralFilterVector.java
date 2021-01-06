@@ -54,7 +54,7 @@ public class BilateralFilterVector extends GenericFilterVector {
 	}
 	
 	@Override
-	protected float[] filterPixel(PixelPack source, int u, int v) {
+	protected float[] doPixel(int u, int v) {
 		float[] S = new float[3]; 	// sum of weighted RGB values
 		float W = 0;				// sum of weights
 		float[] a = source.getPixel(u, v);			// value of the current center pixel

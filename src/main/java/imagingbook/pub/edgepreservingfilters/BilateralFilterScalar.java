@@ -16,7 +16,6 @@ import ij.process.ImageProcessor;
 import imagingbook.lib.filter.GenericFilterScalar;
 import imagingbook.lib.filter.linear.GaussianKernel2D;
 import imagingbook.lib.image.access.PixelPack;
-import imagingbook.lib.image.access.PixelPack.PixelSlice;
 import imagingbook.pub.edgepreservingfilters.BilateralF.Parameters;
 
 /**
@@ -51,7 +50,7 @@ public class BilateralFilterScalar extends GenericFilterScalar {
 	}
 	
 	@Override
-	protected float filterPixel(PixelSlice source, int u, int v) {
+	protected float doPixel(int u, int v) {
 		float S = 0;			// sum of weighted pixel values
 		float W = 0;			// sum of weights		
 		float a = source.getVal(u, v); // value of the current center pixel

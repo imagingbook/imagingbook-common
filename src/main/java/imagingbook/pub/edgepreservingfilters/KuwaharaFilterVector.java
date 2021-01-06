@@ -56,7 +56,7 @@ public class KuwaharaFilterVector extends GenericFilterVector {
 	
 
 	@Override
-	protected float[] filterPixel(PixelPack source, int u, int v)  {
+	protected float[] doPixel(int u, int v)  {
 		Smin = Float.MAX_VALUE;
 		evalSubregion(source, u, v);				// centered subregion - different to original Kuwahara!
 		Smin = Smin - 3 * tsigma * n;				// tS * n because we use variance scaled by n

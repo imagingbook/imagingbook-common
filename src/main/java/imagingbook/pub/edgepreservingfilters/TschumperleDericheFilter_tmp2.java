@@ -44,7 +44,7 @@ import imagingbook.lib.image.access.PixelPack;
  * @version 2013/05/30
  */
 
-public class TschumperleDericheFilter extends GenericFilterVector {
+public class TschumperleDericheFilter_tmp2 extends GenericFilterVector {
 	
 	public static class Parameters {
 		/** Number of smoothing iterations */
@@ -108,14 +108,18 @@ public class TschumperleDericheFilter extends GenericFilterVector {
 	private Kernel2D kernelDx = new Kernel2D(Hdx, 1, 1, false);
 	private Kernel2D kernelDy = new Kernel2D(Hdy, 1, 1, false);
 	
+	float maxV = Float.MIN_VALUE;
+	float minV = Float.MAX_VALUE;
+	float maxVelocity = 0;
+	
 	
 	// constructor - uses only default settings:
-	public TschumperleDericheFilter(ColorProcessor ip) {
+	public TschumperleDericheFilter_tmp2(ColorProcessor ip) {
 		this(ip, new Parameters());
 	}
 	
 	// constructor - use for setting individual parameters:
-	public TschumperleDericheFilter(ColorProcessor ip, Parameters params) {
+	public TschumperleDericheFilter_tmp2(ColorProcessor ip, Parameters params) {
 		super(PixelPack.fromImageProcessor(ip, null));
 		this.params = params;
 		this.T = params.iterations;
@@ -129,7 +133,7 @@ public class TschumperleDericheFilter extends GenericFilterVector {
 		this.A = new float[3][M][N];
 		this.B = new float[K][M][N];
 		
-		this.Gpack = new PixelPack(source.getHeight(), source.getHeight(), 3, null); 
+		this.Gpack = new PixelPack(source.getWidth(), source.getHeight(), 3, null); 
 		
 //		this.Hk = new float[3][M][N];
 		initialize(ip);
@@ -141,17 +145,17 @@ public class TschumperleDericheFilter extends GenericFilterVector {
 		this.DyPack = this.source.getEmptyCopy();
 	}
 	
-	float maxVelocity;
+
 	float alpha;
 	
 	// ------------------------------------------------------------------------------------
 	
-	protected void setupFilter(PixelPack source) {
+	protected void setupFilter() {
 		// does nothing by default
 	}
 	
 	@Override
-	protected void setupPass(PixelPack source) {
+	protected void setupPass() {
 		
 		// Step 1: Calculate gradients and smooth
 		source.copyTo(DxPack);
@@ -164,9 +168,12 @@ public class TschumperleDericheFilter extends GenericFilterVector {
 //		if (getPass() == 0) {
 //			int w = source.getWidth();
 //			int h = source.getHeight();
-//			new ImagePlus("DrR", new FloatProcessor(w, h, DxPack.getSlice(0).getPixels().clone())).show(); // why need for clone??
-//			new ImagePlus("DrG", new FloatProcessor(w, h, DxPack.getSlice(1).getPixels().clone())).show();
-//			new ImagePlus("DrB", new FloatProcessor(w, h, DxPack.getSlice(2).getPixels().clone())).show();
+//			new ImagePlus("Dx-0n", new FloatProcessor(w, h, DxPack.getSlice(0).getPixels().clone())).show(); // why need for clone??
+//			new ImagePlus("Dx-1n", new FloatProcessor(w, h, DxPack.getSlice(1).getPixels().clone())).show();
+//			new ImagePlus("Dx-2n", new FloatProcessor(w, h, DxPack.getSlice(2).getPixels().clone())).show();
+//			new ImagePlus("Dy-0n", new FloatProcessor(w, h, DyPack.getSlice(0).getPixels().clone())).show(); // why need for clone??
+//			new ImagePlus("Dy-1n", new FloatProcessor(w, h, DyPack.getSlice(1).getPixels().clone())).show();
+//			new ImagePlus("Dy-2n", new FloatProcessor(w, h, DyPack.getSlice(2).getPixels().clone())).show();
 //		}
 		
 		
@@ -190,8 +197,18 @@ public class TschumperleDericheFilter extends GenericFilterVector {
 				Gpack.setPixel(u, v, g);
 			}
 		}
+		
+//		if (getPass() == 0) {
+//			int w = source.getWidth(); int h = source.getHeight();
+//			new ImagePlus("G-0n", new FloatProcessor(w, h, Gpack.getSlice(0).getPixels().clone())).show();
+//			new ImagePlus("G-1n", new FloatProcessor(w, h, Gpack.getSlice(1).getPixels().clone())).show();
+//			new ImagePlus("G-2n", new FloatProcessor(w, h, Gpack.getSlice(2).getPixels().clone())).show();
+//		}
+		
 		new GaussianFilterSeparable(Gpack, params.sigmaS).apply();
-
+		
+		maxV = Float.MIN_VALUE;
+		minV = Float.MAX_VALUE;
 	
 		// --------------------------------------------------
 		// --------------------------------------------------
@@ -209,6 +226,8 @@ public class TschumperleDericheFilter extends GenericFilterVector {
 			IJ.log("Step 4 + 5");
 			calculateStructureMatrix(); // Dx, Dy -> G
 			smoothStructureMatrix();	// affects G
+			
+			//--------------------------
 			
 			// Step 6-7:
 			IJ.log("Step 6-7");
@@ -230,10 +249,14 @@ public class TschumperleDericheFilter extends GenericFilterVector {
 	private final float[] tmpPix = new float[3];
 	
 	//------------------------------------------------------------------------
+	
+	
+	
+	
 	//------------------------------------------------------------------------
 	
 	@Override
-	protected float[] filterPixel(PixelPack sources, int u, int v) {
+	protected float[] doPixel(int u, int v) {
 		
 		// Step 6-7: calculateGeometryMatrix();	// G -> A
 		final double[] lambda12 = new double[2]; 	// eigenvalues
@@ -248,7 +271,7 @@ public class TschumperleDericheFilter extends GenericFilterVector {
 		// calculate eigenvalues:
 		if (!realEigenValues2x2(G0, G1, G1, G2, lambda12, e1, e2)) {
 			throw new RuntimeException("eigenvalues undefined in " + 
-						TschumperleDericheFilter.class.getSimpleName());
+						TschumperleDericheFilter_tmp2.class.getSimpleName());
 		}
 		final double val1 = lambda12[0];
 		final double val2 = lambda12[1];
@@ -271,8 +294,7 @@ public class TschumperleDericheFilter extends GenericFilterVector {
 		// Step 8:
 		// Calculate the local image velocity B(k,u,v) from the geometry matrix A(i,u,v)
 		// and the Hessian matrix Hkuv.
-		float maxV = Float.MIN_VALUE;
-		float minV = Float.MAX_VALUE;
+
 		//final float[] Hkuv = new float[3];	// Hessian matrix elements for channel k at u,v
 		
 		float[] BB = new float[source.getDepth()];
@@ -291,8 +313,10 @@ public class TschumperleDericheFilter extends GenericFilterVector {
 //			B[k][u][v] = vel;
 			BB[k] = vel;	
 		}
-		float maxVelocity = Math.max(Math.abs(maxV), Math.abs(minV));
+		
+		maxVelocity = Math.max(Math.abs(maxV), Math.abs(minV));
 		alpha = (float) params.dt / maxVelocity;
+		
 		
 		// Step 9: Update image
 		final float alphaF = (float) alpha;
@@ -499,7 +523,7 @@ public class TschumperleDericheFilter extends GenericFilterVector {
 				// calculate eigenvalues:
 				if (!realEigenValues2x2(G0, G1, G1, G2, lambda12, e1, e2)) {
 					throw new RuntimeException("eigenvalues undefined in " + 
-								TschumperleDericheFilter.class.getSimpleName());
+								TschumperleDericheFilter_tmp2.class.getSimpleName());
 				}
 				final double val1 = lambda12[0];
 				final double val2 = lambda12[1];

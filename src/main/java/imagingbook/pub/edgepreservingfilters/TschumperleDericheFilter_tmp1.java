@@ -103,12 +103,12 @@ public class TschumperleDericheFilter_tmp1 extends GenericFilterVector {
 	
 	// ------------------------------------------------------------------------------------
 	
-	protected void setupFilter(PixelPack source) {
+	protected void setupFilter() {
 		// does nothing by default
 	}
 	
 	@Override
-	protected void setupPass(PixelPack source) {
+	protected void setupPass() {
 		IJ.log("setupPass starting " + getPass());
 		// Step 1:
 		IJ.log("Step 1");
@@ -147,7 +147,7 @@ public class TschumperleDericheFilter_tmp1 extends GenericFilterVector {
 	float[] tmpPix = new float[3];
 	
 	@Override
-	protected float[] filterPixel(PixelPack sources, int u, int v) {
+	protected float[] doPixel(int u, int v) {
 		// TODO Auto-generated method stub
 		return tmpPix;
 	}

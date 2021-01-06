@@ -10,6 +10,7 @@
 package imagingbook.pub.edgepreservingfilters.OLD;
 
 import ij.IJ;
+import ij.ImagePlus;
 import ij.plugin.filter.Convolver;
 import ij.process.ColorProcessor;
 import ij.process.FloatProcessor;
@@ -87,8 +88,8 @@ public class TschumperleDericheFilter_OLD {
 	public void applyTo(ImageProcessor ip) {	
 		initialize(ip);
 		// main iteration loop
-		for (int n = 1; n <= T; n++) {
-			IJ.showProgress(n, T);
+		for (int pass = 1; pass <= T; pass++) {
+			IJ.showProgress(pass, T);
 			
 			// Step 1:
 			calculateGradients(I, Dx, Dy);
@@ -98,8 +99,24 @@ public class TschumperleDericheFilter_OLD {
 			
 			// Step 3: Hessian matrix is only calculated locally as part of Step 8.
 			
+//			if (pass == 1) {
+//				new ImagePlus("Dx-0", new FloatProcessor(Dx[0])).show();
+//				new ImagePlus("Dx-1", new FloatProcessor(Dx[1])).show();
+//				new ImagePlus("Dx-2", new FloatProcessor(Dx[2])).show();
+//				new ImagePlus("Dy-0", new FloatProcessor(Dy[0])).show();
+//				new ImagePlus("Dy-1", new FloatProcessor(Dy[1])).show();
+//				new ImagePlus("Dy-2", new FloatProcessor(Dy[2])).show();
+//			}
+			
 			// Step 4:
 			calculateStructureMatrix(Dx, Dy, G);
+			
+//			if (pass == 1) {
+//				new ImagePlus("G-0", new FloatProcessor(G[0])).show();
+//				new ImagePlus("G-1", new FloatProcessor(G[1])).show();
+//				new ImagePlus("G-2", new FloatProcessor(G[2])).show();
+//			}
+			
 			// Step 5:
 			smoothStructureMatrix(G);
 
@@ -110,7 +127,9 @@ public class TschumperleDericheFilter_OLD {
 			float maxVelocity = calculateVelocities(I, A, B);
 			
 			double alpha = params.dt / maxVelocity;
+			IJ.log("OLD: alpha = " + alpha);
 			updateImage(I, B, alpha);
+			IJ.log("done with iteratation " + pass);
 		}
 		copyResultToImage(ip);
 		cleanUp();

@@ -57,7 +57,7 @@ public class PeronaMalikFilterVector extends GenericFilterVector {
 	// ------------------------------------------------------
 	
 	@Override
-	protected float[] filterPixel(PixelPack sources, int u, int v) {
+	protected float[] doPixel(int u, int v) {
 		/*   
 		 *  NH pixels:      directions:
 		 *      p4              3
@@ -65,11 +65,11 @@ public class PeronaMalikFilterVector extends GenericFilterVector {
 		 *      p2              1
 		 */
 		float[][] p = new float[5][];	// p[i][k]: 5 pixels from the 3x3 neigborhood
-		p[0] = sources.getPixel(u, v);
-		p[1] = sources.getPixel(u + 1, v);
-		p[2] = sources.getPixel(u, v + 1);
-		p[3] = sources.getPixel(u - 1, v);
-		p[4] = sources.getPixel(u, v - 1);
+		p[0] = source.getPixel(u, v);
+		p[1] = source.getPixel(u + 1, v);
+		p[2] = source.getPixel(u, v + 1);
+		p[3] = source.getPixel(u - 1, v);
+		p[4] = source.getPixel(u, v - 1);
 		
 		float[] result = p[0].clone();
 		

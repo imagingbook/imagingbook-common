@@ -63,11 +63,6 @@ public class BilateralFilterVectorSeparable extends GenericFilterVectorSeparable
 		return filterPixelXY(source, u, v, false);
 	}
 	
-	@Override
-	protected void setupPass(PixelPack ignored) {
-		IJ.log("running " + this.getClass().getSimpleName());
-	}
-	
 	// ------------------------------------------------------------------
 	
 	private float[] filterPixelXY(PixelPack source, int u, int v, boolean isX) {
