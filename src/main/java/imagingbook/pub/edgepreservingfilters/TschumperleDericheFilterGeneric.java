@@ -119,17 +119,19 @@ public class TschumperleDericheFilterGeneric extends GenericFilter {
 		// Step 4 + 5: calculateStructureMatrix G
 		calculateStructureMatrix();
 		
+		System.out.format("%d: before update: alpha=%.2f\n", getPass(), alpha);
 		// Step 6-7: calculateGeometryMatrix A
-		calculateGeometryMatrix();
+		calculateGeometryMatrix(); // includes the rest now
 		 
 		// Step 8: calculate max velocity and update the image
-		calculateVelocities();	// updates B and maxVelocity
+//		calculateVelocities();	// updates B and maxVelocity
+		
+//		this.alpha = (float) params.dt / maxVelocity;
+		updateImage();	// uses alpha
 		
 		this.alpha = (float) params.dt / maxVelocity;
-		System.out.format("maxVelocity=%.2f, alpha=%.2f\n", maxVelocity, alpha);
-		updateImage(alpha);
-		
-		IJ.log("done with iteratation " + this.getPass());
+		System.out.format("after update: maxVelocity=%.2f, alpha=%.2f\n", maxVelocity, alpha);
+		IJ.log("done with iteration " + this.getPass());
 	}
 	
 	@Override
@@ -174,6 +176,7 @@ public class TschumperleDericheFilterGeneric extends GenericFilter {
 		double[] e1 = new double[2];			// eigenvector x1
 		double a1 = params.a1;
 		double a2 = params.a2;
+		float maxV = Float.NEGATIVE_INFINITY;	// maximum velocity
 		for (int u = 0; u < M; u++) {
 			for (int v = 0; v < N; v++) {
 				float[] Guv = G.getPixel(u, v); // 3 elements of local geometry matrix (2x2)
@@ -195,35 +198,70 @@ public class TschumperleDericheFilterGeneric extends GenericFilter {
 				float A1 = (c2 - c1)* exy;
 				float A2 = c1 * exx + c2 * eyy;
 				A.setPixel(u, v, A0, A1, A2);		// cool! can make local??
-			}
-		}
-	}
-	
-	private void calculateVelocities() {	// I, A --> B
-		float maxV = Float.MIN_VALUE;
-		final float[] H = new float[3];			// 3 elements of the local Hessian
-		for (int u = 0; u < M; u++) {
-			for (int v = 0; v < N; v++) {
 				
-				float[] Auv = A.getPixel(u, v);
-				final float A0 = Auv[0];
-				final float A1 = Auv[1];
-				final float A2 = Auv[2];	
+				// calculateVelocities() -------------------
 				
+//				float[] AA = A.getPixel(u, v);
+//				final float A0 = AA[0];
+//				final float A1 = AA[1];
+//				final float A2 = AA[2];	
+				
+				float[] BB = new float[K];	// local B
+				
+				final float[] H = new float[3];			// 3 elements of the local Hessian
 				for (int k = 0; k < K; k++) {
-					getHessian(k, u, v, H);	// Hessian for channel k at pos u,v		
+					getHessian(k, u, v, H);	// Hessian for channel k at pos u,v		// PROBLEM: Hessian depends on source! Write to target??
 					final float H0 = H[0]; 
 					final float H1 = H[1]; 
 					final float H2 = H[2];
 					final float vel = A0 * H0 + 2 * A1 * H1 + A2 * H2; // = trace (A*H)
-					B[k][u][v] = vel;
+					B[k][u][v] = vel;	// unnecessary
+					BB[k] = vel; // B[k][u][v] = vel;
 					// find max velocity for time-step adaptation
 					maxV = Math.max(maxV, Math.abs(vel));
 				}
+				
+				// updateImage(float alpha) ------------------------
+//				if (u == 0 && v == 0) 
+//					System.out.format("%d: updating with alpha=%.2f\n", getPass(), alpha);
+//				float[] I = source.getPixel(u, v);
+//				float[] Inew = new float[I.length];
+//				for (int k = 0; k < K; k++) {
+//					//float inew = I[k] + alpha * B[k][u][v];	// we use the previous value of alpha
+//					float inew = I[k] + alpha * BB[k];	// we use the previous value of alpha
+//					Inew[k] = inew;	// I[k][u][v] = inew;
+//				}
+//				source.setPixel(u, v, Inew);
 			}
 		}
-		this.maxVelocity = maxV; // Math.max(Math.abs(maxV), Math.abs(minV));
+		this.maxVelocity = maxV;
 	}
+	
+//	private void calculateVelocities() {	// I, A --> B
+//		float maxV = Float.MIN_VALUE;
+//		final float[] H = new float[3];			// 3 elements of the local Hessian
+//		for (int u = 0; u < M; u++) {
+//			for (int v = 0; v < N; v++) {
+//				
+//				float[] AA = A.getPixel(u, v);
+//				final float A0 = AA[0];
+//				final float A1 = AA[1];
+//				final float A2 = AA[2];	
+//				
+//				for (int k = 0; k < K; k++) {
+//					getHessian(k, u, v, H);	// Hessian for channel k at pos u,v		
+//					final float H0 = H[0]; 
+//					final float H1 = H[1]; 
+//					final float H2 = H[2];
+//					final float vel = A0 * H0 + 2 * A1 * H1 + A2 * H2; // = trace (A*H)
+//					B[k][u][v] = vel;
+//					// find max velocity for time-step adaptation
+//					maxV = Math.max(maxV, Math.abs(vel));
+//				}
+//			}
+//		}
+//		this.maxVelocity = maxV; // Math.max(Math.abs(maxV), Math.abs(minV));
+//	}
 	
 	// Calculate the Hessian matrix Hk for channel k at position (u,v)
 	void getHessian(int k, int u, int v, float[] Hk) {
@@ -235,7 +273,8 @@ public class TschumperleDericheFilterGeneric extends GenericFilter {
 	}
 	
 	
-	void updateImage(float alpha) {	// float[][][] I, float[][][] B, double alpha
+	void updateImage() {	// float[][][] I, float[][][] B, double alpha
+		System.out.format("%d: updating with alpha=%.2f\n", getPass(), alpha);
 		for (int u = 0; u < M; u++) {
 			for (int v = 0; v < N; v++) {
 				float[] I = source.getPixel(u, v);
