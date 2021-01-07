@@ -10,10 +10,10 @@ import imagingbook.lib.image.access.PixelPack;
 public abstract class GenericFilterVectorSeparable extends GenericFilterVector {
 
 	@Override
-	protected final float[] doPixel(int u, int v) {
+	protected final float[] doPixel(PixelPack pack, int u, int v) {
 		switch (getPass()) {
-		case 0: return filterPixelX(source, u, v);
-		case 1: return filterPixelY(source, u, v);
+		case 0: return filterPixelX(pack, u, v);
+		case 1: return filterPixelY(pack, u, v);
 		default: throw new RuntimeException("invalid pass number " + getPass());
 		}
 	}
@@ -26,9 +26,9 @@ public abstract class GenericFilterVectorSeparable extends GenericFilterVector {
 	// ------------------------------------------------------------------------
 
 	// Apply a 1D filter in x-direction
-	protected abstract float[] filterPixelX(PixelPack source, int u, int v);
+	protected abstract float[] filterPixelX(PixelPack pack, int u, int v);
 
 	// Apply a 1D filter in y-direction
-	protected abstract float[] filterPixelY(PixelPack source, int u, int v);
+	protected abstract float[] filterPixelY(PixelPack pack, int u, int v);
 	
 }

@@ -14,6 +14,7 @@ import static imagingbook.lib.math.Arithmetic.sqr;
 import ij.process.ColorProcessor;
 import imagingbook.lib.filter.GenericFilterVector;
 import imagingbook.lib.filter.linear.GaussianKernel2D;
+import imagingbook.lib.image.access.PixelPack;
 import imagingbook.lib.math.VectorNorm;
 import imagingbook.pub.edgepreservingfilters.BilateralF.Parameters;
 
@@ -37,7 +38,6 @@ public class BilateralFilterVector extends GenericFilterVector {
 	private final VectorNorm colorNorm;
 	private final double colorScale2;
 	
-	
 	public BilateralFilterVector() {
 		this(new Parameters());
 	}
@@ -52,14 +52,14 @@ public class BilateralFilterVector extends GenericFilterVector {
 	}
 	
 	@Override
-	protected float[] doPixel(int u, int v) {
+	protected float[] doPixel(PixelPack pack, int u, int v) {
 		float[] S = new float[3]; 	// sum of weighted RGB values
 		float W = 0;				// sum of weights
-		float[] a = source.getPixel(u, v);			// value of the current center pixel
+		float[] a = pack.getPixel(u, v);			// value of the current center pixel
 		
 		for (int m = -K; m <= K; m++) {
 			for (int n = -K; n <= K; n++) {
-				float[] b = source.getPixel(u + m, v + n);
+				float[] b = pack.getPixel(u + m, v + n);
 				float wd = Hd[m + K][n + K];				// domain weight
 				float wr = similarityGauss(a, b);			// range weight
 				float w = wd * wr;

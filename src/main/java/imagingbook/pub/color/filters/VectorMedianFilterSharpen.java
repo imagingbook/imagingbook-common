@@ -12,7 +12,6 @@ package imagingbook.pub.color.filters;
 import java.awt.Color;
 import java.util.Arrays;
 
-import ij.process.ImageProcessor;
 import imagingbook.lib.filter.GenericFilterVector;
 import imagingbook.lib.image.access.PixelPack;
 import imagingbook.lib.math.VectorNorm;
@@ -72,9 +71,9 @@ public class VectorMedianFilterSharpen extends GenericFilterVector {
 	}
 	
 	@Override
-	protected float[] doPixel(int u, int v) {
-		float[] pCtr = source.getPixel(u, v);
-		getSupportRegion(source, u, v);
+	protected float[] doPixel(PixelPack pack, int u, int v) {
+		float[] pCtr = pack.getPixel(u, v);
+		getSupportRegion(pack, u, v);
 		double dCtr = trimmedAggregateDistance(pCtr, a); 
 		double dMin = Double.MAX_VALUE;
 		int jMin = -1;

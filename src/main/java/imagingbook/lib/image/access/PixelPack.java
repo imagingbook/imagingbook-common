@@ -11,6 +11,8 @@ import imagingbook.lib.color.Rgb;
 
 public class PixelPack {
 	
+	// TODO: make read-only version?
+	
 	public static final OutOfBoundsStrategy DefaultOutOfBoundsStrategy = OutOfBoundsStrategy.NEAREST_BORDER;
 
 	private final int depth;
@@ -35,6 +37,7 @@ public class PixelPack {
 		copyFromImageProcessor(ip, this.pixels);
 	}
 	
+	// duplicate without copying data
 	public PixelPack(PixelPack orig) {
 		this(orig, false);
 	}
@@ -73,10 +76,20 @@ public class PixelPack {
 	}
 	
 	public void copyTo(PixelPack other) {
-		// TODO: check compatibility
+		if (!this.isCompatibleTo(other)) {
+			throw new IllegalArgumentException("pixel packs of incompatible size, cannot copy");
+		}
 		for (int k = 0; k < this.depth; k++) {
 			System.arraycopy(this.pixels[k], 0, other.pixels[k], 0, this.length);
 		}
+	}
+	
+	public boolean isCompatibleTo(PixelPack other) {
+		if (this.pixels.length == other.pixels.length && this.length == other.length) { // TODO: check width/height too
+			return true;
+		}
+		else
+			return false;
 	}
 	
 	public PixelSlice getSlice(int k) {

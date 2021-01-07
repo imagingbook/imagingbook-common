@@ -12,6 +12,7 @@ package imagingbook.pub.edgepreservingfilters;
 import static imagingbook.lib.math.Matrix.subtract;
 
 import imagingbook.lib.filter.GenericFilterVector;
+import imagingbook.lib.image.access.PixelPack;
 import imagingbook.lib.math.Matrix;
 import imagingbook.pub.edgepreservingfilters.PeronaMalikF.ColorMode;
 import imagingbook.pub.edgepreservingfilters.PeronaMalikF.ConductanceFunction;
@@ -54,7 +55,7 @@ public class PeronaMalikFilterVector extends GenericFilterVector {
 	// ------------------------------------------------------
 	
 	@Override
-	protected float[] doPixel(int u, int v) {
+	protected float[] doPixel(PixelPack pack, int u, int v) {
 		/*   
 		 *  NH pixels:      directions:
 		 *      p4              3
@@ -62,11 +63,11 @@ public class PeronaMalikFilterVector extends GenericFilterVector {
 		 *      p2              1
 		 */
 		float[][] p = new float[5][];	// p[i][k]: 5 pixels from the 3x3 neigborhood
-		p[0] = source.getPixel(u, v);
-		p[1] = source.getPixel(u + 1, v);
-		p[2] = source.getPixel(u, v + 1);
-		p[3] = source.getPixel(u - 1, v);
-		p[4] = source.getPixel(u, v - 1);
+		p[0] = pack.getPixel(u, v);
+		p[1] = pack.getPixel(u + 1, v);
+		p[2] = pack.getPixel(u, v + 1);
+		p[3] = pack.getPixel(u - 1, v);
+		p[4] = pack.getPixel(u, v - 1);
 		
 		float[] result = p[0].clone();
 		
