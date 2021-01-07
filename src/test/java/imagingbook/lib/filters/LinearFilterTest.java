@@ -11,7 +11,6 @@ import imagingbook.lib.filter.linear.Kernel2D;
 import imagingbook.lib.filter.linear.LinearFilter;
 import imagingbook.lib.ij.IjUtils;
 import imagingbook.lib.image.access.OutOfBoundsStrategy;
-import imagingbook.lib.image.access.PixelPack;
 import imagingbook.testutils.ImageTests;
 
 public class LinearFilterTest {
@@ -39,7 +38,7 @@ public class LinearFilterTest {
 		ImageProcessor ipA = IjUtils.openImage(path1A).getProcessor();
 		float[][] H = H1;
 		ImageProcessor ipAf = ipA.duplicate();
-		new LinearFilter(new Kernel2D(H)).applyTo(PixelPack.pack(ipAf, OBS));
+		new LinearFilter(new Kernel2D(H)).applyTo(ipAf, OBS);
 		assertTrue(ImageTests.match(ipAf, ipA, 1E-6));
 	}
 	
@@ -49,7 +48,7 @@ public class LinearFilterTest {
 		ImageProcessor ipB = IjUtils.openImage(path1B).getProcessor();
 		float[][] H = H2;
 		ImageProcessor ipAf = ipA.duplicate();
-		new LinearFilter(new Kernel2D(H)).applyTo(PixelPack.pack(ipAf, OBS));
+		new LinearFilter(new Kernel2D(H)).applyTo(ipAf, OBS);
 		assertTrue(ImageTests.match(ipAf, ipB, 1E-6));
 	}
 	
@@ -59,7 +58,7 @@ public class LinearFilterTest {
 		ImageProcessor ipB = IjUtils.openImage(path1B).getProcessor();
 		float[][] H = H2;
 		ImageProcessor ipAf = ipA.convertToFloatProcessor();
-		new LinearFilter(new Kernel2D(H)).applyTo(PixelPack.pack(ipAf, OBS));
+		new LinearFilter(new Kernel2D(H)).applyTo(ipAf, OBS);
 		assertTrue(ImageTests.match(ipAf, ipB.convertToFloatProcessor(), 0.5f));
 	}
 	
@@ -70,7 +69,7 @@ public class LinearFilterTest {
 		float[][] H = H2;
 		
 		ImageProcessor ipAf = ipA.duplicate();
-		new LinearFilter(new Kernel2D(H)).applyTo(PixelPack.pack(ipAf, OBS));
+		new LinearFilter(new Kernel2D(H)).applyTo(ipAf, OBS);
 		assertTrue(ImageTests.match(ipAf, ipB, 1E-6));
 	}
 

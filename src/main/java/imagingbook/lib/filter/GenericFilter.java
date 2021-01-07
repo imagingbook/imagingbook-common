@@ -12,22 +12,13 @@ public abstract class GenericFilter {
 	
 	protected PixelPack source = null;
 	private int pass = 0;
-	
-	@Deprecated
-	protected GenericFilter(PixelPack source) {
-		this.source = source;
-	}
+
 	
 	public GenericFilter() {
 	}
 
 	protected int getPass() {
 		return pass;
-	}
-	
-	// needed?
-	protected  ImageProcessor getIp() {
-		return this.source.getIp();
 	}
 	
 	// -----------------------------------------------------------------------------------
@@ -55,9 +46,9 @@ public abstract class GenericFilter {
 	}
 	
 	public void applyTo(ImageProcessor ip, OutOfBoundsStrategy obs) {
-		PixelPack pp = PixelPack.pack(ip, obs);
+		PixelPack pp = new PixelPack(ip, obs);
 		applyTo(pp);
-		pp.copyToImageProcessor(ip);
+		pp.copyToImageProcessor(ip);	// copy data back to ip
 	}
 
 	// -----------------------------------------------------------------------------------

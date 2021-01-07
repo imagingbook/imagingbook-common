@@ -14,7 +14,7 @@ public class PixelPack {
 	
 	public static final OutOfBoundsStrategy DefaultOutOfBoundsStrategy = OutOfBoundsStrategy.NEAREST_BORDER;
 
-	private ImageProcessor ip = null;
+//	private ImageProcessor ip = null;
 	private final int depth;
 	private final float[][] pixels;
 	private final int length;
@@ -38,7 +38,7 @@ public class PixelPack {
 	public PixelPack(ImageProcessor ip, OutOfBoundsStrategy obs) {
 		this(ip.getWidth(), ip.getHeight(), getDepth(ip), obs);
 		copyFromImageProcessor(ip, this.pixels);
-		this.ip = ip;
+//		this.ip = ip;
 	}
 	
 	public PixelPack(PixelPack orig) {
@@ -124,9 +124,9 @@ public class PixelPack {
 		return this.depth;
 	}
 	
-	public ImageProcessor getIp() {
-		return this.ip;
-	}
+//	public ImageProcessor getIp() {
+//		return this.ip;
+//	}
 	
 	public OutOfBoundsStrategy getOutOfBoundsStrategy() {
 		return this.indexer.obs;
@@ -162,13 +162,13 @@ public class PixelPack {
 		copyToImageProcessor(this.pixels, ip);
 	}
 	
-	// write contents back to source ImageProcessor (if exists)
-	@Deprecated
-	public void updateImageProcessor() {
-		if (this.ip != null) {
-			copyToImageProcessor(this.pixels, this.ip);
-		}
-	}
+//	// write contents back to source ImageProcessor (if exists)
+//	@Deprecated
+//	public void updateImageProcessor() {
+//		if (this.ip != null) {
+//			copyToImageProcessor(this.pixels, this.ip);
+//		}
+//	}
 
 	// -------------------------------------------------------------------
 	
@@ -288,14 +288,15 @@ public class PixelPack {
 	
 	// -------------------------------------------------------------------
 	
+//	@Deprecated
+//	public static PixelPack pack(ImageProcessor ip) {
+//		return pack(ip, DefaultOutOfBoundsStrategy);
+//	}
 	
-	public static PixelPack pack(ImageProcessor ip) {
-		return pack(ip, DefaultOutOfBoundsStrategy);
-	}
-			
+	@Deprecated
 	public static PixelPack pack(ImageProcessor ip, OutOfBoundsStrategy obs) {
 		PixelPack pack = new PixelPack(ip.getWidth(), ip.getHeight(), getDepth(ip), obs);
-		pack.ip = ip;
+//		pack.ip = ip;
 		copyFromImageProcessor(ip, pack.pixels);
 		return pack;
 	}
