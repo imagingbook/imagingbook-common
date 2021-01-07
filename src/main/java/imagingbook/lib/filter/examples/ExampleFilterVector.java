@@ -1,15 +1,10 @@
 package imagingbook.lib.filter.examples;
 
-import ij.process.ImageProcessor;
 import imagingbook.lib.filter.GenericFilterVector;
-import imagingbook.lib.image.access.PixelPack;
-import imagingbook.lib.image.access.OutOfBoundsStrategy;
 
 public class ExampleFilterVector extends GenericFilterVector {
 
-
-	public ExampleFilterVector(ImageProcessor ip, OutOfBoundsStrategy obs) {
-		super(PixelPack.pack(ip, obs));
+	public ExampleFilterVector() {
 	}
 
 	int width = 3;

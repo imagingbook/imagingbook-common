@@ -14,7 +14,6 @@ import static imagingbook.lib.math.Arithmetic.sqr;
 import ij.process.ColorProcessor;
 import imagingbook.lib.filter.GenericFilterVector;
 import imagingbook.lib.filter.linear.GaussianKernel2D;
-import imagingbook.lib.image.access.PixelPack;
 import imagingbook.lib.math.VectorNorm;
 import imagingbook.pub.edgepreservingfilters.BilateralF.Parameters;
 
@@ -39,12 +38,11 @@ public class BilateralFilterVector extends GenericFilterVector {
 	private final double colorScale2;
 	
 	
-	public BilateralFilterVector(ColorProcessor ip) {
-		this(ip, new Parameters());
+	public BilateralFilterVector() {
+		this(new Parameters());
 	}
 	
-	public BilateralFilterVector(ColorProcessor ip, Parameters params) {
-		super(PixelPack.pack(ip, params.obs));
+	public BilateralFilterVector(Parameters params) {
 		GaussianKernel2D kernel = new GaussianKernel2D(params.sigmaD);
 		this.Hd = kernel.getH();
 		this.K = kernel.getXc();

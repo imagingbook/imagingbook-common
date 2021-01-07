@@ -13,7 +13,6 @@ import static imagingbook.lib.math.Arithmetic.sqr;
 import static imagingbook.pub.edgepreservingfilters.NagaoMatsuyamaF.R0;
 import static imagingbook.pub.edgepreservingfilters.NagaoMatsuyamaF.SubRegions;
 
-import ij.process.ColorProcessor;
 import imagingbook.lib.filter.GenericFilterVector;
 import imagingbook.lib.image.access.PixelPack;
 import imagingbook.pub.edgepreservingfilters.NagaoMatsuyamaF.Parameters;
@@ -36,12 +35,11 @@ public class NagaoMatsuyamaFilterVector extends GenericFilterVector {
 	private final float[] rgb = new float[3];
 	private final float[] minMean = new float[3];
 	
-	public NagaoMatsuyamaFilterVector(ColorProcessor ip) {
-		this(ip, new Parameters());
+	public NagaoMatsuyamaFilterVector() {
+		this(new Parameters());
 	}
 	
-	public NagaoMatsuyamaFilterVector(ColorProcessor ip, Parameters params) {
-		super(PixelPack.pack(ip, params.obs));
+	public NagaoMatsuyamaFilterVector(Parameters params) {
 		this.varThreshold = (float) params.varThreshold;
 	}
 	

@@ -37,11 +37,10 @@ public class ScalarMedianFilter extends GenericFilterScalar {
 	
 	
 	public ScalarMedianFilter(ImageProcessor ip) {
-		this(ip, new Parameters());
+		this(new Parameters());
 	}
 	
-	public ScalarMedianFilter(ImageProcessor ip, Parameters params) {
-		super(PixelPack.pack(ip, params.obs));
+	public ScalarMedianFilter(Parameters params) {
 		this.params = params;
 		this.mask = new CircularMask(params.radius);
 		this.maskCount = mask.getCount();

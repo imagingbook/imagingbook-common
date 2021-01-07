@@ -11,8 +11,6 @@ package imagingbook.pub.edgepreservingfilters;
 
 import static imagingbook.lib.math.Arithmetic.sqr;
 
-
-import ij.process.ColorProcessor;
 import imagingbook.lib.filter.GenericFilterVector;
 import imagingbook.lib.image.access.PixelPack;
 import imagingbook.pub.edgepreservingfilters.KuwaharaF.Parameters;
@@ -35,12 +33,11 @@ public class KuwaharaFilterVector extends GenericFilterVector {
 	private final float tsigma;
 
 	// constructor using default settings
-	public KuwaharaFilterVector(ColorProcessor ip) {
-		this(ip, new Parameters());
+	public KuwaharaFilterVector() {
+		this(new Parameters());
 	}
 	
-	public KuwaharaFilterVector(ColorProcessor ip, Parameters params) {
-		super(PixelPack.pack(ip, params.obs));
+	public KuwaharaFilterVector(Parameters params) {
 		int r = params.radius;
 		this.n = sqr(r + 1);	// size of complete filter
 		this.dm = (r / 2) - r;			// d- = top/left center coordinate

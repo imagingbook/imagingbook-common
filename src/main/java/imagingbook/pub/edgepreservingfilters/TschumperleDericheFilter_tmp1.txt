@@ -80,13 +80,12 @@ public class TschumperleDericheFilter_tmp1 extends GenericFilterVector {
 	private float initial_min;
 	
 	// constructor - uses only default settings:
-	public TschumperleDericheFilter_tmp1(ColorProcessor ip) {
-		this(ip, new Parameters());
+	public TschumperleDericheFilter_tmp1() {
+		this(new Parameters());
 	}
 	
 	// constructor - use for setting individual parameters:
-	public TschumperleDericheFilter_tmp1(ColorProcessor ip, Parameters params) {
-		super(PixelPack.pack(ip, null));
+	public TschumperleDericheFilter_tmp1(Parameters params) {
 		this.params = params;
 		this.imgProc = ip;
 		this.T = params.iterations;

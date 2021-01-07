@@ -37,12 +37,11 @@ public class BilateralFilterScalar extends GenericFilterScalar {
 	private final int K;		// the domain kernel size [-K,...,K]
 	private final double sigmaR2;
 	
-	public BilateralFilterScalar(ImageProcessor ip) {
-		this(ip, new Parameters());
+	public BilateralFilterScalar() {
+		this(new Parameters());
 	}
 	
-	public BilateralFilterScalar(ImageProcessor ip, Parameters params) {
-		super(PixelPack.pack(ip, params.obs));
+	public BilateralFilterScalar(Parameters params) {
 		GaussianKernel2D kernel = new GaussianKernel2D(params.sigmaD);
 		this.Hd = kernel.getH();
 		this.K = kernel.getXc();

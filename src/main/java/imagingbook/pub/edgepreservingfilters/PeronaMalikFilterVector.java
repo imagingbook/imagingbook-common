@@ -11,9 +11,7 @@ package imagingbook.pub.edgepreservingfilters;
 
 import static imagingbook.lib.math.Matrix.subtract;
 
-import ij.process.ColorProcessor;
 import imagingbook.lib.filter.GenericFilterVector;
-import imagingbook.lib.image.access.PixelPack;
 import imagingbook.lib.math.Matrix;
 import imagingbook.pub.edgepreservingfilters.PeronaMalikF.ColorMode;
 import imagingbook.pub.edgepreservingfilters.PeronaMalikF.ConductanceFunction;
@@ -41,13 +39,12 @@ public class PeronaMalikFilterVector extends GenericFilterVector {
 	private ColorMode colorMode;
 	
 	// constructor - using default parameters
-	public PeronaMalikFilterVector (ColorProcessor ip) {
-		this(ip, new Parameters());
+	public PeronaMalikFilterVector () {
+		this(new Parameters());
 	}
 	
 	// constructor - use this version to set all parameters
-	public PeronaMalikFilterVector (ColorProcessor ip, Parameters params) {
-		super(PixelPack.pack(ip, params.obs));
+	public PeronaMalikFilterVector (Parameters params) {
 		this.T = params.iterations;
 		this.alpha = params.alpha;
 		this.g = ConductanceFunction.get(params.conductanceFunType, params.kappa);

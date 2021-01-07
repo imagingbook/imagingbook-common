@@ -5,10 +5,6 @@ import imagingbook.lib.image.access.PixelPack;
 public abstract class GenericFilterVector extends GenericFilter {
 	
 	PixelPack target = null;
-
-	public GenericFilterVector(PixelPack pp) {
-		super(pp);
-	}
 	
 	@Override
 	protected void makeTarget() {

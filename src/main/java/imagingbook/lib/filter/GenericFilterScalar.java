@@ -1,16 +1,11 @@
 package imagingbook.lib.filter;
 
-import imagingbook.lib.image.access.PixelPack;
 import imagingbook.lib.image.access.PixelPack.PixelSlice;
 
 public abstract class GenericFilterScalar extends GenericFilter {
 	
 	protected PixelSlice source = null;	// TODO: rethink, has the same name as super, use getSource() method instead!
 	protected PixelSlice target = null;
-	
-	protected GenericFilterScalar(PixelPack pp) {
-		super(pp);
-	}
 	
 //	protected <T extends PixelPack> PixelPack getSource() {
 //		return this.source;

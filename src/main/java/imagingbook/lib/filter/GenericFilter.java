@@ -1,6 +1,7 @@
 package imagingbook.lib.filter;
 
 import ij.process.ImageProcessor;
+import imagingbook.lib.image.access.OutOfBoundsStrategy;
 import imagingbook.lib.image.access.PixelPack;
 
 public abstract class GenericFilter {
@@ -30,27 +31,6 @@ public abstract class GenericFilter {
 	}
 	
 	// -----------------------------------------------------------------------------------
-	@Deprecated
-	public void apply() {
-		makeTarget();
-		if (pass > 0) {
-			throw new IllegalStateException("filter has already been applied");
-		}
-		try {
-			pass = 0;
-			while (!finished()) {
-				setupPass();
-				doPass();
-				pass++;
-			}
-		} catch (AbortFilterException e) {};
-		// the filter's result is to be found in 'source'
-		ImageProcessor ip = source.getIp();
-		if (ip != null) {	// source has an IP attached, so we need to copy back
-			source.copyToIp(ip);
-		}
-		closeFilter();
-	}
 	
 	public void applyTo(PixelPack source) {
 		this.source = source;
@@ -64,8 +44,20 @@ public abstract class GenericFilter {
 			}
 		} catch (AbortFilterException e) {};
 		// the filter's result is to be found in 'source'
-		source.updateImageProcessor();
+		//source.updateImageProcessor();
 		closeFilter();
+	}
+	
+	// -----------------------------------------------------------------------------------
+	
+	public void applyTo(ImageProcessor ip) {
+		applyTo(ip, PixelPack.DefaultOutOfBoundsStrategy);
+	}
+	
+	public void applyTo(ImageProcessor ip, OutOfBoundsStrategy obs) {
+		PixelPack pp = PixelPack.pack(ip, obs);
+		applyTo(pp);
+		pp.copyToImageProcessor(ip);
 	}
 
 	// -----------------------------------------------------------------------------------

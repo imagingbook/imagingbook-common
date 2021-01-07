@@ -1,6 +1,5 @@
 package imagingbook.lib.filters;
 
-import static imagingbook.lib.image.access.PixelPack.pack;
 import static org.junit.Assert.assertTrue;
 
 import java.nio.file.Path;
@@ -31,7 +30,7 @@ public class GaussianFilterTest {
 		ImageProcessor ipB = IjUtils.openImage(path1B).getProcessor();
 		
 		//new GaussianFilter(ipA, SIGMA).apply();
-		new GaussianFilter(SIGMA).applyTo(pack(ipA));
+		new GaussianFilter(SIGMA).applyTo(ipA);
 		assertTrue(ImageTests.match(ipA, ipB, TOL));
 	}
 	
@@ -40,7 +39,7 @@ public class GaussianFilterTest {
 		ImageProcessor ipA = IjUtils.openImage(path2A).getProcessor();
 		ImageProcessor ipB = IjUtils.openImage(path2B).getProcessor();
 		
-		new GaussianFilter(SIGMA).applyTo(pack(ipA));
+		new GaussianFilter(SIGMA).applyTo(ipA);
 		assertTrue(ImageTests.match(ipA, ipB, TOL));
 	}
 	
@@ -51,7 +50,7 @@ public class GaussianFilterTest {
 		ImageProcessor ipA = IjUtils.openImage(path1A).getProcessor();
 		ImageProcessor ipB = IjUtils.openImage(path1B).getProcessor();
 		
-		new GaussianFilter(SIGMA).applyTo(pack(ipA));
+		new GaussianFilter(SIGMA).applyTo(ipA);
 		assertTrue(ImageTests.match(ipA, ipB, TOL));
 	}
 
@@ -60,7 +59,7 @@ public class GaussianFilterTest {
 		ImageProcessor ipA = IjUtils.openImage(path2A).getProcessor();
 		ImageProcessor ipB = IjUtils.openImage(path2B).getProcessor();
 		
-		new GaussianFilter(SIGMA).applyTo(pack(ipA));
+		new GaussianFilter(SIGMA).applyTo(ipA);
 		assertTrue(ImageTests.match(ipA, ipB, TOL));
 	}
 }

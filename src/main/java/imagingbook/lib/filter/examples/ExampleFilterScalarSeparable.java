@@ -1,15 +1,17 @@
 package imagingbook.lib.filter.examples;
 
-import ij.process.ImageProcessor;
 import imagingbook.lib.filter.GenericFilterScalar;
-import imagingbook.lib.image.access.OutOfBoundsStrategy;
-import imagingbook.lib.image.access.PixelPack;
+import imagingbook.lib.filter.linear.LinearFilterSeparable;
 import imagingbook.lib.image.access.PixelPack.PixelSlice;
 
+/**
+ * See also {@link LinearFilterSeparable}.
+ * @author WB
+ *
+ */
 public class ExampleFilterScalarSeparable extends GenericFilterScalar {
 
-	protected ExampleFilterScalarSeparable(ImageProcessor ip, OutOfBoundsStrategy obs) {
-		super(PixelPack.pack(ip, obs));
+	protected ExampleFilterScalarSeparable() {
 	}
 
 	@Override

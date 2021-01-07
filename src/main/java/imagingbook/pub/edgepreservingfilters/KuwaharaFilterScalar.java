@@ -9,9 +9,7 @@
 
 package imagingbook.pub.edgepreservingfilters;
 
-import ij.process.ImageProcessor;
 import imagingbook.lib.filter.GenericFilterScalar;
-import imagingbook.lib.image.access.PixelPack;
 import imagingbook.lib.image.access.PixelPack.PixelSlice;
 import imagingbook.pub.edgepreservingfilters.KuwaharaF.Parameters;
 
@@ -33,12 +31,11 @@ public class KuwaharaFilterScalar extends GenericFilterScalar {
 	private final float tsigma;
 
 	// constructor using default settings
-	public KuwaharaFilterScalar(ImageProcessor ip) {
-		this(ip, new Parameters());
+	public KuwaharaFilterScalar() {
+		this(new Parameters());
 	}
 	
-	public KuwaharaFilterScalar(ImageProcessor ip, Parameters params) {
-		super(PixelPack.pack(ip, params.obs));
+	public KuwaharaFilterScalar(Parameters params) {
 		int r = params.radius;
 		this.n = (r + 1) * (r + 1);		// size of complete filter
 		this.dm = (r / 2) - r;			// d- = top/left center coordinate

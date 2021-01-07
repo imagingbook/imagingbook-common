@@ -157,12 +157,13 @@ public class PixelPack {
 		return nh;
 	}
 	
-	@Deprecated
-	public void copyToIp(ImageProcessor ip2) {
-		copyToImageProcessor(this.pixels, ip2);
+	public void copyToImageProcessor(ImageProcessor ip) {
+		// TODO: check compatibility
+		copyToImageProcessor(this.pixels, ip);
 	}
 	
 	// write contents back to source ImageProcessor (if exists)
+	@Deprecated
 	public void updateImageProcessor() {
 		if (this.ip != null) {
 			copyToImageProcessor(this.pixels, this.ip);

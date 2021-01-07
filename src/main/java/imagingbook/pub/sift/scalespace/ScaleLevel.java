@@ -10,8 +10,7 @@
 package imagingbook.pub.sift.scalespace;
 
 import ij.process.FloatProcessor;
-import imagingbook.lib.filter.linear.GaussianFilter;
-import imagingbook.lib.image.access.PixelPack;
+import imagingbook.lib.filter.linear.GaussianFilterSeparable;
 
 
 /**
@@ -56,7 +55,7 @@ public class ScaleLevel extends FloatProcessor {	// TODO: make IJ independent, u
 	// ------------------------------
 
 	public void filterGaussian(double sigma) {
-		new GaussianFilter(sigma).applyTo(PixelPack.pack(this));	// TODO: validate change!
+		new GaussianFilterSeparable(sigma).applyTo(this);	// TODO: validate change!
 	}
 	
 	public ScaleLevel duplicate() {

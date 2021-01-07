@@ -9,9 +9,7 @@
 
 package imagingbook.pub.edgepreservingfilters;
 
-import ij.process.ImageProcessor;
 import imagingbook.lib.filter.GenericFilterScalar;
-import imagingbook.lib.image.access.PixelPack;
 import imagingbook.pub.edgepreservingfilters.PeronaMalikF.ConductanceFunction;
 import imagingbook.pub.edgepreservingfilters.PeronaMalikF.Parameters;
 
@@ -38,13 +36,12 @@ public class PeronaMalikFilterScalar extends GenericFilterScalar {
 	private final ConductanceFunction g;
 	
 	// constructor - using default parameters
-	public PeronaMalikFilterScalar (ImageProcessor ip) {
-		this(ip, new Parameters());
+	public PeronaMalikFilterScalar () {
+		this(new Parameters());
 	}
 	
 	// constructor - use this version to set all parameters
-	public PeronaMalikFilterScalar (ImageProcessor ip, Parameters params) {
-		super(PixelPack.pack(ip, params.obs));
+	public PeronaMalikFilterScalar (Parameters params) {
 		this.T = params.iterations;
 		this.alpha = params.alpha;
 		this.g = ConductanceFunction.get(params.conductanceFunType, params.kappa);

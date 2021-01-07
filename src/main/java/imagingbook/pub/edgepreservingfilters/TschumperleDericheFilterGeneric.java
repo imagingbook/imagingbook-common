@@ -86,11 +86,11 @@ public class TschumperleDericheFilterGeneric extends GenericFilter {
 	
 	// constructor - uses only default settings:
 	public TschumperleDericheFilterGeneric(ImageProcessor ip) {
-		this(ip, new Parameters());
+		this(new Parameters());
 	}
 	
 	// constructor - use for setting individual parameters:
-	public TschumperleDericheFilterGeneric(ImageProcessor ip, Parameters params) {
+	public TschumperleDericheFilterGeneric(Parameters params) {
 		this.params = params;
 		this.T = params.iterations;
 		this.M = source.getWidth(); 

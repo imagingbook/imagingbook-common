@@ -1,25 +1,21 @@
 package imagingbook.lib.filter.examples;
 
-import ij.process.ImageProcessor;
 import imagingbook.lib.filter.GenericFilterScalar;
-import imagingbook.lib.image.access.OutOfBoundsStrategy;
-import imagingbook.lib.image.access.PixelPack;
 
 public class ExampleFilterScalar extends GenericFilterScalar {
 	
-	public ExampleFilterScalar(ImageProcessor ip, OutOfBoundsStrategy obs) {
-		super(PixelPack.pack(ip, obs));
+	public ExampleFilterScalar() {
 	}
-
-	int width = 3;
-	int height = 3;
-	int xc = 1;
-	int yc = 1;
 	
 	static float[][] H = {
 			{1, 2, 1},
 			{2, 4, 2},
 			{1, 2, 1}};
+	
+	int width = 3;
+	int height = 3;
+	int xc = 1;
+	int yc = 1;
 	
 	@Override
 	protected float doPixel(int u, int v) {

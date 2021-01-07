@@ -25,8 +25,8 @@ public class ColorMedianFilterTest {
 		params.radius = 3.0;
 		params.obs = OutOfBoundsStrategy.NEAREST_BORDER;
 		
-		ScalarMedianFilter filter = new ScalarMedianFilter(ipA, params);
-		filter.apply();
+		ScalarMedianFilter filter = new ScalarMedianFilter(params);
+		filter.applyTo(ipA);
 		assertTrue(ImageTests.match(ipA, ipB, 1E-6));
 	}
 	
@@ -42,8 +42,8 @@ public class ColorMedianFilterTest {
 		params.obs = OutOfBoundsStrategy.NEAREST_BORDER;
 		params.distanceNorm = NormType.L1;
 		
-		VectorMedianFilter filter = new VectorMedianFilter(ipA, params);
-		filter.apply();
+		VectorMedianFilter filter = new VectorMedianFilter(params);
+		filter.applyTo(ipA);
 		assertTrue(ImageTests.match(ipA, ipB, 1E-6));
 	}
 	
@@ -61,8 +61,8 @@ public class ColorMedianFilterTest {
 		params.sharpen = 0.5;
 		params.threshold = 0.0;	
 		
-		VectorMedianFilterSharpen filter = new VectorMedianFilterSharpen(ipA, params);
-		filter.apply();
+		VectorMedianFilterSharpen filter = new VectorMedianFilterSharpen(params);
+		filter.applyTo(ipA);
 		assertTrue(ImageTests.match(ipA, ipB, 1E-6));
 	}
 

@@ -38,12 +38,11 @@ public class BilateralFilterVectorSeparable extends GenericFilterVectorSeparable
 	private final VectorNorm colorNorm;
 	private final double colorScale2;
 	
-	public BilateralFilterVectorSeparable(ColorProcessor ip) {
-		this(ip, new Parameters());
+	public BilateralFilterVectorSeparable() {
+		this(new Parameters());
 	}
 	
-	public BilateralFilterVectorSeparable(ColorProcessor ip, Parameters params) {
-		super(PixelPack.pack(ip, params.obs));
+	public BilateralFilterVectorSeparable(Parameters params) {
 		GaussianKernel1D kernel = new GaussianKernel1D(params.sigmaD);
 		this.Hd = kernel.getH();
 		this.K = kernel.getXc();
