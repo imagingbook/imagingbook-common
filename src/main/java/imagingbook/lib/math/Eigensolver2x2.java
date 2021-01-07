@@ -53,13 +53,16 @@ public class Eigensolver2x2 {
 	
 	/**
 	 * Constructor, takes the individual elements of a 2x2 matrix.
+	 * <pre>
+	 *   A B
+	 *   C D<pre>
 	 * @param A matrix element M[0,0]
 	 * @param B matrix element M[0,1]
 	 * @param C matrix element M[1,0]
 	 * @param D matrix element M[1,1]
 	 */
 	public Eigensolver2x2(double A, double B, double C, double D) {
-		isReal = solve(A, B, C, D);
+		this.isReal = this.solve(A, B, C, D);
 	}
 	
 	private boolean solve(double A, double B, double C, double D) {
@@ -72,15 +75,15 @@ public class Eigensolver2x2 {
 		}
 		
 		final double T = Math.sqrt(rho);
-		eVals[0] = R + T;
-		eVals[1] = R - T;
+		this.eVals[0] = R + T;
+		this.eVals[1] = R - T;
 		if (A - D > 0) {
-			eVecs[0] = new double[] { S + T, C };
-			eVecs[1] = new double[] { B, -S - T };
+			this.eVecs[0] = new double[] { S + T, C };
+			this.eVecs[1] = new double[] { B, -S - T };
 		}
 		else if (A - D < 0) {
-			eVecs[0] = new double[] { B, -S + T};
-			eVecs[1] = new double[] { S - T, C};
+			this.eVecs[0] = new double[] { B, -S + T};
+			this.eVecs[1] = new double[] { S - T, C};
 		}
 		else {		// (A - D) == 0
 			
@@ -88,16 +91,16 @@ public class Eigensolver2x2 {
 			final double aC = Math.abs(C);
 			final double sBC = Math.sqrt(B * C);
 			if (aB < aC) {							// |B| < |C|
-				eVecs[0] = new double[] { sBC, C};
-				eVecs[1] = new double[] {-sBC, C};
+				this.eVecs[0] = new double[] { sBC, C};
+				this.eVecs[1] = new double[] {-sBC, C};
 			}
 			else if (aB > aC) { 					// |B| > |C|
-				eVecs[0] = new double[] { B,  sBC};
-				eVecs[1] = new double[] { B, -sBC};
+				this.eVecs[0] = new double[] { B,  sBC};
+				this.eVecs[1] = new double[] { B, -sBC};
 			}
 			else {									// |B| == |C|
-				eVecs[0] = new double[] { C, C};
-				eVecs[1] = new double[] {-C, C};
+				this.eVecs[0] = new double[] { C, C};
+				this.eVecs[1] = new double[] {-C, C};
 			}
 		}
 		return true;
@@ -115,13 +118,21 @@ public class Eigensolver2x2 {
 	/**
 	 * Returns a vector holding the two real eigenvalues. Both are
 	 * {@code NaN} if the associated matrix has no real eigenvalues.
-	 * The first eigenvalue is the greater of the two.
+	 * Otherwise the first eigenvalue is the greater of the two.
 	 * Note that the method returns a reference to an internal
-	 * array and should thus be used read-only!
+	 * array and thus results should be used read-only!
 	 * @return a 2-element array of eigenvalues
 	 */
 	public double[] getEigenvalues() {
 		return this.eVals;
+	}
+	
+	public double getEigenvalue1() {
+		return this.eVals[0];
+	}
+	
+	public double getEigenvalue2() {
+		return this.eVals[1];
 	}
 	
 	/**
@@ -136,11 +147,19 @@ public class Eigensolver2x2 {
 	 * The ordering of the returned eigenvectors is the same as for the
 	 * eigenvalues returned by {@link #getEigenvalues()}.
 	 * Note that the method returns a reference to an internal
-	 * array and should thus be used read-only!
+	 * array and thus results should be used read-only!
 	 * @return a 2-element array of 2D eigenvectors
 	 */
 	public double[][] getEigenvectors() {
 		return this.eVecs;
+	}
+	
+	public double[] getEigenvector1() {
+		return this.eVecs[0];
+	}
+	
+	public double[] getEigenvector2() {
+		return this.eVecs[1];
 	}
 		
 	// for Testing only --------------------------------------------------------------

@@ -36,14 +36,18 @@ public class TschumperleDericheFilter extends GenericFilter {
 	private int M;				// image width
 	private int N;				// image height
 	private int K;				// number of color channels (any, but typ. 1 or 3)
+	
 	private PixelPack Dx, Dy;
+	private PixelPack G;		// structure matrix as (u,v) with 3 elements
+	
 	private GenericFilterScalar filterDx, filterDy;
 	private GenericFilterScalar gradientBlurFilter;
 	private GenericFilterScalar structureBlurFilter;
-	private PixelPack G;		// structure matrix as (u,v) with 3 elements
 	
 	private int T;		// number of iterations
 	private float alpha;
+	private double a1, a2;
+	private PixelPack source, target;
 	
 	// constructor - uses only default settings:
 	public TschumperleDericheFilter(ImageProcessor ip) {
@@ -57,12 +61,17 @@ public class TschumperleDericheFilter extends GenericFilter {
 	
 	@Override
 	protected void initFilter(PixelPack sourcePack, PixelPack targetPack) {	// called by {@link GenericFilter}
+		this.source = sourcePack;
+		this.target = targetPack;
+		
 		this.M = this.getWidth(); 
 		this.N = this.getHeight(); 
 		this.K = this.getDepth();
 		
 		this.T = params.iterations;
 		this.alpha = params.initialAlpha;
+		this.a1 = params.a1;
+		this.a2 = params.a2;
 		
 		this.Dx = new PixelPack(sourcePack, false);	// container for X/Y-derivatives
 		this.Dy = new PixelPack(sourcePack, false);
@@ -144,17 +153,19 @@ public class TschumperleDericheFilter extends GenericFilter {
 	}
 	
 	private float[] getGeometryMatrix(int u, int v) {
-		double[] lambda12 = new double[2]; 		// eigenvalues
-		double[] evec1 = new double[2];			// eigenvector 1
-		double a1 = params.a1;
-		double a2 = params.a2;
-		
 		float[] Guv = G.getPixel(u, v); // 3 elements of local geometry matrix (2x2)
-		// calculate the 2 eigenvalues lambda1, lambda2 and the greater eigenvector e1
-		getEigenValues2x2(Guv[0], Guv[1], Guv[1], Guv[2], lambda12, evec1);
-		normalize(evec1);
 		
-		double arg = 1.0 + lambda12[0] + lambda12[1];	// 1 + lambda_1 + lambda_2
+		// calculate the 2 eigenvalues lambda1, lambda2 and the greater eigenvector e1
+		Eigensolver2x2 solver = new Eigensolver2x2(Guv[0], Guv[1], Guv[1], Guv[2]);
+		if (!solver.isReal()) {
+			throw new RuntimeException("undefined eigenvalues in " + 
+					this.getClass().getSimpleName());
+		}
+		double lambda1 = solver.getEigenvalue1();
+		double lambda2 = solver.getEigenvalue2();
+		double[] evec1 = solver.getEigenvector1();
+		normalize(evec1);		
+		double arg = 1.0 + lambda1 + lambda2;	// 1 + lambda_1 + lambda_2
 		float c1 = (float) Math.pow(arg, -a1);
 		float c2 = (float) Math.pow(arg, -a2);
 		
@@ -185,33 +196,13 @@ public class TschumperleDericheFilter extends GenericFilter {
 	
 	// --------------------------------------------------------------------------
 	
-	private void getEigenValues2x2 (		// TODO: not optimal, revise!
-			double A, double B, double C, double D, 
-			double[] lam12, double[] x1) {
-		Eigensolver2x2 solver = new Eigensolver2x2(A, B, C, D);
-		if (solver.isReal()) {
-			copyFromTo(solver.getEigenvalues(), lam12);
-			double[][] evecs = solver.getEigenvectors();
-			copyFromTo(evecs[0], x1);
-			//copyFromTo(evecs[1], x2);
-		}
-		else {
-			throw new RuntimeException("eigenvalues undefined in " + 
-					this.getClass().getSimpleName());
-		}
-	}
-	
 	private void normalize(double[] vec) {
 		double norm = Matrix.normL2(vec);
-		if (norm > 0.000001) {
+		if (norm > 1E-6) {
 			for (int i = 0; i < vec.length; i++) {
 				vec[i] = vec[i] / norm;
 			}
 		}
-	}
-	
-	private void copyFromTo(double[] a, double[] b) {
-		System.arraycopy(a, 0, b, 0, a.length);
 	}
 	
 	// ----------------------------------------------------------------------
@@ -228,7 +219,6 @@ public class TschumperleDericheFilter extends GenericFilter {
 		this.Dy = null;
 		this.G = null;
 	}
-
 
 }
 
