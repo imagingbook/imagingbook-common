@@ -10,6 +10,7 @@
 package imagingbook.pub.edgepreservingfilters;
 
 import imagingbook.lib.filter.GenericFilterScalar;
+import imagingbook.lib.image.access.PixelPack.PixelSlice;
 import imagingbook.pub.edgepreservingfilters.PeronaMalikF.ConductanceFunction;
 import imagingbook.pub.edgepreservingfilters.PeronaMalikF.Parameters;
 
@@ -50,7 +51,7 @@ public class PeronaMalikFilterScalar extends GenericFilterScalar {
 	// ------------------------------------------------------
 	
 	@Override
-	protected float doPixel(int u, int v) {
+	protected float doPixel(PixelSlice plane, int u, int v) {
 		/*   
 		 *  NH pixels:      directions:
 		 *      p4              3
@@ -58,11 +59,11 @@ public class PeronaMalikFilterScalar extends GenericFilterScalar {
 		 *      p2              1
 		 */
 		float[] p = new float[5];
-		p[0] = source.getVal(u, v);
-		p[1] = source.getVal(u + 1, v);
-		p[2] = source.getVal(u, v + 1);
-		p[3] = source.getVal(u - 1, v);
-		p[4] = source.getVal(u, v - 1);
+		p[0] = plane.getVal(u, v);
+		p[1] = plane.getVal(u + 1, v);
+		p[2] = plane.getVal(u, v + 1);
+		p[3] = plane.getVal(u - 1, v);
+		p[4] = plane.getVal(u, v - 1);
 			
 		float result = p[0];
 		for (int i = 1; i <= 4; i++) {

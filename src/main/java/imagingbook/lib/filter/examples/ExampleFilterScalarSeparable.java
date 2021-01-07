@@ -7,18 +7,15 @@ import imagingbook.lib.image.access.PixelPack.PixelSlice;
 /**
  * See also {@link LinearFilterSeparable}.
  * @author WB
- *
+ * @deprecated
  */
 public class ExampleFilterScalarSeparable extends GenericFilterScalar {
 
-	protected ExampleFilterScalarSeparable() {
-	}
-
 	@Override
-	protected float doPixel(int u, int v) {
+	protected float doPixel(PixelSlice plane, int u, int v) {
 		switch (getPass()) {
-		case 0: return filterPixelX(source, u, v);
-		case 1: return filterPixelY(source, u, v);
+		case 0: return filterPixelX(plane, u, v);	// TODO: check if we nneed to copy back this plane??
+		case 1: return filterPixelY(plane, u, v);
 		default: throw new RuntimeException("invalid pass number " + getPass());
 		}
 	}

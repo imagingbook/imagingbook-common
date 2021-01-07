@@ -42,12 +42,12 @@ public class NagaoMatsuyamaFilterScalar extends GenericFilterScalar {
 	// ------------------------------------------------------
 
 	@Override
-	protected float doPixel(int u, int v) {
-		minVariance = Float.MAX_VALUE;
-		evalSubregion(source, R0, u, v);
+	protected float doPixel(PixelSlice plane, int u, int v) {
+		minVariance = Float.POSITIVE_INFINITY;
+		evalSubregion(plane, R0, u, v);
 		minVariance = minVariance - varThreshold;
 		for (int[][] Rk : SubRegions) {
-			evalSubregion(source, Rk, u, v);
+			evalSubregion(plane, Rk, u, v);
 		}
  		return minMean;
  	}

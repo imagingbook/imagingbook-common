@@ -16,6 +16,7 @@ import imagingbook.lib.filter.GenericFilter;
 import imagingbook.lib.filter.GenericFilterScalar;
 import imagingbook.lib.image.access.OutOfBoundsStrategy;
 import imagingbook.lib.image.access.PixelPack;
+import imagingbook.lib.image.access.PixelPack.PixelSlice;
 
 /**
  * Ordinary (scalar) median filter for color images implemented
@@ -60,14 +61,14 @@ public class ScalarMedianFilter extends GenericFilterScalar {
 	//-------------------------------------------------------------------------------------
 	
 	@Override
-	protected float doPixel(int u, int v) {
+	protected float doPixel(PixelSlice plane, int u, int v) {
 		int k = 0;
 		for (int i = 0; i < maskArray.length; i++) {
 			int ui = u + i - xc;
 			for (int j = 0; j < maskArray[0].length; j++) {
 				if (maskArray[i][j] > 0) {
 					int vj = v + j - yc;
-					supportRegion[k] = source.getVal(ui, vj);
+					supportRegion[k] = plane.getVal(ui, vj);
 					k = k + 1;
 				}
 			}

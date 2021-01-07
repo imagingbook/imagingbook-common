@@ -9,15 +9,11 @@ import imagingbook.lib.image.access.PixelPack.PixelSlice;
  */
 public abstract class GenericFilterScalarSeparable extends GenericFilterScalar {
 
-	public GenericFilterScalarSeparable() {
-		super();
-	}
-
 	@Override
-	protected final float doPixel(int u, int v) {
+	protected final float doPixel(PixelSlice plane, int u, int v) {
 		switch (getPass()) {
-		case 0: return filterPixelX(source, u, v);
-		case 1: return filterPixelY(source, u, v);
+		case 0: return filterPixelX(plane, u, v);
+		case 1: return filterPixelY(plane, u, v);
 		default: throw new RuntimeException("invalid pass number " + getPass());
 		}
 	}

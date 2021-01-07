@@ -96,8 +96,8 @@ public class TschumperleDericheFilterGeneric extends GenericFilter {
 		this.M = source.getWidth(); 
 		this.N = source.getHeight(); 
 		this.K = source.getDepth();
-		this.Dx = this.source.getEmptyCopy();
-		this.Dy = this.source.getEmptyCopy();
+		this.Dx = new PixelPack(this.source);
+		this.Dy = new PixelPack(this.source);
 		this.G = new PixelPack(M, N, 3, null);	// structure matrix as (u,v) with 3 elements
 		this.A = new PixelPack(M, N, 3, null);	// geometry matrix at (u,v) with 3 elements
 		
@@ -340,9 +340,6 @@ public class TschumperleDericheFilterGeneric extends GenericFilter {
 //		initial_min = min;
 //	}
 
-	@Override
-	protected void makeTarget() {
-		// no target needed
-	}
+
 }
 

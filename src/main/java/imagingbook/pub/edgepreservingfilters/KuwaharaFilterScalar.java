@@ -49,14 +49,14 @@ public class KuwaharaFilterScalar extends GenericFilterScalar {
 	private float Amin;			
 	
 	@Override
-	protected float doPixel(int u, int v) {
+	protected float doPixel(PixelSlice plane, int u, int v) {
 		Smin = Float.MAX_VALUE;
-		evalSubregionGray(source, u, v);		// a centered subregion (not in original Kuwahara)
+		evalSubregionGray(plane, u, v);		// a centered subregion (not in original Kuwahara)
 		Smin = Smin - tsigma * n;				// tS * n because we use variance scaled by n
-		evalSubregionGray(source, u + dm, v + dm);
-		evalSubregionGray(source, u + dm, v + dp);
-		evalSubregionGray(source, u + dp, v + dm);
-		evalSubregionGray(source, u + dp, v + dp);
+		evalSubregionGray(plane, u + dm, v + dm);
+		evalSubregionGray(plane, u + dm, v + dp);
+		evalSubregionGray(plane, u + dp, v + dm);
+		evalSubregionGray(plane, u + dp, v + dp);
 		
  		return Amin;
  	} 

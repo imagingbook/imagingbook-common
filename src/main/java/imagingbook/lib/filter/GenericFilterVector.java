@@ -1,15 +1,6 @@
 package imagingbook.lib.filter;
 
-import imagingbook.lib.image.access.PixelPack;
-
 public abstract class GenericFilterVector extends GenericFilter {
-	
-	PixelPack target = null;
-	
-	@Override
-	protected void makeTarget() {
-		this.target = source.getEmptyCopy();
-	}
 
 	@Override 
 	protected void doPass() {
@@ -21,7 +12,7 @@ public abstract class GenericFilterVector extends GenericFilter {
 				target.setPixel(u, v, doPixel(u, v)); // single pixel operation
 			}
 		}
-		target.copyTo(source);	// copy targets back to sources
+		//target.copyTo(source);	// this is done in super-class
 	}
 	
 	// calculate the result vector for a single pixel
@@ -31,7 +22,7 @@ public abstract class GenericFilterVector extends GenericFilter {
 	
 	// -----------------------------------------------------------------
 	
-	// helper method for copying vector pixels
+	// helper method for copying vector pixels, TODO: move to Utils or so
 	public void copyPixel(float[] source, float[] target) {
 		System.arraycopy(source, 0, target, 0, source.length);
 	}

@@ -47,9 +47,8 @@ public class LinearFilterTest {
 		ImageProcessor ipA = IjUtils.openImage(path1A).getProcessor();
 		ImageProcessor ipB = IjUtils.openImage(path1B).getProcessor();
 		float[][] H = H2;
-		ImageProcessor ipAf = ipA.duplicate();
-		new LinearFilter(new Kernel2D(H)).applyTo(ipAf, OBS);
-		assertTrue(ImageTests.match(ipAf, ipB, 1E-6));
+		new LinearFilter(new Kernel2D(H)).applyTo(ipA, OBS);
+		assertTrue(ImageTests.match(ipA, ipB, 1E-6));
 	}
 	
 	@Test

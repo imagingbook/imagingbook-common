@@ -9,25 +9,20 @@ import ij.process.ImageProcessor;
 import ij.process.ShortProcessor;
 import imagingbook.lib.color.Rgb;
 
-
 public class PixelPack {
 	
 	public static final OutOfBoundsStrategy DefaultOutOfBoundsStrategy = OutOfBoundsStrategy.NEAREST_BORDER;
 
-//	private ImageProcessor ip = null;
 	private final int depth;
 	private final float[][] pixels;
 	private final int length;
-//	private OutOfBoundsStrategy obs;
 	private final GridIndexer2D indexer;
 	
 	// --------------------------------------------------------------------
 	public PixelPack(int width, int height, int depth, OutOfBoundsStrategy obs) {
-//		this.width = width;
-//		this.height = height;
 		this.depth = depth;
 		this.length = width * height;
-		this.pixels = new float[depth][width * height];
+		this.pixels = new float[depth][length];
 		this.indexer = GridIndexer2D.create(width, height, obs);
 	}
 	
@@ -38,7 +33,6 @@ public class PixelPack {
 	public PixelPack(ImageProcessor ip, OutOfBoundsStrategy obs) {
 		this(ip.getWidth(), ip.getHeight(), getDepth(ip), obs);
 		copyFromImageProcessor(ip, this.pixels);
-//		this.ip = ip;
 	}
 	
 	public PixelPack(PixelPack orig) {
@@ -69,15 +63,6 @@ public class PixelPack {
 		return vals;
 	}
 	
-//	public void setPixel(int u, int v, float[] vals) {
-//		final int i = indexer.getIndex(u, v);
-//		if (i >= 0) {
-//			for (int k = 0; k < depth; k++) {
-//				pixels[k][i] = vals[k];
-//			}
-//		}
-//	}
-	
 	public void setPixel(int u, int v, float ... vals) {
 		final int i = indexer.getIndex(u, v);
 		if (i >= 0) {
@@ -87,11 +72,8 @@ public class PixelPack {
 		}
 	}
 	
-	public PixelPack getEmptyCopy() {
-		return new PixelPack(this);
-	}
-	
 	public void copyTo(PixelPack other) {
+		// TODO: check compatibility
 		for (int k = 0; k < this.depth; k++) {
 			System.arraycopy(this.pixels[k], 0, other.pixels[k], 0, this.length);
 		}
@@ -123,10 +105,6 @@ public class PixelPack {
 	public int getDepth() {
 		return this.depth;
 	}
-	
-//	public ImageProcessor getIp() {
-//		return this.ip;
-//	}
 	
 	public OutOfBoundsStrategy getOutOfBoundsStrategy() {
 		return this.indexer.obs;
@@ -162,14 +140,10 @@ public class PixelPack {
 		copyToImageProcessor(this.pixels, ip);
 	}
 	
-//	// write contents back to source ImageProcessor (if exists)
-//	@Deprecated
-//	public void updateImageProcessor() {
-//		if (this.ip != null) {
-//			copyToImageProcessor(this.pixels, this.ip);
-//		}
-//	}
-
+	public static int getDepth(ImageProcessor ip) {
+		return (ip instanceof ColorProcessor) ? 3 : 1;
+	}
+	
 	// -------------------------------------------------------------------
 	
 	public class PixelSlice {
@@ -288,22 +262,6 @@ public class PixelPack {
 	
 	// -------------------------------------------------------------------
 	
-//	@Deprecated
-//	public static PixelPack pack(ImageProcessor ip) {
-//		return pack(ip, DefaultOutOfBoundsStrategy);
-//	}
-	
-	@Deprecated
-	public static PixelPack pack(ImageProcessor ip, OutOfBoundsStrategy obs) {
-		PixelPack pack = new PixelPack(ip.getWidth(), ip.getHeight(), getDepth(ip), obs);
-//		pack.ip = ip;
-		copyFromImageProcessor(ip, pack.pixels);
-		return pack;
-	}
-	
-	
-	// -------------------------------------------------------------------
-	
 //	public static float[][] fromImageProcessor(ImageProcessor ip) {
 //		if (ip instanceof ByteProcessor)
 //			return fromByteProcessor((ByteProcessor)ip);
@@ -355,10 +313,7 @@ public class PixelPack {
 //		return new float[][] {R, G, B};
 //	}
 	
-	public static int getDepth(ImageProcessor ip) {
-		return (ip instanceof ColorProcessor) ? 3 : 1;
-	}
-	
+
 	// --------------------------------------------------------------------
 	
 	public static ImageProcessor copyToImageProcessor(float[][] sources, ImageProcessor ip) {
