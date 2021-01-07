@@ -19,7 +19,7 @@ public class PixelPack {
 	private final float[][] pixels;
 	private final int length;
 //	private OutOfBoundsStrategy obs;
-	private final PixelIndexer indexer;
+	private final GridIndexer2D indexer;
 	
 	// --------------------------------------------------------------------
 	public PixelPack(int width, int height, int depth, OutOfBoundsStrategy obs) {
@@ -28,7 +28,7 @@ public class PixelPack {
 		this.depth = depth;
 		this.length = width * height;
 		this.pixels = new float[depth][width * height];
-		this.indexer = PixelIndexer.create(width, height, obs);
+		this.indexer = GridIndexer2D.create(width, height, obs);
 	}
 	
 	public PixelPack(ImageProcessor ip) {

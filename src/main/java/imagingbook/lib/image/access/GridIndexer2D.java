@@ -22,11 +22,11 @@ package imagingbook.lib.image.access;
  * out-of-image coordinates.
  * 
  */
-public abstract class PixelIndexer implements Cloneable {
+public abstract class GridIndexer2D implements Cloneable {
 	
 	public static final OutOfBoundsStrategy DefaultOutOfBoundsStrategy = OutOfBoundsStrategy.NEAREST_BORDER;
 	
-	public static PixelIndexer create(int width, int height, OutOfBoundsStrategy obs) {
+	public static GridIndexer2D create(int width, int height, OutOfBoundsStrategy obs) {
 		obs = (obs != null) ? obs : DefaultOutOfBoundsStrategy;
 		switch (obs) {
 		case ZERO_VALUE 		: return new ZeroValueIndexer(width, height);
@@ -41,7 +41,7 @@ public abstract class PixelIndexer implements Cloneable {
 	protected final int height;
 	protected final OutOfBoundsStrategy obs;
 
-	private PixelIndexer(int width, int height, OutOfBoundsStrategy obs) {
+	private GridIndexer2D(int width, int height, OutOfBoundsStrategy obs) {
 		this.width = width;
 		this.height = height;
 		this.obs = obs;
@@ -69,7 +69,7 @@ public abstract class PixelIndexer implements Cloneable {
 	 * are taken from the closest border pixel. This is the
 	 * most common method.
 	 */
-	public static class NearestBorderIndexer extends PixelIndexer {
+	public static class NearestBorderIndexer extends GridIndexer2D {
 		
 		NearestBorderIndexer(int width, int height) {
 			super(width, height, OutOfBoundsStrategy.NEAREST_BORDER);
@@ -97,7 +97,7 @@ public abstract class PixelIndexer implements Cloneable {
 	 * This indexer returns out-of-bound pixels taken from
 	 * the mirrored image.
 	 */
-	public static class MirrorImageIndexer extends PixelIndexer {
+	public static class MirrorImageIndexer extends GridIndexer2D {
 		
 		MirrorImageIndexer(int width, int height) {
 			super(width, height, OutOfBoundsStrategy.MIRROR_IMAGE);
@@ -122,7 +122,7 @@ public abstract class PixelIndexer implements Cloneable {
 	 * This indexer returns -1 for out-of-bounds coordinates to
 	 * indicate that a (predefined) default value should be used.
 	 */
-	public static class ZeroValueIndexer extends PixelIndexer {
+	public static class ZeroValueIndexer extends GridIndexer2D {
 		
 		ZeroValueIndexer(int width, int height) {
 			super(width, height, OutOfBoundsStrategy.ZERO_VALUE);
@@ -143,7 +143,7 @@ public abstract class PixelIndexer implements Cloneable {
 	 * This indexer throws an exception if out of bounds pixels
 	 * are accessed.
 	 */
-	public static class ExceptionIndexer extends PixelIndexer {
+	public static class ExceptionIndexer extends GridIndexer2D {
 		
 		ExceptionIndexer(int width, int height) {
 			super(width, height, OutOfBoundsStrategy.THROW_EXCEPTION);

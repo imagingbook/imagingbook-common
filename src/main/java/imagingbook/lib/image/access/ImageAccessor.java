@@ -52,7 +52,7 @@ public abstract class ImageAccessor {
 	protected final ImageProcessor ip;
 	protected final int width;
 	protected final int height;
-	protected final PixelIndexer indexer;		// implements the specified OutOfBoundsStrategy
+	protected final GridIndexer2D indexer;		// implements the specified OutOfBoundsStrategy
 	protected final OutOfBoundsStrategy outOfBoundsStrategy;
 	protected final InterpolationMethod interpolationMethod;
 	
@@ -94,7 +94,7 @@ public abstract class ImageAccessor {
 		this.height = ip.getHeight();
 		this.outOfBoundsStrategy = (obs != null) ? obs : DefaultOutOfBoundsStrategy;
 		this.interpolationMethod = (ipm != null) ? ipm : DefaultInterpolationMethod;
-		this.indexer = PixelIndexer.create(width, height, this.outOfBoundsStrategy);
+		this.indexer = GridIndexer2D.create(width, height, this.outOfBoundsStrategy);
 	}
 	
 	/**
