@@ -19,8 +19,8 @@ public abstract class GenericFilterVectorSeparable extends GenericFilterVector {
 	}
 	
 	@Override
-	protected final boolean finished() {
-		return (getPass() >= 2);	// do exactly 2 passes
+	protected final int passesRequired() {
+		return 2;	// do exactly 2 passes
 	}
 	
 	// ------------------------------------------------------------------------

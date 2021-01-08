@@ -3,7 +3,8 @@ package imagingbook.lib.filter.examples;
 import imagingbook.lib.filter.GenericFilterScalar;
 import imagingbook.lib.image.access.PixelPack.PixelSlice;
 
-public class ExampleFilterScalar extends GenericFilterScalar {
+public class ExampleFilterScalar extends GenericFilterScalar //implements ReportsProgress
+{
 	
 	static float[][] H = {
 			{1, 2, 1},
@@ -26,6 +27,41 @@ public class ExampleFilterScalar extends GenericFilterScalar {
 			}
 		}
 		return sum / 16;
+	}
+	
+	// -----------------------------------------------------------------
+	
+	int done = 0;
+	int all = 100;
+	
+	@Override
+	public double reportProgress(double subProgress) {
+		double localProgress = (double) done / all;
+		System.out.println("reportProgress: ExampleFilterScalar " + localProgress);
+		return super.reportProgress(localProgress);
+	}
+//	
+//	protected double[] myProgress() {
+//		int done = 50000;
+//		int all = 100000;
+//		System.out.println("myProgress: ExampleFilterScalar " + ((double)done/all));
+//		return new double[] {done, all};
+//	}
+	
+	
+	public void runLoop() {
+		for (done=0; done < all; done++) {
+			System.out.println("******* done = " + done);
+			reportProgress(0);
+		}
+	}
+	
+
+	public static void main(String[] args) {
+		ExampleFilterScalar filter = new ExampleFilterScalar();
+		//filter.reportProgress(0);
+		filter.runLoop();
+
 	}
 
 }

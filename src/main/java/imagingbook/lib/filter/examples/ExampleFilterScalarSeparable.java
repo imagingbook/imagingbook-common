@@ -21,8 +21,8 @@ public class ExampleFilterScalarSeparable extends GenericFilterScalar {
 	}
 	
 	@Override
-	protected boolean finished() {
-		return (getPass() >= 2);	// do exactly 2 passes
+	protected int passesRequired() {
+		return 2;	// do exactly 2 passes
 	}
 
 	private float filterPixelX(PixelSlice source, int u, int v) {

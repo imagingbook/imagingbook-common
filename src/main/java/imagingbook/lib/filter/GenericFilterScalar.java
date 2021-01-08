@@ -5,11 +5,17 @@ import imagingbook.lib.image.access.PixelPack.PixelSlice;
 
 public abstract class GenericFilterScalar extends GenericFilter {
 	
+//	double progress;
+//	double progressStep;
+	int slice;
+	int depth;
+	
 	// apply filter to a stack of pixel planes (1 pass)
-	protected void doPass(PixelPack sourcePack, PixelPack targetPack) {
-		int depth = source.getDepth();
+	protected void doPass(PixelPack source, PixelPack target) {
+		depth = source.getDepth();
 		for (int k = 0; k < depth; k++) {
-			doSlice(sourcePack.getSlice(k), targetPack.getSlice(k));	// default behavior: apply filter to each plane, place results in target
+			this.slice = k;
+			doSlice(source.getSlice(k), target.getSlice(k));	// default behavior: apply filter to each plane, place results in target
 		}
 	}
 	
@@ -29,4 +35,19 @@ public abstract class GenericFilterScalar extends GenericFilter {
 	protected float doPixel(PixelSlice plane, int u, int v) {
 		throw new UnsupportedOperationException("method 'float doPixel(u,v)' not implemented!");
 	}
+	
+	
+	// -------------------------------------------------------------------
+
+	public double reportProgress(double subProgress) {
+		int slice = 3;
+		int depth = 4;
+//		double[] prog = GenericFilterScalar.this.myProgress();
+//		double slice = prog[0];
+//		double depth = prog[1];
+		double localProgress = (slice + subProgress) / depth;
+		System.out.println("reportProgress: GenericFilterScalar " + localProgress);
+		return super.reportProgress(localProgress);
+	}
+
 }

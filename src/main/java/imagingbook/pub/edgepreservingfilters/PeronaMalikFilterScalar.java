@@ -75,8 +75,8 @@ public class PeronaMalikFilterScalar extends GenericFilterScalar {
 	}
 
 	@Override
-	protected final boolean finished() {
-		return (getPass() >= T);	// this filter needs T passes
+	protected final int passesRequired() {
+		return T;	// this filter needs T passes
 	}
 
 }

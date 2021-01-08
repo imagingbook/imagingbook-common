@@ -6,11 +6,11 @@ public abstract class GenericFilterVector extends GenericFilter {
 
 	@Override 
 	protected void doPass(PixelPack sourcePack, PixelPack targetPack) {
-		final int width = source.getWidth();
-		final int height = source.getHeight();
+		final int width = sourcePack.getWidth();
+		final int height = sourcePack.getHeight();
 		for (int v = 0; v < height; v++) {
 			for (int u = 0; u < width; u++) {
-				target.setPixel(u, v, doPixel(source, u, v)); // single pixel operation
+				targetPack.setPixel(u, v, doPixel(sourcePack, u, v)); // single pixel operation
 			}
 		}
 	}

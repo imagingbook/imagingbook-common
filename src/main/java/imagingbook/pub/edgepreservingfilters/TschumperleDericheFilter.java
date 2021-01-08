@@ -37,6 +37,7 @@ public class TschumperleDericheFilter extends GenericFilter {
 	private int N;				// image height
 	private int K;				// number of color channels (any, but typ. 1 or 3)
 	
+	// temporary data
 	private PixelPack Dx, Dy;
 	private PixelPack G;		// structure matrix as (u,v) with 3 elements
 	
@@ -60,21 +61,21 @@ public class TschumperleDericheFilter extends GenericFilter {
 	}
 	
 	@Override
-	protected void initFilter(PixelPack sourcePack, PixelPack targetPack) {	// called by {@link GenericFilter}
-		this.source = sourcePack;
-		this.target = targetPack;
+	protected void initFilter(PixelPack source, PixelPack target) {	// called by {@link GenericFilter}
+		this.source = source;
+		this.target = target;
 		
-		this.M = this.getWidth(); 
-		this.N = this.getHeight(); 
-		this.K = this.getDepth();
+		this.M = source.getWidth(); 
+		this.N = source.getHeight(); 
+		this.K = source.getDepth();
 		
 		this.T = params.iterations;
 		this.alpha = params.initialAlpha;
 		this.a1 = params.a1;
 		this.a2 = params.a2;
 		
-		this.Dx = new PixelPack(sourcePack, false);	// container for X/Y-derivatives
-		this.Dy = new PixelPack(sourcePack, false);
+		this.Dx = new PixelPack(source, false);	// container for X/Y-derivatives
+		this.Dy = new PixelPack(source, false);
 		
 		this.filterDx = new LinearFilter(kernelDx);
 		this.filterDy = new LinearFilter(kernelDy);
@@ -88,7 +89,7 @@ public class TschumperleDericheFilter extends GenericFilter {
 	// ----------------------------------------------------------------------------------
 	
 	@Override
-	protected void doPass(PixelPack sourcePack, PixelPack targetPack) {
+	protected void doPass(PixelPack source, PixelPack target) {
 		makeGradients();							// Step 1
 		makeStructureMatrix();						// Step 2
 		float maxVelocity = updateVelocities(); 	// Step 3
@@ -208,12 +209,12 @@ public class TschumperleDericheFilter extends GenericFilter {
 	// ----------------------------------------------------------------------
 	
 	@Override
-	protected final boolean finished() {
-		return (getPass() >= T);	// this filter needs T passes
+	protected final int passesRequired() {
+		return T;	// this filter needs T passes
 	}
 	
 	@Override
-	// do some (probably unnecessary) cleanup
+	// cleanup temporary data (probably unnecessary)
 	protected void closeFilter() {
 		this.Dx = null;
 		this.Dy = null;
