@@ -1,4 +1,6 @@
-package imagingbook.lib.filter;
+package imagingbook.lib.filter.examples;
+
+import imagingbook.lib.filter.ProgressMonitor;
 
 @Deprecated
 public class ProgressMonitorTest {

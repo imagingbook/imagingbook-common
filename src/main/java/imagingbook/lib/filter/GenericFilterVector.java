@@ -4,7 +4,7 @@ import imagingbook.lib.image.access.PixelPack;
 
 public abstract class GenericFilterVector extends GenericFilter {
 
-	public int iter = 0, iterMax = 1;	// for progress reporting only
+	private int iter = 0, iterMax = 1;	// for progress reporting only
 	
 	@Override 
 	protected void doPass(PixelPack sourcePack, PixelPack targetPack) {
@@ -35,11 +35,11 @@ public abstract class GenericFilterVector extends GenericFilter {
 		System.arraycopy(source, 0, target, 0, source.length);
 	}
 	
-
-	public double reportProgress(double subProgress) {
+	@Override
+	protected final double getProcessInner(double subProgress) {
 		double localProgress = (double) iter /iterMax;
 		//System.out.println("GenericFilterVector: reportProgress() - returning " + localProgress);
-		return super.reportProgress(localProgress);
+		return super.getProcessInner(localProgress);
 	}
 
 }

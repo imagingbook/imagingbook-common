@@ -1,4 +1,4 @@
-package imagingbook.lib.filter;
+package imagingbook.lib.filter.OBSOLETE;
 
 import java.util.EventListener;
 

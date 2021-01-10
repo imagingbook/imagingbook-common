@@ -31,4 +31,15 @@ public abstract class GenericFilterVectorSeparable extends GenericFilterVector {
 	// Apply a 1D filter in y-direction
 	protected abstract float[] filterPixelY(PixelPack pack, int u, int v);
 	
+	// ------------------------------------------------------------------------
+
+	
+//	@Override  // not needed, because this stage does not introduce additional iterations
+//	public double getProgressInner(double subProgress) {
+//		double localProgress = 0;
+//		return super.reportProgress(localProgress);
+//	}
+	
+	
+	
 }

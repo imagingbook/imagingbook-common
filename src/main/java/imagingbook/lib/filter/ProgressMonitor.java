@@ -15,8 +15,10 @@ public class ProgressMonitor extends Thread {
 		this(target, DefaultWaitTime);
 	}
 	
-	public ProgressMonitor(ReportsProgress instanceToBeMonitored, int period) {
-		this.target = instanceToBeMonitored;
+	public ProgressMonitor(ReportsProgress target, int period) {
+		if (target == null)
+			throw new IllegalArgumentException("target instance is null");
+		this.target = target;
 		this.period = period;
 	}
 
@@ -24,7 +26,9 @@ public class ProgressMonitor extends Thread {
 	public void run() {
 		running = true;
 		while(running) {
-			IJ.showProgress(target.getProgress());
+			double p = target.getProgress();
+			IJ.log(String.format("progress = %.3f", p));
+			IJ.showProgress(target.getProgress());	// TODO: allow a lambda expression instead?
 			try {
 				Thread.sleep(period);
 			} catch (InterruptedException e) {break;}

@@ -31,15 +31,15 @@ public class ExampleFilterScalar extends GenericFilterScalar //implements Report
 	
 	// -----------------------------------------------------------------
 	
-	int done = 0;
-	int all = 100;
+//	int done = 0;
+//	int all = 100;
 	
-	@Override
-	public double reportProgress(double subProgress) {
-		double localProgress = (double) done / all;
-		System.out.println("reportProgress: ExampleFilterScalar " + localProgress);
-		return super.reportProgress(localProgress);
-	}
+//	@Override
+//	public double reportProgress(double subProgress) {
+//		double localProgress = (double) done / all;
+//		System.out.println("reportProgress: ExampleFilterScalar " + localProgress);
+//		return super.reportProgress(localProgress);
+//	}
 //	
 //	protected double[] myProgress() {
 //		int done = 50000;
@@ -49,19 +49,19 @@ public class ExampleFilterScalar extends GenericFilterScalar //implements Report
 //	}
 	
 	
-	public void runLoop() {
-		for (done=0; done < all; done++) {
-			System.out.println("******* done = " + done);
-			reportProgress(0);
-		}
-	}
+//	public void runLoop() {
+//		for (done=0; done < all; done++) {
+//			System.out.println("******* done = " + done);
+//			reportProgress(0);
+//		}
+//	}
 	
 
-	public static void main(String[] args) {
-		ExampleFilterScalar filter = new ExampleFilterScalar();
-		//filter.reportProgress(0);
-		filter.runLoop();
-
-	}
+//	public static void main(String[] args) {
+//		ExampleFilterScalar filter = new ExampleFilterScalar();
+//		//filter.reportProgress(0);
+//		filter.runLoop();
+//
+//	}
 
 }

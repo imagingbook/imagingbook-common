@@ -12,10 +12,8 @@ public abstract class GenericFilter implements ReportsProgress {
 	
 	private PixelPack source = null;
 	private PixelPack target = null;
-//	private FilterProgressListener listener = null;
 	private int pass = -1;
-
-//	private double progressMinor = 0;	// 0,..,1
+	private ProgressMonitor monitor = null;
 	
 	public GenericFilter() {
 	}
@@ -51,22 +49,6 @@ public abstract class GenericFilter implements ReportsProgress {
 		return source.getDepth();
 	}
 	
-	// 
-//	protected void setProgress() {
-//		double progress = (pass + progressMinor) / passesRequired();
-//		setProgress(progress);
-//	}
-	
-//	protected void setProgress(double progress) {
-//		if (listener == null) 
-//			return;
-//		if (progress < 0) progress = 0;
-//		if (progress > 1) progress = 1;
-//		IJ.log(String.format("  pass=%d, progress=%.3f  major=%.3f  minor=%.3f", 
-//				getPass(), progress, (double)pass/passesRequired(), progressMinor));
-//		listener.updateProgress(progress);
-//	}
-	
 	// -----------------------------------------------------------------------------------
 	
 	/**
@@ -80,20 +62,20 @@ public abstract class GenericFilter implements ReportsProgress {
 	}
 	
 	private void doFilter(PixelPack source, PixelPack target) {	// do we always want to copy back??
+		monitor = new ProgressMonitor(this);
 		try {
 			pass = 0;
+			monitor.start();
 			initFilter(source, target);
 			while (pass < passesRequired()) {
-//				progressMinor = 0;
 				initPass(source, target);
 				doPass(source, target);
 				target.copyTo(this.source); // copy target back to sources
 				pass++;
-//				setProgress();
 			}
 		} catch (AbortFilterException e) {};
 		// the filter's result is to be found in 'source'
-//		setProgress(1);
+		monitor.terminate();
 		closeFilter();
 		this.source = null;
 		this.target = null;
@@ -138,40 +120,34 @@ public abstract class GenericFilter implements ReportsProgress {
 		return 1;	// do exactly 1 pass
 	}
 	
-//	protected final void stepProcess(double progressMinor) {
-//		if (progressMinor < 0) progressMinor = 0;
-//		if (progressMinor > 1) progressMinor = 1;
-////		this.progressMinor = progressMinor;
-////		this.setProgress();
-//	}
-	
-	// call this method to abort the filter
+	// call this method to abort the filter prematurely
 	protected final void abort() {
 		throw new AbortFilterException();
 	}
 
 	protected abstract void doPass(PixelPack sourcePack, PixelPack targetPack);
 	
-	// experimental ----------------------------------------------------------------
+	// progress reporting ----------------------------------------------------------------
+	
+
 	
 	// this is the method called from outside (not to be overridden)
+	@Override
 	public final double getProgress() {
-		double fp = getProgressFinal();
-		return this.reportProgress(fp);
+		double fp = getProgressLocal();
+		return this.getProcessInner(fp);
 	}
 	
 	// this method is for default and may be overridden by the terminal class if does extended work
-	protected double getProgressFinal() {
-		//System.out.println("GenericFilter: getProcessFinal() - returning 0");
+	protected double getProgressLocal() {
 		return 0;
 	}
 	
 	// this method should be implemented by every class in the hierarchy except the terminal class
-	public double reportProgress(double subProgress) {
+	protected double getProcessInner(double subProgress) {
 		int pass = Math.max(getPass(), 0);	// getPass() returns -1 if loop is not started 
 		double localProgress = (pass + subProgress) / passesRequired();
-		//System.out.println("GenericFilter: reportProgress() - returning " + localProgress);
-		return localProgress;
+		return localProgress; // this is the final value returned to the monitor
 	}
 	
 	/*

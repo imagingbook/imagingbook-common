@@ -5,9 +5,9 @@ import imagingbook.lib.image.access.PixelPack.PixelSlice;
 
 public abstract class GenericFilterScalar extends GenericFilter {
 	
-	
-	int slice;
-	int depth = 1;
+	// for progress reporting only
+	private int slice;
+	private int depth = 1;
 	
 	// apply filter to a stack of pixel planes (1 pass)
 	protected void doPass(PixelPack source, PixelPack target) {
@@ -38,10 +38,11 @@ public abstract class GenericFilterScalar extends GenericFilter {
 	
 	// -------------------------------------------------------------------
 
-	public double reportProgress(double subProgress) {
+	@Override
+	protected final double getProcessInner(double subProgress) {
 		double localProgress = (this.slice + subProgress) / depth;
-		System.out.println("reportProgress: GenericFilterScalar " + localProgress);
-		return super.reportProgress(localProgress);
+		//System.out.println("reportProgress: GenericFilterScalar " + localProgress);
+		return super.getProcessInner(localProgress);
 	}
 
 }

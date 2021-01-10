@@ -1,29 +1,24 @@
 package imagingbook.lib.filter.examples;
 
-import ij.IJ;
-import imagingbook.lib.filter.GenericFilter;
 import imagingbook.lib.filter.GenericFilterVector;
-import imagingbook.lib.filter.ProgressMonitor;
 import imagingbook.lib.image.access.PixelPack;
 
+// a custom filter that provides its own progress data
 public class FilterShowProgressExample extends GenericFilterVector {
 
 	// variables for progress reporting
-	int maxCnt = 10000;
-	int cnt;
+	private int maxCnt = 5000;
+	private int cnt;
 	
 	@Override
 	protected void initFilter(PixelPack source, PixelPack target) {	
-		//this.n = source.getWidth() * source.getHeight();
-		IJ.log("needs passes " + this.passesRequired());
 	}
 	
+	@Override
 	protected void initPass(PixelPack source, PixelPack target) {
-		//this.n = source.getWidth() * source.getHeight();
-//		System.out.println("**** pass " + this.getPass() + " prog = " + this.getProgress());
-//		System.out.println("    GenericFilterVector.this.iter = " + super.iter);
 	}
 	
+	@Override
 	protected int passesRequired() {
 		return 3;	// needs 3 passes
 	}
@@ -35,10 +30,7 @@ public class FilterShowProgressExample extends GenericFilterVector {
 		cnt = 0;
 		for (int i = 0; i < maxCnt; i++) {
 			this.cnt = i;
-//			if (i % 2 == 0) {
-//				IJ.log("    i = " + i + " prog = " + this.getProgress());
-//			}
-			sum += (float) Math.sqrt(i);
+			sum += (float) Math.sqrt(i); // some dummy work
 		}
 		cnt = 0;
 		dummy[0] = sum;
@@ -48,20 +40,17 @@ public class FilterShowProgressExample extends GenericFilterVector {
 	// -------------------------------------------------------------
 	
 	@Override
-	protected double getProgressFinal() {
-		double prog = (double) this.cnt / this.maxCnt;
-		//System.out.println("FilterShowProgressExample: getProcessFinal() - returning " + prog);
-		return prog;
+	protected double getProgressLocal() {
+		return (double) this.cnt / this.maxCnt;
 	}
 	
-	public static void main(String[] args) {
-		GenericFilter filter = new FilterShowProgressExample();
-		ProgressMonitor mon = new ProgressMonitor(filter, 500);
-		//System.out.println("main: getProgress() - returning " + filter.getProgress());
-		mon.start();
-		PixelPack pp = new PixelPack(400, 300, 3, null);
-		filter.applyTo(pp);
-		mon.terminate();
-	}
+//	public static void main(String[] args) {
+//		GenericFilter filter = new FilterShowProgressExample();
+//		ProgressMonitor mon = new ProgressMonitor(filter, 500);
+//		mon.start();
+//		PixelPack pp = new PixelPack(400, 300, 3, null);
+//		filter.applyTo(pp);
+//		mon.terminate();
+//	}
 
 }

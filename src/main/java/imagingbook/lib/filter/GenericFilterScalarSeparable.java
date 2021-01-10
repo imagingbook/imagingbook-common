@@ -31,4 +31,12 @@ public abstract class GenericFilterScalarSeparable extends GenericFilterScalar {
 	// Apply a 1D filter in y-direction
 	protected abstract float filterPixelY(PixelSlice source, int u, int v);
 	
+	// ------------------------------------------------------------------------
+	
+//	@Override	// not needed, because this stage does not introduce additional iterations
+//	public double getProgressInner(double subProgress) {
+//		double localProgress = 0;
+//		return super.reportProgress(localProgress);
+//	}
+	
 }
