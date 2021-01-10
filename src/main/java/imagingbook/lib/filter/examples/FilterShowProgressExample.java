@@ -1,25 +1,27 @@
 package imagingbook.lib.filter.examples;
 
 import ij.IJ;
+import imagingbook.lib.filter.GenericFilter;
 import imagingbook.lib.filter.GenericFilterVector;
+import imagingbook.lib.filter.ProgressMonitor;
 import imagingbook.lib.image.access.PixelPack;
 
 public class FilterShowProgressExample extends GenericFilterVector {
 
-	float[] dummy = new float[3];
-//	int n;
+	// variables for progress reporting
+	int maxCnt = 10000;
 	int cnt;
 	
 	@Override
-	protected void initFilter(PixelPack source, PixelPack target) {
+	protected void initFilter(PixelPack source, PixelPack target) {	
 		//this.n = source.getWidth() * source.getHeight();
 		IJ.log("needs passes " + this.passesRequired());
 	}
 	
 	protected void initPass(PixelPack source, PixelPack target) {
 		//this.n = source.getWidth() * source.getHeight();
-		IJ.log(" ***********************+ pass " + this.getPass());
-		cnt = 0;
+//		System.out.println("**** pass " + this.getPass() + " prog = " + this.getProgress());
+//		System.out.println("    GenericFilterVector.this.iter = " + super.iter);
 	}
 	
 	protected int passesRequired() {
@@ -28,24 +30,38 @@ public class FilterShowProgressExample extends GenericFilterVector {
 	
 	@Override
 	protected float[] doPixel(PixelPack source, int u, int v) {
-		cnt++;
-		if (cnt % 2000 == 0) {
-			int n = source.getWidth() * source.getHeight();
-			IJ.log("   step " + cnt);
-			this.stepProcess((double)cnt/n);
-		}
-		// here comes the actual filter's work
-//		try {
-//			//Thread.sleep(1);
-//			Thread.sleep(0, 25);	// sleep 
-//			
-//		} catch (InterruptedException e) {}
+		float[] dummy = new float[3];
 		float sum = 0;
-		for (int i = 0; i < 1000; i++) {
+		cnt = 0;
+		for (int i = 0; i < maxCnt; i++) {
+			this.cnt = i;
+//			if (i % 2 == 0) {
+//				IJ.log("    i = " + i + " prog = " + this.getProgress());
+//			}
 			sum += (float) Math.sqrt(i);
 		}
+		cnt = 0;
 		dummy[0] = sum;
 		return dummy;
+	}
+	
+	// -------------------------------------------------------------
+	
+	@Override
+	protected double getProgressFinal() {
+		double prog = (double) this.cnt / this.maxCnt;
+		//System.out.println("FilterShowProgressExample: getProcessFinal() - returning " + prog);
+		return prog;
+	}
+	
+	public static void main(String[] args) {
+		GenericFilter filter = new FilterShowProgressExample();
+		ProgressMonitor mon = new ProgressMonitor(filter, 500);
+		//System.out.println("main: getProgress() - returning " + filter.getProgress());
+		mon.start();
+		PixelPack pp = new PixelPack(400, 300, 3, null);
+		filter.applyTo(pp);
+		mon.terminate();
 	}
 
 }

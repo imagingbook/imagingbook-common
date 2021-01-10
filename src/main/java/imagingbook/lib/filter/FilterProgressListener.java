@@ -4,6 +4,7 @@ import java.util.EventListener;
 
 import ij.IJ;
 
+@Deprecated
 public interface FilterProgressListener extends EventListener {
 	
 	// override to get different behavior

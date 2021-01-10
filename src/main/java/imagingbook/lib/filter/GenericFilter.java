@@ -1,15 +1,10 @@
 package imagingbook.lib.filter;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.Arrays;
-
-import ij.IJ;
 import ij.process.ImageProcessor;
 import imagingbook.lib.image.access.OutOfBoundsStrategy;
 import imagingbook.lib.image.access.PixelPack;
 
-public abstract class GenericFilter {
+public abstract class GenericFilter implements ReportsProgress {
 	
 	private class AbortFilterException extends RuntimeException {
 		private static final long serialVersionUID = 1L;
@@ -17,19 +12,19 @@ public abstract class GenericFilter {
 	
 	private PixelPack source = null;
 	private PixelPack target = null;
-	private FilterProgressListener listener = null;
+//	private FilterProgressListener listener = null;
 	private int pass = -1;
 
-	private double progressMinor = 0;	// 0,..,1
+//	private double progressMinor = 0;	// 0,..,1
 	
 	public GenericFilter() {
 	}
 	
 	// --------------------------------------------------------------------------------
 	
-	public void setProgressListener(FilterProgressListener listener) {
-		this.listener = listener;
-	}
+//	public void setProgressListener(FilterProgressListener listener) {
+//		this.listener = listener;
+//	}
 
 	protected int getPass() {
 		return pass;
@@ -57,20 +52,20 @@ public abstract class GenericFilter {
 	}
 	
 	// 
-	protected void setProgress() {
-		double progress = (pass + progressMinor) / passesRequired();
-		setProgress(progress);
-	}
+//	protected void setProgress() {
+//		double progress = (pass + progressMinor) / passesRequired();
+//		setProgress(progress);
+//	}
 	
-	protected void setProgress(double progress) {
-		if (listener == null) 
-			return;
-		if (progress < 0) progress = 0;
-		if (progress > 1) progress = 1;
-		IJ.log(String.format("  pass=%d, progress=%.3f  major=%.3f  minor=%.3f", 
-				getPass(), progress, (double)pass/passesRequired(), progressMinor));
-		listener.updateProgress(progress);
-	}
+//	protected void setProgress(double progress) {
+//		if (listener == null) 
+//			return;
+//		if (progress < 0) progress = 0;
+//		if (progress > 1) progress = 1;
+//		IJ.log(String.format("  pass=%d, progress=%.3f  major=%.3f  minor=%.3f", 
+//				getPass(), progress, (double)pass/passesRequired(), progressMinor));
+//		listener.updateProgress(progress);
+//	}
 	
 	// -----------------------------------------------------------------------------------
 	
@@ -86,20 +81,19 @@ public abstract class GenericFilter {
 	
 	private void doFilter(PixelPack source, PixelPack target) {	// do we always want to copy back??
 		try {
-			setProgress();
-			initFilter(source, target);
 			pass = 0;
+			initFilter(source, target);
 			while (pass < passesRequired()) {
-				progressMinor = 0;
+//				progressMinor = 0;
 				initPass(source, target);
 				doPass(source, target);
 				target.copyTo(this.source); // copy target back to sources
 				pass++;
-				setProgress();
+//				setProgress();
 			}
 		} catch (AbortFilterException e) {};
 		// the filter's result is to be found in 'source'
-		setProgress(1);
+//		setProgress(1);
 		closeFilter();
 		this.source = null;
 		this.target = null;
@@ -144,12 +138,12 @@ public abstract class GenericFilter {
 		return 1;	// do exactly 1 pass
 	}
 	
-	protected final void stepProcess(double progressMinor) {
-		if (progressMinor < 0) progressMinor = 0;
-		if (progressMinor > 1) progressMinor = 1;
-		this.progressMinor = progressMinor;
-		this.setProgress();
-	}
+//	protected final void stepProcess(double progressMinor) {
+//		if (progressMinor < 0) progressMinor = 0;
+//		if (progressMinor > 1) progressMinor = 1;
+////		this.progressMinor = progressMinor;
+////		this.setProgress();
+//	}
 	
 	// call this method to abort the filter
 	protected final void abort() {
@@ -160,56 +154,37 @@ public abstract class GenericFilter {
 	
 	// experimental ----------------------------------------------------------------
 	
-	public interface ReportsProgress {
-		public double getProgress();
+	// this is the method called from outside (not to be overridden)
+	public final double getProgress() {
+		double fp = getProgressFinal();
+		return this.reportProgress(fp);
 	}
 	
-	private void foo() {
-		System.out.println("    calling foo1");
+	// this method is for default and may be overridden by the terminal class if does extended work
+	protected double getProgressFinal() {
+		//System.out.println("GenericFilter: getProcessFinal() - returning 0");
+		return 0;
 	}
 	
-	
-	
-	public void searchFoo() {
-		Class<?> clazz = this.getClass();
-		while (clazz != null) {
-			System.out.println(clazz.getSimpleName());
-			Method m = null;
-			try {
-				m = clazz.getDeclaredMethod("foo");
-			} catch (NoSuchMethodException | SecurityException e) {
-				//System.out.println("oups1");
-			}
-			System.out.println("   has foo() method " + (m != null));
-			if (m != null) {
-				try {
-					m.setAccessible(true);	// make private method accessible!!
-					m.invoke(this);
-				} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {	
-					System.out.println("oups2 " + e);
-				}
-			}
-			clazz = clazz.getSuperclass();
-		}
-	}
-	
-	
-	
+	// this method should be implemented by every class in the hierarchy except the terminal class
 	public double reportProgress(double subProgress) {
-		int pass = 1;
-		int passesRequired = 10;
-//		double[] prog = GenericFilter.this.myProgress();
-//		double pass = prog[0];
-//		double passesRequired = prog[1];
-		double localProgress = (pass + subProgress) / passesRequired;
-		System.out.println("reportProgress: GenericFilter " + localProgress);
+		int pass = Math.max(getPass(), 0);	// getPass() returns -1 if loop is not started 
+		double localProgress = (pass + subProgress) / passesRequired();
+		//System.out.println("GenericFilter: reportProgress() - returning " + localProgress);
 		return localProgress;
 	}
-
-	protected final double getProgress() {
-		return this.reportProgress(0);
-	}
 	
-	
+	/*
+	 * Progress reporting works like this:
+	 * 
+	 * double getProgress() is called from outside, result in [0,1]
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 */
+	 
 	
 }
