@@ -49,15 +49,16 @@ public class BilateralFilterVectorSeparable extends GenericFilterVectorSeparable
 		this.sigmaR2 = sqr(params.sigmaR);
 		this.colorNorm = params.colorNormType.create();
 		this.colorScale2 = sqr(colorNorm.getScale(3));
+		this.setProgressMonitoring(true);
 	}
 	
 	@Override
-	protected float[] filterPixelX(PixelPack source, int u, int v) {
+	protected float[] doPixelX(PixelPack source, int u, int v) {
 		return filterPixelXY(source, u, v, true);
 	}
 
 	@Override
-	protected float[] filterPixelY(PixelPack source, int u, int v) {
+	protected float[] doPixelY(PixelPack source, int u, int v) {
 		return filterPixelXY(source, u, v, false);
 	}
 	

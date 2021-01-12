@@ -40,7 +40,7 @@ public class FilterShowProgressExample extends GenericFilterVector {
 	// -------------------------------------------------------------
 	
 	@Override
-	protected double getProgressLocal() {
+	protected double reportProgress() {
 		return (double) this.cnt / this.maxCnt;
 	}
 	

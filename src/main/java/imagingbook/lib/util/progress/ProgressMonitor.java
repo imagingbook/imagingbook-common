@@ -1,140 +1,80 @@
 package imagingbook.lib.util.progress;
 
-import java.util.Arrays;
-import java.util.LinkedHashMap;
+import ij.IJ;
 
 /**
- * Allows monitoring of progress of activities distributed in
- * a class hierarchy.
- * 
- * TODO: add annotation to classes which should be monitored?
- * 
+ * An instance of this class monitors the progress of another object (task)
+ * by querying its status periodically.
+ * TODO: Make the associated action more generic (currently progress information is 
+ * used to update ImageJ's peogress bar.
  * @author WB
- * @version 2021/01/09
+ *
  */
-public class ProgressMonitor {
+public class ProgressMonitor extends Thread {
 	
-	/**
-	 * Classes to be monitored must implement this interface.
-	 */
-	public interface HasProgressMonitor {
-		public ProgressMonitor getProcessMonitor();
-		
-		// delegating methods ---------------------------
-		
-		public default void stepCount(Class<?> clazz) {
-			getProcessMonitor().stepCount(clazz);
-		}
-		
+	private static int DefaultWaitTime = 250; // ms
+	
+	private final int period;
+	private final ReportingProgress target;
+	private final boolean ijRunning;
+	private boolean ijUpdateProgressBar = true;
+	
+	private boolean running;
+	private long startTime, endTime;
+	
+	
+	public ProgressMonitor(ReportingProgress target) {
+		this(target, DefaultWaitTime);
 	}
 	
-	// ---------------------------------------------------------------------
-	
-	private final LinkedHashMap<Class<?>, Integer> classHierarchy;
-	private final long[][] progressCounters;
-	
-	public ProgressMonitor(HasProgressMonitor instance) {
-		this.classHierarchy = getClassHierarchy(instance);
-		this.progressCounters = new long[2][classHierarchy.size()];	// [0] = max counts, [1] = current counts
+	public ProgressMonitor(ReportingProgress target, int period) {
+		if (target == null)
+			throw new IllegalArgumentException("target instance is null");
+		this.target = target;
+		this.period = period;
+		this.ijRunning = (IJ.getInstance() != null);
 	}
 	
-	// collect all classes in the class hierarchy that implement {@link HasProgressMonitor}
-	private static LinkedHashMap<Class<?>, Integer> getClassHierarchy(Object instance) {
-		int nc = 0;
-		LinkedHashMap<Class<?>, Integer> map = new LinkedHashMap<>();
-		Class<?> clazz = instance.getClass();
-		while (clazz != null) {
-			if (HasProgressMonitor.class.isAssignableFrom(clazz)) { //if (!clazz.equals(Object.class)) {
-				map.put(clazz, nc);
-			}
-			clazz = clazz.getSuperclass();
-			nc++;
-		}
-		return map;
-	}
-	
-	public void listClassHierarchy() {
-		for(Class<?> clazz : classHierarchy.keySet()) {
-			int nc = classHierarchy.get(clazz);
-			System.out.println(nc + " " + clazz);
-		}
-	}
-	
-	public int getClassIndex(Class<?> clazz) throws IllegalArgumentException {
-		Integer k = classHierarchy.get(clazz);
-		if (k == null) 
-			throw new IllegalArgumentException("class not monitored: " + clazz.getSimpleName());
-		else
-			return k;
-	}
-	
-	public void setMaxCount(Class<?> clazz, long val) {
-		int k = getClassIndex(clazz);
-		progressCounters[0][k] = val;
-	}
-	
-	public void resetCount(Class<?> clazz) {
-		resetCount(getClassIndex(clazz));
-	}
-	
-	public void resetCount(int k) {
-		progressCounters[1][k] = 0;
-	}
-	
-	public void stepCount(Class<?> clazz) {
-		int k = getClassIndex(clazz);
-		progressCounters[1][k] += 1;
-		// reset all lower counters
-		for (int i = k - 1; i >= 0; i--) {
-			resetCount(i);
-		}
-	}
-	
-	public void reset() {
-		for (int k = 0; k < progressCounters[1].length; k++) {
-			progressCounters[1][k] = 0;
-		}
-	}
-	
-	public long getMaxCount(Class<?> clazz) {
-		return progressCounters[0][getClassIndex(clazz)];
-	}
-	
-	public long getCount(Class<?> clazz) {
-		return progressCounters[1][getClassIndex(clazz)];
-	}
-	
+	// --------------------------------------------------------
+
 	@Override
-	public String toString() {
-		return String.format("%s cur=%s max=%s", this.getClass().getSimpleName(), 
-				Arrays.toString(progressCounters[1]), Arrays.toString(progressCounters[0]));
-	}
-	
-	// -----------------------------------------------------------------------------
-	
-	public double getProgress(Class<?> clazz) {
-		int k = classHierarchy.get(clazz);
-		return getProgress(k);
-	}
-	
-	public double getProgress(int k) {
-		long maxCount = progressCounters[0][k];
-		if (maxCount <= 0) {
-			throw new IllegalStateException("invalid max. progress count at index " + k);
+	public void run() {
+		startTime = System.nanoTime();
+		running = true;
+		if (ijRunning && ijUpdateProgressBar) {
+			IJ.showProgress(0);
 		}
-		return (double) progressCounters[1][k] / maxCount;
-	}
-	
-	public double getProgress() {
-		double progress = 0;
-		for (int k = 0; k < progressCounters[0].length; k++) {
-			long maxCount = progressCounters[0][k];
-			long curCount = progressCounters[1][k];
-			if (maxCount > 0) {	// skip if no maxCount is defined
-				progress = (curCount + progress) / maxCount;
+		do {
+			try {
+				Thread.sleep(period);
+			} catch (InterruptedException e) {break;}
+			double p = target.getProgress();
+			//IJ.log(String.format("progress = %.3f", p));
+			if (ijRunning && ijUpdateProgressBar) {
+				IJ.showProgress(p);
 			}
+		} while(running);
+		endTime = System.nanoTime();
+	}
+	
+	public void terminate() {
+        running = false;
+        this.interrupt();
+    }
+	
+	// --------------------------------------------------------
+	
+	public void setIjUpdateProgressBar(boolean onOff) {
+		this.ijUpdateProgressBar = onOff;
+	}
+	
+	public double getElapsedTime() { // result is in seconds
+		if (running) {
+			return  (System.nanoTime() - startTime) / 1E9d;
 		}
-		return progress;
+		else {
+			return (endTime - startTime) / 1E9d;
+		}
 	}
 
 }

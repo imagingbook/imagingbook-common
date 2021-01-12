@@ -46,6 +46,7 @@ public class PeronaMalikFilterScalar extends GenericFilterScalar {
 		this.T = params.iterations;
 		this.alpha = params.alpha;
 		this.g = ConductanceFunction.get(params.conductanceFunType, params.kappa);
+		this.setProgressMonitoring(true);
 	}
 	
 	// ------------------------------------------------------

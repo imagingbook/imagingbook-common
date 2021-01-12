@@ -46,17 +46,18 @@ public class BilateralFilterScalarSeparable extends GenericFilterScalarSeparable
 		this.Hd = kernel.getH();
 		this.K = kernel.getXc();
 		this.sigmaR2 = sqr(params.sigmaR);
+		this.setProgressMonitoring(true);
 	}
 	
 	// 1D filter in x-direction
 	@Override
-	protected float filterPixelX(PixelSlice source, int u, int v) {
+	protected float doPixelX(PixelSlice source, int u, int v) {
 		return filterXY(source, u, v, true);
 	}
 	
 	// 1D filter in y-direction
 	@Override
-	protected float filterPixelY(PixelSlice source, int u, int v) {
+	protected float doPixelY(PixelSlice source, int u, int v) {
 		return filterXY(source, u, v, false);
 	}
 	

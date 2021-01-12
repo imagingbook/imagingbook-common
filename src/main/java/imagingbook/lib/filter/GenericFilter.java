@@ -3,8 +3,10 @@ package imagingbook.lib.filter;
 import ij.process.ImageProcessor;
 import imagingbook.lib.image.access.OutOfBoundsStrategy;
 import imagingbook.lib.image.access.PixelPack;
+import imagingbook.lib.util.progress.ProgressMonitor;
+import imagingbook.lib.util.progress.ReportingProgress;
 
-public abstract class GenericFilter implements ReportsProgress {
+public abstract class GenericFilter implements ReportingProgress {
 	
 	private class AbortFilterException extends RuntimeException {
 		private static final long serialVersionUID = 1L;
@@ -13,16 +15,14 @@ public abstract class GenericFilter implements ReportsProgress {
 	private PixelPack source = null;
 	private PixelPack target = null;
 	private int pass = -1;
+	
+	private boolean doProgressMonitoring = false;
 	private ProgressMonitor monitor = null;
 	
 	public GenericFilter() {
 	}
 	
 	// --------------------------------------------------------------------------------
-	
-//	public void setProgressListener(FilterProgressListener listener) {
-//		this.listener = listener;
-//	}
 
 	protected int getPass() {
 		return pass;
@@ -52,30 +52,33 @@ public abstract class GenericFilter implements ReportsProgress {
 	// -----------------------------------------------------------------------------------
 	
 	/**
-	 * The key method.
+	 * The key public method.
 	 * @param source
 	 */
 	public void applyTo(PixelPack source) {
 		this.source = source;
 		this.target = new PixelPack(source);	// empty copy of same dimensions as source
-		doFilter(source, target);
+		runFilter(source, target);
 	}
 	
-	private void doFilter(PixelPack source, PixelPack target) {	// do we always want to copy back??
-		monitor = new ProgressMonitor(this);
-		try {
-			pass = 0;
+	private void runFilter(PixelPack source, PixelPack target) {	// do we always want to copy back??
+		initFilter(source, target);
+		if (doProgressMonitoring) {
+			monitor = new ProgressMonitor(this);
 			monitor.start();
-			initFilter(source, target);
-			while (pass < passesRequired()) {
+		}
+		pass = 0;
+		try {
+			while (pass < passesRequired()) {	// TODO: check return value of passesRequired()!
+				//IJ.log("****** starting pass " + pass);
 				initPass(source, target);
-				doPass(source, target);
+				runPass(source, target);
 				target.copyTo(this.source); // copy target back to sources
 				pass++;
 			}
 		} catch (AbortFilterException e) {};
 		// the filter's result is to be found in 'source'
-		monitor.terminate();
+		if (monitor != null) monitor.terminate();
 		closeFilter();
 		this.source = null;
 		this.target = null;
@@ -94,7 +97,7 @@ public abstract class GenericFilter implements ReportsProgress {
 		applyTo(pp);
 		pp.copyToImageProcessor(ip);	// copy data back to ip
 	}
-
+	
 	// -----------------------------------------------------------------------------------
 	
 	// called once before the filter operations starts.
@@ -125,42 +128,34 @@ public abstract class GenericFilter implements ReportsProgress {
 		throw new AbortFilterException();
 	}
 
-	protected abstract void doPass(PixelPack sourcePack, PixelPack targetPack);
+	protected abstract void runPass(PixelPack sourcePack, PixelPack targetPack);
 	
 	// progress reporting ----------------------------------------------------------------
 	
-
+	public void setProgressMonitoring(boolean onOff) {
+		doProgressMonitoring = onOff;
+	}
 	
 	// this is the method called from outside (not to be overridden)
 	@Override
 	public final double getProgress() {
-		double fp = getProgressLocal();
-		return this.getProcessInner(fp);
+		double fp = reportProgress();
+		return this.reportProgress(fp);
 	}
 	
 	// this method is for default and may be overridden by the terminal class if does extended work
-	protected double getProgressLocal() {
+	protected double reportProgress() {
 		return 0;
 	}
 	
 	// this method should be implemented by every class in the hierarchy except the terminal class
-	protected double getProcessInner(double subProgress) {
+	protected double reportProgress(double subProgress) {
 		int pass = Math.max(getPass(), 0);	// getPass() returns -1 if loop is not started 
 		double localProgress = (pass + subProgress) / passesRequired();
 		return localProgress; // this is the final value returned to the monitor
 	}
 	
-	/*
-	 * Progress reporting works like this:
-	 * 
-	 * double getProgress() is called from outside, result in [0,1]
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 */
-	 
-	
+	public ProgressMonitor getProgressMonitor() {
+		return this.monitor;
+	}
 }

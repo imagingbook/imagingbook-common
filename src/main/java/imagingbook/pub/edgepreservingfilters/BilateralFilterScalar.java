@@ -45,6 +45,7 @@ public class BilateralFilterScalar extends GenericFilterScalar {
 		this.Hd = kernel.getH();
 		this.K = kernel.getXc();
 		this.sigmaR2 = sqr(params.sigmaR);
+		this.setProgressMonitoring(true);
 	}
 	
 	@Override

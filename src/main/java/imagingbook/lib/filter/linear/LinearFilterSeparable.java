@@ -27,7 +27,7 @@ public class LinearFilterSeparable extends GenericFilterScalarSeparable {
 
 	// 1D convolution in x-direction
 	@Override
-	protected float filterPixelX(PixelSlice source, int u, int v) {
+	protected float doPixelX(PixelSlice source, int u, int v) {
 		final int vj = v; // - yc;
 		double sum = 0;
 		for (int i = 0; i < width; i++) {
@@ -39,7 +39,7 @@ public class LinearFilterSeparable extends GenericFilterScalarSeparable {
 	
 	@Override
 	// 1D convolution in y-direction
-	protected float filterPixelY(PixelSlice source, int u, int v) {
+	protected float doPixelY(PixelSlice source, int u, int v) {
 		final int ui = u; // - xc;
 		double sum = 0;
 		for (int j = 0; j < height; j++) {

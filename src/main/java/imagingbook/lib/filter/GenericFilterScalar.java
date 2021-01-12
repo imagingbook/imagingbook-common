@@ -7,42 +7,51 @@ public abstract class GenericFilterScalar extends GenericFilter {
 	
 	// for progress reporting only
 	private int slice;
-	private int depth = 1;
+	private int sliceMax = 1;
+	
+	private int iter;
+	private int iterMax = 1;
 	
 	// apply filter to a stack of pixel planes (1 pass)
-	protected void doPass(PixelPack source, PixelPack target) {
-		depth = source.getDepth();
-		for (int k = 0; k < depth; k++) {
+	@Override
+	protected void runPass(PixelPack source, PixelPack target) {
+		sliceMax = source.getDepth();
+		for (int k = 0; k < sliceMax; k++) {
+			//IJ.log("+++++++ starting slice " + k);
 			this.slice = k;
-			doSlice(source.getSlice(k), target.getSlice(k));	// default behavior: apply filter to each plane, place results in target
+			runSlice(source.getSlice(k), target.getSlice(k));	// default behavior: apply filter to each plane, place results in target
 		}
 	}
 	
 	// a bit wasteful, as we provide a separate target for each plane
-	protected void doSlice(PixelSlice sourcePlane, PixelSlice targetPlane) {
+	private void runSlice(PixelSlice sourcePlane, PixelSlice targetPlane) {
 		final int width = sourcePlane.getWidth();
 		final int height = sourcePlane.getHeight();
+		this.iterMax = width * height;
+		this.iter = 0;
 		for (int v = 0; v < height; v++) {
 			for (int u = 0; u < width; u++) {
 				targetPlane.setVal(u, v, doPixel(sourcePlane, u, v));
+				this.iter++;
 			}
 		}
+		this.iter = 0;
 	}
 
 	// this method every scalar filter must implement
-	// calculate the result vector for a single pixel
-	protected float doPixel(PixelSlice plane, int u, int v) {
-		throw new UnsupportedOperationException("method 'float doPixel(u,v)' not implemented!");
-	}
-	
+	// calculate the result value for a single pixel
+	protected abstract float doPixel(PixelSlice plane, int u, int v);
 	
 	// -------------------------------------------------------------------
 
 	@Override
-	protected final double getProcessInner(double subProgress) {
-		double localProgress = (this.slice + subProgress) / depth;
+	protected final double reportProgress(double subProgress) {
+		double loopProgress = (this.iter + subProgress) / this.iterMax;
+		//IJ.log("   loopProgress = " + loopProgress);
+		double sliceProgress = (this.slice + loopProgress) / this.sliceMax;
+		//IJ.log("   sliceProgress = " + sliceProgress);
 		//System.out.println("reportProgress: GenericFilterScalar " + localProgress);
-		return super.getProcessInner(localProgress);
+		return super.reportProgress(sliceProgress);
 	}
 
 }

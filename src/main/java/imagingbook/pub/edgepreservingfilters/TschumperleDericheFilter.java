@@ -12,15 +12,14 @@ package imagingbook.pub.edgepreservingfilters;
 import static imagingbook.pub.edgepreservingfilters.TschumperleDericheF.kernelDx;
 import static imagingbook.pub.edgepreservingfilters.TschumperleDericheF.kernelDy;
 
-import ij.process.ImageProcessor;
 import imagingbook.lib.filter.GenericFilter;
-import imagingbook.lib.filter.GenericFilterScalar;
 import imagingbook.lib.filter.linear.GaussianFilterSeparable;
 import imagingbook.lib.filter.linear.LinearFilter;
 import imagingbook.lib.image.access.PixelPack;
 import imagingbook.lib.image.access.PixelPack.PixelSlice;
 import imagingbook.lib.math.Eigensolver2x2;
 import imagingbook.lib.math.Matrix;
+import imagingbook.pub.edgepreservingfilters.TschumperleDericheF.Parameters;
 
 /**
  * Complete rewrite from scratch
@@ -32,7 +31,7 @@ public class TschumperleDericheFilter extends GenericFilter {
 
 	// ----------------------------------------------------------------------------------
 	
-	private final TschumperleDericheF.Parameters params;
+	private final Parameters params;
 	private int M;				// image width
 	private int N;				// image height
 	private int K;				// number of color channels (any, but typ. 1 or 3)
@@ -41,23 +40,24 @@ public class TschumperleDericheFilter extends GenericFilter {
 	private PixelPack Dx, Dy;
 	private PixelPack G;		// structure matrix as (u,v) with 3 elements
 	
-	private GenericFilterScalar filterDx, filterDy;
-	private GenericFilterScalar gradientBlurFilter;
-	private GenericFilterScalar structureBlurFilter;
+	private GenericFilter filterDx, filterDy;
+	private GenericFilter gradientBlurFilter;
+	private GenericFilter structureBlurFilter;
 	
 	private int T;		// number of iterations
 	private float alpha;
 	private double a1, a2;
 	private PixelPack source, target;
 	
-	// constructor - uses only default settings:
-	public TschumperleDericheFilter(ImageProcessor ip) {
-		this(new TschumperleDericheF.Parameters());
+	
+	public TschumperleDericheFilter() {
+		this(new Parameters());
 	}
 	
 	// constructor - use for setting individual parameters:
-	public TschumperleDericheFilter(TschumperleDericheF.Parameters params) {
+	public TschumperleDericheFilter(Parameters params) {
 		this.params = params;
+		this.setProgressMonitoring(true);
 	}
 	
 	@Override
@@ -80,16 +80,16 @@ public class TschumperleDericheFilter extends GenericFilter {
 		this.filterDx = new LinearFilter(kernelDx);
 		this.filterDy = new LinearFilter(kernelDy);
 		
-		this.gradientBlurFilter = new GaussianFilterSeparable(params.sigmaG);
+		this.gradientBlurFilter = new GaussianFilterSeparable(params.sigmaG);	
 		this.structureBlurFilter = new GaussianFilterSeparable(params.sigmaS);
 		
-		this.G = new PixelPack(M, N, 3, null);	// structure matrix as (u,v) with 3 elements
+		this.G = new PixelPack(M, N, 3, null);	// structure matrix as (u,v) with 3 elements	
 	}
 	
 	// ----------------------------------------------------------------------------------
 	
 	@Override
-	protected void doPass(PixelPack source, PixelPack target) {
+	protected void runPass(PixelPack source, PixelPack target) {
 		makeGradients();							// Step 1
 		makeStructureMatrix();						// Step 2
 		float maxVelocity = updateVelocities(); 	// Step 3

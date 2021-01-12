@@ -49,6 +49,7 @@ public class BilateralFilterVector extends GenericFilterVector {
 		this.sigmaR2 = sqr(params.sigmaR);
 		this.colorNorm = params.colorNormType.create();
 		this.colorScale2 = sqr(colorNorm.getScale(3));
+		this.setProgressMonitoring(true);
 	}
 	
 	@Override
