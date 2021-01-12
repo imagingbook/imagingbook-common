@@ -26,293 +26,294 @@
 <span class="sourceLineNo">016</span><a id="line.16">import java.util.Random;</a>
 <span class="sourceLineNo">017</span><a id="line.17">import java.util.Set;</a>
 <span class="sourceLineNo">018</span><a id="line.18"></a>
-<span class="sourceLineNo">019</span><a id="line.19">import imagingbook.pub.color.statistics.ColorHistogram;</a>
-<span class="sourceLineNo">020</span><a id="line.20"></a>
-<span class="sourceLineNo">021</span><a id="line.21">/**</a>
-<span class="sourceLineNo">022</span><a id="line.22"> * This class implements color quantization using k-means clustering</a>
-<span class="sourceLineNo">023</span><a id="line.23"> * of image pixels in RGB color space. Two modes of selecting</a>
-<span class="sourceLineNo">024</span><a id="line.24"> * the colors for the initial clusters are provided:</a>
-<span class="sourceLineNo">025</span><a id="line.25"> * (a) random sampling of the input colors,</a>
-<span class="sourceLineNo">026</span><a id="line.26"> * (b) using the most frequent colors.</a>
-<span class="sourceLineNo">027</span><a id="line.27"> * </a>
-<span class="sourceLineNo">028</span><a id="line.28"> * @author WB</a>
-<span class="sourceLineNo">029</span><a id="line.29"> * @version 2017/01/04</a>
-<span class="sourceLineNo">030</span><a id="line.30"> */</a>
-<span class="sourceLineNo">031</span><a id="line.31">public class KMeansClusteringQuantizer extends ColorQuantizer {</a>
-<span class="sourceLineNo">032</span><a id="line.32">        </a>
-<span class="sourceLineNo">033</span><a id="line.33">        private final Parameters params;</a>
-<span class="sourceLineNo">034</span><a id="line.34">        private final int[][] colormap;</a>
-<span class="sourceLineNo">035</span><a id="line.35">        private final Cluster[] clusters;</a>
-<span class="sourceLineNo">036</span><a id="line.36">        private final double totalError;</a>
-<span class="sourceLineNo">037</span><a id="line.37">        </a>
-<span class="sourceLineNo">038</span><a id="line.38">        public enum SamplingMethod {</a>
-<span class="sourceLineNo">039</span><a id="line.39">                Random, Most_Frequent</a>
-<span class="sourceLineNo">040</span><a id="line.40">        };</a>
-<span class="sourceLineNo">041</span><a id="line.41">        </a>
-<span class="sourceLineNo">042</span><a id="line.42">        public static class Parameters {</a>
-<span class="sourceLineNo">043</span><a id="line.43">                /** Maximum number of quantized colors. */</a>
-<span class="sourceLineNo">044</span><a id="line.44">                public int maxColors = 16;</a>
-<span class="sourceLineNo">045</span><a id="line.45">                /** Maximum number of clustering iterations */</a>
-<span class="sourceLineNo">046</span><a id="line.46">                public int maxIterations = 500;</a>
-<span class="sourceLineNo">047</span><a id="line.47">                /** The method used for selecting the initial color samples. */</a>
-<span class="sourceLineNo">048</span><a id="line.48">                public SamplingMethod samplMethod = SamplingMethod.Random;</a>
-<span class="sourceLineNo">049</span><a id="line.49">                </a>
-<span class="sourceLineNo">050</span><a id="line.50">                void check() {</a>
-<span class="sourceLineNo">051</span><a id="line.51">                        if (maxColors &lt; 2 || maxColors &gt; 256 || maxIterations &lt; 1) {</a>
-<span class="sourceLineNo">052</span><a id="line.52">                                throw new IllegalArgumentException();</a>
-<span class="sourceLineNo">053</span><a id="line.53">                        }</a>
-<span class="sourceLineNo">054</span><a id="line.54">                }</a>
-<span class="sourceLineNo">055</span><a id="line.55">        }</a>
-<span class="sourceLineNo">056</span><a id="line.56">        </a>
-<span class="sourceLineNo">057</span><a id="line.57">        // --------------------------------------------------------------</a>
-<span class="sourceLineNo">058</span><a id="line.58"></a>
-<span class="sourceLineNo">059</span><a id="line.59">        /**</a>
-<span class="sourceLineNo">060</span><a id="line.60">         * Creates a new quantizer instance from the supplied sequence</a>
-<span class="sourceLineNo">061</span><a id="line.61">         * of color values (assumed to be ARGB-encoded integers).</a>
-<span class="sourceLineNo">062</span><a id="line.62">         * </a>
-<span class="sourceLineNo">063</span><a id="line.63">         * @param pixels Sequence of input color values.</a>
-<span class="sourceLineNo">064</span><a id="line.64">         * @param params Parameter object.</a>
-<span class="sourceLineNo">065</span><a id="line.65">         */</a>
-<span class="sourceLineNo">066</span><a id="line.66">        public KMeansClusteringQuantizer(int[] pixels, Parameters params) {</a>
-<span class="sourceLineNo">067</span><a id="line.67">                params.check();</a>
-<span class="sourceLineNo">068</span><a id="line.68">                this.params = params;</a>
-<span class="sourceLineNo">069</span><a id="line.69">                clusters = makeClusters(pixels);</a>
-<span class="sourceLineNo">070</span><a id="line.70">                totalError = cluster(pixels);</a>
-<span class="sourceLineNo">071</span><a id="line.71">                colormap = makeColorMap();</a>
-<span class="sourceLineNo">072</span><a id="line.72">        }</a>
-<span class="sourceLineNo">073</span><a id="line.73">        </a>
-<span class="sourceLineNo">074</span><a id="line.74">        public KMeansClusteringQuantizer(int[] pixels) {</a>
-<span class="sourceLineNo">075</span><a id="line.75">                this(pixels, new Parameters());</a>
-<span class="sourceLineNo">076</span><a id="line.76">        }</a>
-<span class="sourceLineNo">077</span><a id="line.77">        </a>
-<span class="sourceLineNo">078</span><a id="line.78">        // --------------------------------------------------------------</a>
-<span class="sourceLineNo">079</span><a id="line.79"></a>
-<span class="sourceLineNo">080</span><a id="line.80">        private Cluster[] makeClusters(int[] pixels) {</a>
-<span class="sourceLineNo">081</span><a id="line.81">                int Kmax = Math.min(pixels.length, params.maxColors);</a>
-<span class="sourceLineNo">082</span><a id="line.82">                int[] samples = getColorSamples(pixels, Kmax);</a>
-<span class="sourceLineNo">083</span><a id="line.83">                int k = Math.min(samples.length, Kmax);</a>
-<span class="sourceLineNo">084</span><a id="line.84">                Cluster[] cls = new Cluster[k]; // create an array of K clusters</a>
-<span class="sourceLineNo">085</span><a id="line.85">                for (int i = 0; i &lt; k; i++) {</a>
-<span class="sourceLineNo">086</span><a id="line.86">                        cls[i] = new Cluster(samples[i]); // initialize cluster center</a>
-<span class="sourceLineNo">087</span><a id="line.87">                }</a>
-<span class="sourceLineNo">088</span><a id="line.88">                return cls; </a>
-<span class="sourceLineNo">089</span><a id="line.89">        }</a>
-<span class="sourceLineNo">090</span><a id="line.90">        </a>
-<span class="sourceLineNo">091</span><a id="line.91">        /**</a>
-<span class="sourceLineNo">092</span><a id="line.92">         * We randomly pick k distinct colors from the original image</a>
-<span class="sourceLineNo">093</span><a id="line.93">         * pixels.</a>
-<span class="sourceLineNo">094</span><a id="line.94">         * @param pixels</a>
-<span class="sourceLineNo">095</span><a id="line.95">         * @param k</a>
-<span class="sourceLineNo">096</span><a id="line.96">         * @return</a>
-<span class="sourceLineNo">097</span><a id="line.97">         */</a>
-<span class="sourceLineNo">098</span><a id="line.98">        private int[] getColorSamples(int[] pixels, int k) {</a>
-<span class="sourceLineNo">099</span><a id="line.99">                switch (params.samplMethod) {</a>
-<span class="sourceLineNo">100</span><a id="line.100">                case Random:</a>
-<span class="sourceLineNo">101</span><a id="line.101">                        return getRandomColors(pixels, k);</a>
-<span class="sourceLineNo">102</span><a id="line.102">                case Most_Frequent:</a>
-<span class="sourceLineNo">103</span><a id="line.103">                        return getMostFrequentColors(pixels, k);</a>
-<span class="sourceLineNo">104</span><a id="line.104">                default:</a>
-<span class="sourceLineNo">105</span><a id="line.105">                        return null;</a>
-<span class="sourceLineNo">106</span><a id="line.106">                }</a>
-<span class="sourceLineNo">107</span><a id="line.107">        }</a>
-<span class="sourceLineNo">108</span><a id="line.108"></a>
-<span class="sourceLineNo">109</span><a id="line.109">        private int[] getRandomColors(int[] pixels, int k) {</a>
-<span class="sourceLineNo">110</span><a id="line.110">                Random rng = new Random();</a>
-<span class="sourceLineNo">111</span><a id="line.111">                Set&lt;Integer&gt; pixelSet = new LinkedHashSet&lt;Integer&gt;();</a>
-<span class="sourceLineNo">112</span><a id="line.112">                while (pixelSet.size() &lt; k) {</a>
-<span class="sourceLineNo">113</span><a id="line.113">                        Integer next = rng.nextInt(pixels.length);</a>
-<span class="sourceLineNo">114</span><a id="line.114">                        int p = pixels[next];</a>
-<span class="sourceLineNo">115</span><a id="line.115">                        // adding to a set automatically does a containment check</a>
-<span class="sourceLineNo">116</span><a id="line.116">                        pixelSet.add(p);</a>
-<span class="sourceLineNo">117</span><a id="line.117">                }</a>
-<span class="sourceLineNo">118</span><a id="line.118">                int[] s = new int[k];</a>
-<span class="sourceLineNo">119</span><a id="line.119">                int i = 0;</a>
-<span class="sourceLineNo">120</span><a id="line.120">                for (Integer p : pixelSet) {</a>
-<span class="sourceLineNo">121</span><a id="line.121">                        s[i] = p;</a>
-<span class="sourceLineNo">122</span><a id="line.122">                        i++;</a>
-<span class="sourceLineNo">123</span><a id="line.123">                }</a>
-<span class="sourceLineNo">124</span><a id="line.124">                return s;</a>
-<span class="sourceLineNo">125</span><a id="line.125">        }</a>
-<span class="sourceLineNo">126</span><a id="line.126">        </a>
-<span class="sourceLineNo">127</span><a id="line.127">        private int[] getMostFrequentColors(int[] pixels, int k) {</a>
-<span class="sourceLineNo">128</span><a id="line.128">                ColorHistogram colorHist = new ColorHistogram(pixels, true);</a>
-<span class="sourceLineNo">129</span><a id="line.129">                k = Math.min(k, colorHist.getNumberOfColors());</a>
-<span class="sourceLineNo">130</span><a id="line.130">                int[] s = new int[k];</a>
-<span class="sourceLineNo">131</span><a id="line.131">                for (int i = 0; i &lt; k; i++) {</a>
-<span class="sourceLineNo">132</span><a id="line.132">                        s[i] = colorHist.getColor(i);</a>
-<span class="sourceLineNo">133</span><a id="line.133">                }</a>
-<span class="sourceLineNo">134</span><a id="line.134">                return s;</a>
-<span class="sourceLineNo">135</span><a id="line.135">        }</a>
-<span class="sourceLineNo">136</span><a id="line.136">        </a>
-<span class="sourceLineNo">137</span><a id="line.137">        private double cluster(int[] pixels) {</a>
-<span class="sourceLineNo">138</span><a id="line.138">                int changed = Integer.MAX_VALUE;</a>
-<span class="sourceLineNo">139</span><a id="line.139">                double distSum = Double.POSITIVE_INFINITY;</a>
-<span class="sourceLineNo">140</span><a id="line.140">                int j = 0;</a>
-<span class="sourceLineNo">141</span><a id="line.141">                while (changed &gt; 0 &amp;&amp; j &lt; params.maxIterations) {</a>
-<span class="sourceLineNo">142</span><a id="line.142">                        distSum = assignSamples(pixels);</a>
-<span class="sourceLineNo">143</span><a id="line.143">                        changed = updateClusters();</a>
-<span class="sourceLineNo">144</span><a id="line.144">                        j++;</a>
-<span class="sourceLineNo">145</span><a id="line.145">                }</a>
-<span class="sourceLineNo">146</span><a id="line.146">                return distSum;</a>
-<span class="sourceLineNo">147</span><a id="line.147">        }</a>
-<span class="sourceLineNo">148</span><a id="line.148"></a>
-<span class="sourceLineNo">149</span><a id="line.149">        </a>
-<span class="sourceLineNo">150</span><a id="line.150">        private double assignSamples(int[] pixels) {</a>
-<span class="sourceLineNo">151</span><a id="line.151">                double distSum = 0;</a>
-<span class="sourceLineNo">152</span><a id="line.152">                for (int p : pixels) {</a>
-<span class="sourceLineNo">153</span><a id="line.153">                        double dist = addToClosestCluster(p);</a>
-<span class="sourceLineNo">154</span><a id="line.154">                        distSum = distSum + dist;</a>
-<span class="sourceLineNo">155</span><a id="line.155">                }</a>
-<span class="sourceLineNo">156</span><a id="line.156">                return distSum;</a>
-<span class="sourceLineNo">157</span><a id="line.157">        }</a>
-<span class="sourceLineNo">158</span><a id="line.158">        </a>
-<span class="sourceLineNo">159</span><a id="line.159">        private int updateClusters() {</a>
-<span class="sourceLineNo">160</span><a id="line.160">                int changed = 0;</a>
-<span class="sourceLineNo">161</span><a id="line.161">                for (Cluster c : clusters) {</a>
-<span class="sourceLineNo">162</span><a id="line.162">                        changed = changed + c.upDate();</a>
-<span class="sourceLineNo">163</span><a id="line.163">                }</a>
-<span class="sourceLineNo">164</span><a id="line.164">                return changed;</a>
-<span class="sourceLineNo">165</span><a id="line.165">        }</a>
-<span class="sourceLineNo">166</span><a id="line.166">        </a>
-<span class="sourceLineNo">167</span><a id="line.167">        private double addToClosestCluster(int p) {</a>
-<span class="sourceLineNo">168</span><a id="line.168">                double minDist = Double.POSITIVE_INFINITY;</a>
-<span class="sourceLineNo">169</span><a id="line.169">                Cluster closest = null;</a>
-<span class="sourceLineNo">170</span><a id="line.170">                for (Cluster c : clusters) {</a>
-<span class="sourceLineNo">171</span><a id="line.171">                        double d = c.getDistance(p);</a>
-<span class="sourceLineNo">172</span><a id="line.172">                        if (d &lt; minDist) {</a>
-<span class="sourceLineNo">173</span><a id="line.173">                                minDist = d;</a>
-<span class="sourceLineNo">174</span><a id="line.174">                                closest = c;</a>
-<span class="sourceLineNo">175</span><a id="line.175">                        }</a>
-<span class="sourceLineNo">176</span><a id="line.176">                }</a>
-<span class="sourceLineNo">177</span><a id="line.177">                closest.addPixel(p);</a>
-<span class="sourceLineNo">178</span><a id="line.178">                return minDist;</a>
-<span class="sourceLineNo">179</span><a id="line.179">        }</a>
-<span class="sourceLineNo">180</span><a id="line.180"></a>
-<span class="sourceLineNo">181</span><a id="line.181">        private int[][] makeColorMap() {</a>
-<span class="sourceLineNo">182</span><a id="line.182">                List&lt;int[]&gt; colList = new LinkedList&lt;&gt;();</a>
-<span class="sourceLineNo">183</span><a id="line.183">                for (Cluster c : clusters) {</a>
-<span class="sourceLineNo">184</span><a id="line.184">                        if (!c.isEmpty()) {</a>
-<span class="sourceLineNo">185</span><a id="line.185">                                colList.add(c.getCenterColor());</a>
-<span class="sourceLineNo">186</span><a id="line.186">                        }</a>
-<span class="sourceLineNo">187</span><a id="line.187">                }               </a>
-<span class="sourceLineNo">188</span><a id="line.188">                return colList.toArray(new int[0][]);</a>
-<span class="sourceLineNo">189</span><a id="line.189">        }</a>
-<span class="sourceLineNo">190</span><a id="line.190">        </a>
-<span class="sourceLineNo">191</span><a id="line.191">        /**</a>
-<span class="sourceLineNo">192</span><a id="line.192">         * Lists the color clusters to System.out (intended for debugging only).</a>
-<span class="sourceLineNo">193</span><a id="line.193">         */</a>
-<span class="sourceLineNo">194</span><a id="line.194">        public void listClusters() {</a>
-<span class="sourceLineNo">195</span><a id="line.195">                for (Cluster c : clusters) {</a>
-<span class="sourceLineNo">196</span><a id="line.196">                        System.out.println(c.toString());</a>
-<span class="sourceLineNo">197</span><a id="line.197">                }</a>
-<span class="sourceLineNo">198</span><a id="line.198">        }</a>
-<span class="sourceLineNo">199</span><a id="line.199">        </a>
-<span class="sourceLineNo">200</span><a id="line.200">        /**</a>
-<span class="sourceLineNo">201</span><a id="line.201">         * Returns the total error of this clustering, calculated as the sum of</a>
-<span class="sourceLineNo">202</span><a id="line.202">         * the squared distances of the color samples to the associated cluster</a>
-<span class="sourceLineNo">203</span><a id="line.203">         * center. This calculation is performed during the final iteration.</a>
-<span class="sourceLineNo">204</span><a id="line.204">         * </a>
-<span class="sourceLineNo">205</span><a id="line.205">         * @return The sum of the squared distances between samples and cluster centers.</a>
-<span class="sourceLineNo">206</span><a id="line.206">         */</a>
-<span class="sourceLineNo">207</span><a id="line.207">        public double getTotalError() {</a>
-<span class="sourceLineNo">208</span><a id="line.208">                return totalError;</a>
-<span class="sourceLineNo">209</span><a id="line.209">        }</a>
-<span class="sourceLineNo">210</span><a id="line.210"></a>
-<span class="sourceLineNo">211</span><a id="line.211">        // ------- methods required by abstract super class -----------------------</a>
-<span class="sourceLineNo">212</span><a id="line.212">        </a>
-<span class="sourceLineNo">213</span><a id="line.213">        @Override</a>
-<span class="sourceLineNo">214</span><a id="line.214">        public int[][] getColorMap() {</a>
-<span class="sourceLineNo">215</span><a id="line.215">                return colormap;</a>
-<span class="sourceLineNo">216</span><a id="line.216">        }</a>
-<span class="sourceLineNo">217</span><a id="line.217">        </a>
-<span class="sourceLineNo">218</span><a id="line.218">        // ------------------------------------------------------------------------</a>
-<span class="sourceLineNo">219</span><a id="line.219">        </a>
-<span class="sourceLineNo">220</span><a id="line.220">        private class Cluster {</a>
-<span class="sourceLineNo">221</span><a id="line.221">                int sRed, sGrn, sBlu;           // RGB sum of contained pixels</a>
-<span class="sourceLineNo">222</span><a id="line.222">                int pCounter;                           // pixel counter, used during pixel assignment</a>
-<span class="sourceLineNo">223</span><a id="line.223">                int population = 0;                     // number of contained pixels</a>
-<span class="sourceLineNo">224</span><a id="line.224">                double cRed, cGrn, cBlu;        // center of this cluster</a>
-<span class="sourceLineNo">225</span><a id="line.225"></a>
-<span class="sourceLineNo">226</span><a id="line.226">                Cluster(int p) {</a>
-<span class="sourceLineNo">227</span><a id="line.227">                        int[] rgb = intToRgb(p);</a>
-<span class="sourceLineNo">228</span><a id="line.228">                        cRed = rgb[0];</a>
-<span class="sourceLineNo">229</span><a id="line.229">                        cGrn = rgb[1];</a>
-<span class="sourceLineNo">230</span><a id="line.230">                        cBlu = rgb[2];</a>
-<span class="sourceLineNo">231</span><a id="line.231">                        reset();</a>
-<span class="sourceLineNo">232</span><a id="line.232">                }</a>
-<span class="sourceLineNo">233</span><a id="line.233"></a>
-<span class="sourceLineNo">234</span><a id="line.234">                public int[] getCenterColor() {</a>
-<span class="sourceLineNo">235</span><a id="line.235">                        int[] rgb = new int[] {</a>
-<span class="sourceLineNo">236</span><a id="line.236">                                        (int) Math.round(cRed),</a>
-<span class="sourceLineNo">237</span><a id="line.237">                                        (int) Math.round(cGrn),</a>
-<span class="sourceLineNo">238</span><a id="line.238">                                        (int) Math.round(cBlu)</a>
-<span class="sourceLineNo">239</span><a id="line.239">                                        };</a>
-<span class="sourceLineNo">240</span><a id="line.240"></a>
-<span class="sourceLineNo">241</span><a id="line.241">                        return rgb;</a>
-<span class="sourceLineNo">242</span><a id="line.242">                }</a>
-<span class="sourceLineNo">243</span><a id="line.243"></a>
-<span class="sourceLineNo">244</span><a id="line.244">                public boolean isEmpty() {</a>
-<span class="sourceLineNo">245</span><a id="line.245">                        return (population == 0);</a>
-<span class="sourceLineNo">246</span><a id="line.246">                }</a>
-<span class="sourceLineNo">247</span><a id="line.247"></a>
-<span class="sourceLineNo">248</span><a id="line.248">                void reset() {  // Used at the start of the pixel assignment.</a>
-<span class="sourceLineNo">249</span><a id="line.249">                        sRed = 0;</a>
-<span class="sourceLineNo">250</span><a id="line.250">                        sGrn = 0;</a>
-<span class="sourceLineNo">251</span><a id="line.251">                        sBlu = 0;</a>
-<span class="sourceLineNo">252</span><a id="line.252">                        pCounter = 0;</a>
-<span class="sourceLineNo">253</span><a id="line.253">                }</a>
-<span class="sourceLineNo">254</span><a id="line.254">                </a>
-<span class="sourceLineNo">255</span><a id="line.255">                void addPixel(int p) {</a>
-<span class="sourceLineNo">256</span><a id="line.256">                        int[] rgb = intToRgb(p);</a>
-<span class="sourceLineNo">257</span><a id="line.257">                        sRed += rgb[0];</a>
-<span class="sourceLineNo">258</span><a id="line.258">                        sGrn += rgb[1];</a>
-<span class="sourceLineNo">259</span><a id="line.259">                        sBlu += rgb[2];</a>
-<span class="sourceLineNo">260</span><a id="line.260">                        pCounter = pCounter + 1;</a>
-<span class="sourceLineNo">261</span><a id="line.261">                }</a>
-<span class="sourceLineNo">262</span><a id="line.262">                </a>
-<span class="sourceLineNo">263</span><a id="line.263">                /**</a>
-<span class="sourceLineNo">264</span><a id="line.264">                 * This method is invoked after all samples have been assigned.</a>
-<span class="sourceLineNo">265</span><a id="line.265">                 * It updates the cluster's center and returns true if its</a>
-<span class="sourceLineNo">266</span><a id="line.266">                 * population changed from the previous clustering.</a>
-<span class="sourceLineNo">267</span><a id="line.267">                 * @return true if the population of this cluster has changed.</a>
-<span class="sourceLineNo">268</span><a id="line.268">                 */</a>
-<span class="sourceLineNo">269</span><a id="line.269">                int upDate() {</a>
-<span class="sourceLineNo">270</span><a id="line.270">                        if (pCounter &gt; 0) {</a>
-<span class="sourceLineNo">271</span><a id="line.271">                                double scale = 1.0 / pCounter;</a>
-<span class="sourceLineNo">272</span><a id="line.272">                                cRed = sRed * scale;</a>
-<span class="sourceLineNo">273</span><a id="line.273">                                cGrn = sGrn * scale;</a>
-<span class="sourceLineNo">274</span><a id="line.274">                                cBlu = sBlu * scale;</a>
-<span class="sourceLineNo">275</span><a id="line.275">                        }</a>
-<span class="sourceLineNo">276</span><a id="line.276">                        int changed = Math.abs(pCounter - population);  // change in cluster population</a>
-<span class="sourceLineNo">277</span><a id="line.277">                        population = pCounter;</a>
-<span class="sourceLineNo">278</span><a id="line.278">                        reset();</a>
-<span class="sourceLineNo">279</span><a id="line.279">                        return changed; </a>
-<span class="sourceLineNo">280</span><a id="line.280">                }</a>
-<span class="sourceLineNo">281</span><a id="line.281">                </a>
-<span class="sourceLineNo">282</span><a id="line.282">                /**</a>
-<span class="sourceLineNo">283</span><a id="line.283">                 * Calculates and returns the squared Euclidean distance between the color p</a>
-<span class="sourceLineNo">284</span><a id="line.284">                 * and this cluster's center in RGB space.</a>
-<span class="sourceLineNo">285</span><a id="line.285">                 * @param p Color sample</a>
-<span class="sourceLineNo">286</span><a id="line.286">                 * @return Squared distance to the cluster center</a>
-<span class="sourceLineNo">287</span><a id="line.287">                 */</a>
-<span class="sourceLineNo">288</span><a id="line.288">                double getDistance(int p) {</a>
-<span class="sourceLineNo">289</span><a id="line.289">                        int[] rgb = intToRgb(p);</a>
-<span class="sourceLineNo">290</span><a id="line.290">                        final double dR = rgb[0] - cRed;</a>
-<span class="sourceLineNo">291</span><a id="line.291">                        final double dG = rgb[1] - cGrn;</a>
-<span class="sourceLineNo">292</span><a id="line.292">                        final double dB = rgb[2] - cBlu;</a>
-<span class="sourceLineNo">293</span><a id="line.293">                        return dR * dR + dG * dG + dB * dB;</a>
-<span class="sourceLineNo">294</span><a id="line.294">                }</a>
-<span class="sourceLineNo">295</span><a id="line.295">                </a>
-<span class="sourceLineNo">296</span><a id="line.296">                @Override</a>
-<span class="sourceLineNo">297</span><a id="line.297">                public String toString() {</a>
-<span class="sourceLineNo">298</span><a id="line.298">                        return String.format(Locale.US, Cluster.class.getSimpleName() +</a>
-<span class="sourceLineNo">299</span><a id="line.299">                                        ": center=(%.1f,%.1f,%.1f), population=%d", cRed, cGrn, cBlu, population);</a>
-<span class="sourceLineNo">300</span><a id="line.300">                }</a>
-<span class="sourceLineNo">301</span><a id="line.301">        }</a>
-<span class="sourceLineNo">302</span><a id="line.302">        </a>
+<span class="sourceLineNo">019</span><a id="line.19">import imagingbook.lib.color.Rgb;</a>
+<span class="sourceLineNo">020</span><a id="line.20">import imagingbook.pub.color.statistics.ColorHistogram;</a>
+<span class="sourceLineNo">021</span><a id="line.21"></a>
+<span class="sourceLineNo">022</span><a id="line.22">/**</a>
+<span class="sourceLineNo">023</span><a id="line.23"> * This class implements color quantization using k-means clustering</a>
+<span class="sourceLineNo">024</span><a id="line.24"> * of image pixels in RGB color space. Two modes of selecting</a>
+<span class="sourceLineNo">025</span><a id="line.25"> * the colors for the initial clusters are provided:</a>
+<span class="sourceLineNo">026</span><a id="line.26"> * (a) random sampling of the input colors,</a>
+<span class="sourceLineNo">027</span><a id="line.27"> * (b) using the most frequent colors.</a>
+<span class="sourceLineNo">028</span><a id="line.28"> * </a>
+<span class="sourceLineNo">029</span><a id="line.29"> * @author WB</a>
+<span class="sourceLineNo">030</span><a id="line.30"> * @version 2017/01/04</a>
+<span class="sourceLineNo">031</span><a id="line.31"> */</a>
+<span class="sourceLineNo">032</span><a id="line.32">public class KMeansClusteringQuantizer extends ColorQuantizer {</a>
+<span class="sourceLineNo">033</span><a id="line.33">        </a>
+<span class="sourceLineNo">034</span><a id="line.34">        private final Parameters params;</a>
+<span class="sourceLineNo">035</span><a id="line.35">        private final int[][] colormap;</a>
+<span class="sourceLineNo">036</span><a id="line.36">        private final Cluster[] clusters;</a>
+<span class="sourceLineNo">037</span><a id="line.37">        private final double totalError;</a>
+<span class="sourceLineNo">038</span><a id="line.38">        </a>
+<span class="sourceLineNo">039</span><a id="line.39">        public enum SamplingMethod {</a>
+<span class="sourceLineNo">040</span><a id="line.40">                Random, Most_Frequent</a>
+<span class="sourceLineNo">041</span><a id="line.41">        };</a>
+<span class="sourceLineNo">042</span><a id="line.42">        </a>
+<span class="sourceLineNo">043</span><a id="line.43">        public static class Parameters {</a>
+<span class="sourceLineNo">044</span><a id="line.44">                /** Maximum number of quantized colors. */</a>
+<span class="sourceLineNo">045</span><a id="line.45">                public int maxColors = 16;</a>
+<span class="sourceLineNo">046</span><a id="line.46">                /** Maximum number of clustering iterations */</a>
+<span class="sourceLineNo">047</span><a id="line.47">                public int maxIterations = 500;</a>
+<span class="sourceLineNo">048</span><a id="line.48">                /** The method used for selecting the initial color samples. */</a>
+<span class="sourceLineNo">049</span><a id="line.49">                public SamplingMethod samplMethod = SamplingMethod.Random;</a>
+<span class="sourceLineNo">050</span><a id="line.50">                </a>
+<span class="sourceLineNo">051</span><a id="line.51">                void check() {</a>
+<span class="sourceLineNo">052</span><a id="line.52">                        if (maxColors &lt; 2 || maxColors &gt; 256 || maxIterations &lt; 1) {</a>
+<span class="sourceLineNo">053</span><a id="line.53">                                throw new IllegalArgumentException();</a>
+<span class="sourceLineNo">054</span><a id="line.54">                        }</a>
+<span class="sourceLineNo">055</span><a id="line.55">                }</a>
+<span class="sourceLineNo">056</span><a id="line.56">        }</a>
+<span class="sourceLineNo">057</span><a id="line.57">        </a>
+<span class="sourceLineNo">058</span><a id="line.58">        // --------------------------------------------------------------</a>
+<span class="sourceLineNo">059</span><a id="line.59"></a>
+<span class="sourceLineNo">060</span><a id="line.60">        /**</a>
+<span class="sourceLineNo">061</span><a id="line.61">         * Creates a new quantizer instance from the supplied sequence</a>
+<span class="sourceLineNo">062</span><a id="line.62">         * of color values (assumed to be ARGB-encoded integers).</a>
+<span class="sourceLineNo">063</span><a id="line.63">         * </a>
+<span class="sourceLineNo">064</span><a id="line.64">         * @param pixels Sequence of input color values.</a>
+<span class="sourceLineNo">065</span><a id="line.65">         * @param params Parameter object.</a>
+<span class="sourceLineNo">066</span><a id="line.66">         */</a>
+<span class="sourceLineNo">067</span><a id="line.67">        public KMeansClusteringQuantizer(int[] pixels, Parameters params) {</a>
+<span class="sourceLineNo">068</span><a id="line.68">                params.check();</a>
+<span class="sourceLineNo">069</span><a id="line.69">                this.params = params;</a>
+<span class="sourceLineNo">070</span><a id="line.70">                clusters = makeClusters(pixels);</a>
+<span class="sourceLineNo">071</span><a id="line.71">                totalError = cluster(pixels);</a>
+<span class="sourceLineNo">072</span><a id="line.72">                colormap = makeColorMap();</a>
+<span class="sourceLineNo">073</span><a id="line.73">        }</a>
+<span class="sourceLineNo">074</span><a id="line.74">        </a>
+<span class="sourceLineNo">075</span><a id="line.75">        public KMeansClusteringQuantizer(int[] pixels) {</a>
+<span class="sourceLineNo">076</span><a id="line.76">                this(pixels, new Parameters());</a>
+<span class="sourceLineNo">077</span><a id="line.77">        }</a>
+<span class="sourceLineNo">078</span><a id="line.78">        </a>
+<span class="sourceLineNo">079</span><a id="line.79">        // --------------------------------------------------------------</a>
+<span class="sourceLineNo">080</span><a id="line.80"></a>
+<span class="sourceLineNo">081</span><a id="line.81">        private Cluster[] makeClusters(int[] pixels) {</a>
+<span class="sourceLineNo">082</span><a id="line.82">                int Kmax = Math.min(pixels.length, params.maxColors);</a>
+<span class="sourceLineNo">083</span><a id="line.83">                int[] samples = getColorSamples(pixels, Kmax);</a>
+<span class="sourceLineNo">084</span><a id="line.84">                int k = Math.min(samples.length, Kmax);</a>
+<span class="sourceLineNo">085</span><a id="line.85">                Cluster[] cls = new Cluster[k]; // create an array of K clusters</a>
+<span class="sourceLineNo">086</span><a id="line.86">                for (int i = 0; i &lt; k; i++) {</a>
+<span class="sourceLineNo">087</span><a id="line.87">                        cls[i] = new Cluster(samples[i]); // initialize cluster center</a>
+<span class="sourceLineNo">088</span><a id="line.88">                }</a>
+<span class="sourceLineNo">089</span><a id="line.89">                return cls; </a>
+<span class="sourceLineNo">090</span><a id="line.90">        }</a>
+<span class="sourceLineNo">091</span><a id="line.91">        </a>
+<span class="sourceLineNo">092</span><a id="line.92">        /**</a>
+<span class="sourceLineNo">093</span><a id="line.93">         * We randomly pick k distinct colors from the original image</a>
+<span class="sourceLineNo">094</span><a id="line.94">         * pixels.</a>
+<span class="sourceLineNo">095</span><a id="line.95">         * @param pixels</a>
+<span class="sourceLineNo">096</span><a id="line.96">         * @param k</a>
+<span class="sourceLineNo">097</span><a id="line.97">         * @return</a>
+<span class="sourceLineNo">098</span><a id="line.98">         */</a>
+<span class="sourceLineNo">099</span><a id="line.99">        private int[] getColorSamples(int[] pixels, int k) {</a>
+<span class="sourceLineNo">100</span><a id="line.100">                switch (params.samplMethod) {</a>
+<span class="sourceLineNo">101</span><a id="line.101">                case Random:</a>
+<span class="sourceLineNo">102</span><a id="line.102">                        return getRandomColors(pixels, k);</a>
+<span class="sourceLineNo">103</span><a id="line.103">                case Most_Frequent:</a>
+<span class="sourceLineNo">104</span><a id="line.104">                        return getMostFrequentColors(pixels, k);</a>
+<span class="sourceLineNo">105</span><a id="line.105">                default:</a>
+<span class="sourceLineNo">106</span><a id="line.106">                        return null;</a>
+<span class="sourceLineNo">107</span><a id="line.107">                }</a>
+<span class="sourceLineNo">108</span><a id="line.108">        }</a>
+<span class="sourceLineNo">109</span><a id="line.109"></a>
+<span class="sourceLineNo">110</span><a id="line.110">        private int[] getRandomColors(int[] pixels, int k) {</a>
+<span class="sourceLineNo">111</span><a id="line.111">                Random rng = new Random();</a>
+<span class="sourceLineNo">112</span><a id="line.112">                Set&lt;Integer&gt; pixelSet = new LinkedHashSet&lt;Integer&gt;();</a>
+<span class="sourceLineNo">113</span><a id="line.113">                while (pixelSet.size() &lt; k) {</a>
+<span class="sourceLineNo">114</span><a id="line.114">                        Integer next = rng.nextInt(pixels.length);</a>
+<span class="sourceLineNo">115</span><a id="line.115">                        int p = pixels[next];</a>
+<span class="sourceLineNo">116</span><a id="line.116">                        // adding to a set automatically does a containment check</a>
+<span class="sourceLineNo">117</span><a id="line.117">                        pixelSet.add(p);</a>
+<span class="sourceLineNo">118</span><a id="line.118">                }</a>
+<span class="sourceLineNo">119</span><a id="line.119">                int[] s = new int[k];</a>
+<span class="sourceLineNo">120</span><a id="line.120">                int i = 0;</a>
+<span class="sourceLineNo">121</span><a id="line.121">                for (Integer p : pixelSet) {</a>
+<span class="sourceLineNo">122</span><a id="line.122">                        s[i] = p;</a>
+<span class="sourceLineNo">123</span><a id="line.123">                        i++;</a>
+<span class="sourceLineNo">124</span><a id="line.124">                }</a>
+<span class="sourceLineNo">125</span><a id="line.125">                return s;</a>
+<span class="sourceLineNo">126</span><a id="line.126">        }</a>
+<span class="sourceLineNo">127</span><a id="line.127">        </a>
+<span class="sourceLineNo">128</span><a id="line.128">        private int[] getMostFrequentColors(int[] pixels, int k) {</a>
+<span class="sourceLineNo">129</span><a id="line.129">                ColorHistogram colorHist = new ColorHistogram(pixels, true);</a>
+<span class="sourceLineNo">130</span><a id="line.130">                k = Math.min(k, colorHist.getNumberOfColors());</a>
+<span class="sourceLineNo">131</span><a id="line.131">                int[] s = new int[k];</a>
+<span class="sourceLineNo">132</span><a id="line.132">                for (int i = 0; i &lt; k; i++) {</a>
+<span class="sourceLineNo">133</span><a id="line.133">                        s[i] = colorHist.getColor(i);</a>
+<span class="sourceLineNo">134</span><a id="line.134">                }</a>
+<span class="sourceLineNo">135</span><a id="line.135">                return s;</a>
+<span class="sourceLineNo">136</span><a id="line.136">        }</a>
+<span class="sourceLineNo">137</span><a id="line.137">        </a>
+<span class="sourceLineNo">138</span><a id="line.138">        private double cluster(int[] pixels) {</a>
+<span class="sourceLineNo">139</span><a id="line.139">                int changed = Integer.MAX_VALUE;</a>
+<span class="sourceLineNo">140</span><a id="line.140">                double distSum = Double.POSITIVE_INFINITY;</a>
+<span class="sourceLineNo">141</span><a id="line.141">                int j = 0;</a>
+<span class="sourceLineNo">142</span><a id="line.142">                while (changed &gt; 0 &amp;&amp; j &lt; params.maxIterations) {</a>
+<span class="sourceLineNo">143</span><a id="line.143">                        distSum = assignSamples(pixels);</a>
+<span class="sourceLineNo">144</span><a id="line.144">                        changed = updateClusters();</a>
+<span class="sourceLineNo">145</span><a id="line.145">                        j++;</a>
+<span class="sourceLineNo">146</span><a id="line.146">                }</a>
+<span class="sourceLineNo">147</span><a id="line.147">                return distSum;</a>
+<span class="sourceLineNo">148</span><a id="line.148">        }</a>
+<span class="sourceLineNo">149</span><a id="line.149"></a>
+<span class="sourceLineNo">150</span><a id="line.150">        </a>
+<span class="sourceLineNo">151</span><a id="line.151">        private double assignSamples(int[] pixels) {</a>
+<span class="sourceLineNo">152</span><a id="line.152">                double distSum = 0;</a>
+<span class="sourceLineNo">153</span><a id="line.153">                for (int p : pixels) {</a>
+<span class="sourceLineNo">154</span><a id="line.154">                        double dist = addToClosestCluster(p);</a>
+<span class="sourceLineNo">155</span><a id="line.155">                        distSum = distSum + dist;</a>
+<span class="sourceLineNo">156</span><a id="line.156">                }</a>
+<span class="sourceLineNo">157</span><a id="line.157">                return distSum;</a>
+<span class="sourceLineNo">158</span><a id="line.158">        }</a>
+<span class="sourceLineNo">159</span><a id="line.159">        </a>
+<span class="sourceLineNo">160</span><a id="line.160">        private int updateClusters() {</a>
+<span class="sourceLineNo">161</span><a id="line.161">                int changed = 0;</a>
+<span class="sourceLineNo">162</span><a id="line.162">                for (Cluster c : clusters) {</a>
+<span class="sourceLineNo">163</span><a id="line.163">                        changed = changed + c.upDate();</a>
+<span class="sourceLineNo">164</span><a id="line.164">                }</a>
+<span class="sourceLineNo">165</span><a id="line.165">                return changed;</a>
+<span class="sourceLineNo">166</span><a id="line.166">        }</a>
+<span class="sourceLineNo">167</span><a id="line.167">        </a>
+<span class="sourceLineNo">168</span><a id="line.168">        private double addToClosestCluster(int p) {</a>
+<span class="sourceLineNo">169</span><a id="line.169">                double minDist = Double.POSITIVE_INFINITY;</a>
+<span class="sourceLineNo">170</span><a id="line.170">                Cluster closest = null;</a>
+<span class="sourceLineNo">171</span><a id="line.171">                for (Cluster c : clusters) {</a>
+<span class="sourceLineNo">172</span><a id="line.172">                        double d = c.getDistance(p);</a>
+<span class="sourceLineNo">173</span><a id="line.173">                        if (d &lt; minDist) {</a>
+<span class="sourceLineNo">174</span><a id="line.174">                                minDist = d;</a>
+<span class="sourceLineNo">175</span><a id="line.175">                                closest = c;</a>
+<span class="sourceLineNo">176</span><a id="line.176">                        }</a>
+<span class="sourceLineNo">177</span><a id="line.177">                }</a>
+<span class="sourceLineNo">178</span><a id="line.178">                closest.addPixel(p);</a>
+<span class="sourceLineNo">179</span><a id="line.179">                return minDist;</a>
+<span class="sourceLineNo">180</span><a id="line.180">        }</a>
+<span class="sourceLineNo">181</span><a id="line.181"></a>
+<span class="sourceLineNo">182</span><a id="line.182">        private int[][] makeColorMap() {</a>
+<span class="sourceLineNo">183</span><a id="line.183">                List&lt;int[]&gt; colList = new LinkedList&lt;&gt;();</a>
+<span class="sourceLineNo">184</span><a id="line.184">                for (Cluster c : clusters) {</a>
+<span class="sourceLineNo">185</span><a id="line.185">                        if (!c.isEmpty()) {</a>
+<span class="sourceLineNo">186</span><a id="line.186">                                colList.add(c.getCenterColor());</a>
+<span class="sourceLineNo">187</span><a id="line.187">                        }</a>
+<span class="sourceLineNo">188</span><a id="line.188">                }               </a>
+<span class="sourceLineNo">189</span><a id="line.189">                return colList.toArray(new int[0][]);</a>
+<span class="sourceLineNo">190</span><a id="line.190">        }</a>
+<span class="sourceLineNo">191</span><a id="line.191">        </a>
+<span class="sourceLineNo">192</span><a id="line.192">        /**</a>
+<span class="sourceLineNo">193</span><a id="line.193">         * Lists the color clusters to System.out (intended for debugging only).</a>
+<span class="sourceLineNo">194</span><a id="line.194">         */</a>
+<span class="sourceLineNo">195</span><a id="line.195">        public void listClusters() {</a>
+<span class="sourceLineNo">196</span><a id="line.196">                for (Cluster c : clusters) {</a>
+<span class="sourceLineNo">197</span><a id="line.197">                        System.out.println(c.toString());</a>
+<span class="sourceLineNo">198</span><a id="line.198">                }</a>
+<span class="sourceLineNo">199</span><a id="line.199">        }</a>
+<span class="sourceLineNo">200</span><a id="line.200">        </a>
+<span class="sourceLineNo">201</span><a id="line.201">        /**</a>
+<span class="sourceLineNo">202</span><a id="line.202">         * Returns the total error of this clustering, calculated as the sum of</a>
+<span class="sourceLineNo">203</span><a id="line.203">         * the squared distances of the color samples to the associated cluster</a>
+<span class="sourceLineNo">204</span><a id="line.204">         * center. This calculation is performed during the final iteration.</a>
+<span class="sourceLineNo">205</span><a id="line.205">         * </a>
+<span class="sourceLineNo">206</span><a id="line.206">         * @return The sum of the squared distances between samples and cluster centers.</a>
+<span class="sourceLineNo">207</span><a id="line.207">         */</a>
+<span class="sourceLineNo">208</span><a id="line.208">        public double getTotalError() {</a>
+<span class="sourceLineNo">209</span><a id="line.209">                return totalError;</a>
+<span class="sourceLineNo">210</span><a id="line.210">        }</a>
+<span class="sourceLineNo">211</span><a id="line.211"></a>
+<span class="sourceLineNo">212</span><a id="line.212">        // ------- methods required by abstract super class -----------------------</a>
+<span class="sourceLineNo">213</span><a id="line.213">        </a>
+<span class="sourceLineNo">214</span><a id="line.214">        @Override</a>
+<span class="sourceLineNo">215</span><a id="line.215">        public int[][] getColorMap() {</a>
+<span class="sourceLineNo">216</span><a id="line.216">                return colormap;</a>
+<span class="sourceLineNo">217</span><a id="line.217">        }</a>
+<span class="sourceLineNo">218</span><a id="line.218">        </a>
+<span class="sourceLineNo">219</span><a id="line.219">        // ------------------------------------------------------------------------</a>
+<span class="sourceLineNo">220</span><a id="line.220">        </a>
+<span class="sourceLineNo">221</span><a id="line.221">        private class Cluster {</a>
+<span class="sourceLineNo">222</span><a id="line.222">                int sRed, sGrn, sBlu;           // RGB sum of contained pixels</a>
+<span class="sourceLineNo">223</span><a id="line.223">                int pCounter;                           // pixel counter, used during pixel assignment</a>
+<span class="sourceLineNo">224</span><a id="line.224">                int population = 0;                     // number of contained pixels</a>
+<span class="sourceLineNo">225</span><a id="line.225">                double cRed, cGrn, cBlu;        // center of this cluster</a>
+<span class="sourceLineNo">226</span><a id="line.226"></a>
+<span class="sourceLineNo">227</span><a id="line.227">                Cluster(int p) {</a>
+<span class="sourceLineNo">228</span><a id="line.228">                        int[] rgb = Rgb.intToRgb(p);</a>
+<span class="sourceLineNo">229</span><a id="line.229">                        cRed = rgb[0];</a>
+<span class="sourceLineNo">230</span><a id="line.230">                        cGrn = rgb[1];</a>
+<span class="sourceLineNo">231</span><a id="line.231">                        cBlu = rgb[2];</a>
+<span class="sourceLineNo">232</span><a id="line.232">                        reset();</a>
+<span class="sourceLineNo">233</span><a id="line.233">                }</a>
+<span class="sourceLineNo">234</span><a id="line.234"></a>
+<span class="sourceLineNo">235</span><a id="line.235">                public int[] getCenterColor() {</a>
+<span class="sourceLineNo">236</span><a id="line.236">                        int[] rgb = new int[] {</a>
+<span class="sourceLineNo">237</span><a id="line.237">                                        (int) Math.round(cRed),</a>
+<span class="sourceLineNo">238</span><a id="line.238">                                        (int) Math.round(cGrn),</a>
+<span class="sourceLineNo">239</span><a id="line.239">                                        (int) Math.round(cBlu)</a>
+<span class="sourceLineNo">240</span><a id="line.240">                                        };</a>
+<span class="sourceLineNo">241</span><a id="line.241"></a>
+<span class="sourceLineNo">242</span><a id="line.242">                        return rgb;</a>
+<span class="sourceLineNo">243</span><a id="line.243">                }</a>
+<span class="sourceLineNo">244</span><a id="line.244"></a>
+<span class="sourceLineNo">245</span><a id="line.245">                public boolean isEmpty() {</a>
+<span class="sourceLineNo">246</span><a id="line.246">                        return (population == 0);</a>
+<span class="sourceLineNo">247</span><a id="line.247">                }</a>
+<span class="sourceLineNo">248</span><a id="line.248"></a>
+<span class="sourceLineNo">249</span><a id="line.249">                void reset() {  // Used at the start of the pixel assignment.</a>
+<span class="sourceLineNo">250</span><a id="line.250">                        sRed = 0;</a>
+<span class="sourceLineNo">251</span><a id="line.251">                        sGrn = 0;</a>
+<span class="sourceLineNo">252</span><a id="line.252">                        sBlu = 0;</a>
+<span class="sourceLineNo">253</span><a id="line.253">                        pCounter = 0;</a>
+<span class="sourceLineNo">254</span><a id="line.254">                }</a>
+<span class="sourceLineNo">255</span><a id="line.255">                </a>
+<span class="sourceLineNo">256</span><a id="line.256">                void addPixel(int p) {</a>
+<span class="sourceLineNo">257</span><a id="line.257">                        int[] rgb = Rgb.intToRgb(p);</a>
+<span class="sourceLineNo">258</span><a id="line.258">                        sRed += rgb[0];</a>
+<span class="sourceLineNo">259</span><a id="line.259">                        sGrn += rgb[1];</a>
+<span class="sourceLineNo">260</span><a id="line.260">                        sBlu += rgb[2];</a>
+<span class="sourceLineNo">261</span><a id="line.261">                        pCounter = pCounter + 1;</a>
+<span class="sourceLineNo">262</span><a id="line.262">                }</a>
+<span class="sourceLineNo">263</span><a id="line.263">                </a>
+<span class="sourceLineNo">264</span><a id="line.264">                /**</a>
+<span class="sourceLineNo">265</span><a id="line.265">                 * This method is invoked after all samples have been assigned.</a>
+<span class="sourceLineNo">266</span><a id="line.266">                 * It updates the cluster's center and returns true if its</a>
+<span class="sourceLineNo">267</span><a id="line.267">                 * population changed from the previous clustering.</a>
+<span class="sourceLineNo">268</span><a id="line.268">                 * @return true if the population of this cluster has changed.</a>
+<span class="sourceLineNo">269</span><a id="line.269">                 */</a>
+<span class="sourceLineNo">270</span><a id="line.270">                int upDate() {</a>
+<span class="sourceLineNo">271</span><a id="line.271">                        if (pCounter &gt; 0) {</a>
+<span class="sourceLineNo">272</span><a id="line.272">                                double scale = 1.0 / pCounter;</a>
+<span class="sourceLineNo">273</span><a id="line.273">                                cRed = sRed * scale;</a>
+<span class="sourceLineNo">274</span><a id="line.274">                                cGrn = sGrn * scale;</a>
+<span class="sourceLineNo">275</span><a id="line.275">                                cBlu = sBlu * scale;</a>
+<span class="sourceLineNo">276</span><a id="line.276">                        }</a>
+<span class="sourceLineNo">277</span><a id="line.277">                        int changed = Math.abs(pCounter - population);  // change in cluster population</a>
+<span class="sourceLineNo">278</span><a id="line.278">                        population = pCounter;</a>
+<span class="sourceLineNo">279</span><a id="line.279">                        reset();</a>
+<span class="sourceLineNo">280</span><a id="line.280">                        return changed; </a>
+<span class="sourceLineNo">281</span><a id="line.281">                }</a>
+<span class="sourceLineNo">282</span><a id="line.282">                </a>
+<span class="sourceLineNo">283</span><a id="line.283">                /**</a>
+<span class="sourceLineNo">284</span><a id="line.284">                 * Calculates and returns the squared Euclidean distance between the color p</a>
+<span class="sourceLineNo">285</span><a id="line.285">                 * and this cluster's center in RGB space.</a>
+<span class="sourceLineNo">286</span><a id="line.286">                 * @param p Color sample</a>
+<span class="sourceLineNo">287</span><a id="line.287">                 * @return Squared distance to the cluster center</a>
+<span class="sourceLineNo">288</span><a id="line.288">                 */</a>
+<span class="sourceLineNo">289</span><a id="line.289">                double getDistance(int p) {</a>
+<span class="sourceLineNo">290</span><a id="line.290">                        int[] rgb = Rgb.intToRgb(p);</a>
+<span class="sourceLineNo">291</span><a id="line.291">                        final double dR = rgb[0] - cRed;</a>
+<span class="sourceLineNo">292</span><a id="line.292">                        final double dG = rgb[1] - cGrn;</a>
+<span class="sourceLineNo">293</span><a id="line.293">                        final double dB = rgb[2] - cBlu;</a>
+<span class="sourceLineNo">294</span><a id="line.294">                        return dR * dR + dG * dG + dB * dB;</a>
+<span class="sourceLineNo">295</span><a id="line.295">                }</a>
+<span class="sourceLineNo">296</span><a id="line.296">                </a>
+<span class="sourceLineNo">297</span><a id="line.297">                @Override</a>
+<span class="sourceLineNo">298</span><a id="line.298">                public String toString() {</a>
+<span class="sourceLineNo">299</span><a id="line.299">                        return String.format(Locale.US, Cluster.class.getSimpleName() +</a>
+<span class="sourceLineNo">300</span><a id="line.300">                                        ": center=(%.1f,%.1f,%.1f), population=%d", cRed, cGrn, cBlu, population);</a>
+<span class="sourceLineNo">301</span><a id="line.301">                }</a>
+<span class="sourceLineNo">302</span><a id="line.302">        }</a>
 <span class="sourceLineNo">303</span><a id="line.303">        </a>
-<span class="sourceLineNo">304</span><a id="line.304">} </a>
-<span class="sourceLineNo">305</span><a id="line.305"></a>
+<span class="sourceLineNo">304</span><a id="line.304">        </a>
+<span class="sourceLineNo">305</span><a id="line.305">} </a>
+<span class="sourceLineNo">306</span><a id="line.306"></a>
 
 
 

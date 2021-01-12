@@ -52,10 +52,10 @@ public class Eigensolver2x2 {
 	}
 	
 	/**
-	 * Constructor, takes the individual elements of a 2x2 matrix.
+	 * Constructor, takes the individual elements of a 2x2 matrix:
 	 * <pre>
 	 *   A B
-	 *   C D<pre>
+	 *   C D</pre>
 	 * @param A matrix element M[0,0]
 	 * @param B matrix element M[0,1]
 	 * @param C matrix element M[1,0]

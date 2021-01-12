@@ -1,11 +1,14 @@
 imagingbook
 imagingbook.lib
 imagingbook.lib.color
-imagingbook.lib.filters
+imagingbook.lib.filter
+imagingbook.lib.filter.examples
+imagingbook.lib.filter.linear
 imagingbook.lib.handles
 imagingbook.lib.ij
 imagingbook.lib.image
 imagingbook.lib.image.access
+imagingbook.lib.image.data
 imagingbook.lib.interpolation
 imagingbook.lib.math
 imagingbook.lib.math.testing
@@ -13,6 +16,8 @@ imagingbook.lib.settings
 imagingbook.lib.tuples
 imagingbook.lib.util
 imagingbook.lib.util.choice
+imagingbook.lib.util.progress
+imagingbook.lib.util.progress.ij
 imagingbook.pub
 imagingbook.pub.color.edge
 imagingbook.pub.color.filters
@@ -27,6 +32,7 @@ imagingbook.pub.dct
 imagingbook.pub.dft
 imagingbook.pub.dft.obsolete
 imagingbook.pub.edgepreservingfilters
+imagingbook.pub.edgepreservingfilters.OLD
 imagingbook.pub.fd
 imagingbook.pub.geometry.basic
 imagingbook.pub.geometry.delaunay
