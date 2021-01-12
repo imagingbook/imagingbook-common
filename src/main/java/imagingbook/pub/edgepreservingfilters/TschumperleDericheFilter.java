@@ -15,8 +15,8 @@ import static imagingbook.pub.edgepreservingfilters.TschumperleDericheF.kernelDy
 import imagingbook.lib.filter.GenericFilter;
 import imagingbook.lib.filter.linear.GaussianFilterSeparable;
 import imagingbook.lib.filter.linear.LinearFilter;
-import imagingbook.lib.image.access.PixelPack;
-import imagingbook.lib.image.access.PixelPack.PixelSlice;
+import imagingbook.lib.image.data.PixelPack;
+import imagingbook.lib.image.data.PixelPack.PixelSlice;
 import imagingbook.lib.math.Eigensolver2x2;
 import imagingbook.lib.math.Matrix;
 import imagingbook.pub.edgepreservingfilters.TschumperleDericheF.Parameters;
@@ -57,7 +57,6 @@ public class TschumperleDericheFilter extends GenericFilter {
 	// constructor - use for setting individual parameters:
 	public TschumperleDericheFilter(Parameters params) {
 		this.params = params;
-		this.setProgressMonitoring(true);
 	}
 	
 	@Override

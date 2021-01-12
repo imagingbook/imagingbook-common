@@ -1,7 +1,7 @@
 package imagingbook.lib.filter.examples;
 
 import imagingbook.lib.filter.GenericFilterScalar;
-import imagingbook.lib.image.access.PixelPack.PixelSlice;
+import imagingbook.lib.image.data.PixelPack.PixelSlice;
 
 public class ExampleFilterScalar extends GenericFilterScalar //implements ReportsProgress
 {

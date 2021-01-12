@@ -62,6 +62,18 @@ public abstract class GridIndexer2D implements Cloneable {
 		return width * v + u;
 	}
 	
+	public int getWidth() {
+		return this.width;
+	}
+	
+	public int getHeight() {
+		return this.height;
+	}
+	
+	public OutOfBoundsStrategy getOutOfBoundsStrategy() {
+		return this.obs;
+	}
+	
 	// ---------------------------------------------------------
 
 	/** 

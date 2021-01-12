@@ -14,7 +14,7 @@ import static imagingbook.pub.edgepreservingfilters.NagaoMatsuyamaF.R0;
 import static imagingbook.pub.edgepreservingfilters.NagaoMatsuyamaF.SubRegions;
 
 import imagingbook.lib.filter.GenericFilterVector;
-import imagingbook.lib.image.access.PixelPack;
+import imagingbook.lib.image.data.PixelPack;
 import imagingbook.pub.edgepreservingfilters.NagaoMatsuyamaF.Parameters;
 
 /**

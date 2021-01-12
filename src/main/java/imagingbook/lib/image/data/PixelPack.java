@@ -1,4 +1,4 @@
-package imagingbook.lib.image.access;
+package imagingbook.lib.image.data;
 
 import java.util.Arrays;
 
@@ -8,6 +8,8 @@ import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
 import ij.process.ShortProcessor;
 import imagingbook.lib.color.Rgb;
+import imagingbook.lib.image.access.GridIndexer2D;
+import imagingbook.lib.image.access.OutOfBoundsStrategy;
 
 public class PixelPack {
 	
@@ -33,7 +35,7 @@ public class PixelPack {
 	}
 			
 	public PixelPack(ImageProcessor ip, OutOfBoundsStrategy obs) {
-		this(ip.getWidth(), ip.getHeight(), getDepth(ip), obs);
+		this(ip.getWidth(), ip.getHeight(), ip.getNChannels(), obs);
 		copyFromImageProcessor(ip, this.pixels);
 	}
 	
@@ -43,7 +45,7 @@ public class PixelPack {
 	}
 		
 	public PixelPack(PixelPack orig, boolean copyData) {
-		this(orig.getWidth(), orig.getHeight(), orig.getDepth(), orig.indexer.obs);
+		this(orig.getWidth(), orig.getHeight(), orig.getDepth(), orig.indexer.getOutOfBoundsStrategy());
 		if (copyData) {
 			orig.copyTo(this);
 		}
@@ -108,11 +110,11 @@ public class PixelPack {
 	}
 	
 	public int getWidth() {
-		return this.indexer.width;
+		return this.indexer.getWidth();
 	}
 	
 	public int getHeight() {
-		return this.indexer.height;
+		return this.indexer.getHeight();
 	}
 	
 	public int getDepth() {
@@ -120,7 +122,7 @@ public class PixelPack {
 	}
 	
 	public OutOfBoundsStrategy getOutOfBoundsStrategy() {
-		return this.indexer.obs;
+		return this.indexer.getOutOfBoundsStrategy();
 	}
 	
 	// returns a new pixel array
@@ -149,12 +151,13 @@ public class PixelPack {
 	}
 	
 	public void copyToImageProcessor(ImageProcessor ip) {
-		// TODO: check compatibility
+		if (this.getWidth() != ip.getWidth() || this.getHeight() != ip.getHeight()) {
+			throw new IllegalArgumentException("cannot copy to image processor, incompatible width or height");
+		}
+		if (this.getDepth() != ip.getNChannels()) {
+			throw new IllegalArgumentException("cannot copy to image processor, wrong depth");
+		}
 		copyToImageProcessor(this.pixels, ip);
-	}
-	
-	public static int getDepth(ImageProcessor ip) {
-		return (ip instanceof ColorProcessor) ? 3 : 1;
 	}
 	
 	// -------------------------------------------------------------------

@@ -1,7 +1,7 @@
 package imagingbook.lib.filter.linear;
 
 import imagingbook.lib.filter.GenericFilterScalarSeparable;
-import imagingbook.lib.image.access.PixelPack.PixelSlice;
+import imagingbook.lib.image.data.PixelPack.PixelSlice;
 
 public class LinearFilterSeparable extends GenericFilterScalarSeparable {
 

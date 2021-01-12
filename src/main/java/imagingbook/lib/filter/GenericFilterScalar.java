@@ -1,7 +1,7 @@
 package imagingbook.lib.filter;
 
-import imagingbook.lib.image.access.PixelPack;
-import imagingbook.lib.image.access.PixelPack.PixelSlice;
+import imagingbook.lib.image.data.PixelPack;
+import imagingbook.lib.image.data.PixelPack.PixelSlice;
 
 public abstract class GenericFilterScalar extends GenericFilter {
 	

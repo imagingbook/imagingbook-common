@@ -2,7 +2,7 @@ package imagingbook.lib.filter.examples;
 
 import imagingbook.lib.filter.GenericFilterScalar;
 import imagingbook.lib.filter.linear.LinearFilterSeparable;
-import imagingbook.lib.image.access.PixelPack.PixelSlice;
+import imagingbook.lib.image.data.PixelPack.PixelSlice;
 
 /**
  * See also {@link LinearFilterSeparable}.

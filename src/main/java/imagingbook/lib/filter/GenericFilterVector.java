@@ -1,6 +1,6 @@
 package imagingbook.lib.filter;
 
-import imagingbook.lib.image.access.PixelPack;
+import imagingbook.lib.image.data.PixelPack;
 
 public abstract class GenericFilterVector extends GenericFilter {
 

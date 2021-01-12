@@ -14,7 +14,7 @@ import static imagingbook.lib.math.Arithmetic.sqr;
 import ij.process.ColorProcessor;
 import imagingbook.lib.filter.GenericFilterVector;
 import imagingbook.lib.filter.linear.GaussianKernel2D;
-import imagingbook.lib.image.access.PixelPack;
+import imagingbook.lib.image.data.PixelPack;
 import imagingbook.lib.math.VectorNorm;
 import imagingbook.pub.edgepreservingfilters.BilateralF.Parameters;
 
@@ -49,7 +49,6 @@ public class BilateralFilterVector extends GenericFilterVector {
 		this.sigmaR2 = sqr(params.sigmaR);
 		this.colorNorm = params.colorNormType.create();
 		this.colorScale2 = sqr(colorNorm.getScale(3));
-		this.setProgressMonitoring(true);
 	}
 	
 	@Override

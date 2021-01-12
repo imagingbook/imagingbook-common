@@ -1,7 +1,7 @@
 package imagingbook.lib.filter.examples;
 
 import imagingbook.lib.filter.GenericFilterVector;
-import imagingbook.lib.image.access.PixelPack;
+import imagingbook.lib.image.data.PixelPack;
 
 public class ExampleFilterVector extends GenericFilterVector {
 

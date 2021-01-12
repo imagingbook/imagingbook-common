@@ -1,6 +1,6 @@
 package imagingbook.lib.filter;
 
-import imagingbook.lib.image.access.PixelPack;
+import imagingbook.lib.image.data.PixelPack;
 
 /**
  * A generic vector multi-pass filter with exactly 2 passes.

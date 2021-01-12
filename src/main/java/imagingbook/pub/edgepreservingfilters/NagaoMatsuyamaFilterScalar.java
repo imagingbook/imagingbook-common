@@ -13,7 +13,7 @@ import static imagingbook.pub.edgepreservingfilters.NagaoMatsuyamaF.R0;
 import static imagingbook.pub.edgepreservingfilters.NagaoMatsuyamaF.SubRegions;
 
 import imagingbook.lib.filter.GenericFilterScalar;
-import imagingbook.lib.image.access.PixelPack.PixelSlice;
+import imagingbook.lib.image.data.PixelPack.PixelSlice;
 import imagingbook.pub.edgepreservingfilters.NagaoMatsuyamaF.Parameters;
 
 /**

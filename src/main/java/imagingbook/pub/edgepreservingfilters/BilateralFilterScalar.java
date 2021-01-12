@@ -14,7 +14,7 @@ import static imagingbook.pub.edgepreservingfilters.BilateralF.gauss;
 
 import imagingbook.lib.filter.GenericFilterScalar;
 import imagingbook.lib.filter.linear.GaussianKernel2D;
-import imagingbook.lib.image.access.PixelPack.PixelSlice;
+import imagingbook.lib.image.data.PixelPack.PixelSlice;
 import imagingbook.pub.edgepreservingfilters.BilateralF.Parameters;
 
 /**
@@ -45,7 +45,6 @@ public class BilateralFilterScalar extends GenericFilterScalar {
 		this.Hd = kernel.getH();
 		this.K = kernel.getXc();
 		this.sigmaR2 = sqr(params.sigmaR);
-		this.setProgressMonitoring(true);
 	}
 	
 	@Override

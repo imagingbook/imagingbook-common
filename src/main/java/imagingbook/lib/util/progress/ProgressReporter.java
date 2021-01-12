@@ -5,7 +5,7 @@ package imagingbook.lib.util.progress;
  * @author WB
  * 
  */
-public interface ReportingProgress {
+public interface ProgressReporter {
 	
 	/**
 	 * Returns a value in [0,1) indicating to which degree the

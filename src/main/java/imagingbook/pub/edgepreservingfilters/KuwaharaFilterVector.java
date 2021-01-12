@@ -12,7 +12,7 @@ package imagingbook.pub.edgepreservingfilters;
 import static imagingbook.lib.math.Arithmetic.sqr;
 
 import imagingbook.lib.filter.GenericFilterVector;
-import imagingbook.lib.image.access.PixelPack;
+import imagingbook.lib.image.data.PixelPack;
 import imagingbook.pub.edgepreservingfilters.KuwaharaF.Parameters;
 
 /**
