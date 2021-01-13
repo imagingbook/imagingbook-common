@@ -91,7 +91,7 @@ public class TschumperleDericheFilter extends GenericFilter {
 	protected void runPass(PixelPack source, PixelPack target) {
 		makeGradients();							// Step 1
 		makeStructureMatrix();						// Step 2
-		float maxVelocity = updateVelocities(); 	// Step 3
+		float maxVelocity = updateImage(); 	// Step 3
 		alpha = (float) params.dt / maxVelocity;	// Step 4: re-adjust alpha
 	}
 	
@@ -126,30 +126,24 @@ public class TschumperleDericheFilter extends GenericFilter {
 		structureBlurFilter.applyTo(G);
 	}
 
-	private float updateVelocities() {
-		float maxV = Float.NEGATIVE_INFINITY;	// maximum velocity
+	private float updateImage() {
+		float betaMax = Float.NEGATIVE_INFINITY;	// maximum velocity
 		for (int u = 0; u < M; u++) {
 			for (int v = 0; v < N; v++) {
 				// calculate the local geometry matrix A(u,v), which has only 3 distinct elements
 				float[] A = getGeometryMatrix(u, v);
-				float[] B = new float[K];			// local velocities for K channels			
-				for (int k = 0; k < K; k++) {
-					float[] H = getHessianMatrix(k, u, v); // local Hessian for channel k at pos u,v (3 elements)
-					float vel = A[0] * H[0] + 2 * A[1] * H[1] + A[2] * H[2]; // = trace (A*H)
-					B[k] = vel;
-					maxV = Math.max(maxV, Math.abs(vel)); // find max absolute velocity for time-step adaptation
-				}
-				
-				// update the image (result goes to target)
 				float[] p = source.getPixel(u, v);
 				for (int k = 0; k < K; k++) {
-					p[k] = p[k] + alpha * B[k];	// we use alpha from the previous pass!
+					float[] H = getHessianMatrix(k, u, v); // local Hessian for channel k at pos u,v (3 elements)
+					float beta = A[0] * H[0] + 2 * A[1] * H[1] + A[2] * H[2]; // = trace (A*H)
+					betaMax = Math.max(betaMax, Math.abs(beta)); // find max absolute velocity for time-step adaptation
+					// update the image (result goes to target)
+					p[k] = p[k] + alpha * beta;	// we use alpha from the previous pass!
 				}
-				//source.setPixel(u, v, Inew);
 				target.setPixel(u, v, p);
 			}
 		}
-		return maxV;
+		return betaMax;
 	}
 	
 	private float[] getGeometryMatrix(int u, int v) {
@@ -169,16 +163,16 @@ public class TschumperleDericheFilter extends GenericFilter {
 		float c1 = (float) Math.pow(arg, -a1);
 		float c2 = (float) Math.pow(arg, -a2);
 		
-		// mount geometry matrix:
-		float ex = (float) evec1[0];
-		float ey = (float) evec1[1];
-		float exx = ex * ex;
-		float exy = ex * ey;
-		float eyy = ey * ey;
+		// mount geometry matrix A:
+		float x1 = (float) evec1[0];
+		float y1 = (float) evec1[1];
+		float xx1 = x1 * x1;
+		float xy1 = x1 * y1;
+		float yy1 = y1 * y1;
 		
-		float A0 = c1 * eyy + c2 * exx;
-		float A1 = (c2 - c1)* exy;
-		float A2 = c1 * exx + c2 * eyy;
+		float A0 = c1 * yy1 + c2 * xx1;
+		float A1 = (c2 - c1)* xy1;
+		float A2 = c1 * xx1 + c2 * yy1;
 		return new float[] {A0, A1, A2};
 	}
 
