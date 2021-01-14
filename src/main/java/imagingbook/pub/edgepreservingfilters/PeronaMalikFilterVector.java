@@ -63,11 +63,11 @@ public class PeronaMalikFilterVector extends GenericFilterVector {
 		 *      p2              1
 		 */
 		float[][] p = new float[5][];	// p[i][k]: 5 pixels from the 3x3 neigborhood
-		p[0] = pack.getPixel(u, v);
-		p[1] = pack.getPixel(u + 1, v);
-		p[2] = pack.getPixel(u, v + 1);
-		p[3] = pack.getPixel(u - 1, v);
-		p[4] = pack.getPixel(u, v - 1);
+		p[0] = pack.getVec(u, v);
+		p[1] = pack.getVec(u + 1, v);
+		p[2] = pack.getVec(u, v + 1);
+		p[3] = pack.getVec(u - 1, v);
+		p[4] = pack.getVec(u, v - 1);
 		
 		float[] result = p[0].clone();
 		

@@ -16,7 +16,7 @@ import imagingbook.lib.image.access.OutOfBoundsStrategy;
  * vector-valued image data, using float-values throughout.
  * 
  * @author WB
- * @version 2021/01/12
+ * @version 2021/01/14
  */
 public class PixelPack {
 	
@@ -24,7 +24,7 @@ public class PixelPack {
 	public static final OutOfBoundsStrategy DefaultOutOfBoundsStrategy = OutOfBoundsStrategy.NEAREST_BORDER;
 
 	private final int depth;
-	private final float[][] pixels;
+	private final float[][] data;
 	private final int length;
 	private final GridIndexer2D indexer;
 	
@@ -40,7 +40,7 @@ public class PixelPack {
 	public PixelPack(int width, int height, int depth, OutOfBoundsStrategy obs) {
 		this.depth = depth;
 		this.length = width * height;
-		this.pixels = new float[depth][length];
+		this.data = new float[depth][length];
 		this.indexer = GridIndexer2D.create(width, height, obs);
 	}
 	
@@ -63,7 +63,7 @@ public class PixelPack {
 	 */
 	public PixelPack(ImageProcessor ip, OutOfBoundsStrategy obs) {
 		this(ip.getWidth(), ip.getHeight(), ip.getNChannels(), obs);
-		copyFromImageProcessor(ip, this.pixels);
+		copyFromImageProcessor(ip, this.data);
 	}
 	
 	/**
@@ -104,7 +104,7 @@ public class PixelPack {
 	 * @param vals a suitable 
 	 * @return the array of pixel data
 	 */
-	public float[] getPixel(int u, int v, float[] vals) {
+	public float[] getVec(int u, int v, float[] vals) {
 		if (vals == null) 
 			vals = new float[depth];
 		final int i = indexer.getIndex(u, v);
@@ -113,15 +113,15 @@ public class PixelPack {
 		}
 		else {	
 			for (int k = 0; k < depth; k++) {
-				vals[k] = pixels[k][i];
+				vals[k] = data[k][i];
 			}
 		}
 		return vals;
 	}
 	
 	// returns a new pixel array
-	public float[] getPixel(int u, int v) {
-		return getPixel(u, v, new float[depth]);
+	public float[] getVec(int u, int v) {
+		return getVec(u, v, new float[depth]);
 	}
 	
 	/**
@@ -132,11 +132,11 @@ public class PixelPack {
 	 * @param v the y-position
 	 * @param vals a float vector with the values for this pixel
 	 */
-	public void setPixel(int u, int v, float ... vals) {
+	public void setVec(int u, int v, float ... vals) {
 		final int i = indexer.getIndex(u, v);
 		if (i >= 0) {
 			for (int k = 0; k < depth && k < vals.length; k++) {
-				pixels[k][i] = vals[k];
+				data[k][i] = vals[k];
 			}
 		}
 	}
@@ -151,7 +151,7 @@ public class PixelPack {
 			throw new IllegalArgumentException("pixel packs of incompatible size, cannot copy");
 		}
 		for (int k = 0; k < this.depth; k++) {
-			System.arraycopy(this.pixels[k], 0, other.pixels[k], 0, this.length);
+			System.arraycopy(this.data[k], 0, other.data[k], 0, this.length);
 		}
 	}
 	
@@ -162,7 +162,7 @@ public class PixelPack {
 	 * @return true if both have the same dimensions
 	 */
 	public boolean isCompatibleTo(PixelPack other) {
-		if (this.pixels.length == other.pixels.length && this.length == other.length) { // TODO: check width/height too
+		if (this.data.length == other.data.length && this.length == other.length) { // TODO: check width/height too
 			return true;
 		}
 		else
@@ -198,8 +198,8 @@ public class PixelPack {
 	 * dimension 2 is the pixel index (each slice is a 1D array).
 	 * @return the pixel pack's data array
 	 */
-	public float[][] getPixels() {
-		return pixels;
+	public float[][] getArrays() {
+		return data;
 	}
 	
 	/**
@@ -261,7 +261,7 @@ public class PixelPack {
 			int u = uc - 1 + i;
 			for (int j = 0; j < 3; j++) {
 				int v = vc - 1 + j;
-				nh[i][j] = getPixel(u, v);
+				nh[i][j] = getVec(u, v);
 			}
 		}
 		return nh;
@@ -280,7 +280,7 @@ public class PixelPack {
 		if (this.getDepth() != ip.getNChannels()) {
 			throw new IllegalArgumentException("cannot copy to image processor, wrong depth");
 		}
-		copyToImageProcessor(this.pixels, ip);
+		copyToImageProcessor(this.data, ip);
 	}
 	
 	// -------------------------------------------------------------------
@@ -300,7 +300,7 @@ public class PixelPack {
 		 */
 		PixelSlice(int idx) {
 			this.idx = idx;
-			this.vals = pixels[idx];
+			this.vals = data[idx];
 		}
 		
 		/** Constructor. Creates an empty (zero-values) pixel slice with the same
@@ -347,7 +347,7 @@ public class PixelPack {
 			return idx;
 		}
 		
-		public float[] getPixels() {
+		public float[] getArray() {
 			return vals;
 		}
 		
@@ -431,105 +431,51 @@ public class PixelPack {
 		}
 	}
 	
-	// -------------------------------------------------------------------
-	
-//	public static float[][] fromImageProcessor(ImageProcessor ip) {
-//		if (ip instanceof ByteProcessor)
-//			return fromByteProcessor((ByteProcessor)ip);
-//		if (ip instanceof ShortProcessor)
-//			return fromShortProcessor((ShortProcessor)ip);
-//		if (ip instanceof FloatProcessor)
-//			return fromFloatProcessor((FloatProcessor)ip);
-//		if (ip instanceof ColorProcessor)
-//			return fromColorProcessor((ColorProcessor)ip);
-//		throw new IllegalArgumentException("unknown processor type " + ip.getClass().getSimpleName());
-//	}
-//	
-//	public static float[][] fromByteProcessor(ByteProcessor ip) {
-//		byte[] pixels = (byte[]) ip.getPixels();
-//		float[] P = new float[pixels.length];
-//		for (int i = 0; i < pixels.length; i++) {
-//			P[i] = 0xff & pixels[i];
-//		}
-//		return new float[][] {P};
-//	}
-//	
-//	public static float[][] fromShortProcessor(ShortProcessor ip) {
-//		short[] pixels = (short[]) ip.getPixels();
-//		float[] P = new float[pixels.length];
-//		for (int i = 0; i < pixels.length; i++) {
-//			P[i] = 0xffff & pixels[i];
-//		}
-//		return new float[][] {P};
-//	}
-//	
-//	public static float[][] fromFloatProcessor(FloatProcessor ip) {
-//		float[] pixels = (float[]) ip.getPixels();
-//		float[] P = pixels.clone();
-//		return new float[][] {P};
-//	}
-//	
-//	public static float[][] fromColorProcessor(ColorProcessor ip) {
-//		int[] pixels = (int[]) ip.getPixels();
-//		float[] R = new float[pixels.length];
-//		float[] G = new float[pixels.length];
-//		float[] B = new float[pixels.length];
-//		int[] RGB = new int[3];
-//		for (int i = 0; i < pixels.length; i++) {
-//			Rgb.intToRgb(pixels[i], RGB);
-//			R[i] = RGB[0];
-//			G[i] = RGB[1];
-//			B[i] = RGB[2];
-//		}
-//		return new float[][] {R, G, B};
-//	}
-	
-
 	// --------------------------------------------------------------------
 	
-	public static ImageProcessor copyToImageProcessor(float[][] sources, ImageProcessor ip) {
+	public static ImageProcessor copyToImageProcessor(float[][] source, ImageProcessor ip) {
 		if (ip instanceof ByteProcessor)
-			copyToByteProcessor(sources, (ByteProcessor)ip);
+			copyToByteProcessor(source, (ByteProcessor)ip);
 		else if (ip instanceof ShortProcessor)
-			copyToShortProcessor(sources, (ShortProcessor)ip);
+			copyToShortProcessor(source, (ShortProcessor)ip);
 		else if (ip instanceof FloatProcessor)
-			copyToFloatProcessor(sources, (FloatProcessor)ip);
+			copyToFloatProcessor(source, (FloatProcessor)ip);
 		else if (ip instanceof ColorProcessor)
-			copyToColorProcessor(sources, (ColorProcessor)ip);
+			copyToColorProcessor(source, (ColorProcessor)ip);
 		else
 			throw new IllegalArgumentException("unknown processor type " + ip.getClass().getSimpleName());
 		return ip;
 	}
 	
-	public static void copyToByteProcessor(float[][] sources, ByteProcessor ip) {
+	public static void copyToByteProcessor(float[][] source, ByteProcessor ip) {
 		byte[] pixels = (byte[]) ip.getPixels();
-		float[] P = sources[0];
+		float[] P = source[0];
 		for (int i = 0; i < pixels.length; i++) {
 			int val = clampByte(Math.round(P[i]));
 			pixels[i] = (byte) val;
 		}
 	}
 	
-	public static void copyToShortProcessor(float[][] sources, ShortProcessor ip) {
+	public static void copyToShortProcessor(float[][] source, ShortProcessor ip) {
 		short[] pixels = (short[]) ip.getPixels();
-		float[] P = sources[0];
+		float[] P = source[0];
 		for (int i = 0; i < pixels.length; i++) {
 			int val = clampShort(Math.round(P[i]));
 			pixels[i] = (short) val;
 		}
 	}
 	
-	public static void copyToFloatProcessor(float[][] sources, FloatProcessor ip) {
+	public static void copyToFloatProcessor(float[][] source, FloatProcessor ip) {
 		float[] pixels = (float[]) ip.getPixels();
-		float[] P = sources[0];
+		float[] P = source[0];
 		System.arraycopy(P, 0, pixels, 0, P.length);
 	}
 	
-	public static void copyToColorProcessor(float[][] sources, ColorProcessor ip) {
+	public static void copyToColorProcessor(float[][] source, ColorProcessor ip) {
 		int[] pixels = (int[]) ip.getPixels();
-		float[] R = sources[0];
-		float[] G = sources[1];
-		float[] B = sources[2];
+		float[] R = source[0];
+		float[] G = source[1];
+		float[] B = source[2];
 		for (int i = 0; i < pixels.length; i++) {
 			int r = clampByte(Math.round(R[i]));
 			int g = clampByte(Math.round(G[i]));
@@ -537,6 +483,8 @@ public class PixelPack {
 			pixels[i] = Rgb.rgbToInt(r, g, b);
 		}
 	}
+	
+	// --------------------------------------------------------------------------
 	
 	private static int clampByte(int val) {
 		if (val < 0) return 0;

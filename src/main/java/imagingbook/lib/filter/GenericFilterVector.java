@@ -15,7 +15,7 @@ public abstract class GenericFilterVector extends GenericFilter {
 		iter = 0;
 		for (int v = 0; v < height; v++) {
 			for (int u = 0; u < width; u++) {
-				targetPack.setPixel(u, v, doPixel(sourcePack, u, v)); // single pixel operation
+				targetPack.setVec(u, v, doPixel(sourcePack, u, v)); // single pixel operation
 				iter++;
 			}
 		}

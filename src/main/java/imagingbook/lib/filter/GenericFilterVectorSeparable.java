@@ -23,7 +23,7 @@ public abstract class GenericFilterVectorSeparable extends GenericFilter { // Ge
 		//IJ.log("X-part +++++++++++++++++++++++++++++++++");
 		for (int v = 0; v < height; v++) {
 			for (int u = 0; u < width; u++) {
-				target.setPixel(u, v, doPixelX(source, u, v)); // single pixel operation
+				target.setVec(u, v, doPixelX(source, u, v)); // single pixel operation
 				iter++;
 			}
 		}
@@ -34,7 +34,7 @@ public abstract class GenericFilterVectorSeparable extends GenericFilter { // Ge
 		//IJ.log("Y-part +++++++++++++++++++++++++++++++++");
 		for (int v = 0; v < height; v++) {
 			for (int u = 0; u < width; u++) {
-				target.setPixel(u, v, doPixelY(source, u, v)); // single pixel operation
+				target.setVec(u, v, doPixelY(source, u, v)); // single pixel operation
 				iter++;
 			}
 		}

@@ -72,7 +72,7 @@ public class VectorMedianFilterSharpen extends GenericFilterVector {
 	
 	@Override
 	protected float[] doPixel(PixelPack pack, int u, int v) {
-		float[] pCtr = pack.getPixel(u, v);
+		float[] pCtr = pack.getVec(u, v);
 		getSupportRegion(pack, u, v);
 		double dCtr = trimmedAggregateDistance(pCtr, a); 
 		double dMin = Double.MAX_VALUE;
@@ -114,7 +114,7 @@ public class VectorMedianFilterSharpen extends GenericFilterVector {
 			for (int j = 0; j < maskArray[0].length; j++) {
 				if (maskArray[i][j] > 0) {
 					int vj = v + j - yc;
-					float[] p = src.getPixel(ui, vj, pTmp);
+					float[] p = src.getVec(ui, vj, pTmp);
 					copyPixel(p, supportRegion[k]);
 					k = k + 1;
 				}

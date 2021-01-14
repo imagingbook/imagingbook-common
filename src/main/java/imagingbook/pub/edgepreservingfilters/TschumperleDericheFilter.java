@@ -22,9 +22,17 @@ import imagingbook.lib.math.Matrix;
 import imagingbook.pub.edgepreservingfilters.TschumperleDericheF.Parameters;
 
 /**
- * Complete rewrite from scratch
+ * This class implements the Anisotropic Diffusion filter proposed by David Tschumperle 
+ * in D. Tschumperle and R. Deriche, "Diffusion PDEs on vector-valued images", 
+ * IEEE Signal Processing Magazine, vol. 19, no. 5, pp. 16-25 (Sep. 2002). It is based 
+ * on an earlier C++ (CImg) implementation (pde_TschumperleDeriche2d.cpp) by the original
+ * author, made available under the CeCILL v2.0 license 
+ * (http://www.cecill.info/licences/Licence_CeCILL_V2-en.html).
  * 
- * @version 2021/01/06
+ * This class is based on the ImageJ API and intended to be used in ImageJ plugins.
+ * How to use: consult the source code of the related ImageJ plugins for examples.
+ * 
+ * @version 2021/01/06 (complete rewrite from scratch)
  */
 
 public class TschumperleDericheFilter extends GenericFilter {
@@ -54,7 +62,6 @@ public class TschumperleDericheFilter extends GenericFilter {
 		this(new Parameters());
 	}
 	
-	// constructor - use for setting individual parameters:
 	public TschumperleDericheFilter(Parameters params) {
 		this.params = params;
 	}
@@ -98,10 +105,11 @@ public class TschumperleDericheFilter extends GenericFilter {
 	// ------------------------------------------------------------
 	
 	private void makeGradients() {
+		// x-gradients:
 		source.copyTo(Dx);
 		filterDx.applyTo(Dx);
 		gradientBlurFilter.applyTo(Dx);
-		
+		// y-gradients:
 		source.copyTo(Dy);
 		filterDy.applyTo(Dy);
 		gradientBlurFilter.applyTo(Dy);
@@ -110,17 +118,17 @@ public class TschumperleDericheFilter extends GenericFilter {
 	private void makeStructureMatrix() {	// make G
 		for (int u = 0; u < M; u++) {
 			for (int v = 0; v < N; v++) {
-				final float[] dx = Dx.getPixel(u, v);
-				final float[] dy = Dy.getPixel(u, v);
-				float a = 0; float b = 0; float c = 0;
+				final float[] dx = Dx.getVec(u, v);
+				final float[] dy = Dy.getVec(u, v);
+				float g0 = 0; float g1 = 0; float g2 = 0;
 				for (int k = 0; k < K; k++) {
 					final float fx = dx[k];
 					final float fy = dy[k];
-					a += fx * fx;
-					b += fx * fy;
-					c += fy * fy;
+					g0 += fx * fx;
+					g1 += fx * fy;
+					g2 += fy * fy;
 				}
-				G.setPixel(u, v, a, b, c);
+				G.setVec(u, v, g0, g1, g2);
 			}
 		}
 		structureBlurFilter.applyTo(G);
@@ -132,7 +140,7 @@ public class TschumperleDericheFilter extends GenericFilter {
 			for (int v = 0; v < N; v++) {
 				// calculate the local geometry matrix A(u,v), which has only 3 distinct elements
 				float[] A = getGeometryMatrix(u, v);
-				float[] p = source.getPixel(u, v);
+				float[] p = source.getVec(u, v);
 				for (int k = 0; k < K; k++) {
 					float[] H = getHessianMatrix(k, u, v); // local Hessian for channel k at pos u,v (3 elements)
 					float beta = A[0] * H[0] + 2 * A[1] * H[1] + A[2] * H[2]; // = trace (A*H)
@@ -140,14 +148,14 @@ public class TschumperleDericheFilter extends GenericFilter {
 					// update the image (result goes to target)
 					p[k] = p[k] + alpha * beta;	// we use alpha from the previous pass!
 				}
-				target.setPixel(u, v, p);
+				target.setVec(u, v, p);
 			}
 		}
 		return betaMax;
 	}
 	
 	private float[] getGeometryMatrix(int u, int v) {
-		float[] Guv = G.getPixel(u, v); // 3 elements of local geometry matrix (2x2)
+		float[] Guv = G.getVec(u, v); // 3 elements of local geometry matrix (2x2)
 		
 		// calculate the 2 eigenvalues lambda1, lambda2 and the greater eigenvector e1
 		Eigensolver2x2 solver = new Eigensolver2x2(Guv[0], Guv[1], Guv[1], Guv[2]);
