@@ -4,9 +4,20 @@ import imagingbook.lib.image.data.PixelPack;
 import imagingbook.lib.image.data.PixelPack.PixelSlice;
 
 /**
- * A generic scalar multi-pass filter with exactly 2 passes.
- * @author WB
- * @version 2021/01/02
+ * This (abstract) class represents a generic scalar filter whose pixel-operation
+ * is x/y-separable.
+ * It is similar to {@link GenericFilterScalar} but requires two methods to
+ * be implemented by concrete sub-classes: 
+ * {@link #doPixelX(PixelSlice, int, int)} and {@link #doPixelY(PixelSlice, int, int)}
+ * for the x- and y-pass, respectively,
+ * which are invoked in exactly this order.
+ * If the processed image has more than one component 
+ * (e.g., a RGB color image), this filter is automatically 
+ * and independently applied to all (scalar-valued) components.
+ * The remaining filter mechanics
+ * including multiple components, out-of-bounds coordinate handling,
+ * multiple passes and data copying are handled by this class and its super-class
+ * (see {@link GenericFilter}). 
  */
 public abstract class GenericFilterScalarSeparable extends GenericFilter {
 	
@@ -61,10 +72,38 @@ public abstract class GenericFilterScalarSeparable extends GenericFilter {
 	
 	// ------------------------------------------------------------------------
 
-	// Apply a 1D filter in x-direction
+	/**
+	 * Applies a 1D filter operation in x-direction.
+	 * This method must be implemented by concrete sub-classes.
+	 * This method is invoked before {@link #doPixelY(PixelSlice, int, int)}.
+	 * The source data are passed as a {@link PixelSlice} container, which
+	 * holds the scalar values of one image component.
+	 * The method {@link PixelSlice#getVal(int, int)} should be used to read
+	 * individual pixel values. These data should not be modified but
+	 * the (float) result of the single-pixel calculation must be returned.
+	 * 
+	 * @param source the scalar-valued data for a single image component
+	 * @param u the current x-position
+	 * @param v the current y-position
+	 * @return the result of the filter calculation for this pixel
+	 */
 	protected abstract float doPixelX(PixelSlice source, int u, int v);
 
-	// Apply a 1D filter in y-direction
+	/**
+	 * Applies a 1D filter operation in y-direction.
+	 * This method must be implemented by concrete sub-classes.
+	 * This method is invoked after {@link #doPixelX(PixelSlice, int, int)}.
+	 * The source data are passed as a {@link PixelSlice} container, which
+	 * holds the scalar values of one image component.
+	 * The method {@link PixelSlice#getVal(int, int)} should be used to read
+	 * individual pixel values. These data should not be modified but
+	 * the (float) result of the single-pixel calculation must be returned.
+	 * 
+	 * @param source the scalar-valued data for a single image component
+	 * @param u the current x-position
+	 * @param v the current y-position
+	 * @return the result of the filter calculation for this pixel
+	 */
 	protected abstract float doPixelY(PixelSlice source, int u, int v);
 	
 	// ------------------------------------------------------------------------

@@ -9,18 +9,24 @@
 
 package imagingbook.lib.image.access;
 
+import imagingbook.lib.image.data.PixelPack;
+
 /**
- * Instances of this class perform the transformation between 2D image coordinates 
+ * <p>Instances of this class perform the transformation between 2D image coordinates 
  * and indexes into the associated 1D pixel array and vice versa.
- * 
- * The key method {@link #getIndex(int, int)} returns the 1D array index
- * for a pair of image coordinates.
- * It throws an exception when trying to access out-of-image coordinates.
- * 
- * The subclasses {@link ZeroValueIndexer}, {@link MirrorImageIndexer} and
- * {@link NearestBorderIndexer} implement different behaviors for accessing
- * out-of-image coordinates.
- * 
+ * As usual images are assumed to be stored in row-major order.
+ * Objects of this class do not hold any image date themselves, they just
+ * perform the indexing task. 
+ * Class {@link PixelPack} provides a universal image data container which 
+ * uses {@link GridIndexer2D} internally.
+ * </p>
+ * <p>
+ * The (abstract) method {@link #getIndex(int, int)} returns the 1D array index
+ * for a pair of 2D image coordinates. It is implemented by
+ * the inner subclasses {@link ZeroValueIndexer}, {@link MirrorImageIndexer} and
+ * {@link NearestBorderIndexer}. They exhibit different behaviors when accessing
+ * out-of-image coordinates (see {@link OutOfBoundsStrategy}).
+ * </p>
  */
 public abstract class GridIndexer2D implements Cloneable {
 	
@@ -49,9 +55,7 @@ public abstract class GridIndexer2D implements Cloneable {
 	
 	/**
 	 * Returns the 1D array index for a given pair of image coordinates.
-	 * Throws an exception when applied to out-of-image coordinates.
-	 * Subclasses override this method.
-	 * 
+	 * Subclasses implement (override) this method.
 	 * @param u x-coordinate
 	 * @param v y-coordinate
 	 * @return 1D array index
@@ -62,14 +66,27 @@ public abstract class GridIndexer2D implements Cloneable {
 		return width * v + u;
 	}
 	
+	/**
+	 * Returns the width of the associated image.
+	 * @return the image width
+	 */
 	public int getWidth() {
 		return this.width;
 	}
 	
+	/**
+	 * Returns the height of the associated image.
+	 * @return the image height
+	 */
 	public int getHeight() {
 		return this.height;
 	}
 	
+	/**
+	 * Returns the out-of-bounds strategy (see {qlink OutOfBoundsStrategy} 
+	 * used by this indexer.
+	 * @return the out-of-bounds strategy
+	 */
 	public OutOfBoundsStrategy getOutOfBoundsStrategy() {
 		return this.obs;
 	}
@@ -77,9 +94,8 @@ public abstract class GridIndexer2D implements Cloneable {
 	// ---------------------------------------------------------
 
 	/** 
-	 * This indexer returns out-of-bounds pixels that
-	 * are taken from the closest border pixel. This is the
-	 * most common method.
+	 * This indexer returns the closest border pixel for coordinates
+	 * outside the image bounds. This is the most common method.
 	 */
 	public static class NearestBorderIndexer extends GridIndexer2D {
 		
@@ -106,8 +122,8 @@ public abstract class GridIndexer2D implements Cloneable {
 	}
 	
 	/** 
-	 * This indexer returns out-of-bound pixels taken from
-	 * the mirrored image.
+	 * This indexer returns mirrored image values for coordinates
+	 * outside the image bounds. 
 	 */
 	public static class MirrorImageIndexer extends GridIndexer2D {
 		
@@ -131,8 +147,8 @@ public abstract class GridIndexer2D implements Cloneable {
 	}
 	
 	/** 
-	 * This indexer returns -1 for out-of-bounds coordinates to
-	 * indicate that a (predefined) default value should be used.
+	 * This indexer returns -1 for coordinates outside the image
+	 * bounds, indicating that a (predefined) default value should be used.
 	 */
 	public static class ZeroValueIndexer extends GridIndexer2D {
 		
@@ -152,8 +168,8 @@ public abstract class GridIndexer2D implements Cloneable {
 	}
 	
 	/**
-	 * This indexer throws an exception if out of bounds pixels
-	 * are accessed.
+	 * This indexer throws an exception if coordinates outside
+	 * image bounds are accessed.
 	 */
 	public static class ExceptionIndexer extends GridIndexer2D {
 		

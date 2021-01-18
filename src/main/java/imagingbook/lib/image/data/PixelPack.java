@@ -8,12 +8,14 @@ import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
 import ij.process.ShortProcessor;
 import imagingbook.lib.color.Rgb;
+import imagingbook.lib.filter.GenericFilter;
 import imagingbook.lib.image.access.GridIndexer2D;
 import imagingbook.lib.image.access.OutOfBoundsStrategy;
 
 /**
- * This class defines a generic container for scalar and
- * vector-valued image data, using float-values throughout.
+ * This class defines a generic data container for scalar and
+ * vector-valued images, using float-values throughout.
+ * Its primary use is in the {@link GenericFilter} framework. 
  * 
  * @author WB
  * @version 2021/01/14
@@ -63,7 +65,7 @@ public class PixelPack {
 	 */
 	public PixelPack(ImageProcessor ip, OutOfBoundsStrategy obs) {
 		this(ip.getWidth(), ip.getHeight(), ip.getNChannels(), obs);
-		copyFromImageProcessor(ip, this.data);
+		copyFromImageProcessor(ip, this);
 	}
 	
 	/**
@@ -280,7 +282,7 @@ public class PixelPack {
 		if (this.getDepth() != ip.getNChannels()) {
 			throw new IllegalArgumentException("cannot copy to image processor, wrong depth");
 		}
-		copyToImageProcessor(this.data, ip);
+		copyToImageProcessor(this, ip);
 	}
 	
 	// -------------------------------------------------------------------
@@ -347,31 +349,71 @@ public class PixelPack {
 			return idx;
 		}
 		
+		/** 
+		 * Returns a reference to the data array associated with this pixel slice.
+		 * @return the data array
+		 */
 		public float[] getArray() {
 			return vals;
 		}
 		
+		/**
+		 * Returns the length (number of pixels) of the associated 1D pixel array.
+		 * @return the length of the image array
+		 */
 		public int getLength() {
 			return vals.length;
 		}
 		
+		/**
+		 * Returns the width of the associated image
+		 * (see also {@link GridIndexer2D}).
+		 * @return the image width
+		 */
 		public int getWidth() {
 			return PixelPack.this.getWidth();
 		}
 		
+		/**
+		 * Returns the height of the associated image
+		 * (see also {@link GridIndexer2D}).
+		 * @return the image height
+		 */
 		public int getHeight() {
 			return PixelPack.this.getHeight();
 		}
 		
+		/**
+		 * Sets all pixel values to zero.
+		 */
 		public void zero() {
 			Arrays.fill(this.vals, 0);
 		}
 		
+		/**
+		 * Copies the contents of this pixel slice to another
+		 * pixel slice.
+		 * @param other the pixel slice to modified
+		 */
 		public void copyTo(PixelSlice other) {
 			System.arraycopy(this.vals, 0, other.vals, 0, this.vals.length);
 		}
 		
-		// returns nh[x][y]
+		/**
+		 * Returns the pixel values from the 3x3 neighborhood centered at
+		 * the specified position.
+		 * The 3x3 array {@code nh[x][y]} has the coordinates
+		 * x = 0,..,2 and y = 0,..,2; 
+		 * the value at position {@code [1][1]} belongs to the 
+		 * specified position.
+		 * If a non-null array is supplied, it is filled and returned.
+		 * If null, a new array is created and returned.
+		 * 
+		 * @param uc the center x-position
+		 * @param vc the center y-position
+		 * @param nh a 3x3 array or null
+		 * @return a 3x3 array of pixel values
+		 */
 		public float[][] get3x3Neighborhood(int uc, int vc, float[][] nh) {
 			if (nh == null) 
 				nh = new float[3][3];
@@ -388,39 +430,50 @@ public class PixelPack {
 	
 	// -------------------------------------------------------------------
 	
-	public static void copyFromImageProcessor(ImageProcessor ip, float[][] P) {
+	/**
+	 * Utility method. Copies the contents of an image processor to an existing
+	 * pixel pack. They must be compatible w.r.t. size and depth.
+	 * 
+	 * @param ip the image processor to be copied
+	 * @param pack the receiving pixel pack
+	 */
+	public static void copyFromImageProcessor(ImageProcessor ip, PixelPack pack) {
 		if (ip instanceof ByteProcessor)
-			copyFromByteProcessor((ByteProcessor)ip, P);
+			copyFromByteProcessor((ByteProcessor)ip, pack);
 		else if (ip instanceof ShortProcessor)
-			copyFromShortProcessor((ShortProcessor)ip, P);
+			copyFromShortProcessor((ShortProcessor)ip, pack);
 		else if (ip instanceof FloatProcessor)
-			copyFromFloatProcessor((FloatProcessor)ip, P);
+			copyFromFloatProcessor((FloatProcessor)ip, pack);
 		else if (ip instanceof ColorProcessor)
-			copyFromColorProcessor((ColorProcessor)ip, P);
+			copyFromColorProcessor((ColorProcessor)ip, pack);
 		else 
 			throw new IllegalArgumentException("unknown processor type " + ip.getClass().getSimpleName());
 	}
 	
-	public static void copyFromByteProcessor(ByteProcessor ip, float[][] P) {
+	public static void copyFromByteProcessor(ByteProcessor ip, PixelPack pack) {
+		final float[][] P = pack.data;
 		byte[] pixels = (byte[]) ip.getPixels();
 		for (int i = 0; i < pixels.length; i++) {
 			P[0][i] = 0xff & pixels[i];
 		}
 	}
 	
-	public static void copyFromShortProcessor(ShortProcessor ip, float[][] P) {
+	public static void copyFromShortProcessor(ShortProcessor ip, PixelPack pack) {
+		final float[][] P = pack.data;
 		short[] pixels = (short[]) ip.getPixels();
 		for (int i = 0; i < pixels.length; i++) {
 			P[0][i] = 0xffff & pixels[i];
 		}
 	}
 	
-	public static void copyFromFloatProcessor(FloatProcessor ip, float[][] P) {
+	public static void copyFromFloatProcessor(FloatProcessor ip, PixelPack pack) {
+		final float[][] P = pack.data;
 		float[] pixels = (float[]) ip.getPixels();
 		System.arraycopy(pixels, 0, P[0], 0, pixels.length);
 	}
 	
-	public static void copyFromColorProcessor(ColorProcessor ip, float[][] P) {
+	public static void copyFromColorProcessor(ColorProcessor ip, PixelPack pack) {
+		final float[][] P = pack.data;
 		final int[] pixels = (int[]) ip.getPixels();
 		final int[] rgb = new int[3];
 		for (int i = 0; i < pixels.length; i++) {
@@ -433,49 +486,55 @@ public class PixelPack {
 	
 	// --------------------------------------------------------------------
 	
-	public static ImageProcessor copyToImageProcessor(float[][] source, ImageProcessor ip) {
+	/**
+	 * Utility method. Copies the contents of a pixel pack to an existing
+	 * image processor. They must be compatible w.r.t. size and depth.
+	 * 
+	 * @param pack the source pixel pack
+	 * @param ip the receiving image processor
+	 */
+	public void copyToImageProcessor(PixelPack pack, ImageProcessor ip) {
 		if (ip instanceof ByteProcessor)
-			copyToByteProcessor(source, (ByteProcessor)ip);
+			copyToByteProcessor(pack, (ByteProcessor)ip);
 		else if (ip instanceof ShortProcessor)
-			copyToShortProcessor(source, (ShortProcessor)ip);
+			copyToShortProcessor(pack, (ShortProcessor)ip);
 		else if (ip instanceof FloatProcessor)
-			copyToFloatProcessor(source, (FloatProcessor)ip);
+			copyToFloatProcessor(pack, (FloatProcessor)ip);
 		else if (ip instanceof ColorProcessor)
-			copyToColorProcessor(source, (ColorProcessor)ip);
+			copyToColorProcessor(pack, (ColorProcessor)ip);
 		else
 			throw new IllegalArgumentException("unknown processor type " + ip.getClass().getSimpleName());
-		return ip;
 	}
 	
-	public static void copyToByteProcessor(float[][] source, ByteProcessor ip) {
+	public static void copyToByteProcessor(PixelPack pack, ByteProcessor ip) {
 		byte[] pixels = (byte[]) ip.getPixels();
-		float[] P = source[0];
+		float[] P = pack.data[0];
 		for (int i = 0; i < pixels.length; i++) {
 			int val = clampByte(Math.round(P[i]));
 			pixels[i] = (byte) val;
 		}
 	}
 	
-	public static void copyToShortProcessor(float[][] source, ShortProcessor ip) {
+	public static void copyToShortProcessor(PixelPack pack, ShortProcessor ip) {
 		short[] pixels = (short[]) ip.getPixels();
-		float[] P = source[0];
+		float[] P = pack.data[0];
 		for (int i = 0; i < pixels.length; i++) {
 			int val = clampShort(Math.round(P[i]));
 			pixels[i] = (short) val;
 		}
 	}
 	
-	public static void copyToFloatProcessor(float[][] source, FloatProcessor ip) {
+	public static void copyToFloatProcessor(PixelPack pack, FloatProcessor ip) {
 		float[] pixels = (float[]) ip.getPixels();
-		float[] P = source[0];
+		float[] P = pack.data[0];
 		System.arraycopy(P, 0, pixels, 0, P.length);
 	}
 	
-	public static void copyToColorProcessor(float[][] source, ColorProcessor ip) {
+	public static void copyToColorProcessor(PixelPack pack, ColorProcessor ip) {
 		int[] pixels = (int[]) ip.getPixels();
-		float[] R = source[0];
-		float[] G = source[1];
-		float[] B = source[2];
+		float[] R = pack.data[0];
+		float[] G = pack.data[1];
+		float[] B = pack.data[2];
 		for (int i = 0; i < pixels.length; i++) {
 			int r = clampByte(Math.round(R[i]));
 			int g = clampByte(Math.round(G[i]));

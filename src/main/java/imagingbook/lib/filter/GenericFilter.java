@@ -2,6 +2,7 @@ package imagingbook.lib.filter;
 
 import ij.process.ImageProcessor;
 import imagingbook.lib.filter.examples.ExampleFilterScalar;
+import imagingbook.lib.filter.examples.FilterShowProgressExample;
 import imagingbook.lib.filter.examples.ExampleFilterVector;
 import imagingbook.lib.image.access.GridIndexer2D;
 import imagingbook.lib.image.access.OutOfBoundsStrategy;
@@ -19,7 +20,7 @@ import imagingbook.lib.util.progress.ij.ProgressBarMonitor;
  * image data structures, all based on {@code float} values
  * (see {@link PixelPack} and {@link PixelSlice}).
  * Input images are transparently copied from and back to these
- * float data, thus authors of new filters do not need not concern themselves
+ * float data, thus authors of new filters do not need to concern themselves
  * with the original pixel data types.
  * Behind the scenes, classes {@link GridIndexer2D} and {@link OutOfBoundsStrategy} are relevant for
  * pixel indexing and out-of-boundary coordinates handling.
@@ -58,6 +59,7 @@ import imagingbook.lib.util.progress.ij.ProgressBarMonitor;
  * {@link GenericFilter}s support asynchronous <strong>progress reporting</strong> based on the
  * {@link ProgressMonitor} framework. Here is a usage example (from one of the sample plugins):</p>
  * <pre>
+ * ImageProcessor ip = ... // any image
  * ...
  * GenericFilter filter = new TschumperleDericheFilter();
  * try (ProgressMonitor m = new ProgressBarMonitor(filter)) {
@@ -170,8 +172,8 @@ public abstract class GenericFilter implements ProgressReporter {
 	}
 	
 	/**
-	 * Applies this filter to the given {@link ImageProcessor}, which is modified.
-	 * The specified {@link OutOfBoundsStrategy} is used to handle out-of-bounds coordinates.
+	 * Applies this filter to the given {@link ImageProcessor}, which is modified;
+	 * the specified {@link OutOfBoundsStrategy} is used to handle out-of-bounds coordinates.
 	 * @param ip the image to be filtered
 	 * @param obs the out-of-bounds strategy to be used
 	 */
@@ -213,7 +215,7 @@ public abstract class GenericFilter implements ProgressReporter {
 	// concrete sub-classes should override to purge 
 	// specific data structures if needed
 	/**
-	 * This method is called once when the filter executions terminates.
+	 * This method is called once when the filter terminates.
 	 * It does nothing by default.
 	 * Concrete filter classes should override this method if needed.
 	 */
@@ -223,10 +225,14 @@ public abstract class GenericFilter implements ProgressReporter {
 	// limits the necessary number of passes, which may not be known at initialization.
 	// multi-pass filters must override this method.
 	/**
-	 * Returns the necessary number of passes, which may not be known at initialization.
-	 * The value 1 is returned by default.
+	 * Returns the necessary number of passes, which may change during execution 
+	 * of the filter. The value 1 is returned by default.
 	 * Multi-pass filters must override this method.
 	 * The filter terminates as soon as the requested number of passes is reached.
+	 * This this method can be used to terminate filter execution once some desired
+	 * state has been reached (e.g., convergence).
+	 * See also {@link #getPass()}.
+	 * 
 	 * @return the required number of filter passes
 	 */
 	protected int passesRequired() {
@@ -242,8 +248,8 @@ public abstract class GenericFilter implements ProgressReporter {
 	}
 
 	/**
-	 * This method performs one pass of the filter.
-	 * It must be implemented by a sub-class.
+	 * This method performs one pass of the filter, it must be implemented by a sub-class.
+	 * There is usually no need for a custom filter class to override this method.
 	 * 
 	 * @param source the image source data
 	 * @param target the image target data
@@ -260,13 +266,14 @@ public abstract class GenericFilter implements ProgressReporter {
 	
 	// 
 	/**
-	 * This method is called asynchonously and may be overridden by the terminal filter class if it does extensive
-	 * work that should be monitored. 
+	 * This method is called asynchonously and may be overridden by the terminal filter class 
+	 * if it does extensive work that should be monitored. 
 	 * In this case the method must return a value between 0 and 1, reflecting the degree of completion
 	 * (only of the final class's subtask) at the time of invocation.
 	 * Normally this is not necessary, since the intermediate classes
 	 * return their own progress state (for the less granular tasks) anyways.
 	 * The default implementations returns 0 (progress).
+	 * See {@link FilterShowProgressExample} for an example.
 	 * @return the degree of completion (0,...,1)
 	 */
 	protected double reportProgress() {

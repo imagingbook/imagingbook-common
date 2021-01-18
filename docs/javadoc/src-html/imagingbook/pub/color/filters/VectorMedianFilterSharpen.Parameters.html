@@ -82,7 +82,7 @@
 <span class="sourceLineNo">072</span><a id="line.72">        </a>
 <span class="sourceLineNo">073</span><a id="line.73">        @Override</a>
 <span class="sourceLineNo">074</span><a id="line.74">        protected float[] doPixel(PixelPack pack, int u, int v) {</a>
-<span class="sourceLineNo">075</span><a id="line.75">                float[] pCtr = pack.getPixel(u, v);</a>
+<span class="sourceLineNo">075</span><a id="line.75">                float[] pCtr = pack.getVec(u, v);</a>
 <span class="sourceLineNo">076</span><a id="line.76">                getSupportRegion(pack, u, v);</a>
 <span class="sourceLineNo">077</span><a id="line.77">                double dCtr = trimmedAggregateDistance(pCtr, a); </a>
 <span class="sourceLineNo">078</span><a id="line.78">                double dMin = Double.MAX_VALUE;</a>
@@ -124,7 +124,7 @@
 <span class="sourceLineNo">114</span><a id="line.114">                        for (int j = 0; j &lt; maskArray[0].length; j++) {</a>
 <span class="sourceLineNo">115</span><a id="line.115">                                if (maskArray[i][j] &gt; 0) {</a>
 <span class="sourceLineNo">116</span><a id="line.116">                                        int vj = v + j - yc;</a>
-<span class="sourceLineNo">117</span><a id="line.117">                                        float[] p = src.getPixel(ui, vj, pTmp);</a>
+<span class="sourceLineNo">117</span><a id="line.117">                                        float[] p = src.getVec(ui, vj, pTmp);</a>
 <span class="sourceLineNo">118</span><a id="line.118">                                        copyPixel(p, supportRegion[k]);</a>
 <span class="sourceLineNo">119</span><a id="line.119">                                        k = k + 1;</a>
 <span class="sourceLineNo">120</span><a id="line.120">                                }</a>

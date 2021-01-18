@@ -36,7 +36,7 @@
 <span class="sourceLineNo">026</span><a id="line.26">                        int vj = v + j - yc;</a>
 <span class="sourceLineNo">027</span><a id="line.27">                        for (int i = 0; i &lt; width; i++) {</a>
 <span class="sourceLineNo">028</span><a id="line.28">                                int ui = u + i - xc;</a>
-<span class="sourceLineNo">029</span><a id="line.29">                                float[] p = pack.getPixel(ui, vj);</a>
+<span class="sourceLineNo">029</span><a id="line.29">                                float[] p = pack.getVec(ui, vj);</a>
 <span class="sourceLineNo">030</span><a id="line.30">                                for (int k = 0; k &lt; depth; k++) {</a>
 <span class="sourceLineNo">031</span><a id="line.31">                                        sum[k] = sum[k] + (p[k] * H[i][j]) / 16;</a>
 <span class="sourceLineNo">032</span><a id="line.32">                                }</a>

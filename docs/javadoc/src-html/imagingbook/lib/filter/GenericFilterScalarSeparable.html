@@ -14,83 +14,122 @@
 <span class="sourceLineNo">004</span><a id="line.4">import imagingbook.lib.image.data.PixelPack.PixelSlice;</a>
 <span class="sourceLineNo">005</span><a id="line.5"></a>
 <span class="sourceLineNo">006</span><a id="line.6">/**</a>
-<span class="sourceLineNo">007</span><a id="line.7"> * A generic scalar multi-pass filter with exactly 2 passes.</a>
-<span class="sourceLineNo">008</span><a id="line.8"> * @author WB</a>
-<span class="sourceLineNo">009</span><a id="line.9"> * @version 2021/01/02</a>
-<span class="sourceLineNo">010</span><a id="line.10"> */</a>
-<span class="sourceLineNo">011</span><a id="line.11">public abstract class GenericFilterScalarSeparable extends GenericFilter {</a>
-<span class="sourceLineNo">012</span><a id="line.12">        </a>
-<span class="sourceLineNo">013</span><a id="line.13">        // for progress reporting only</a>
-<span class="sourceLineNo">014</span><a id="line.14">        private int slice;</a>
-<span class="sourceLineNo">015</span><a id="line.15">        private int sliceMax = 1;</a>
-<span class="sourceLineNo">016</span><a id="line.16">        </a>
-<span class="sourceLineNo">017</span><a id="line.17">        private int iter = 0;</a>
-<span class="sourceLineNo">018</span><a id="line.18">        private int iterMax = 1;        // for progress reporting only</a>
-<span class="sourceLineNo">019</span><a id="line.19">        </a>
-<span class="sourceLineNo">020</span><a id="line.20">        </a>
-<span class="sourceLineNo">021</span><a id="line.21">        // apply filter to a stack of pixel planes (1 pass)</a>
-<span class="sourceLineNo">022</span><a id="line.22">        @Override</a>
-<span class="sourceLineNo">023</span><a id="line.23">        protected void runPass(PixelPack source, PixelPack target) {</a>
-<span class="sourceLineNo">024</span><a id="line.24">                sliceMax = source.getDepth();</a>
-<span class="sourceLineNo">025</span><a id="line.25">                for (int k = 0; k &lt; sliceMax; k++) {</a>
-<span class="sourceLineNo">026</span><a id="line.26">                        //IJ.log("+++++++ starting slice " + k);</a>
-<span class="sourceLineNo">027</span><a id="line.27">                        this.slice = k;</a>
-<span class="sourceLineNo">028</span><a id="line.28">                        runSlice(source.getSlice(k), target.getSlice(k));       // default behavior: apply filter to each plane, place results in target</a>
-<span class="sourceLineNo">029</span><a id="line.29">                }</a>
-<span class="sourceLineNo">030</span><a id="line.30">        }</a>
+<span class="sourceLineNo">007</span><a id="line.7"> * This (abstract) class represents a generic scalar filter whose pixel-operation</a>
+<span class="sourceLineNo">008</span><a id="line.8"> * is x/y-separable.</a>
+<span class="sourceLineNo">009</span><a id="line.9"> * It is similar to {@link GenericFilterScalar} but requires two methods to</a>
+<span class="sourceLineNo">010</span><a id="line.10"> * be implemented by concrete sub-classes: </a>
+<span class="sourceLineNo">011</span><a id="line.11"> * {@link #doPixelX(PixelSlice, int, int)} and {@link #doPixelY(PixelSlice, int, int)}</a>
+<span class="sourceLineNo">012</span><a id="line.12"> * for the x- and y-pass, respectively,</a>
+<span class="sourceLineNo">013</span><a id="line.13"> * which are invoked in exactly this order.</a>
+<span class="sourceLineNo">014</span><a id="line.14"> * If the processed image has more than one component </a>
+<span class="sourceLineNo">015</span><a id="line.15"> * (e.g., a RGB color image), this filter is automatically </a>
+<span class="sourceLineNo">016</span><a id="line.16"> * and independently applied to all (scalar-valued) components.</a>
+<span class="sourceLineNo">017</span><a id="line.17"> * The remaining filter mechanics</a>
+<span class="sourceLineNo">018</span><a id="line.18"> * including multiple components, out-of-bounds coordinate handling,</a>
+<span class="sourceLineNo">019</span><a id="line.19"> * multiple passes and data copying are handled by this class and its super-class</a>
+<span class="sourceLineNo">020</span><a id="line.20"> * (see {@link GenericFilter}). </a>
+<span class="sourceLineNo">021</span><a id="line.21"> */</a>
+<span class="sourceLineNo">022</span><a id="line.22">public abstract class GenericFilterScalarSeparable extends GenericFilter {</a>
+<span class="sourceLineNo">023</span><a id="line.23">        </a>
+<span class="sourceLineNo">024</span><a id="line.24">        // for progress reporting only</a>
+<span class="sourceLineNo">025</span><a id="line.25">        private int slice;</a>
+<span class="sourceLineNo">026</span><a id="line.26">        private int sliceMax = 1;</a>
+<span class="sourceLineNo">027</span><a id="line.27">        </a>
+<span class="sourceLineNo">028</span><a id="line.28">        private int iter = 0;</a>
+<span class="sourceLineNo">029</span><a id="line.29">        private int iterMax = 1;        // for progress reporting only</a>
+<span class="sourceLineNo">030</span><a id="line.30">        </a>
 <span class="sourceLineNo">031</span><a id="line.31">        </a>
-<span class="sourceLineNo">032</span><a id="line.32">        // a bit wasteful, as we provide a separate target for each plane</a>
-<span class="sourceLineNo">033</span><a id="line.33">        private void runSlice(PixelSlice source, PixelSlice target) {</a>
-<span class="sourceLineNo">034</span><a id="line.34">                final int width = source.getWidth();</a>
-<span class="sourceLineNo">035</span><a id="line.35">                final int height = source.getHeight();</a>
-<span class="sourceLineNo">036</span><a id="line.36">                this.iterMax = width * height * 2;</a>
-<span class="sourceLineNo">037</span><a id="line.37">                this.iter = 0;</a>
-<span class="sourceLineNo">038</span><a id="line.38">                </a>
-<span class="sourceLineNo">039</span><a id="line.39">                // X-part</a>
-<span class="sourceLineNo">040</span><a id="line.40">                //IJ.log("doing X-part =============================== ");</a>
-<span class="sourceLineNo">041</span><a id="line.41">                for (int v = 0; v &lt; height; v++) {</a>
-<span class="sourceLineNo">042</span><a id="line.42">                        for (int u = 0; u &lt; width; u++) {</a>
-<span class="sourceLineNo">043</span><a id="line.43">                                target.setVal(u, v, doPixelX(source, u, v));</a>
-<span class="sourceLineNo">044</span><a id="line.44">                                this.iter++;</a>
-<span class="sourceLineNo">045</span><a id="line.45">                        }</a>
-<span class="sourceLineNo">046</span><a id="line.46">                }</a>
-<span class="sourceLineNo">047</span><a id="line.47">                </a>
-<span class="sourceLineNo">048</span><a id="line.48">                target.copyTo(source);</a>
+<span class="sourceLineNo">032</span><a id="line.32">        // apply filter to a stack of pixel planes (1 pass)</a>
+<span class="sourceLineNo">033</span><a id="line.33">        @Override</a>
+<span class="sourceLineNo">034</span><a id="line.34">        protected void runPass(PixelPack source, PixelPack target) {</a>
+<span class="sourceLineNo">035</span><a id="line.35">                sliceMax = source.getDepth();</a>
+<span class="sourceLineNo">036</span><a id="line.36">                for (int k = 0; k &lt; sliceMax; k++) {</a>
+<span class="sourceLineNo">037</span><a id="line.37">                        //IJ.log("+++++++ starting slice " + k);</a>
+<span class="sourceLineNo">038</span><a id="line.38">                        this.slice = k;</a>
+<span class="sourceLineNo">039</span><a id="line.39">                        runSlice(source.getSlice(k), target.getSlice(k));       // default behavior: apply filter to each plane, place results in target</a>
+<span class="sourceLineNo">040</span><a id="line.40">                }</a>
+<span class="sourceLineNo">041</span><a id="line.41">        }</a>
+<span class="sourceLineNo">042</span><a id="line.42">        </a>
+<span class="sourceLineNo">043</span><a id="line.43">        // a bit wasteful, as we provide a separate target for each plane</a>
+<span class="sourceLineNo">044</span><a id="line.44">        private void runSlice(PixelSlice source, PixelSlice target) {</a>
+<span class="sourceLineNo">045</span><a id="line.45">                final int width = source.getWidth();</a>
+<span class="sourceLineNo">046</span><a id="line.46">                final int height = source.getHeight();</a>
+<span class="sourceLineNo">047</span><a id="line.47">                this.iterMax = width * height * 2;</a>
+<span class="sourceLineNo">048</span><a id="line.48">                this.iter = 0;</a>
 <span class="sourceLineNo">049</span><a id="line.49">                </a>
-<span class="sourceLineNo">050</span><a id="line.50">                // Y-part</a>
-<span class="sourceLineNo">051</span><a id="line.51">                //IJ.log("doing Y-part =============================== ");</a>
+<span class="sourceLineNo">050</span><a id="line.50">                // X-part</a>
+<span class="sourceLineNo">051</span><a id="line.51">                //IJ.log("doing X-part =============================== ");</a>
 <span class="sourceLineNo">052</span><a id="line.52">                for (int v = 0; v &lt; height; v++) {</a>
 <span class="sourceLineNo">053</span><a id="line.53">                        for (int u = 0; u &lt; width; u++) {</a>
-<span class="sourceLineNo">054</span><a id="line.54">                                target.setVal(u, v, doPixelY(source, u, v));</a>
+<span class="sourceLineNo">054</span><a id="line.54">                                target.setVal(u, v, doPixelX(source, u, v));</a>
 <span class="sourceLineNo">055</span><a id="line.55">                                this.iter++;</a>
 <span class="sourceLineNo">056</span><a id="line.56">                        }</a>
 <span class="sourceLineNo">057</span><a id="line.57">                }</a>
 <span class="sourceLineNo">058</span><a id="line.58">                </a>
-<span class="sourceLineNo">059</span><a id="line.59">                this.iter = 0;</a>
-<span class="sourceLineNo">060</span><a id="line.60">        }</a>
-<span class="sourceLineNo">061</span><a id="line.61">        </a>
-<span class="sourceLineNo">062</span><a id="line.62">        // ------------------------------------------------------------------------</a>
-<span class="sourceLineNo">063</span><a id="line.63"></a>
-<span class="sourceLineNo">064</span><a id="line.64">        // Apply a 1D filter in x-direction</a>
-<span class="sourceLineNo">065</span><a id="line.65">        protected abstract float doPixelX(PixelSlice source, int u, int v);</a>
-<span class="sourceLineNo">066</span><a id="line.66"></a>
-<span class="sourceLineNo">067</span><a id="line.67">        // Apply a 1D filter in y-direction</a>
-<span class="sourceLineNo">068</span><a id="line.68">        protected abstract float doPixelY(PixelSlice source, int u, int v);</a>
-<span class="sourceLineNo">069</span><a id="line.69">        </a>
-<span class="sourceLineNo">070</span><a id="line.70">        // ------------------------------------------------------------------------</a>
-<span class="sourceLineNo">071</span><a id="line.71">        </a>
-<span class="sourceLineNo">072</span><a id="line.72">        @Override</a>
-<span class="sourceLineNo">073</span><a id="line.73">        protected final double reportProgress(double subProgress) {</a>
-<span class="sourceLineNo">074</span><a id="line.74">                double loopProgress = (this.iter + subProgress) / this.iterMax;</a>
-<span class="sourceLineNo">075</span><a id="line.75">                //IJ.log("   loopProgress = " + loopProgress);</a>
-<span class="sourceLineNo">076</span><a id="line.76">                double sliceProgress = (this.slice + loopProgress) / this.sliceMax;</a>
-<span class="sourceLineNo">077</span><a id="line.77">                //IJ.log("   sliceProgress = " + sliceProgress);</a>
-<span class="sourceLineNo">078</span><a id="line.78">                //System.out.println("reportProgress: GenericFilterScalar " + localProgress);</a>
-<span class="sourceLineNo">079</span><a id="line.79">                return super.reportProgress(sliceProgress);</a>
-<span class="sourceLineNo">080</span><a id="line.80">        }</a>
-<span class="sourceLineNo">081</span><a id="line.81"></a>
-<span class="sourceLineNo">082</span><a id="line.82">        </a>
-<span class="sourceLineNo">083</span><a id="line.83">}</a>
+<span class="sourceLineNo">059</span><a id="line.59">                target.copyTo(source);</a>
+<span class="sourceLineNo">060</span><a id="line.60">                </a>
+<span class="sourceLineNo">061</span><a id="line.61">                // Y-part</a>
+<span class="sourceLineNo">062</span><a id="line.62">                //IJ.log("doing Y-part =============================== ");</a>
+<span class="sourceLineNo">063</span><a id="line.63">                for (int v = 0; v &lt; height; v++) {</a>
+<span class="sourceLineNo">064</span><a id="line.64">                        for (int u = 0; u &lt; width; u++) {</a>
+<span class="sourceLineNo">065</span><a id="line.65">                                target.setVal(u, v, doPixelY(source, u, v));</a>
+<span class="sourceLineNo">066</span><a id="line.66">                                this.iter++;</a>
+<span class="sourceLineNo">067</span><a id="line.67">                        }</a>
+<span class="sourceLineNo">068</span><a id="line.68">                }</a>
+<span class="sourceLineNo">069</span><a id="line.69">                </a>
+<span class="sourceLineNo">070</span><a id="line.70">                this.iter = 0;</a>
+<span class="sourceLineNo">071</span><a id="line.71">        }</a>
+<span class="sourceLineNo">072</span><a id="line.72">        </a>
+<span class="sourceLineNo">073</span><a id="line.73">        // ------------------------------------------------------------------------</a>
+<span class="sourceLineNo">074</span><a id="line.74"></a>
+<span class="sourceLineNo">075</span><a id="line.75">        /**</a>
+<span class="sourceLineNo">076</span><a id="line.76">         * Applies a 1D filter operation in x-direction.</a>
+<span class="sourceLineNo">077</span><a id="line.77">         * This method must be implemented by concrete sub-classes.</a>
+<span class="sourceLineNo">078</span><a id="line.78">         * This method is invoked before {@link #doPixelY(PixelSlice, int, int)}.</a>
+<span class="sourceLineNo">079</span><a id="line.79">         * The source data are passed as a {@link PixelSlice} container, which</a>
+<span class="sourceLineNo">080</span><a id="line.80">         * holds the scalar values of one image component.</a>
+<span class="sourceLineNo">081</span><a id="line.81">         * The method {@link PixelSlice#getVal(int, int)} should be used to read</a>
+<span class="sourceLineNo">082</span><a id="line.82">         * individual pixel values. These data should not be modified but</a>
+<span class="sourceLineNo">083</span><a id="line.83">         * the (float) result of the single-pixel calculation must be returned.</a>
+<span class="sourceLineNo">084</span><a id="line.84">         * </a>
+<span class="sourceLineNo">085</span><a id="line.85">         * @param source the scalar-valued data for a single image component</a>
+<span class="sourceLineNo">086</span><a id="line.86">         * @param u the current x-position</a>
+<span class="sourceLineNo">087</span><a id="line.87">         * @param v the current y-position</a>
+<span class="sourceLineNo">088</span><a id="line.88">         * @return the result of the filter calculation for this pixel</a>
+<span class="sourceLineNo">089</span><a id="line.89">         */</a>
+<span class="sourceLineNo">090</span><a id="line.90">        protected abstract float doPixelX(PixelSlice source, int u, int v);</a>
+<span class="sourceLineNo">091</span><a id="line.91"></a>
+<span class="sourceLineNo">092</span><a id="line.92">        /**</a>
+<span class="sourceLineNo">093</span><a id="line.93">         * Applies a 1D filter operation in y-direction.</a>
+<span class="sourceLineNo">094</span><a id="line.94">         * This method must be implemented by concrete sub-classes.</a>
+<span class="sourceLineNo">095</span><a id="line.95">         * This method is invoked after {@link #doPixelX(PixelSlice, int, int)}.</a>
+<span class="sourceLineNo">096</span><a id="line.96">         * The source data are passed as a {@link PixelSlice} container, which</a>
+<span class="sourceLineNo">097</span><a id="line.97">         * holds the scalar values of one image component.</a>
+<span class="sourceLineNo">098</span><a id="line.98">         * The method {@link PixelSlice#getVal(int, int)} should be used to read</a>
+<span class="sourceLineNo">099</span><a id="line.99">         * individual pixel values. These data should not be modified but</a>
+<span class="sourceLineNo">100</span><a id="line.100">         * the (float) result of the single-pixel calculation must be returned.</a>
+<span class="sourceLineNo">101</span><a id="line.101">         * </a>
+<span class="sourceLineNo">102</span><a id="line.102">         * @param source the scalar-valued data for a single image component</a>
+<span class="sourceLineNo">103</span><a id="line.103">         * @param u the current x-position</a>
+<span class="sourceLineNo">104</span><a id="line.104">         * @param v the current y-position</a>
+<span class="sourceLineNo">105</span><a id="line.105">         * @return the result of the filter calculation for this pixel</a>
+<span class="sourceLineNo">106</span><a id="line.106">         */</a>
+<span class="sourceLineNo">107</span><a id="line.107">        protected abstract float doPixelY(PixelSlice source, int u, int v);</a>
+<span class="sourceLineNo">108</span><a id="line.108">        </a>
+<span class="sourceLineNo">109</span><a id="line.109">        // ------------------------------------------------------------------------</a>
+<span class="sourceLineNo">110</span><a id="line.110">        </a>
+<span class="sourceLineNo">111</span><a id="line.111">        @Override</a>
+<span class="sourceLineNo">112</span><a id="line.112">        protected final double reportProgress(double subProgress) {</a>
+<span class="sourceLineNo">113</span><a id="line.113">                double loopProgress = (this.iter + subProgress) / this.iterMax;</a>
+<span class="sourceLineNo">114</span><a id="line.114">                //IJ.log("   loopProgress = " + loopProgress);</a>
+<span class="sourceLineNo">115</span><a id="line.115">                double sliceProgress = (this.slice + loopProgress) / this.sliceMax;</a>
+<span class="sourceLineNo">116</span><a id="line.116">                //IJ.log("   sliceProgress = " + sliceProgress);</a>
+<span class="sourceLineNo">117</span><a id="line.117">                //System.out.println("reportProgress: GenericFilterScalar " + localProgress);</a>
+<span class="sourceLineNo">118</span><a id="line.118">                return super.reportProgress(sliceProgress);</a>
+<span class="sourceLineNo">119</span><a id="line.119">        }</a>
+<span class="sourceLineNo">120</span><a id="line.120"></a>
+<span class="sourceLineNo">121</span><a id="line.121">        </a>
+<span class="sourceLineNo">122</span><a id="line.122">}</a>
 
 
 

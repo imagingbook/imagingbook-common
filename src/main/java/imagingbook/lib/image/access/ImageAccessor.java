@@ -13,9 +13,6 @@ import ij.process.ColorProcessor;
 import ij.process.ImageProcessor;
 import imagingbook.lib.interpolation.InterpolationMethod;
 
-// TODO: make ImageAccessor vector-valued by default, eliminate VectorAccessor alltogether?
-
-
 /**
  * This abstract class provides unified image access to all 4 types of images available in ImageJ:
  * 8-bit, 16-bit, float, and color images.

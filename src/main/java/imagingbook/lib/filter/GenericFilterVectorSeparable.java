@@ -3,9 +3,17 @@ package imagingbook.lib.filter;
 import imagingbook.lib.image.data.PixelPack;
 
 /**
- * A generic vector multi-pass filter with exactly 2 passes.
- * @author WB
- * @version 2021/01/02
+ * This (abstract) class represents a generic vector filter whose pixel-operation
+ * is x/y-separable.
+ * It is similar to {@link GenericFilterVector} but requires two methods to
+ * be implemented by concrete sub-classes: 
+ * {@link #doPixelX(PixelPack, int, int)} and {@link #doPixelY(PixelPack, int, int)}
+ * for the x- and y-pass, respectively,
+ * which are invoked in exactly this order.
+ * The remaining filter mechanics
+ * including out-of-bounds coordinate handling,
+ * multiple passes and data copying are handled by this class and its super-class
+ * (see {@link GenericFilter}). 
  */
 public abstract class GenericFilterVectorSeparable extends GenericFilter { // GenericFilterVector
 	
@@ -41,38 +49,53 @@ public abstract class GenericFilterVectorSeparable extends GenericFilter { // Ge
 		iter = 0;
 	}
 	
-//	@Override
-//	protected final float[] doPixel(PixelPack pack, int u, int v) {
-//		switch (getPass()) {
-//		case 0: return filterPixelX(pack, u, v);
-//		case 1: return filterPixelY(pack, u, v);
-//		default: throw new RuntimeException("invalid pass number " + getPass());
-//		}
-//	}
-	
-//	@Override
-//	protected final int passesRequired() {
-//		return 2;	// do exactly 2 passes
-//	}
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Applies a 1D filter operation in x-direction.
+	 * This method must be implemented by concrete sub-classes.
+	 * This method is invoked before {@link #doPixelY(PixelPack, int, int)}.
+	 * The source data are passed as a {@link PixelPack} container, which
+	 * holds the vector values of all image components.
+	 * The method {@link PixelPack#getVec(int, int)} should be used to read
+	 * individual pixel vectors. These data should not be modified but
+	 * the (float[]) result of the single-pixel calculation must be returned.
+	 * Implementations are free to return the same float-array at each invocation,
+	 * i.e., there is no need to allocate a new array every time.
+	 * 
+	 * @param source the scalar-valued data for a single image component
+	 * @param u the current x-position
+	 * @param v the current y-position
+	 * @return the result of the filter calculation for this pixel
+	 */
+	protected abstract float[] doPixelX(PixelPack source, int u, int v);
+
+	/**
+	 * Applies a 1D filter operation in y-direction.
+	 * This method must be implemented by concrete sub-classes.
+	 * This method is invoked after {@link #doPixelX(PixelPack, int, int)}.
+	 * The source data are passed as a {@link PixelPack} container, which
+	 * holds the vector values of all image components.
+	 * The method {@link PixelPack#getVec(int, int)} should be used to read
+	 * individual pixel vectors. These data should not be modified but
+	 * the (float[]) result of the single-pixel calculation must be returned.
+	 * Implementations are free to return the same float-array at each invocation,
+	 * i.e., there is no need to allocate a new array every time.
+	 * 
+	 * @param source the scalar-valued data for a single image component
+	 * @param u the current x-position
+	 * @param v the current y-position
+	 * @return the result of the filter calculation for this pixel
+	 */
+	protected abstract float[] doPixelY(PixelPack source, int u, int v);
 	
 	// ------------------------------------------------------------------------
 
-	// Apply a 1D filter in x-direction
-	protected abstract float[] doPixelX(PixelPack pack, int u, int v);
-
-	// Apply a 1D filter in y-direction
-	protected abstract float[] doPixelY(PixelPack pack, int u, int v);
-	
-	// ------------------------------------------------------------------------
-
-	
 	@Override
 	protected final double reportProgress(double subProgress) {
 		double localProgress = (double) iter /iterMax;
 		//System.out.println("GenericFilterVector: reportProgress() - returning " + localProgress);
 		return super.reportProgress(localProgress);
 	}
-	
-	
 	
 }
