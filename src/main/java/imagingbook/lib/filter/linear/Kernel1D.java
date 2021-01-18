@@ -38,14 +38,26 @@ public class Kernel1D {
 		this.xc = xc;
 	}
 	
+	/**
+	 * Returns the kernel's 1D array.
+	 * @return the kernel's 1D array
+	 */
 	public float[] getH() {
 		return h;
 	}
 	
+	/**
+	 * Returns the width (length) of this kernel.
+	 * @return the kernel's width
+	 */
 	public int getWidth() {
 		return width;
 	}
 	
+	/**
+	 * Returns the center coordinate of this kernel.
+	 * @return the kernel's center coordinate
+	 */
 	public int getXc() {
 		return xc;
 	}
@@ -55,6 +67,7 @@ public class Kernel1D {
 	/**
 	 * Normalizes the specified array such that its sum becomes 1.
 	 * Throws an exception if the array's sum is zero.
+	 * The original array is not modified.
 	 * 
 	 * @param A a 1D array
 	 * @return the normalized array

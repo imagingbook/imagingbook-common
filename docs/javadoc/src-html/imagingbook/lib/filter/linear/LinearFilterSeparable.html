@@ -10,56 +10,82 @@
 <div class="sourceContainer">
 <pre><span class="sourceLineNo">001</span><a id="line.1">package imagingbook.lib.filter.linear;</a>
 <span class="sourceLineNo">002</span><a id="line.2"></a>
-<span class="sourceLineNo">003</span><a id="line.3">import imagingbook.lib.filter.GenericFilterScalarSeparable;</a>
-<span class="sourceLineNo">004</span><a id="line.4">import imagingbook.lib.image.data.PixelPack.PixelSlice;</a>
-<span class="sourceLineNo">005</span><a id="line.5"></a>
-<span class="sourceLineNo">006</span><a id="line.6">public class LinearFilterSeparable extends GenericFilterScalarSeparable {</a>
-<span class="sourceLineNo">007</span><a id="line.7"></a>
-<span class="sourceLineNo">008</span><a id="line.8">        private final float[] hX, hY;                   // the horizontal/vertical kernel arrays</a>
-<span class="sourceLineNo">009</span><a id="line.9">        private final int width, height;                // width/height of the kernel</a>
-<span class="sourceLineNo">010</span><a id="line.10">        private final int xc, yc;                               // 'hot spot' coordinates</a>
-<span class="sourceLineNo">011</span><a id="line.11">        </a>
-<span class="sourceLineNo">012</span><a id="line.12">        public LinearFilterSeparable(Kernel1D kernelXY) {</a>
-<span class="sourceLineNo">013</span><a id="line.13">                this(kernelXY, kernelXY);</a>
-<span class="sourceLineNo">014</span><a id="line.14">        }</a>
-<span class="sourceLineNo">015</span><a id="line.15">        </a>
-<span class="sourceLineNo">016</span><a id="line.16">        public LinearFilterSeparable(Kernel1D kernelX, Kernel1D kernelY) {</a>
-<span class="sourceLineNo">017</span><a id="line.17">                super();</a>
-<span class="sourceLineNo">018</span><a id="line.18">                this.hX = kernelX.getH();</a>
-<span class="sourceLineNo">019</span><a id="line.19">                this.hY = kernelY.getH();</a>
-<span class="sourceLineNo">020</span><a id="line.20">                this.width = kernelX.getWidth();</a>
-<span class="sourceLineNo">021</span><a id="line.21">                this.height = kernelY.getWidth();</a>
-<span class="sourceLineNo">022</span><a id="line.22">                this.xc = kernelX.getXc();</a>
-<span class="sourceLineNo">023</span><a id="line.23">                this.yc = kernelY.getXc();</a>
-<span class="sourceLineNo">024</span><a id="line.24">        }</a>
-<span class="sourceLineNo">025</span><a id="line.25"></a>
-<span class="sourceLineNo">026</span><a id="line.26">        // ------------------------------------------------------------------------</a>
-<span class="sourceLineNo">027</span><a id="line.27"></a>
-<span class="sourceLineNo">028</span><a id="line.28">        // 1D convolution in x-direction</a>
-<span class="sourceLineNo">029</span><a id="line.29">        @Override</a>
-<span class="sourceLineNo">030</span><a id="line.30">        protected float doPixelX(PixelSlice source, int u, int v) {</a>
-<span class="sourceLineNo">031</span><a id="line.31">                final int vj = v; // - yc;</a>
-<span class="sourceLineNo">032</span><a id="line.32">                double sum = 0;</a>
-<span class="sourceLineNo">033</span><a id="line.33">                for (int i = 0; i &lt; width; i++) {</a>
-<span class="sourceLineNo">034</span><a id="line.34">                        int ui = u + i - xc;</a>
-<span class="sourceLineNo">035</span><a id="line.35">                        sum = sum + source.getVal(ui, vj) * hX[i];</a>
-<span class="sourceLineNo">036</span><a id="line.36">                }</a>
-<span class="sourceLineNo">037</span><a id="line.37">                return (float)sum;</a>
-<span class="sourceLineNo">038</span><a id="line.38">        }</a>
-<span class="sourceLineNo">039</span><a id="line.39">        </a>
-<span class="sourceLineNo">040</span><a id="line.40">        @Override</a>
-<span class="sourceLineNo">041</span><a id="line.41">        // 1D convolution in y-direction</a>
-<span class="sourceLineNo">042</span><a id="line.42">        protected float doPixelY(PixelSlice source, int u, int v) {</a>
-<span class="sourceLineNo">043</span><a id="line.43">                final int ui = u; // - xc;</a>
-<span class="sourceLineNo">044</span><a id="line.44">                double sum = 0;</a>
-<span class="sourceLineNo">045</span><a id="line.45">                for (int j = 0; j &lt; height; j++) {</a>
-<span class="sourceLineNo">046</span><a id="line.46">                        int vj = v + j - yc;</a>
-<span class="sourceLineNo">047</span><a id="line.47">                        sum = sum + source.getVal(ui, vj) * hY[j];</a>
-<span class="sourceLineNo">048</span><a id="line.48">                }</a>
-<span class="sourceLineNo">049</span><a id="line.49">                return (float) sum;</a>
+<span class="sourceLineNo">003</span><a id="line.3">import imagingbook.lib.filter.GenericFilter;</a>
+<span class="sourceLineNo">004</span><a id="line.4">import imagingbook.lib.filter.GenericFilterScalarSeparable;</a>
+<span class="sourceLineNo">005</span><a id="line.5">import imagingbook.lib.image.data.PixelPack.PixelSlice;</a>
+<span class="sourceLineNo">006</span><a id="line.6"></a>
+<span class="sourceLineNo">007</span><a id="line.7">/**</a>
+<span class="sourceLineNo">008</span><a id="line.8"> * This class represents a 2D linear filter that is x/y-separable and</a>
+<span class="sourceLineNo">009</span><a id="line.9"> * specified by two 1D-kernels.</a>
+<span class="sourceLineNo">010</span><a id="line.10"> * It is based on {@link GenericFilter} and {@link GenericFilterScalarSeparable},</a>
+<span class="sourceLineNo">011</span><a id="line.11"> * which take care of all data copying and filter mechanics.</a>
+<span class="sourceLineNo">012</span><a id="line.12"> * Since it is a "scalar" filter, pixel values are treated as scalars.</a>
+<span class="sourceLineNo">013</span><a id="line.13"> * If the processed image has more than one component </a>
+<span class="sourceLineNo">014</span><a id="line.14"> * (e.g., a RGB color image), this filter is automatically </a>
+<span class="sourceLineNo">015</span><a id="line.15"> * and independently applied to all (scalar-valued) components.</a>
+<span class="sourceLineNo">016</span><a id="line.16"> * To apply to an image, use the {@link #applyTo(ij.process.ImageProcessor)}</a>
+<span class="sourceLineNo">017</span><a id="line.17"> * method, for example.</a>
+<span class="sourceLineNo">018</span><a id="line.18"> */</a>
+<span class="sourceLineNo">019</span><a id="line.19">public class LinearFilterSeparable extends GenericFilterScalarSeparable {</a>
+<span class="sourceLineNo">020</span><a id="line.20"></a>
+<span class="sourceLineNo">021</span><a id="line.21">        private final float[] hX, hY;                   // the horizontal/vertical kernel arrays</a>
+<span class="sourceLineNo">022</span><a id="line.22">        private final int width, height;                // width/height of the kernel</a>
+<span class="sourceLineNo">023</span><a id="line.23">        private final int xc, yc;                               // 'hot spot' coordinates</a>
+<span class="sourceLineNo">024</span><a id="line.24">        </a>
+<span class="sourceLineNo">025</span><a id="line.25">        /**</a>
+<span class="sourceLineNo">026</span><a id="line.26">         * Constructor, takes a 1D convolution kernel to be applied both</a>
+<span class="sourceLineNo">027</span><a id="line.27">         * in x- and y-direction. </a>
+<span class="sourceLineNo">028</span><a id="line.28">         * </a>
+<span class="sourceLineNo">029</span><a id="line.29">         * @param kernelXY a 1D convolution kernel</a>
+<span class="sourceLineNo">030</span><a id="line.30">         */</a>
+<span class="sourceLineNo">031</span><a id="line.31">        public LinearFilterSeparable(Kernel1D kernelXY) {</a>
+<span class="sourceLineNo">032</span><a id="line.32">                this(kernelXY, kernelXY);</a>
+<span class="sourceLineNo">033</span><a id="line.33">        }</a>
+<span class="sourceLineNo">034</span><a id="line.34">        </a>
+<span class="sourceLineNo">035</span><a id="line.35">        /**</a>
+<span class="sourceLineNo">036</span><a id="line.36">         * Constructor, takes two 1D convolution kernels to be applied</a>
+<span class="sourceLineNo">037</span><a id="line.37">         * in x- and y-direction, respectively</a>
+<span class="sourceLineNo">038</span><a id="line.38">         * </a>
+<span class="sourceLineNo">039</span><a id="line.39">         * @param kernelX a 1D convolution kernel for the x-direction</a>
+<span class="sourceLineNo">040</span><a id="line.40">         * @param kernelY a 1D convolution kernel for the y-direction</a>
+<span class="sourceLineNo">041</span><a id="line.41">         */</a>
+<span class="sourceLineNo">042</span><a id="line.42">        public LinearFilterSeparable(Kernel1D kernelX, Kernel1D kernelY) {</a>
+<span class="sourceLineNo">043</span><a id="line.43">                super();</a>
+<span class="sourceLineNo">044</span><a id="line.44">                this.hX = kernelX.getH();</a>
+<span class="sourceLineNo">045</span><a id="line.45">                this.hY = kernelY.getH();</a>
+<span class="sourceLineNo">046</span><a id="line.46">                this.width = kernelX.getWidth();</a>
+<span class="sourceLineNo">047</span><a id="line.47">                this.height = kernelY.getWidth();</a>
+<span class="sourceLineNo">048</span><a id="line.48">                this.xc = kernelX.getXc();</a>
+<span class="sourceLineNo">049</span><a id="line.49">                this.yc = kernelY.getXc();</a>
 <span class="sourceLineNo">050</span><a id="line.50">        }</a>
 <span class="sourceLineNo">051</span><a id="line.51"></a>
-<span class="sourceLineNo">052</span><a id="line.52">}</a>
+<span class="sourceLineNo">052</span><a id="line.52">        // ------------------------------------------------------------------------</a>
+<span class="sourceLineNo">053</span><a id="line.53"></a>
+<span class="sourceLineNo">054</span><a id="line.54">        // 1D convolution in x-direction</a>
+<span class="sourceLineNo">055</span><a id="line.55">        @Override</a>
+<span class="sourceLineNo">056</span><a id="line.56">        protected float doPixelX(PixelSlice source, int u, int v) {</a>
+<span class="sourceLineNo">057</span><a id="line.57">                final int vj = v; // - yc;</a>
+<span class="sourceLineNo">058</span><a id="line.58">                double sum = 0;</a>
+<span class="sourceLineNo">059</span><a id="line.59">                for (int i = 0; i &lt; width; i++) {</a>
+<span class="sourceLineNo">060</span><a id="line.60">                        int ui = u + i - xc;</a>
+<span class="sourceLineNo">061</span><a id="line.61">                        sum = sum + source.getVal(ui, vj) * hX[i];</a>
+<span class="sourceLineNo">062</span><a id="line.62">                }</a>
+<span class="sourceLineNo">063</span><a id="line.63">                return (float)sum;</a>
+<span class="sourceLineNo">064</span><a id="line.64">        }</a>
+<span class="sourceLineNo">065</span><a id="line.65">        </a>
+<span class="sourceLineNo">066</span><a id="line.66">        @Override</a>
+<span class="sourceLineNo">067</span><a id="line.67">        // 1D convolution in y-direction</a>
+<span class="sourceLineNo">068</span><a id="line.68">        protected float doPixelY(PixelSlice source, int u, int v) {</a>
+<span class="sourceLineNo">069</span><a id="line.69">                final int ui = u; // - xc;</a>
+<span class="sourceLineNo">070</span><a id="line.70">                double sum = 0;</a>
+<span class="sourceLineNo">071</span><a id="line.71">                for (int j = 0; j &lt; height; j++) {</a>
+<span class="sourceLineNo">072</span><a id="line.72">                        int vj = v + j - yc;</a>
+<span class="sourceLineNo">073</span><a id="line.73">                        sum = sum + source.getVal(ui, vj) * hY[j];</a>
+<span class="sourceLineNo">074</span><a id="line.74">                }</a>
+<span class="sourceLineNo">075</span><a id="line.75">                return (float) sum;</a>
+<span class="sourceLineNo">076</span><a id="line.76">        }</a>
+<span class="sourceLineNo">077</span><a id="line.77"></a>
+<span class="sourceLineNo">078</span><a id="line.78">}</a>
 
 
 

@@ -9,8 +9,6 @@
 
 package imagingbook.lib.filter.linear;
 
-import imagingbook.lib.image.access.OutOfBoundsStrategy;
-
 /**
  * This class implements a separable 2D Gaussian filter by extending
  * {@link LinearFilterSeparable}.
@@ -20,12 +18,19 @@ import imagingbook.lib.image.access.OutOfBoundsStrategy;
  */
 public class GaussianFilterSeparable extends LinearFilterSeparable {
 	
-	public static final OutOfBoundsStrategy OBS = OutOfBoundsStrategy.NEAREST_BORDER;
-	
+	/**
+	 * Constructor.
+	 * @param sigma the width of the 2D Gaussian in x- and y-direction
+	 */
 	public GaussianFilterSeparable(double sigma) {
 		super(new GaussianKernel1D(sigma));
 	}
 	
+	/**
+	 * Constructor.
+	 * @param sigmaX the width of the 2D Gaussian in x-direction
+	 * @param sigmaY the width of the 2D Gaussian in y-direction
+	 */
 	public GaussianFilterSeparable(double sigmaX, double sigmaY) {
 		super(new GaussianKernel1D(sigmaX), new GaussianKernel1D(sigmaY));
 	}

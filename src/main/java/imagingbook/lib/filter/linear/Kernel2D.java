@@ -59,6 +59,7 @@ public class Kernel2D {
 	 * The result is not normalized.
 	 * Use the constructor {@link #Kernel2D(Kernel1D, Kernel1D, boolean)}
 	 * to create the equivalent (optionally normalized) 2D kernel.
+	 * Note that the kernel coordinates are {@code H[y][x]}.
 	 * 
 	 * @param Hx the 1D kernel for the x-direction
 	 * @param Hy the 1D kernel for the y-direction
@@ -83,22 +84,43 @@ public class Kernel2D {
 		// TODO: should we check if xc/yc is inside the kernel? does it matter?
 	}
 	
+	/**
+	 * Returns the kernel's 2D array.
+	 * Note that the kernel coordinates are {@code H[y][x]}.
+	 * @return the kernel's 2D array
+	 */
 	public float[][] getH() {
 		return H;
 	}
 	
+	/**
+	 * Returns the width of this kernel.
+	 * @return the kernel's width
+	 */
 	public int getWidth() {
 		return width;
 	}
 	
+	/**
+	 * Returns the height of this kernel.
+	 * @return the kernel's height
+	 */
 	public int getHeight() {
 		return height;
 	}
 	
+	/**
+	 * Returns the horizontal center coordinate of this kernel.
+	 * @return the kernel's x-center coordinate
+	 */
 	public int getXc() {
 		return xc;
 	}
 	
+	/**
+	 * Returns the vertical center coordinate of this kernel.
+	 * @return the kernel's y-center coordinate
+	 */
 	public int getYc() {
 		return yc;
 	}
@@ -108,6 +130,7 @@ public class Kernel2D {
 	/**
 	 * Normalizes the specified array such that its sum becomes 1.
 	 * Throws an exception if the array's sum is zero.
+	 * The original array is not modified.
 	 * 
 	 * @param A a 2D array
 	 * @return the normalized array

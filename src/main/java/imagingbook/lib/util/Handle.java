@@ -1,4 +1,4 @@
-package imagingbook.lib.handles;
+package imagingbook.lib.util;
 
 import imagingbook.lib.tuples.Tuple2;
 

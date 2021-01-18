@@ -20,7 +20,7 @@ public class GaussianKernel2D extends Kernel2D {
 
 	/**
 	 * Creates and returns a 2D Gaussian filter kernel large enough
-	 * to avoid truncation effects. The resulting array is odd-sized in
+	 * to avoid truncation effects. The associated array is odd-sized in
 	 * both dimensions.
 	 * The returned kernel is normalized.
 	 * 
@@ -38,10 +38,10 @@ public class GaussianKernel2D extends Kernel2D {
 		final double sigmaX2 = (sigmaX > 0.1) ? sqr(sigmaX) : 0.1;
 		final double sigmaY2 = (sigmaY > 0.1) ? sqr(sigmaY) : 0.1;
 		
-		for (int i = 0; i < sizeX; i++) {
-			final double a = sqr(radX - i) / (2 * sigmaX2);
-			for (int j = 0; j < sizeY; j++) {
-				final double  b = sqr(radY - j) / (2 * sigmaY2);
+		for (int i = 0; i < sizeY; i++) {
+			final double  b = sqr(radY - i) / (2 * sigmaY2);
+			for (int j = 0; j < sizeX; j++) {
+				final double a = sqr(radX - j) / (2 * sigmaX2);
 				double g = Math.exp(-(a + b));
 				kernel[i][j] = (float) g;
 			}

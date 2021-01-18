@@ -1,6 +1,6 @@
 package imagingbook.lib.tuples;
 
-import imagingbook.lib.handles.Handle;
+import imagingbook.lib.util.Handle;
 
 /**
  * A tuple with exactly 2 elements of arbitrary types.

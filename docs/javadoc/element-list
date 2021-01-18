@@ -4,7 +4,6 @@ imagingbook.lib.color
 imagingbook.lib.filter
 imagingbook.lib.filter.examples
 imagingbook.lib.filter.linear
-imagingbook.lib.handles
 imagingbook.lib.ij
 imagingbook.lib.image
 imagingbook.lib.image.access

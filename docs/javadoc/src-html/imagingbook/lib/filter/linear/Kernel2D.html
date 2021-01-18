@@ -69,67 +69,90 @@
 <span class="sourceLineNo">059</span><a id="line.59">         * The result is not normalized.</a>
 <span class="sourceLineNo">060</span><a id="line.60">         * Use the constructor {@link #Kernel2D(Kernel1D, Kernel1D, boolean)}</a>
 <span class="sourceLineNo">061</span><a id="line.61">         * to create the equivalent (optionally normalized) 2D kernel.</a>
-<span class="sourceLineNo">062</span><a id="line.62">         * </a>
-<span class="sourceLineNo">063</span><a id="line.63">         * @param Hx the 1D kernel for the x-direction</a>
-<span class="sourceLineNo">064</span><a id="line.64">         * @param Hy the 1D kernel for the y-direction</a>
-<span class="sourceLineNo">065</span><a id="line.65">         * @return the effective 2D kernel matrix</a>
-<span class="sourceLineNo">066</span><a id="line.66">         */</a>
-<span class="sourceLineNo">067</span><a id="line.67">        public static float[][] getEffectiveKernel(Kernel1D Hx, Kernel1D Hy) {</a>
-<span class="sourceLineNo">068</span><a id="line.68">                float[] kernelX = Hx.getH();</a>
-<span class="sourceLineNo">069</span><a id="line.69">                float[] kernelY = Hy.getH();</a>
-<span class="sourceLineNo">070</span><a id="line.70">                </a>
-<span class="sourceLineNo">071</span><a id="line.71">                float[][] kernel = new float[kernelX.length][kernelY.length];</a>
-<span class="sourceLineNo">072</span><a id="line.72">                for (int y = 0; y &lt; kernelY.length; y++) {</a>
-<span class="sourceLineNo">073</span><a id="line.73">                        for (int x = 0; x &lt; kernelX.length; x++) {</a>
-<span class="sourceLineNo">074</span><a id="line.74">                                kernel[y][x] = kernelX[x] * kernelY[y];</a>
-<span class="sourceLineNo">075</span><a id="line.75">                        }</a>
-<span class="sourceLineNo">076</span><a id="line.76">                }</a>
-<span class="sourceLineNo">077</span><a id="line.77">                return kernel;</a>
-<span class="sourceLineNo">078</span><a id="line.78">        }</a>
-<span class="sourceLineNo">079</span><a id="line.79">        </a>
-<span class="sourceLineNo">080</span><a id="line.80">        private void validate() {</a>
-<span class="sourceLineNo">081</span><a id="line.81">                if (!Matrix.isRectangular(H))</a>
-<span class="sourceLineNo">082</span><a id="line.82">                        throw new IllegalArgumentException("non-rectangular filter kernel");</a>
-<span class="sourceLineNo">083</span><a id="line.83">                // TODO: should we check if xc/yc is inside the kernel? does it matter?</a>
-<span class="sourceLineNo">084</span><a id="line.84">        }</a>
-<span class="sourceLineNo">085</span><a id="line.85">        </a>
-<span class="sourceLineNo">086</span><a id="line.86">        public float[][] getH() {</a>
-<span class="sourceLineNo">087</span><a id="line.87">                return H;</a>
-<span class="sourceLineNo">088</span><a id="line.88">        }</a>
-<span class="sourceLineNo">089</span><a id="line.89">        </a>
-<span class="sourceLineNo">090</span><a id="line.90">        public int getWidth() {</a>
-<span class="sourceLineNo">091</span><a id="line.91">                return width;</a>
-<span class="sourceLineNo">092</span><a id="line.92">        }</a>
-<span class="sourceLineNo">093</span><a id="line.93">        </a>
-<span class="sourceLineNo">094</span><a id="line.94">        public int getHeight() {</a>
-<span class="sourceLineNo">095</span><a id="line.95">                return height;</a>
-<span class="sourceLineNo">096</span><a id="line.96">        }</a>
-<span class="sourceLineNo">097</span><a id="line.97">        </a>
-<span class="sourceLineNo">098</span><a id="line.98">        public int getXc() {</a>
-<span class="sourceLineNo">099</span><a id="line.99">                return xc;</a>
-<span class="sourceLineNo">100</span><a id="line.100">        }</a>
-<span class="sourceLineNo">101</span><a id="line.101">        </a>
-<span class="sourceLineNo">102</span><a id="line.102">        public int getYc() {</a>
-<span class="sourceLineNo">103</span><a id="line.103">                return yc;</a>
-<span class="sourceLineNo">104</span><a id="line.104">        }</a>
-<span class="sourceLineNo">105</span><a id="line.105">        </a>
-<span class="sourceLineNo">106</span><a id="line.106">        // ----------------------------------------------------------</a>
-<span class="sourceLineNo">107</span><a id="line.107">        </a>
-<span class="sourceLineNo">108</span><a id="line.108">        /**</a>
-<span class="sourceLineNo">109</span><a id="line.109">         * Normalizes the specified array such that its sum becomes 1.</a>
-<span class="sourceLineNo">110</span><a id="line.110">         * Throws an exception if the array's sum is zero.</a>
-<span class="sourceLineNo">111</span><a id="line.111">         * </a>
-<span class="sourceLineNo">112</span><a id="line.112">         * @param A a 2D array</a>
-<span class="sourceLineNo">113</span><a id="line.113">         * @return the normalized array</a>
-<span class="sourceLineNo">114</span><a id="line.114">         */</a>
-<span class="sourceLineNo">115</span><a id="line.115">        public static float[][] normalize(float[][] A) throws ArithmeticException {</a>
-<span class="sourceLineNo">116</span><a id="line.116">                float s = (float) (1.0 / Matrix.sum(A));</a>
-<span class="sourceLineNo">117</span><a id="line.117">                if (!Double.isFinite(s))</a>
-<span class="sourceLineNo">118</span><a id="line.118">                        throw new ArithmeticException("zero kernel sum, cannot normalize");</a>
-<span class="sourceLineNo">119</span><a id="line.119">                return Matrix.multiply(s, A);</a>
-<span class="sourceLineNo">120</span><a id="line.120">        }</a>
-<span class="sourceLineNo">121</span><a id="line.121"></a>
-<span class="sourceLineNo">122</span><a id="line.122">}</a>
+<span class="sourceLineNo">062</span><a id="line.62">         * Note that the kernel coordinates are {@code H[y][x]}.</a>
+<span class="sourceLineNo">063</span><a id="line.63">         * </a>
+<span class="sourceLineNo">064</span><a id="line.64">         * @param Hx the 1D kernel for the x-direction</a>
+<span class="sourceLineNo">065</span><a id="line.65">         * @param Hy the 1D kernel for the y-direction</a>
+<span class="sourceLineNo">066</span><a id="line.66">         * @return the effective 2D kernel matrix</a>
+<span class="sourceLineNo">067</span><a id="line.67">         */</a>
+<span class="sourceLineNo">068</span><a id="line.68">        public static float[][] getEffectiveKernel(Kernel1D Hx, Kernel1D Hy) {</a>
+<span class="sourceLineNo">069</span><a id="line.69">                float[] kernelX = Hx.getH();</a>
+<span class="sourceLineNo">070</span><a id="line.70">                float[] kernelY = Hy.getH();</a>
+<span class="sourceLineNo">071</span><a id="line.71">                </a>
+<span class="sourceLineNo">072</span><a id="line.72">                float[][] kernel = new float[kernelX.length][kernelY.length];</a>
+<span class="sourceLineNo">073</span><a id="line.73">                for (int y = 0; y &lt; kernelY.length; y++) {</a>
+<span class="sourceLineNo">074</span><a id="line.74">                        for (int x = 0; x &lt; kernelX.length; x++) {</a>
+<span class="sourceLineNo">075</span><a id="line.75">                                kernel[y][x] = kernelX[x] * kernelY[y];</a>
+<span class="sourceLineNo">076</span><a id="line.76">                        }</a>
+<span class="sourceLineNo">077</span><a id="line.77">                }</a>
+<span class="sourceLineNo">078</span><a id="line.78">                return kernel;</a>
+<span class="sourceLineNo">079</span><a id="line.79">        }</a>
+<span class="sourceLineNo">080</span><a id="line.80">        </a>
+<span class="sourceLineNo">081</span><a id="line.81">        private void validate() {</a>
+<span class="sourceLineNo">082</span><a id="line.82">                if (!Matrix.isRectangular(H))</a>
+<span class="sourceLineNo">083</span><a id="line.83">                        throw new IllegalArgumentException("non-rectangular filter kernel");</a>
+<span class="sourceLineNo">084</span><a id="line.84">                // TODO: should we check if xc/yc is inside the kernel? does it matter?</a>
+<span class="sourceLineNo">085</span><a id="line.85">        }</a>
+<span class="sourceLineNo">086</span><a id="line.86">        </a>
+<span class="sourceLineNo">087</span><a id="line.87">        /**</a>
+<span class="sourceLineNo">088</span><a id="line.88">         * Returns the kernel's 2D array.</a>
+<span class="sourceLineNo">089</span><a id="line.89">         * Note that the kernel coordinates are {@code H[y][x]}.</a>
+<span class="sourceLineNo">090</span><a id="line.90">         * @return the kernel's 2D array</a>
+<span class="sourceLineNo">091</span><a id="line.91">         */</a>
+<span class="sourceLineNo">092</span><a id="line.92">        public float[][] getH() {</a>
+<span class="sourceLineNo">093</span><a id="line.93">                return H;</a>
+<span class="sourceLineNo">094</span><a id="line.94">        }</a>
+<span class="sourceLineNo">095</span><a id="line.95">        </a>
+<span class="sourceLineNo">096</span><a id="line.96">        /**</a>
+<span class="sourceLineNo">097</span><a id="line.97">         * Returns the width of this kernel.</a>
+<span class="sourceLineNo">098</span><a id="line.98">         * @return the kernel's width</a>
+<span class="sourceLineNo">099</span><a id="line.99">         */</a>
+<span class="sourceLineNo">100</span><a id="line.100">        public int getWidth() {</a>
+<span class="sourceLineNo">101</span><a id="line.101">                return width;</a>
+<span class="sourceLineNo">102</span><a id="line.102">        }</a>
+<span class="sourceLineNo">103</span><a id="line.103">        </a>
+<span class="sourceLineNo">104</span><a id="line.104">        /**</a>
+<span class="sourceLineNo">105</span><a id="line.105">         * Returns the height of this kernel.</a>
+<span class="sourceLineNo">106</span><a id="line.106">         * @return the kernel's height</a>
+<span class="sourceLineNo">107</span><a id="line.107">         */</a>
+<span class="sourceLineNo">108</span><a id="line.108">        public int getHeight() {</a>
+<span class="sourceLineNo">109</span><a id="line.109">                return height;</a>
+<span class="sourceLineNo">110</span><a id="line.110">        }</a>
+<span class="sourceLineNo">111</span><a id="line.111">        </a>
+<span class="sourceLineNo">112</span><a id="line.112">        /**</a>
+<span class="sourceLineNo">113</span><a id="line.113">         * Returns the horizontal center coordinate of this kernel.</a>
+<span class="sourceLineNo">114</span><a id="line.114">         * @return the kernel's x-center coordinate</a>
+<span class="sourceLineNo">115</span><a id="line.115">         */</a>
+<span class="sourceLineNo">116</span><a id="line.116">        public int getXc() {</a>
+<span class="sourceLineNo">117</span><a id="line.117">                return xc;</a>
+<span class="sourceLineNo">118</span><a id="line.118">        }</a>
+<span class="sourceLineNo">119</span><a id="line.119">        </a>
+<span class="sourceLineNo">120</span><a id="line.120">        /**</a>
+<span class="sourceLineNo">121</span><a id="line.121">         * Returns the vertical center coordinate of this kernel.</a>
+<span class="sourceLineNo">122</span><a id="line.122">         * @return the kernel's y-center coordinate</a>
+<span class="sourceLineNo">123</span><a id="line.123">         */</a>
+<span class="sourceLineNo">124</span><a id="line.124">        public int getYc() {</a>
+<span class="sourceLineNo">125</span><a id="line.125">                return yc;</a>
+<span class="sourceLineNo">126</span><a id="line.126">        }</a>
+<span class="sourceLineNo">127</span><a id="line.127">        </a>
+<span class="sourceLineNo">128</span><a id="line.128">        // ----------------------------------------------------------</a>
+<span class="sourceLineNo">129</span><a id="line.129">        </a>
+<span class="sourceLineNo">130</span><a id="line.130">        /**</a>
+<span class="sourceLineNo">131</span><a id="line.131">         * Normalizes the specified array such that its sum becomes 1.</a>
+<span class="sourceLineNo">132</span><a id="line.132">         * Throws an exception if the array's sum is zero.</a>
+<span class="sourceLineNo">133</span><a id="line.133">         * The original array is not modified.</a>
+<span class="sourceLineNo">134</span><a id="line.134">         * </a>
+<span class="sourceLineNo">135</span><a id="line.135">         * @param A a 2D array</a>
+<span class="sourceLineNo">136</span><a id="line.136">         * @return the normalized array</a>
+<span class="sourceLineNo">137</span><a id="line.137">         */</a>
+<span class="sourceLineNo">138</span><a id="line.138">        public static float[][] normalize(float[][] A) throws ArithmeticException {</a>
+<span class="sourceLineNo">139</span><a id="line.139">                float s = (float) (1.0 / Matrix.sum(A));</a>
+<span class="sourceLineNo">140</span><a id="line.140">                if (!Double.isFinite(s))</a>
+<span class="sourceLineNo">141</span><a id="line.141">                        throw new ArithmeticException("zero kernel sum, cannot normalize");</a>
+<span class="sourceLineNo">142</span><a id="line.142">                return Matrix.multiply(s, A);</a>
+<span class="sourceLineNo">143</span><a id="line.143">        }</a>
+<span class="sourceLineNo">144</span><a id="line.144"></a>
+<span class="sourceLineNo">145</span><a id="line.145">}</a>
 
 
 
