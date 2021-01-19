@@ -172,6 +172,22 @@ public class PixelPack {
 	}
 	
 	/**
+	 * Checks is this pixel pack has the same dimensions as the
+	 * specified {@link ImageProcessor} instance, i.e., can be copied to it.
+	 * @param ip the image processor instance
+	 * @return true if compatible
+	 */
+	public boolean isCompatibleTo(ImageProcessor ip) {
+		if (this.getWidth() != ip.getWidth() || this.getHeight() != ip.getHeight()) {
+			return false;
+		}
+		if (this.getDepth() != ip.getNChannels()) {
+			return false;
+		}
+		return true;
+	}
+	
+	/**
 	 * Returns a reference to the specified {@link PixelSlice}.
 	 * An exception is thrown if the specified slice does not exist.
 	 * @param k the slice index (0,...,K-1)
@@ -275,13 +291,7 @@ public class PixelPack {
 	 * 
 	 * @param ip the target image processor
 	 */
-	public void copyToImageProcessor(ImageProcessor ip) throws IllegalArgumentException {
-		if (this.getWidth() != ip.getWidth() || this.getHeight() != ip.getHeight()) {
-			throw new IllegalArgumentException("cannot copy to image processor, incompatible width or height");
-		}
-		if (this.getDepth() != ip.getNChannels()) {
-			throw new IllegalArgumentException("cannot copy to image processor, wrong depth");
-		}
+	public void copyToImageProcessor(ImageProcessor ip) {
 		copyToImageProcessor(this, ip);
 	}
 	
@@ -305,7 +315,7 @@ public class PixelPack {
 			this.vals = data[idx];
 		}
 		
-		/** Constructor. Creates an empty (zero-values) pixel slice with the same
+		/** Constructor. Creates an empty (zero-valued) pixel slice with the same
 		 * properties as the containing pixel pack but not associated
 		 * with it.
 		 */
@@ -315,7 +325,7 @@ public class PixelPack {
 		}
 		
 		/**
-		 * Returns the slice value for the specified image position.
+		 * Returns the pixel value for the specified image position.
 		 * @param u the x-position
 		 * @param v the y-position
 		 * @return the slice value
@@ -326,7 +336,7 @@ public class PixelPack {
 		}
 		
 		/**
-		 * Sets the slice value at the specified image position.
+		 * Sets the pixel value at the specified image position.
 		 * @param u the x-position
 		 * @param v the y-position
 		 * @param val the new value
@@ -429,7 +439,7 @@ public class PixelPack {
 	}
 	
 	// -------------------------------------------------------------------
-	
+
 	/**
 	 * Utility method. Copies the contents of an image processor to an existing
 	 * pixel pack. They must be compatible w.r.t. size and depth.
@@ -438,6 +448,9 @@ public class PixelPack {
 	 * @param pack the receiving pixel pack
 	 */
 	public static void copyFromImageProcessor(ImageProcessor ip, PixelPack pack) {
+		if (!pack.isCompatibleTo(ip) ){
+			throw new IllegalArgumentException("copyFromImageProcessor(): incompatible ImageProcessor/PixelPack)");
+		}
 		if (ip instanceof ByteProcessor)
 			copyFromByteProcessor((ByteProcessor)ip, pack);
 		else if (ip instanceof ShortProcessor)
@@ -450,7 +463,7 @@ public class PixelPack {
 			throw new IllegalArgumentException("unknown processor type " + ip.getClass().getSimpleName());
 	}
 	
-	public static void copyFromByteProcessor(ByteProcessor ip, PixelPack pack) {
+	private static void copyFromByteProcessor(ByteProcessor ip, PixelPack pack) {
 		final float[][] P = pack.data;
 		byte[] pixels = (byte[]) ip.getPixels();
 		for (int i = 0; i < pixels.length; i++) {
@@ -458,7 +471,7 @@ public class PixelPack {
 		}
 	}
 	
-	public static void copyFromShortProcessor(ShortProcessor ip, PixelPack pack) {
+	private static void copyFromShortProcessor(ShortProcessor ip, PixelPack pack) {
 		final float[][] P = pack.data;
 		short[] pixels = (short[]) ip.getPixels();
 		for (int i = 0; i < pixels.length; i++) {
@@ -466,13 +479,13 @@ public class PixelPack {
 		}
 	}
 	
-	public static void copyFromFloatProcessor(FloatProcessor ip, PixelPack pack) {
+	private static void copyFromFloatProcessor(FloatProcessor ip, PixelPack pack) {
 		final float[][] P = pack.data;
 		float[] pixels = (float[]) ip.getPixels();
 		System.arraycopy(pixels, 0, P[0], 0, pixels.length);
 	}
 	
-	public static void copyFromColorProcessor(ColorProcessor ip, PixelPack pack) {
+	private static void copyFromColorProcessor(ColorProcessor ip, PixelPack pack) {
 		final float[][] P = pack.data;
 		final int[] pixels = (int[]) ip.getPixels();
 		final int[] rgb = new int[3];
@@ -487,13 +500,16 @@ public class PixelPack {
 	// --------------------------------------------------------------------
 	
 	/**
-	 * Utility method. Copies the contents of a pixel pack to an existing
+	 * Copies the contents of a pixel pack to an existing
 	 * image processor. They must be compatible w.r.t. size and depth.
 	 * 
 	 * @param pack the source pixel pack
 	 * @param ip the receiving image processor
 	 */
-	public void copyToImageProcessor(PixelPack pack, ImageProcessor ip) {
+	public static void copyToImageProcessor(PixelPack pack, ImageProcessor ip) {
+		if (!pack.isCompatibleTo(ip) ){
+			throw new IllegalArgumentException("copyToImageProcessor(): incompatible ImageProcessor/PixelPack)");
+		}
 		if (ip instanceof ByteProcessor)
 			copyToByteProcessor(pack, (ByteProcessor)ip);
 		else if (ip instanceof ShortProcessor)
@@ -506,7 +522,7 @@ public class PixelPack {
 			throw new IllegalArgumentException("unknown processor type " + ip.getClass().getSimpleName());
 	}
 	
-	public static void copyToByteProcessor(PixelPack pack, ByteProcessor ip) {
+	private static void copyToByteProcessor(PixelPack pack, ByteProcessor ip) {
 		byte[] pixels = (byte[]) ip.getPixels();
 		float[] P = pack.data[0];
 		for (int i = 0; i < pixels.length; i++) {
@@ -515,7 +531,7 @@ public class PixelPack {
 		}
 	}
 	
-	public static void copyToShortProcessor(PixelPack pack, ShortProcessor ip) {
+	private static void copyToShortProcessor(PixelPack pack, ShortProcessor ip) {
 		short[] pixels = (short[]) ip.getPixels();
 		float[] P = pack.data[0];
 		for (int i = 0; i < pixels.length; i++) {
@@ -524,13 +540,13 @@ public class PixelPack {
 		}
 	}
 	
-	public static void copyToFloatProcessor(PixelPack pack, FloatProcessor ip) {
+	private static void copyToFloatProcessor(PixelPack pack, FloatProcessor ip) {
 		float[] pixels = (float[]) ip.getPixels();
 		float[] P = pack.data[0];
 		System.arraycopy(P, 0, pixels, 0, P.length);
 	}
 	
-	public static void copyToColorProcessor(PixelPack pack, ColorProcessor ip) {
+	private static void copyToColorProcessor(PixelPack pack, ColorProcessor ip) {
 		int[] pixels = (int[]) ip.getPixels();
 		float[] R = pack.data[0];
 		float[] G = pack.data[1];

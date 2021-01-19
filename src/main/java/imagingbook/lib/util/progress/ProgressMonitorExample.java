@@ -10,7 +10,9 @@ final class ProgressMonitorExample implements ProgressReporter {
 		return (double) iter / iterMax;
 	}
 	
-	// the task to be monitored
+	/**
+	 * The task (slow process) to be monitored.
+	 */
 	protected void run() {
 		for (iter = 0; iter < iterMax; iter++) {
 			try {
@@ -30,6 +32,10 @@ final class ProgressMonitorExample implements ProgressReporter {
 
 	// --------------------------------------------------------------
 	
+	/**
+	 * A simple progress monitor that only prints query results
+	 * to the console.
+	 */
 	static class MyProcessMonitor extends ProgressMonitor {
 		
 		public MyProcessMonitor(ProgressReporter target) {
