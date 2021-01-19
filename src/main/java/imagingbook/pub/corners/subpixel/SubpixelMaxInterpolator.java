@@ -10,21 +10,20 @@ import static imagingbook.lib.math.Matrix.multiply;
 import static imagingbook.lib.math.Matrix.normL2;
 
 import imagingbook.lib.util.Enums.Description;
-import imagingbook.lib.util.choice.DeclareChoice;
 
 /**
- * The common interface for all sub-pixel locators in this package.
+ * The common interface for all sub-pixel locator classes.
  * @see QuadraticTaylorExtra
  * @see QuadraticLeastSquares
  * @see Quartic
  * @author WB
- * @version 2020/10/03
+ * @version 2021/01/19
  */
 public abstract class SubpixelMaxInterpolator {
 	
 	/**
 	 * Tries to locate the sub-pixel maximum from the 9 discrete sample values
-	 * (s0,...,s8) taken from a 3x3 neigborhood, arranged in the following order:
+	 * (s0,...,s8) taken from a 3x3 neighborhood, arranged in the following order:
 	 * <pre>
 	 * s4 s3 s2
 	 * s5 s0 s1
@@ -42,9 +41,9 @@ public abstract class SubpixelMaxInterpolator {
 	 * Enumeration of keys for {@link SubpixelMaxInterpolator} methods.
 	 */
 	public enum Method {
-		@Description("Quadratic Taylor Expansion") Quadratic_Taylor,
-		@Description("Quadratic Least-Squares") QuadraticLeastSquares,
-		@Description("Quartic Interpolation") QuarticInterpolation,
+		@Description("Quadratic Taylor Interpolation") QuadraticTaylor,
+		@Description("Quadratic Least-Squares Interpolation") QuadraticLeastSquares,
+		@Description("Quartic Interpolation") Quartic,
 		@Description("No Interpolation") None;
 	}
 	
@@ -55,62 +54,56 @@ public abstract class SubpixelMaxInterpolator {
 	 * @return a new {@link SubpixelMaxInterpolator} instance
 	 */
 	public static SubpixelMaxInterpolator getInstance(Method m) {
-		SubpixelMaxInterpolator instance = null;
 		switch(m) {
-		case Quadratic_Taylor:
-			instance = new QuadraticTaylor(); break;
-		case QuadraticLeastSquares:
-			instance = new QuadraticLeastSquares(); break;
-		case QuarticInterpolation:
-			instance = new Quartic(); break;
-		case None:
-			break;
+		case QuadraticTaylor: return new QuadraticTaylor();
+		case QuadraticLeastSquares: return new QuadraticLeastSquares();
+		case Quartic: return new Quartic();
+		case None: return null;
 		}
-		return instance;
+		return null;
 	}
 	
 	// ------------------------------------------------------------------------------
 	
-	/**
-	 * 2D interpolator using second-order Taylor expansion to fit a quadratic
-	 * polynomial of the form
-	 * <br>
-	 * f(x,y) = c_0 + c_1 x + c_2 y + c_3 x^2 + c_4 y^2  + c_5 xy
-	 * <br>
-	 * to the supplied samples values.
-	 * @see SubpixelMaxInterpolator#getMax(float[])
-	 */
-	@DeclareChoice("Quadratic Taylor Interpolator")
-	public static class QuadraticTaylorExtra extends SubpixelMaxInterpolator {
-		
-		private final double[] c = new double[6];	// polynomial coefficients
-
-		@Override
-		public float[] getMax(float[] s) {
-			c[0] = s[0];
-			c[1] = (s[1] - s[5]) / 2;
-			c[2] = (s[7] - s[3]) / 2;
-			c[3] = (s[1] - 2*s[0] + s[5]) / 2;
-			c[4] = (s[3] - 2*s[0] + s[7]) / 2;
-			c[5] = (-s[2] + s[4] - s[6] + s[8]) / 4;
-			
-			double d = (4*c[3]*c[4] - sqr(c[5]));
-			
-			if (d < EPSILON_DOUBLE || c[3] >= 0) {	// not a maximum (minimum or saddle point)
-				return null;
-			}
-			
-			// max position:
-			float x = (float) ((c[2]*c[5] - 2*c[1]*c[4]) / d);
-			float y = (float) ((c[1]*c[5] - 2*c[2]*c[3]) / d);
-			// max value:
-			float z = (float) (c[0] + c[1]*x + c[2]*y + c[3]*x*x + c[4]*y*y + c[5]*x*y);
-			return new float[] {x, y, z};
-		}
-	}
+//	/**
+//	 * 2D interpolator using second-order Taylor expansion to fit a quadratic
+//	 * polynomial of the form
+//	 * <br>
+//	 * f(x,y) = c_0 + c_1 x + c_2 y + c_3 x^2 + c_4 y^2  + c_5 xy
+//	 * <br>
+//	 * to the supplied samples values.
+//	 * @see SubpixelMaxInterpolator#getMax(float[])
+//	 */
+//	@DeclareChoice("Quadratic Taylor Interpolator")
+//	private static class QuadraticTaylorExtra extends SubpixelMaxInterpolator {
+//		
+//		private final double[] c = new double[6];	// polynomial coefficients
+//
+//		@Override
+//		public float[] getMax(float[] s) {
+//			c[0] = s[0];
+//			c[1] = (s[1] - s[5]) / 2;
+//			c[2] = (s[7] - s[3]) / 2;
+//			c[3] = (s[1] - 2*s[0] + s[5]) / 2;
+//			c[4] = (s[3] - 2*s[0] + s[7]) / 2;
+//			c[5] = (-s[2] + s[4] - s[6] + s[8]) / 4;
+//			
+//			double d = (4*c[3]*c[4] - sqr(c[5]));
+//			
+//			if (d < EPSILON_DOUBLE || c[3] >= 0) {	// not a maximum (minimum or saddle point)
+//				return null;
+//			}
+//			
+//			// max position:
+//			float x = (float) ((c[2]*c[5] - 2*c[1]*c[4]) / d);
+//			float y = (float) ((c[1]*c[5] - 2*c[2]*c[3]) / d);
+//			// max value:
+//			float z = (float) (c[0] + c[1]*x + c[2]*y + c[3]*x*x + c[4]*y*y + c[5]*x*y);
+//			return new float[] {x, y, z};
+//		}
+//	}
 	
-	// version 2 - actually looks more like Taylor expansion!
-	@DeclareChoice("Quadratic Taylor Interpolator 2")
+
 	public static class QuadraticTaylor extends SubpixelMaxInterpolator {
 
 		@Override
@@ -149,7 +142,6 @@ public abstract class SubpixelMaxInterpolator {
 	 * to the supplied sample values.
 	 * @see SubpixelMaxInterpolator#getMax(float[])
 	 */
-	@DeclareChoice("Quadratic Least-Squares Interpolator")
 	public static class QuadraticLeastSquares extends SubpixelMaxInterpolator {
 		
 		private final double[] c = new double[6];	// polynomial coefficients
@@ -192,7 +184,6 @@ public abstract class SubpixelMaxInterpolator {
 	 * is found iteratively, which is not guaranteed to succeed.
 	 * @see SubpixelMaxInterpolator#getMax(float[])
 	 */
-	@DeclareChoice("Quartic Interpolator")
 	public static class Quartic extends SubpixelMaxInterpolator {
 		static int DefaultMaxIterations = 20;	// iteration limit
 		static double DefaulMaxDelta = 1e-6;	// smallest x/y move to continue search 
