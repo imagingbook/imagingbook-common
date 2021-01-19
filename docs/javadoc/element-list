@@ -25,13 +25,11 @@ imagingbook.pub.color.quantize
 imagingbook.pub.color.statistics
 imagingbook.pub.corners
 imagingbook.pub.corners.subpixel
-imagingbook.pub.corners.subpixel_obsolete
 imagingbook.pub.corners.util
 imagingbook.pub.dct
 imagingbook.pub.dft
 imagingbook.pub.dft.obsolete
 imagingbook.pub.edgepreservingfilters
-imagingbook.pub.edgepreservingfilters.OLD
 imagingbook.pub.fd
 imagingbook.pub.geometry.basic
 imagingbook.pub.geometry.delaunay

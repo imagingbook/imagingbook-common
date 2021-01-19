@@ -13,7 +13,7 @@ import imagingbook.lib.util.Enums.Description;
 
 /**
  * The common interface for all sub-pixel locator classes.
- * @see QuadraticTaylorExtra
+ * @see QuadraticTaylor
  * @see QuadraticLeastSquares
  * @see Quartic
  * @author WB
