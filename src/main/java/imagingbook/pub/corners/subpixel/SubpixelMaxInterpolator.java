@@ -9,6 +9,7 @@ import static imagingbook.lib.math.Matrix.dotProduct;
 import static imagingbook.lib.math.Matrix.multiply;
 import static imagingbook.lib.math.Matrix.normL2;
 
+import imagingbook.lib.math.Matrix;
 import imagingbook.lib.util.Enums.Description;
 
 /**
@@ -65,46 +66,54 @@ public abstract class SubpixelMaxInterpolator {
 	
 	// ------------------------------------------------------------------------------
 	
-//	/**
-//	 * 2D interpolator using second-order Taylor expansion to fit a quadratic
-//	 * polynomial of the form
-//	 * <br>
-//	 * f(x,y) = c_0 + c_1 x + c_2 y + c_3 x^2 + c_4 y^2  + c_5 xy
-//	 * <br>
-//	 * to the supplied samples values.
-//	 * @see SubpixelMaxInterpolator#getMax(float[])
-//	 */
-//	@DeclareChoice("Quadratic Taylor Interpolator")
-//	private static class QuadraticTaylorExtra extends SubpixelMaxInterpolator {
-//		
-//		private final double[] c = new double[6];	// polynomial coefficients
-//
-//		@Override
-//		public float[] getMax(float[] s) {
-//			c[0] = s[0];
-//			c[1] = (s[1] - s[5]) / 2;
-//			c[2] = (s[7] - s[3]) / 2;
-//			c[3] = (s[1] - 2*s[0] + s[5]) / 2;
-//			c[4] = (s[3] - 2*s[0] + s[7]) / 2;
-//			c[5] = (-s[2] + s[4] - s[6] + s[8]) / 4;
-//			
-//			double d = (4*c[3]*c[4] - sqr(c[5]));
-//			
-//			if (d < EPSILON_DOUBLE || c[3] >= 0) {	// not a maximum (minimum or saddle point)
-//				return null;
-//			}
-//			
-//			// max position:
-//			float x = (float) ((c[2]*c[5] - 2*c[1]*c[4]) / d);
-//			float y = (float) ((c[1]*c[5] - 2*c[2]*c[3]) / d);
-//			// max value:
-//			float z = (float) (c[0] + c[1]*x + c[2]*y + c[3]*x*x + c[4]*y*y + c[5]*x*y);
-//			return new float[] {x, y, z};
-//		}
-//	}
-	
-
+	/**
+	 * 2D interpolator using second-order Taylor expansion to find the coefficients
+	 * of the quadratic interpolating polynomial 
+	 * <pre>f(x,y) = c_0 + c_1 x + c_2 y + c_3 x^2 + c_4 y^2  + c_5 xy</pre>
+	 * The resulting function fits exactly the 5 on-axis samples 
+	 * (s[0], s[1], s[3], s[5], s[7]) but in general does not pass
+	 * through the outer diagonal samples (s[2], s[4], s[6], s[8]).
+	 * Book version (Alg. 'FindMaxQuadraticTaylor').
+	 */
 	public static class QuadraticTaylor extends SubpixelMaxInterpolator {
+		
+		private final double[] c = new double[6];	// polynomial coefficients
+
+		@Override
+		public float[] getMax(float[] s) {
+			c[0] = s[0];
+			c[1] = (s[1] - s[5]) / 2;
+			c[2] = (s[7] - s[3]) / 2;
+			c[3] = (s[1] - 2*s[0] + s[5]) / 2;
+			c[4] = (s[3] - 2*s[0] + s[7]) / 2;
+			c[5] = (-s[2] + s[4] - s[6] + s[8]) / 4;
+			
+			double d = (4*c[3]*c[4] - sqr(c[5]));	// determinant of Hessian
+			
+			if (d < EPSILON_DOUBLE || c[3] >= 0) {	// undefined or not a maximum
+				return null;
+			}
+			
+			// max position:
+			float x = (float) ((c[2]*c[5] - 2*c[1]*c[4]) / d);
+			float y = (float) ((c[1]*c[5] - 2*c[2]*c[3]) / d);
+			// max value:
+			float z = (float) (c[0] + c[1]*x + c[2]*y + c[3]*x*x + c[4]*y*y + c[5]*x*y);
+			return new float[] {x, y, z};
+		}
+	}
+	
+	/**
+	 * 2D interpolator using second-order Taylor expansion to find the coefficients
+	 * of the quadratic interpolating polynomial 
+	 * <pre>f(x,y) = c_0 + c_1 x + c_2 y + c_3 x^2 + c_4 y^2  + c_5 xy</pre>
+	 * The resulting function fits exactly the 5 on-axis samples 
+	 * (s[0], s[1], s[3], s[5], s[7]) but in general does not pass
+	 * through the outer diagonal samples (s[2], s[4], s[6], s[8]).
+	 * Alternate version using explicit inverse Hessian.
+	 */
+	@SuppressWarnings("unused")
+	private static class QuadraticTaylorAlt extends SubpixelMaxInterpolator {
 
 		@Override
 		public float[] getMax(float[] s) {
@@ -136,11 +145,9 @@ public abstract class SubpixelMaxInterpolator {
 	
 	/**
 	 * 2D interpolator based on least-squares fitting a quadratic polynomial 
-	 * <br>
-	 * f(x,y) = c_0 + c_1 x + c_2 y + c_3 x^2 + c_4 y^2  + c_5 xy
-	 * <br>
+	 * <pre>f(x,y) = c_0 + c_1 x + c_2 y + c_3 x^2 + c_4 y^2  + c_5 xy</pre>
 	 * to the supplied sample values.
-	 * @see SubpixelMaxInterpolator#getMax(float[])
+	 * Book Alg. 'FindMaxQuadraticLeastSquares'.
 	 */
 	public static class QuadraticLeastSquares extends SubpixelMaxInterpolator {
 		
@@ -154,8 +161,6 @@ public abstract class SubpixelMaxInterpolator {
 			c[3] = (-2 * s[0] + s[1] + s[2] - 2 * s[3] + s[4] + s[5] + s[6] - 2 * s[7] + s[8]) / 6;
 			c[4] = (-2 * s[0] - 2 * s[1] + s[2] + s[3] + s[4] - 2 * s[5] + s[6] + s[7] + s[8]) / 6;
 			c[5] = (-s[2] + s[4] - s[6] + s[8]) / 4;
-			
-			//System.out.println("c = " + Matrix.toString(c));
 			
 			double d = (4*c[3]*c[4] - sqr(c[5]));
 			
