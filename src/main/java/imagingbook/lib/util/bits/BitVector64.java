@@ -9,6 +9,8 @@ public class BitVector64 implements BitVector {
 	private static final int WL = 64;
 	
 	private final long[] data;
+	
+	/** The length of this bit vector */
 	public final int length;
 	
 	public BitVector64(int length) {

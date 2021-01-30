@@ -9,6 +9,8 @@ public class BitVector32 implements BitVector {
 	private static final int WL = 32;
 	
 	private final int[] data;
+	
+	/** The length of this bit vector */
 	public final int length;
 	
 	public BitVector32(int length) {

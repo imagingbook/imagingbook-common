@@ -14,6 +14,7 @@ imagingbook.lib.math.testing
 imagingbook.lib.settings
 imagingbook.lib.tuples
 imagingbook.lib.util
+imagingbook.lib.util.bits
 imagingbook.lib.util.choice
 imagingbook.lib.util.progress
 imagingbook.lib.util.progress.ij
