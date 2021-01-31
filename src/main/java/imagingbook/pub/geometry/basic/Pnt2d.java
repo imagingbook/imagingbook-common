@@ -371,7 +371,7 @@ public interface Pnt2d {
 	 * return {@code double} values for compatibility reasons.
 	 * 
 	 */
-	public final class PntInt implements Pnt2d {
+	public class PntInt implements Pnt2d {
 		
 		/**
 		 * Singular point instance with zero coordinates.

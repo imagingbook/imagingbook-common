@@ -1,5 +1,7 @@
 package imagingbook.lib.util.bits;
 
+import imagingbook.pub.geometry.basic.Pnt2d.PntInt;
+
 /**
  * This class implements a true 2D bitmap container, i.e., each 0/1 element
  * occupies only a single bit (unlike {@code boolean} arrays, which require at 
@@ -49,6 +51,10 @@ public class BitMap {
 		return bitvec.get(y * width + x);
 	}
 	
+	public boolean get(PntInt p) {
+		return bitvec.get(p.y * width + p.x);
+	}
+	
 	/**
 	 * Sets the specified bit-element to the given boolean value
 	 * (1 for {@code true}, 0 for {@code false}).
@@ -65,6 +71,10 @@ public class BitMap {
 		}
 	}
 	
+	public void set(PntInt p, boolean val) {
+		set(p.x, p.y, val);
+	}
+	
 	/**
 	 * Sets the specified element (to bit-value 1).
 	 * @param x the x-coordinate
@@ -74,6 +84,10 @@ public class BitMap {
 		bitvec.set(y * width + x);
 	}
 	
+	public void set(PntInt p) {
+		bitvec.set(p.y * width + p.x);
+	}
+	
 	/**
 	 * Unsets the specified element (to bit-value 0).
 	 * @param x the x-coordinate
@@ -81,6 +95,10 @@ public class BitMap {
 	 */
 	public void unset(int x, int y) {
 		bitvec.unset(y * width + x);
+	}
+	
+	public void unset(PntInt p) {
+		bitvec.unset(p.y * width + p.x);
 	}
 	
 	/**
