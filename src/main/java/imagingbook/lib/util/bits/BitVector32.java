@@ -19,6 +19,17 @@ public class BitVector32 implements BitVector {
 		this.data = new int[n];
 	}
 	
+	public BitVector32(byte[] bytes) {
+		this(bytes.length);
+		for (int i = 0; i < bytes.length; i++) {
+			if (bytes[i] != 0) {
+				this.set(i);
+			}
+		}
+	}
+	
+	// ---------------------------------------------------------------------
+
 	@Override
 	public int getLength() {
 		return this.length;

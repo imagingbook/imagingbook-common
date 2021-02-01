@@ -51,6 +51,22 @@ public interface BitVector {
 	 */
 	public int getLength();
 	
+	// static methods -----------------------------------------------
+	
+	public static byte[] toByteArray(BitVector bitvector) {
+		byte[] bytes = new byte[bitvector.getLength()];
+		for (int i = 0; i < bytes.length; i++) {
+			if (bitvector.get(i)) {
+				bytes[i] = (byte) 0xFF;
+			}
+		}
+		return bytes;
+	}
+	
+	public static BitVector from(byte[] bytes) {
+		return new BitVector64(bytes);
+	}
+	
 	/**
 	 * Factory method. Creates and returns a new bitvector of type
 	 * {@link BitVector64}.

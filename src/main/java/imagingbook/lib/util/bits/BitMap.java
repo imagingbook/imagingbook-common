@@ -1,5 +1,6 @@
 package imagingbook.lib.util.bits;
 
+import ij.process.ByteProcessor;
 import imagingbook.pub.geometry.basic.Pnt2d.PntInt;
 
 /**
@@ -25,9 +26,19 @@ public class BitMap {
 	 * @param height the height of the new bitmap
 	 */
 	public BitMap(int width, int height) {
+		this(width, height, null);
+	}
+	
+	/**
+	 * Constructor.
+	 * @param width width the width of the new bitmap
+	 * @param height height the height of the new bitmap
+	 * @param bytes a byte array, 0 maps to false, anything else to true
+	 */
+	public BitMap(int width, int height, byte[] bytes) {
 		this.width = width;
 		this.height = height;
-		this.bitvec = BitVector.create(width * height);
+		this.bitvec = (bytes != null) ? BitVector.from(bytes) : BitVector.create(width * height);
 	}
 	
 	/**
@@ -121,6 +132,27 @@ public class BitMap {
 	 */
 	public BitVector getBitVector() {
 		return this.bitvec;
+	}
+	
+	// static methods (could be placed in some abstract class) --------------------------------------------------
+	
+	/**
+	 * 
+	 * @param bp
+	 * @return
+	 */
+	public static BitMap from(ByteProcessor bp) {
+		return new BitMap(bp.getWidth(), bp.getHeight(), (byte[]) bp.getPixels());
+	}
+	
+	/**
+	 * 
+	 * @param bitmap
+	 * @return
+	 */
+	public static ByteProcessor toByteProcessor(BitMap bitmap) {
+		byte[] pixels = BitVector.toByteArray(bitmap.getBitVector());
+		return new ByteProcessor(bitmap.width, bitmap.height, pixels);
 	}
 
 }

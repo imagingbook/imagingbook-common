@@ -19,6 +19,17 @@ public class BitVector64 implements BitVector {
 		this.data = new long[n];
 	}
 	
+	public BitVector64(byte[] bytes) {
+		this(bytes.length);
+		for (int i = 0; i < bytes.length; i++) {
+			if (bytes[i] != 0) {
+				this.set(i);
+			}
+		}
+	}
+	
+	// ---------------------------------------------------------------------
+
 	@Override
 	public int getLength() {
 		return this.length;
