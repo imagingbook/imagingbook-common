@@ -7,9 +7,10 @@
  * Visit http://imagingbook.com for additional details.
  *******************************************************************************/
 
-package imagingbook.pub.moments;
+package imagingbook.pub.geometry.moments;
 import ij.process.ImageProcessor;
 
+@Deprecated
 public class BinaryMoments {
 	
 	static final int BACKGROUND = 0;
@@ -39,13 +40,6 @@ public class BinaryMoments {
 			}
 		}
 		return cMpq;
-	}
-	
-	@Deprecated // renamed to nCentralMoment
-	public static double normalCentralMoment(ImageProcessor I, int p, int q) {
-		double m00 = moment(I, 0, 0);
-		double norm = Math.pow(m00, 0.5 * (p + q + 2));
-		return centralMoment(I, p, q) / norm;
 	}
 	
 	public static double nCentralMoment(ImageProcessor I, int p, int q) {
