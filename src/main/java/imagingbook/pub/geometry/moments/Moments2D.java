@@ -2,7 +2,6 @@ package imagingbook.pub.geometry.moments;
 
 import java.util.Collection;
 
-import ij.process.ImageProcessor;
 import imagingbook.pub.geometry.basic.Pnt2d;
 
 /**
