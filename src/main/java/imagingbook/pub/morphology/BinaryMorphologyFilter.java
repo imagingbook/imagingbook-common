@@ -78,7 +78,7 @@ public class BinaryMorphologyFilter {
 			return;
 		}
 
-		//assume that the hot spot of se is at its center (ic,jc)
+		//assume that the hot spot of H is at its center (ic,jc)
 		int ic = (H[0].length - 1) / 2;
 		int jc = (H.length - 1) / 2;
 		int N = H.length * H[0].length;

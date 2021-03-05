@@ -49,8 +49,8 @@ public class SegmentationRegionContour extends BinaryRegionSegmentation implemen
 	
 	public SegmentationRegionContour(ByteProcessor ip, NeighborhoodType nh) {
 		super(ip, nh);
-		attachOuterContours();	// attach each outer contours to the corresponding region
-		attachInnerContours();	// attach all inner contours to the corresponding regions
+		attachOuterContours();	// attach the outer contour to the corresponding region
+		attachInnerContours();	// attach all inner contours to the corresponding region
 	}
 	
 	// public methods required by interface ContourTracer (others are in inherited from super-class):
