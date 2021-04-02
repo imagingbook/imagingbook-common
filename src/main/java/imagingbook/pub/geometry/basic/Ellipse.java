@@ -1,5 +1,9 @@
 package imagingbook.pub.geometry.basic;
 
+import java.awt.Shape;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Ellipse2D;
+
 public class Ellipse {
 	
 	public final double xc, yc, ra, rb, theta;
@@ -13,7 +17,16 @@ public class Ellipse {
 	}
 	
 	public Ellipse(double xc, double yc, double ra, double rb) {
-		this(xc, yc, ra, rb, 0);
+		this(xc, yc, ra, rb, 0.0);
+	}
+	
+	
+	public Shape getShape() {
+		Ellipse2D oval = new Ellipse2D.Double(-ra, -rb, 2 * ra, 2 * rb);
+		AffineTransform trans = new AffineTransform();
+		trans.translate(xc, yc);
+		trans.rotate(theta);
+		return trans.createTransformedShape(oval);
 	}
 
 }
