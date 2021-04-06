@@ -1078,6 +1078,43 @@ public abstract class Matrix {
 		return va;
 	}
 	
+	// Vector linear interpolation ---------------------------------
+	
+	/**
+	 * Performs linear interpolation between two vectors {@code a} and {@code b}, 
+	 * which must have the same length.
+	 * Returns a new vector {@code c = a + t * (b - a)}.
+	 * @param a first vector (to be interpolated from)
+	 * @param b second vector (to be interpolated to)
+	 * @param t interpolation coefficient, expected to be in [0,1]
+	 * @return the interpolated vector
+	 */
+	public static float[] lerp(float[] a, float[] b, final float t) {
+		float[] c = new float[a.length];
+		for (int i = 0; i < a.length; i++) {
+			c[i] = a[i] + t * (b[i] - a[i]);
+		}
+		return c;
+	}
+	
+	/**
+	 * Performs linear interpolation between two vectors {@code a} and {@code b}, 
+	 * which must have the same length.
+	 * Returns a new vector {@code c = a + t * (b - a)}.
+	 * @param a first vector (to be interpolated from)
+	 * @param b second vector (to be interpolated to)
+	 * @param t interpolation coefficient, expected to be in [0,1]
+	 * @return the interpolated vector
+	 */
+	public static double[] lerp(double[] a, double[] b, final double t) {
+		double[] c = new double[a.length];
+		for (int i = 0; i < a.length; i++) {
+			c[i] = a[i] + t * (b[i] - a[i]);
+		}
+		return c;
+	}
+	
+	
 	// Homogeneous coordinates ---------------------------------
 	
 	/**

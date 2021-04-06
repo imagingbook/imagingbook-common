@@ -11,6 +11,7 @@ package imagingbook.lib.color;
 
 import java.awt.*;
 
+// see http://davidbau.com/colors/
 public enum CssColor {
 	AliceBlue(0xF0, 0xF8, 0xFF),
 	AntiqueWhite(0xFA, 0xEB, 0xD7),
