@@ -20,6 +20,10 @@ public class Ellipse {
 		this(xc, yc, ra, rb, 0.0);
 	}
 	
+	public double getArea() {
+		return this.ra * this.rb * Math.PI;
+	}
+	
 	
 	public Shape getShape() {
 		Ellipse2D oval = new Ellipse2D.Double(-ra, -rb, 2 * ra, 2 * rb);
