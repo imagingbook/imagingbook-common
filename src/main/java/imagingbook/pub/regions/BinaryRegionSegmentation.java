@@ -422,6 +422,7 @@ public abstract class BinaryRegionSegmentation {
 		 * Updates the region's statistics. For now only the
 		 * center coordinates (xc, yc) are updated. Add additional statements as
 		 * needed to update your own region statistics.
+		 * TODO: add an update hook
 		 */
 		protected void update() {
 			if (size > 0) {
@@ -505,18 +506,18 @@ public abstract class BinaryRegionSegmentation {
 		 *    double theta = r.getProperty("angle");
 		 */
 		
-		private Map<String, Double> properties = null;
+		private Map<Object, Double> properties = null;
 		
 		/**
 		 * Sets the specified property of this region to the given value.
-		 * @param name Chosen name of the property.
-		 * @param val Value associated with this property.
+		 * @param key The key of the property.
+		 * @param val The value associated with this property.
 		 */
-		public void setProperty(String name, double val) {
+		public void setProperty(Object key, double val) {
 			if (properties == null) {
-				properties = new HashMap<String, Double>();
+				properties = new HashMap<>();
 			}
-			properties.put(name, val);
+			properties.put(key, val);
 		}
 		
 		/**
@@ -524,13 +525,13 @@ public abstract class BinaryRegionSegmentation {
 		 * {@link IllegalArgumentException} is thrown if the property 
 		 * is not defined for this region.
 		 * 
-		 * @param name The name of the property.
+		 * @param key The key of the property.
 		 * @return The value associated with the specified property.
 		 */
-		public double getProperty(String name) {
+		public double getProperty(Object key) {
 			Double value;
-			if (properties == null || (value = properties.get(name)) == null) {
-				throw new IllegalArgumentException("Region property " + name + " is undefined.");
+			if (properties == null || (value = properties.get(key)) == null) {
+				throw new IllegalArgumentException("Region property " + key + " is undefined.");
 			}
 			return value.doubleValue();
 		}
