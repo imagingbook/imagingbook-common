@@ -50,6 +50,16 @@ public interface Pnt2d {
 	
 	// ----------------------------------------------------------
 	
+	public static Pnt2d from(int x, int y) {
+		return PntInt.from(x, y);
+	}
+	
+	public static Pnt2d from(double x, double y) {
+		return PntDouble.from(x, y);
+	}
+	
+	// ----------------------------------------------------------
+	
 	/**
 	 * Returns this point's coordinates as a new 2-element {@code double} array.
 	 * @return the array
@@ -231,9 +241,9 @@ public interface Pnt2d {
 	public class PntDouble implements Pnt2d {
 		
 		/**
-		 * Singular point instance with zero coordinates.
+		 * Singleton point instance with zero coordinates.
 		 */
-		public static final PntDouble ZERO = PntDouble.from(0, 0);
+		public static final PntDouble ZERO = PntDouble.from(0.0, 0.0);
 
 		public final double x, y;
 
@@ -242,7 +252,7 @@ public interface Pnt2d {
 		 * @param x x-coordinate
 		 * @param y y-coordinate
 		 */
-		private PntDouble(double x, double y) {
+		protected PntDouble(double x, double y) {
 			this.x = x;
 			this.y = y;
 		}
@@ -374,7 +384,7 @@ public interface Pnt2d {
 	public class PntInt implements Pnt2d {
 		
 		/**
-		 * Singular point instance with zero coordinates.
+		 * Singleton point instance with zero coordinates.
 		 */
 		public static final PntInt ZERO = PntInt.from(0, 0);
 		
@@ -385,7 +395,7 @@ public interface Pnt2d {
 		 * @param x x-coordinate
 		 * @param y y-coordinate
 		 */
-		public PntInt(int x, int y) {
+		protected PntInt(int x, int y) {
 			this.x = x;
 			this.y = y;
 		}
