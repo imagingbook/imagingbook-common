@@ -19,6 +19,10 @@ public abstract class Arithmetic {
 		return x * x;
 	}
 	
+	public static long sqr(long x) {
+		return x * x;
+	}
+	
 	public static float sqr(float x) {
 		return x * x;
 	}
