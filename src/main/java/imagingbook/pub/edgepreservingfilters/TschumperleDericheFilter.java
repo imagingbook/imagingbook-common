@@ -163,9 +163,9 @@ public class TschumperleDericheFilter extends GenericFilter {
 			throw new RuntimeException("undefined eigenvalues in " + 
 					this.getClass().getSimpleName());
 		}
-		double lambda1 = solver.getEigenvalue1();
-		double lambda2 = solver.getEigenvalue2();
-		double[] evec1 = solver.getEigenvector1();
+		double lambda1 = solver.getEigenvalue(0);
+		double lambda2 = solver.getEigenvalue(1);
+		double[] evec1 = solver.getEigenvector(0);
 		normalize(evec1);		
 		double arg = 1.0 + lambda1 + lambda2;	// 1 + lambda_1 + lambda_2
 		float c1 = (float) Math.pow(arg, -a1);

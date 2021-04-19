@@ -31,14 +31,14 @@ public class Eigensolver2x2Demo {
 		
 		Eigensolver2x2 solver = new Eigensolver2x2(M);
 		double[]   eigenvalues  = solver.getEigenvalues();
-		double[][] eigenvectors = solver.getEigenvectors();
+		//double[][] eigenvectors = solver.getEigenvectors();
 		
 		System.out.println("eigenvalues/eigenvectors: check if M*x = \u03BB*x \n");
 		
 		for (int i = 1; i <= 2; i++) {
 			// get the eigen-pair <lambda_i, x_i>
 			double lambda = eigenvalues[i-1];
-			double[] x = eigenvectors[i-1];
+			double[] x = solver.getEigenvector(i-1);
 			
 			System.out.format("\u03BB_%d  = %.6f\n", i, lambda);
 			System.out.format("x_%d = %s\n", i, Matrix.toString(x));

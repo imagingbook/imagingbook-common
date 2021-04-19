@@ -175,9 +175,9 @@ public class CannyEdgeDetector extends ColorEdgeDetector {
 				float mag = (float) Math.sqrt(es.getEigenvalues()[0]);
 				Emag.setf(u, v, mag);
 				
-				double[] eVecs = es.getEigenvectors()[0];
-				Ex.setf(u, v, (float) eVecs[0]);
-				Ey.setf(u, v, (float) eVecs[1]);
+				double[] eVec1 = es.getEigenvector(0);
+				Ex.setf(u, v, (float) eVec1[0]);
+				Ey.setf(u, v, (float) eVec1[1]);
 			}
 		}
 		// normalize gradient magnitude 

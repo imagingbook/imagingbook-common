@@ -37,7 +37,7 @@ package imagingbook.lib.math;
  * @author W. Burger
  * @version 2020-02-09
  */
-public class Eigensolver2x2 {
+public class Eigensolver2x2 implements Eigensolver {
 	
 	private final boolean isReal;
 	private final double[] eVals = {Double.NaN, Double.NaN};
@@ -107,10 +107,10 @@ public class Eigensolver2x2 {
 	}
 	
 	/**
-	 * Returns {@code true} iff the associated matrix has real 
-	 * eigenvalues.
+	 * Returns {@code true} iff all eigenvalues of the associated matrix are real.
 	 * @return as described
 	 */
+	@Override
 	public boolean isReal() {
 		return isReal;
 	}
@@ -123,14 +123,37 @@ public class Eigensolver2x2 {
 	 * array and thus results should be used read-only!
 	 * @return a 2-element array of eigenvalues
 	 */
+	@Override
 	public double[] getEigenvalues() {
 		return this.eVals;
 	}
 	
+	/**
+	 * Returns the kth eigenvalue (lambda_k, k = 0, 1).
+	 * {@code NaN} is returned if the no real eigenvalue exists.
+	 * 
+	 * @param k index 0 or 1
+	 * @return the kth eigenvalue
+	 */
+	@Override
+	public double getEigenvalue(int k) {
+		return eVals[k];
+	}
+	
+	/**
+	 * Obsolete, use {@link #getEigenvalue(int)} instead.
+	 * @return the first eigenvalue (lambda_1)
+	 * @deprecated
+	 */
 	public double getEigenvalue1() {
 		return this.eVals[0];
 	}
 	
+	/**
+	 * Obsolete, use {@link #getEigenvalue(int)} instead.
+	 * @return the second eigenvalue (lambda_2)
+	 * @deprecated
+	 */
 	public double getEigenvalue2() {
 		return this.eVals[1];
 	}
@@ -148,16 +171,34 @@ public class Eigensolver2x2 {
 	 * eigenvalues returned by {@link #getEigenvalues()}.
 	 * Note that the method returns a reference to an internal
 	 * array and thus results should be used read-only!
+	 * Obsolete, use {@link #getEigenvector(int)} instead.
 	 * @return a 2-element array of 2D eigenvectors
+	 * @deprecated
 	 */
 	public double[][] getEigenvectors() {
 		return this.eVecs;
 	}
 	
+	/**
+	 * Returns the kth eigenvector, with k = 0 or 1.
+	 * The ordering of the returned eigenvectors is the same as for the
+	 * eigenvalues returned by {@link #getEigenvalues()}.
+	 * Note that the method returns a reference to an internal
+	 * array and thus results should be used read-only!
+	 * @param k index 0 or 1
+	 * @return the kth eigenvector
+	 */
+	@Override
+	public double[] getEigenvector(int k) {
+		return this.eVecs[k];
+	}
+	
+	@Deprecated
 	public double[] getEigenvector1() {
 		return this.eVecs[0];
 	}
 	
+	@Deprecated
 	public double[] getEigenvector2() {
 		return this.eVecs[1];
 	}
