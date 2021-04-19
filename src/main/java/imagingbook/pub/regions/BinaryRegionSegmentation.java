@@ -280,8 +280,10 @@ public abstract class BinaryRegionSegmentation {
 		}
 		
 		/**
-		 * Obsolete - use {@link #getCentroid()} instead!
+		 * Obsolete - use {@link #getCenter()} instead!
 		 * Get the x-value of the region's centroid.
+		 * Obsolete, use {@link #getCenter()} instead.
+		 * 
 		 * @return the x-value of the region's centroid.
 		 * @deprecated
 		 */
@@ -290,8 +292,10 @@ public abstract class BinaryRegionSegmentation {
 		}
 
 		/**
-		 * Obsolete - use {@link #getCentroid()} instead!
+		 * Obsolete - use {@link #getCenter()} instead!
 		 * Get the y-value of the region's centroid.
+		 * Obsolete, use {@link #getCenter()} instead.
+		 * 
 		 * @return the y-value of the region's centroid.
 		 * @deprecated
 		 */
@@ -348,6 +352,25 @@ public abstract class BinaryRegionSegmentation {
 		public long getXYSum() {
 			return xySum;
 		}
+		
+		/**
+		 * Calculates and returns a vector of (unnormalized) central moments:
+		 * (mu10, mu01, mu20, mu02, mu11).
+		 * 
+		 * @return vector of central moments
+		 */
+		public double[] getCentralMoments() {
+			if (size == 0) {
+				throw new IllegalStateException("empty region, moments are undefined");
+			}
+			double n = size;
+			double mu10 = x1Sum / n;
+			double mu01 = y1Sum / n;
+			double mu20 = x2Sum - x1Sum * x1Sum / n;
+			double mu02 = y2Sum - y1Sum * y1Sum / n;
+			double mu11 = xySum - x1Sum * y1Sum / n;
+			return new double[] {mu10, mu01, mu20, mu02, mu11};
+		}
 
 		// ------- public methods --------------------------
 		
@@ -381,16 +404,26 @@ public abstract class BinaryRegionSegmentation {
 	
 		
 		/**
+		 * Returns the center of this region as a 2D point.
+		 * 
+		 * @return the center point of this region.
+		 */
+		public Pnt2d getCenter() {
+			if (size == 0) {
+				throw new IllegalStateException("empty region, center is undefined");
+			}
+			return PntDouble.from((double) x1Sum / size, (double) y1Sum / size);
+		}
+		
+		/**
 		 * Returns the centroid of this region as a 2D point.
-		 * See also {@link getXc}, {@link getYc}.
+		 * Obsolete, use {@link #getCenter()} instead.
 		 * 
 		 * @return the centroid of this region.
+		 * @deprecated
 		 */
 		public Pnt2d getCentroid() {
-			if (Double.isNaN(xc))
-				return null;
-			else
-				return PntDouble.from(xc, yc);
+			return this.getCenter();
 		}
 		
 		@Override
@@ -419,16 +452,10 @@ public abstract class BinaryRegionSegmentation {
 		}
 		
 		/**
-		 * Updates the region's statistics. For now only the
-		 * center coordinates (xc, yc) are updated. Add additional statements as
-		 * needed to update your own region statistics.
-		 * TODO: add an update hook
+		 * Updates the region's statistics. 
+		 * Does nothing but may be overridden by inheriting classes.
 		 */
 		protected void update() {
-			if (size > 0) {
-				xc = (double) x1Sum / size;
-				yc = (double) y1Sum / size;
-			}
 		}
 		
 		/**
