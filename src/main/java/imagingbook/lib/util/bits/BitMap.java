@@ -14,9 +14,9 @@ import imagingbook.pub.geometry.basic.Pnt2d.PntInt;
 public class BitMap {
 	
 	/** the width of this bitmap */
-	public final int width;
+	private final int width;
 	/** the height of this bitmap */
-	public final int height;
+	private final int height;
 	
 	private final BitVector bitvec;
 	
@@ -41,14 +41,13 @@ public class BitMap {
 		this.bitvec = (bytes != null) ? BitVector.from(bytes) : BitVector.create(width * height);
 	}
 	
-	/**
-	 * Factory method.
-	 * @param width the width of the new bitmap
-	 * @param height the height of the new bitmap
-	 * @return a new bitmap with the specified size
-	 */
-	public static BitMap create(int width, int height) {
-		return new BitMap(width, height);
+	
+	public int getWidth() {
+		return this.width;
+	}
+	
+	public int getHeight() {
+		return this.height;
 	}
 	
 	/**
@@ -136,14 +135,14 @@ public class BitMap {
 	
 	// static methods --------------------------------------------------
 	
-	public static BitMap from(ByteProcessor bp) {
-		return new BitMap(bp.getWidth(), bp.getHeight(), (byte[]) bp.getPixels());
+	/**
+	 * Creates a new 2D bitmap of the specified size.
+	 * @param width the width of the new bitmap
+	 * @param height the height of the new bitmap
+	 * @return a new bitmap
+	 */
+	public static BitMap create(int width, int height) {
+		return new BitMap(width, height);
 	}
 	
-
-	public static ByteProcessor toByteProcessor(BitMap bitmap) {
-		byte[] pixels = BitVector.toByteArray(bitmap.getBitVector());
-		return new ByteProcessor(bitmap.width, bitmap.height, pixels);
-	}
-
 }

@@ -26,6 +26,7 @@ import ij.process.ColorProcessor;
 import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
 import ij.process.ShortProcessor;
+import imagingbook.lib.util.bits.BitMap;
 
 
 /**
@@ -396,5 +397,16 @@ public abstract class IjUtils {
 
 		throw new IllegalArgumentException("unknown processor type " + ip1.getClass().getSimpleName());
 	}
+	
+	// BitMap from/to ByteProcessor conversion
+	
+	public static BitMap convertToBitMap(ByteProcessor bp) {
+		return new BitMap(bp.getWidth(), bp.getHeight(), (byte[]) bp.getPixels());
+	}
+	
+	 public static ByteProcessor convertToByteProcessor(BitMap bitmap) {
+		 byte[] pixels = bitmap.getBitVector().toByteArray();
+		 return new ByteProcessor(bitmap.getWidth(), bitmap.getHeight(), pixels);
+	 }
 
 }

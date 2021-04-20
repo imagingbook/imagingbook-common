@@ -70,7 +70,7 @@
 <span class="sourceLineNo">060</span><a id="line.60">        }</a>
 <span class="sourceLineNo">061</span><a id="line.61"></a>
 <span class="sourceLineNo">062</span><a id="line.62">        /**</a>
-<span class="sourceLineNo">063</span><a id="line.63">         * Returns the kth eigenvalue (lambda_k, k = 0, 1).</a>
+<span class="sourceLineNo">063</span><a id="line.63">         * Returns the k-th eigenvalue (&amp;lambda;_k, for k = 0,...,N-1).</a>
 <span class="sourceLineNo">064</span><a id="line.64">         * Eigenvalues are sorted by magnitude (in descending order).</a>
 <span class="sourceLineNo">065</span><a id="line.65">         * {@code Double.Nan} is returned if the associated eigenvalue</a>
 <span class="sourceLineNo">066</span><a id="line.66">         * is complex-valued (non-real).</a>
@@ -152,36 +152,36 @@
 <span class="sourceLineNo">142</span><a id="line.142"></a>
 <span class="sourceLineNo">143</span><a id="line.143">        // -------------------------------------------------------------------------</a>
 <span class="sourceLineNo">144</span><a id="line.144">        </a>
-<span class="sourceLineNo">145</span><a id="line.145">        public static void main(String[] args) {</a>
-<span class="sourceLineNo">146</span><a id="line.146">//              double[][] M = {</a>
-<span class="sourceLineNo">147</span><a id="line.147">//                              {3, -2},</a>
-<span class="sourceLineNo">148</span><a id="line.148">//                              {-4, 1}};</a>
-<span class="sourceLineNo">149</span><a id="line.149">//              double[][] M = {</a>
-<span class="sourceLineNo">150</span><a id="line.150">//                              {5, 2, 0},</a>
-<span class="sourceLineNo">151</span><a id="line.151">//                              {2, 5, 0},</a>
-<span class="sourceLineNo">152</span><a id="line.152">//                              {-3, 4, 6}};</a>
-<span class="sourceLineNo">153</span><a id="line.153">                double[][] M = {</a>
-<span class="sourceLineNo">154</span><a id="line.154">                                {5, 2, 0, 1},</a>
-<span class="sourceLineNo">155</span><a id="line.155">                                {2, 5, 0, 7},</a>
-<span class="sourceLineNo">156</span><a id="line.156">                                {-3, 4, 6, 0},</a>
-<span class="sourceLineNo">157</span><a id="line.157">                                {1 , 2, 3, 4}};</a>
-<span class="sourceLineNo">158</span><a id="line.158">                </a>
-<span class="sourceLineNo">159</span><a id="line.159">                EigensolverNxN solver = new EigensolverNxN(M);  </a>
-<span class="sourceLineNo">160</span><a id="line.160"></a>
-<span class="sourceLineNo">161</span><a id="line.161">                System.out.println("isReal = " + solver.isReal());</a>
-<span class="sourceLineNo">162</span><a id="line.162">                double[] eigenvals = solver.getEigenvalues();</a>
-<span class="sourceLineNo">163</span><a id="line.163">                System.out.println("evals = " + Arrays.toString(eigenvals));</a>
-<span class="sourceLineNo">164</span><a id="line.164">                for (int k = 0; k &lt; eigenvals.length; k++) {</a>
-<span class="sourceLineNo">165</span><a id="line.165">                        double lambda = eigenvals[k];</a>
-<span class="sourceLineNo">166</span><a id="line.166">                        if (Double.isFinite(lambda)) {</a>
-<span class="sourceLineNo">167</span><a id="line.167">                                double[] x = solver.getEigenvector(k);</a>
-<span class="sourceLineNo">168</span><a id="line.168">                                System.out.format("λ_%d = %s\n", k, lambda);</a>
-<span class="sourceLineNo">169</span><a id="line.169">                                System.out.format("x_%d = %s\n", k, Arrays.toString(x));</a>
-<span class="sourceLineNo">170</span><a id="line.170">                                System.out.format("   M*x = %s\n", Arrays.toString(Matrix.multiply(M, x)));</a>
-<span class="sourceLineNo">171</span><a id="line.171">                                System.out.format("   λ*M = %s\n", Arrays.toString(Matrix.multiply(lambda, x)));</a>
-<span class="sourceLineNo">172</span><a id="line.172">                        }</a>
-<span class="sourceLineNo">173</span><a id="line.173">                }</a>
-<span class="sourceLineNo">174</span><a id="line.174">        }</a>
+<span class="sourceLineNo">145</span><a id="line.145">//      public static void main(String[] args) {</a>
+<span class="sourceLineNo">146</span><a id="line.146">////            double[][] M = {</a>
+<span class="sourceLineNo">147</span><a id="line.147">////                            {3, -2},</a>
+<span class="sourceLineNo">148</span><a id="line.148">////                            {-4, 1}};</a>
+<span class="sourceLineNo">149</span><a id="line.149">////            double[][] M = {</a>
+<span class="sourceLineNo">150</span><a id="line.150">////                            {5, 2, 0},</a>
+<span class="sourceLineNo">151</span><a id="line.151">////                            {2, 5, 0},</a>
+<span class="sourceLineNo">152</span><a id="line.152">////                            {-3, 4, 6}};</a>
+<span class="sourceLineNo">153</span><a id="line.153">//              double[][] M = {</a>
+<span class="sourceLineNo">154</span><a id="line.154">//                              {5, 2, 0, 1},</a>
+<span class="sourceLineNo">155</span><a id="line.155">//                              {2, 5, 0, 7},</a>
+<span class="sourceLineNo">156</span><a id="line.156">//                              {-3, 4, 6, 0},</a>
+<span class="sourceLineNo">157</span><a id="line.157">//                              {1 , 2, 3, 4}};</a>
+<span class="sourceLineNo">158</span><a id="line.158">//              </a>
+<span class="sourceLineNo">159</span><a id="line.159">//              EigensolverNxN solver = new EigensolverNxN(M);  </a>
+<span class="sourceLineNo">160</span><a id="line.160">//</a>
+<span class="sourceLineNo">161</span><a id="line.161">//              System.out.println("isReal = " + solver.isReal());</a>
+<span class="sourceLineNo">162</span><a id="line.162">//              double[] eigenvals = solver.getEigenvalues();</a>
+<span class="sourceLineNo">163</span><a id="line.163">//              System.out.println("evals = " + Arrays.toString(eigenvals));</a>
+<span class="sourceLineNo">164</span><a id="line.164">//              for (int k = 0; k &lt; eigenvals.length; k++) {</a>
+<span class="sourceLineNo">165</span><a id="line.165">//                      double lambda = eigenvals[k];</a>
+<span class="sourceLineNo">166</span><a id="line.166">//                      if (Double.isFinite(lambda)) {</a>
+<span class="sourceLineNo">167</span><a id="line.167">//                              double[] x = solver.getEigenvector(k);</a>
+<span class="sourceLineNo">168</span><a id="line.168">//                              System.out.format("λ_%d = %s\n", k, lambda);</a>
+<span class="sourceLineNo">169</span><a id="line.169">//                              System.out.format("x_%d = %s\n", k, Arrays.toString(x));</a>
+<span class="sourceLineNo">170</span><a id="line.170">//                              System.out.format("   M*x = %s\n", Arrays.toString(Matrix.multiply(M, x)));</a>
+<span class="sourceLineNo">171</span><a id="line.171">//                              System.out.format("   λ*M = %s\n", Arrays.toString(Matrix.multiply(lambda, x)));</a>
+<span class="sourceLineNo">172</span><a id="line.172">//                      }</a>
+<span class="sourceLineNo">173</span><a id="line.173">//              }</a>
+<span class="sourceLineNo">174</span><a id="line.174">//      }</a>
 <span class="sourceLineNo">175</span><a id="line.175">}</a>
 
 

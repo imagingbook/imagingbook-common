@@ -1,7 +1,8 @@
 package imagingbook.lib.util.bits;
 
 /**
- * This class implements {@link BitVector} with internal 64-bit {@code long} data.
+ * This class implements {@link BitVector} with internal 64-bit 
+ * {@code long} data.
  * @author WB
  */
 public class BitVector64 implements BitVector {
@@ -9,9 +10,7 @@ public class BitVector64 implements BitVector {
 	private static final int WL = 64;
 	
 	private final long[] data;
-	
-	/** The length of this bit vector */
-	public final int length;
+	private final int length;
 	
 	public BitVector64(int length) {
 		this.length = length;
@@ -25,6 +24,13 @@ public class BitVector64 implements BitVector {
 			if (bytes[i] != 0) {
 				this.set(i);
 			}
+		}
+	}
+	
+	public BitVector64(boolean[] bools) {
+		this(bools.length);
+		for (int i = 0; i < bools.length; i++) {
+			this.set(i, bools[i]);
 		}
 	}
 	

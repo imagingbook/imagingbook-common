@@ -60,7 +60,7 @@ public class EigensolverNxN implements RealEigensolver {
 	}
 
 	/**
-	 * Returns the kth eigenvalue (lambda_k, k = 0, 1).
+	 * Returns the k-th eigenvalue (&lambda;_k, for k = 0,...,N-1).
 	 * Eigenvalues are sorted by magnitude (in descending order).
 	 * {@code Double.Nan} is returned if the associated eigenvalue
 	 * is complex-valued (non-real).
@@ -142,34 +142,34 @@ public class EigensolverNxN implements RealEigensolver {
 
 	// -------------------------------------------------------------------------
 	
-	public static void main(String[] args) {
+//	public static void main(String[] args) {
+////		double[][] M = {
+////				{3, -2},
+////				{-4, 1}};
+////		double[][] M = {
+////				{5, 2, 0},
+////				{2, 5, 0},
+////				{-3, 4, 6}};
 //		double[][] M = {
-//				{3, -2},
-//				{-4, 1}};
-//		double[][] M = {
-//				{5, 2, 0},
-//				{2, 5, 0},
-//				{-3, 4, 6}};
-		double[][] M = {
-				{5, 2, 0, 1},
-				{2, 5, 0, 7},
-				{-3, 4, 6, 0},
-				{1 , 2, 3, 4}};
-		
-		EigensolverNxN solver = new EigensolverNxN(M);	
-
-		System.out.println("isReal = " + solver.isReal());
-		double[] eigenvals = solver.getEigenvalues();
-		System.out.println("evals = " + Arrays.toString(eigenvals));
-		for (int k = 0; k < eigenvals.length; k++) {
-			double lambda = eigenvals[k];
-			if (Double.isFinite(lambda)) {
-				double[] x = solver.getEigenvector(k);
-				System.out.format("λ_%d = %s\n", k, lambda);
-				System.out.format("x_%d = %s\n", k, Arrays.toString(x));
-				System.out.format("   M*x = %s\n", Arrays.toString(Matrix.multiply(M, x)));
-				System.out.format("   λ*M = %s\n", Arrays.toString(Matrix.multiply(lambda, x)));
-			}
-		}
-	}
+//				{5, 2, 0, 1},
+//				{2, 5, 0, 7},
+//				{-3, 4, 6, 0},
+//				{1 , 2, 3, 4}};
+//		
+//		EigensolverNxN solver = new EigensolverNxN(M);	
+//
+//		System.out.println("isReal = " + solver.isReal());
+//		double[] eigenvals = solver.getEigenvalues();
+//		System.out.println("evals = " + Arrays.toString(eigenvals));
+//		for (int k = 0; k < eigenvals.length; k++) {
+//			double lambda = eigenvals[k];
+//			if (Double.isFinite(lambda)) {
+//				double[] x = solver.getEigenvector(k);
+//				System.out.format("λ_%d = %s\n", k, lambda);
+//				System.out.format("x_%d = %s\n", k, Arrays.toString(x));
+//				System.out.format("   M*x = %s\n", Arrays.toString(Matrix.multiply(M, x)));
+//				System.out.format("   λ*M = %s\n", Arrays.toString(Matrix.multiply(lambda, x)));
+//			}
+//		}
+//	}
 }

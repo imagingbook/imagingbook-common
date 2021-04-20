@@ -1,5 +1,14 @@
 package imagingbook.lib.util.bits;
 
+/**
+ * This interface defines the behavior of bit vectors, i.e.,
+ * fixed-sized vectors with single bit elements.
+ * This is similar to the standard Java class {@link java.util.BitSet}, which
+ * implements variable-sized vectors and additional functionality.
+ * 
+ * @author WB
+ *
+ */
 public interface BitVector {
 	
 	/**
@@ -51,25 +60,66 @@ public interface BitVector {
 	 */
 	public int getLength();
 	
-	// static methods -----------------------------------------------
-	
-	public static byte[] toByteArray(BitVector bitvector) {
-		byte[] bytes = new byte[bitvector.getLength()];
+	/**
+	 * Returns the contents of this bit vector as a {@code byte} array.
+	 * Bit-value 0 maps to byte value 0x00, value 1 maps to 0xFF.
+	 * @return a {@code byte} array
+	 */
+	public default byte[] toByteArray() {
+		byte[] bytes = new byte[this.getLength()];
 		for (int i = 0; i < bytes.length; i++) {
-			if (bitvector.get(i)) {
+			if (get(i)) {
 				bytes[i] = (byte) 0xFF;
 			}
 		}
 		return bytes;
 	}
 	
+	/**
+	 * Returns the contents of this bit vector as a {@code boolean} array.
+	 * Bit-value 0 maps to false, value 1 maps to true.
+	 * @return a {@code boolean} array
+	 */
+	public default boolean[] toBooleanArray() {
+		boolean[] bools = new boolean[this.getLength()];
+		for (int i = 0; i < bools.length; i++) {
+			bools[i] = get(i);
+		}
+		return bools;
+	}
+	
+	// static factory methods -----------------------------------------------
+	
+	/**
+	 * Creates and returns a new bitvector of type
+	 * {@link BitVector64} from the specified {@code byte}
+	 * array. Each byte element b is interpreted as 0/false
+	 * if b = 0 and 1/true otherwise.
+	 * 
+	 * @param bytes an array of byte values
+	 * @return a new bit vector
+	 */
 	public static BitVector from(byte[] bytes) {
 		return new BitVector64(bytes);
 	}
 	
 	/**
-	 * Factory method. Creates and returns a new bitvector of type
-	 * {@link BitVector64}.
+	 * Creates and returns a new bitvector of type
+	 * {@link BitVector64} from the specified {@code boolean}
+	 * array, setting elements to 0/false or 1/true.
+	 * 
+	 * @param bools an array of boolean values
+	 * @return a new bit vector
+	 */
+	public static BitVector from(boolean[] bools) {
+		return new BitVector64(bools);
+	}
+	
+	/**
+	 * Creates and returns a new bitvector of type
+	 * {@link BitVector64} with the specified length.
+	 * Elements are initialized to 0/false.
+	 * 
 	 * @param length the length of the bit vector
 	 * @return a new bit vector
 	 */

@@ -129,7 +129,7 @@ public class Eigensolver2x2 implements RealEigensolver {
 	}
 	
 	/**
-	 * Returns the kth eigenvalue (lambda_k, k = 0, 1).
+	 * Returns the k-th eigenvalue (&lambda;_k, k = 0, 1).
 	 * {@code NaN} is returned if the no real eigenvalue exists.
 	 * 
 	 * @param k index 0 or 1
@@ -142,7 +142,7 @@ public class Eigensolver2x2 implements RealEigensolver {
 	
 	/**
 	 * Obsolete, use {@link #getEigenvalue(int)} instead.
-	 * @return the first eigenvalue (lambda_1)
+	 * @return the first eigenvalue (&lambda;_1)
 	 * @deprecated
 	 */
 	public double getEigenvalue1() {
@@ -151,7 +151,7 @@ public class Eigensolver2x2 implements RealEigensolver {
 	
 	/**
 	 * Obsolete, use {@link #getEigenvalue(int)} instead.
-	 * @return the second eigenvalue (lambda_2)
+	 * @return the second eigenvalue (&lambda;_2)
 	 * @deprecated
 	 */
 	public double getEigenvalue2() {
@@ -203,169 +203,4 @@ public class Eigensolver2x2 implements RealEigensolver {
 		return this.eVecs[1];
 	}
 		
-	// for Testing only --------------------------------------------------------------
-	
-//	@SuppressWarnings("unused")
-//	private static void checkEigen(double[][] M) {
-//		System.out.format("Checking M  = \n%s\n", Matrix.toString(M));
-//		Eigensolver2x2 es = new Eigensolver2x2(M);
-//		double[] eVals = es.getEigenvalues();
-//		double[][] eVecs = es.getEigenvectors();
-//		
-//		for (int i = 0; i < 2; i++) {
-//			checkEigenPair(i+1, M, eVals[i], eVecs[i]);
-//			System.out.println();
-//		}
-//		System.out.println();
-//	}
-//	
-//	private static void checkEigenPair(int i, double[][] M, double lambda, double[] x) {
-//		double[] Mx = Matrix.multiply(M, x);
-//		double[] lx = Matrix.multiply(lambda, x);
-//		double d = Matrix.normL2(Matrix.add(Mx, Matrix.multiply(-1, lx)));
-//		System.out.format("    \u03BB_%d  = %.6f\n", i, lambda);
-//		System.out.format("    x_%d = %s\n", i, Matrix.toString(x));
-//		System.out.format("    M.x = %s\n", Matrix.toString(Mx));
-//		System.out.format("    \u03BB.x = %s\n", Matrix.toString(lx));
-//		System.out.format("    error = %.6f\n", d);
-//		if (d > 0.000001) {
-//			System.out.println("    **** WRONG ****");
-//		}
-//	}
-//	
-//	
-//	public static void main(String[] args) {
-//		PrintPrecision.set(6);
-//		{
-//			double[][] M = {
-//					{3, -2},
-//					{-4, 1}};
-//			checkEigen(M);
-//			// Mathematica: {5, -1} | {{-1, 1}, {1, 2}}
-//		}
-//		
-//		{
-//			double[][] M = {
-//					{-0.009562, 0.011933}, 
-//					{0.011933, -0.021158}};
-//			checkEigen(M);
-//			// Mathematica: {-0.028627, -0.002093} | {{-0.530554, 0.847651}, {-0.847651, -0.530554}}
-//		}
-//
-//		{
-//			double[][] M = {
-//					{-0.004710, -0.006970},
-//					{-0.006970, -0.029195}};
-//			checkEigen(M);
-//			// Mathematica: {-0.0310401, -0.00286493} | {{0.255902, 0.966703}, {-0.966703, 0.255902}}
-//		}
-//		
-//		{
-//			double[][] M = {
-//					{0, 0},
-//					{0, 1}};
-//			checkEigen(M);
-//			// Mathematica: {1, 0} | {{0, 1}, {1, 0}}
-//		}
-//		
-//		{
-//			double[][] M = {
-//					{1, 0},
-//					{0, 0}};
-//			checkEigen(M);
-//			// Mathematica: {1, 0} | {{1, 0}, {0, 1}}
-//		}
-//		
-//		{	// Case 3.1
-//			double[][] M = {
-//					{1, 0},
-//					{-2, 1}};
-//			checkEigen(M);
-//			// Mathematica: {1, 1} | {{0, 1}, {0, 0}} !!!!
-//		}
-//		
-//		{	// Case 3.2
-//			double[][] M = {
-//					{1, -2},
-//					{0, 1}};
-//			checkEigen(M);
-//			// Mathematica: {1, 1} | {{1, 0}, {0, 0}} !!!!
-//		}
-//		{	// Case 3.3
-//			double[][] M = {
-//					{1, 2},
-//					{2, 1}};
-//			checkEigen(M);
-//			// Mathematica: {3, -1} | {{1, 1}, {-1, 1}}
-//		}
-//	}
-	
 }
-	
-/*
- 
-Checking M  = 
-{{3.000000, -2.000000}, 
-{-4.000000, 1.000000}}
-    λ_1  = 5.000000
-    x_1 = {4.000000, -4.000000}
-    λ_2  = -1.000000
-    x_2 = {-2.000000, -4.000000}
-
-Checking M  = 
-{{-0.009562, 0.011933}, 
-{0.011933, -0.021158}}
-    λ_1  = -0.002093
-    x_1 = {0.019065, 0.011933}
-    λ_2  = -0.028627
-    x_2 = {0.011933, -0.019065}
-
-Checking M  = 
-{{-0.004710, -0.006970}, 
-{-0.006970, -0.029195}}
-    λ_1  = -0.002865
-    x_1 = {0.026330, -0.006970}
-    λ_2  = -0.031040
-    x_2 = {-0.006970, -0.026330}
-
-Checking M  = 
-{{0.000000, 0.000000}, 
-{0.000000, 1.000000}}
-    λ_1  = 1.000000
-    x_1 = {0.000000, 1.000000}
-    λ_2  = 0.000000
-    x_2 = {-1.000000, 0.000000}
-
-Checking M  = 
-{{1.000000, 0.000000}, 
-{0.000000, 0.000000}}
-    λ_1  = 1.000000
-    x_1 = {1.000000, 0.000000}
-    λ_2  = 0.000000
-    x_2 = {0.000000, -1.000000}
-
-Checking M  = 
-{{1.000000, 0.000000}, 
-{-2.000000, 1.000000}}
-    λ_1  = 1.000000
-    x_1 = {-0.000000, -2.000000}
-    λ_2  = 1.000000
-    x_2 = {0.000000, -2.000000}
-
-Checking M  = 
-{{1.000000, -2.000000}, 
-{0.000000, 1.000000}}
-    λ_1  = 1.000000
-    x_1 = {-2.000000, -0.000000}
-    λ_2  = 1.000000
-    x_2 = {-2.000000, 0.000000}
-
-Checking M  = 
-{{1.000000, 2.000000}, 
-{2.000000, 1.000000}}
-    λ_1  = 3.000000
-    x_1 = {2.000000, 2.000000}
-    λ_2  = -1.000000
-    x_2 = {-2.000000, 2.000000}
-
-*/

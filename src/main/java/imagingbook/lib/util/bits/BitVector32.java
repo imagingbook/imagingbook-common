@@ -9,9 +9,7 @@ public class BitVector32 implements BitVector {
 	private static final int WL = 32;
 	
 	private final int[] data;
-	
-	/** The length of this bit vector */
-	public final int length;
+	private final int length;
 	
 	public BitVector32(int length) {
 		this.length = length;
@@ -25,6 +23,13 @@ public class BitVector32 implements BitVector {
 			if (bytes[i] != 0) {
 				this.set(i);
 			}
+		}
+	}
+	
+	public BitVector32(boolean[] bools) {
+		this(bools.length);
+		for (int i = 0; i < bools.length; i++) {
+			this.set(i, bools[i]);
 		}
 	}
 	
@@ -88,7 +93,6 @@ public class BitVector32 implements BitVector {
 		buf.append("]");
 		return buf.toString();
 	}
-	
 	
 	//----------------------------------------------------------------------------------
 	
