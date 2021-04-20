@@ -50,10 +50,27 @@ public interface Pnt2d {
 	
 	// ----------------------------------------------------------
 	
+	/**
+	 * Creates and returns a new point of type {@link Pnt2d.PntInt}
+	 * with the specified coordinates.
+	 * See also {@link PntInt#from(int, int)}.
+	 * @param x coordinate
+	 * @param y coordinate
+	 * @return the new point
+	 */
 	public static Pnt2d from(int x, int y) {
 		return PntInt.from(x, y);
 	}
 	
+	/**
+	 * Creates and returns a new point of type {@link Pnt2d.PntDouble}
+	 * with the specified coordinates.
+	 * See also {@link PntDouble#from(double, double)}.
+	 * 
+	 * @param x coordinate
+	 * @param y coordinate
+	 * @return the new point
+	 */
 	public static Pnt2d from(double x, double y) {
 		return PntDouble.from(x, y);
 	}
@@ -226,13 +243,11 @@ public interface Pnt2d {
 	/**
 	 * Immutable 2D point implementation with {@code double} coordinates.
 	 * This class implements the {@link Pnt2d} interface.
-	 * <br>
 	 * A public constructor ({@link #PntDouble(double, double)})
 	 * is provided but the preferred way of instantiation is
 	 * by one of the static factory methods, such as
 	 * {@link #from(double, double)},
 	 * {@link #from(double[])}, etc.
-	 * <br>
 	 * Access to the coordinate values is provided by the methods
 	 * {@link #getX()} and {@link #getY()}, but the
 	 * actual field variables {@link #x}, {@link #y} are also 
@@ -245,7 +260,10 @@ public interface Pnt2d {
 		 */
 		public static final PntDouble ZERO = PntDouble.from(0.0, 0.0);
 
-		public final double x, y;
+		/** The (immutable) x-coordinate of this point */
+		public final double x;
+		/** The (immutable) y-coordinate of this point */
+		public final double y;
 
 		/**
 		 * Constructor.
@@ -284,8 +302,7 @@ public interface Pnt2d {
 		}
 		
 		/**
-		 * Returns a new {@link PntDouble} instance
-		 * with the same coordinates as the given point.
+		 * Returns a new {@link PntDouble} instance with the same coordinates as the given point.
 		 * Equivalent to {@link #duplicate()}.
 		 * @param p the original point
 		 * @return the new point
@@ -368,18 +385,15 @@ public interface Pnt2d {
 	/**
 	 * Immutable 2D point implementation with {@code int} coordinates.
 	 * This class implements the {@link Pnt2d} interface.
-	 * <br>
 	 * A public constructor ({@link #PntInt(int, int)})
 	 * is provided but the preferred way of instantiation is
 	 * by one of the static factory methods, such as
 	 * {@link #from(int, int)},
 	 * {@link #from(int[])}, etc.
-	 * <br>
 	 * The {@code int} coordinates can only be retrieved via the
 	 * publicly accessible field variables {@link #x}, {@link #y},
 	 * while the methods {@link #getX()} and {@link #getY()}
 	 * return {@code double} values for compatibility reasons.
-	 * 
 	 */
 	public class PntInt implements Pnt2d {
 		
@@ -388,7 +402,11 @@ public interface Pnt2d {
 		 */
 		public static final PntInt ZERO = PntInt.from(0, 0);
 		
-		public final int x, y;
+		/** The (immutable) x-coordinate of this point */
+		public final int x;
+		/** The (immutable) y-coordinate of this point */
+		public final int y;
+
 		
 		/**
 		 * Constructor.
@@ -436,6 +454,14 @@ public interface Pnt2d {
 			return new PntInt(xy[0], xy[1]);
 		}
 		
+		/**
+		 * Returns a new {@link PntInt} from a given {@link Pnt2d} instance.
+		 * This only works if the argument is of type {@link Pnt2d.PntInt},
+		 * otherwise an exception is thrown.
+		 * 
+		 * @param p a point of type {@link Pnt2d.PntInt}
+		 * @return the new point
+		 */
 		public static PntInt from(Pnt2d p) {
 			if (p instanceof PntInt) {
 				return ((PntInt) p).duplicate();

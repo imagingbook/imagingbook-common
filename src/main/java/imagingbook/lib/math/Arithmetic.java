@@ -12,21 +12,43 @@ package imagingbook.lib.math;
 public abstract class Arithmetic {
 	
 	// machine accuracy for IEEE 754 float/double;
+	/** Tolerance used for comparing {@code float} quantities. */
 	public static final float EPSILON_FLOAT 	= 1e-7f;	// 1.19 x 10^-7
+	/** Tolerance used for comparing {@code double} quantities. */
 	public static final double EPSILON_DOUBLE 	= 2e-16;	// 2.22 x 10^-16
 
+	/**
+	 * Returns the square of its argument.
+	 * @param x argument
+	 * @return square of argument
+	 */
 	public static int sqr(int x) {
 		return x * x;
 	}
 	
+	/**
+	 * Returns the square of its argument.
+	 * @param x argument
+	 * @return square of argument
+	 */
 	public static long sqr(long x) {
 		return x * x;
 	}
 	
+	/**
+	 * Returns the square of its argument.
+	 * @param x argument
+	 * @return square of argument
+	 */
 	public static float sqr(float x) {
 		return x * x;
 	}
 	
+	/**
+	 * Returns the square of its argument.
+	 * @param x argument
+	 * @return square of argument
+	 */
 	public static double sqr(double x) {
 		return x * x;
 	}
@@ -73,7 +95,7 @@ public abstract class Arithmetic {
 	}
 	
 	/**
-	 * Test for zero (float version).
+	 * Test for zero (float version) using a predefined tolerance.
 	 * Returns true if the argument's absolute value
 	 * is less than {@link EPSILON_FLOAT}.
 	 * @param x quantity to be tested
@@ -83,12 +105,20 @@ public abstract class Arithmetic {
 		return Math.abs(x) < EPSILON_FLOAT;
 	}
 	
+	/**
+	 * Test for zero (float version) using a specified tolerance.
+	 * Returns true if the argument's absolute value
+	 * is less than the specified tolerance.
+	 * @param x quantity to be tested
+	 * @param tolerance the tolerance to be used
+	 * @return true if argument is close to zero
+	 */
 	public static boolean isZero(float x, float tolerance) {
 		return Math.abs(x) < tolerance;
 	}
 	
 	/**
-	 * Test for zero (double version).
+	 * Test for zero (double version) using a predefined tolerance.
 	 * Returns true if the argument's absolute value
 	 * is less than {@link EPSILON_DOUBLE}.
 	 * @param x quantity to be tested
@@ -98,12 +128,20 @@ public abstract class Arithmetic {
 		return Math.abs(x) < EPSILON_DOUBLE;
 	}
 	
+	/**
+	 * Test for zero (double version) using a specified tolerance.
+	 * Returns true if the argument's absolute value
+	 * is less than the specified tolerance.
+	 * @param x quantity to be tested
+	 * @param tolerance the tolerance to be used
+	 * @return true if argument is close to zero
+	 */
 	public static boolean isZero(double x, double tolerance) {
 		return Math.abs(x) < tolerance;
 	}
 	
 	/**
-	 * Test for numerical equality (double version).
+	 * Test for numerical equality (double version) using a predefined tolerance.
 	 * Returns true if the absolute difference of the arguments
 	 * is less than {@link EPSILON_DOUBLE}.
 	 * @param x first argument
@@ -115,7 +153,7 @@ public abstract class Arithmetic {
 	}
 	
 	/**
-	 * Test for numerical equality (float version).
+	 * Test for numerical equality (float version) using a predefined tolerance.
 	 * Returns true if the absolute difference of the arguments
 	 * is less than {@link EPSILON_FLOAT}.
 	 * @param x first argument
@@ -139,17 +177,17 @@ public abstract class Arithmetic {
 	
 	// -------------------------------------
 	
-	public static void main(String[] args) {
-		System.out.println(Arithmetic.mod(13, 4));
-		System.out.println(Arithmetic.mod(13, -4));
-		System.out.println(Arithmetic.mod(-13, 4));
-		System.out.println(Arithmetic.mod(-13, -4));
-		
-		int b = 7;
-		System.out.format("   i  -> floor |  mod\n");
-		for (int i = -25; i < 25; i++) {
-			System.out.format("%4d  -> %4d  | %4d \n", i, Math.floorMod(i, b), Arithmetic.mod(i, b));
-		}
-	}
+//	public static void main(String[] args) {
+//		System.out.println(Arithmetic.mod(13, 4));
+//		System.out.println(Arithmetic.mod(13, -4));
+//		System.out.println(Arithmetic.mod(-13, 4));
+//		System.out.println(Arithmetic.mod(-13, -4));
+//		
+//		int b = 7;
+//		System.out.format("   i  -> floor |  mod\n");
+//		for (int i = -25; i < 25; i++) {
+//			System.out.format("%4d  -> %4d  | %4d \n", i, Math.floorMod(i, b), Arithmetic.mod(i, b));
+//		}
+//	}
 
 }

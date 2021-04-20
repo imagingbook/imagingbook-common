@@ -106,10 +106,6 @@ public class Eigensolver2x2 implements RealEigensolver {
 		return true;
 	}
 	
-	/**
-	 * Returns {@code true} iff all eigenvalues of the associated matrix are real.
-	 * @return as described
-	 */
 	@Override
 	public boolean isReal() {
 		return isReal;
@@ -118,7 +114,7 @@ public class Eigensolver2x2 implements RealEigensolver {
 	/**
 	 * Returns a vector holding the two real eigenvalues. Both are
 	 * {@code NaN} if the associated matrix has no real eigenvalues.
-	 * Otherwise the first eigenvalue is the greater of the two.
+	 * Otherwise the first eigenvalue has greater magnitude than the second.
 	 * Note that the method returns a reference to an internal
 	 * array and thus results should be used read-only!
 	 * @return a 2-element array of eigenvalues
@@ -130,10 +126,10 @@ public class Eigensolver2x2 implements RealEigensolver {
 	
 	/**
 	 * Returns the k-th eigenvalue (&lambda;_k, k = 0, 1).
-	 * {@code NaN} is returned if the no real eigenvalue exists.
+	 * {@code NaN} is returned if the the eigenvalue is not real.
 	 * 
-	 * @param k index 0 or 1
-	 * @return the kth eigenvalue
+	 * @param k index (0 or 1)
+	 * @return the k-th eigenvalue
 	 */
 	@Override
 	public double getEigenvalue(int k) {
@@ -180,12 +176,12 @@ public class Eigensolver2x2 implements RealEigensolver {
 	}
 	
 	/**
-	 * Returns the kth eigenvector, with k = 0 or 1.
+	 * Returns the k-th eigenvector, with k = 0 or 1.
 	 * The ordering of the returned eigenvectors is the same as for the
 	 * eigenvalues returned by {@link #getEigenvalues()}.
 	 * Note that the method returns a reference to an internal
 	 * array and thus results should be used read-only!
-	 * @param k index 0 or 1
+	 * @param k index (0 or 1)
 	 * @return the kth eigenvector
 	 */
 	@Override

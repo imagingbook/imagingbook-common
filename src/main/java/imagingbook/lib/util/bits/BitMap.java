@@ -1,6 +1,5 @@
 package imagingbook.lib.util.bits;
 
-import ij.process.ByteProcessor;
 import imagingbook.pub.geometry.basic.Pnt2d.PntInt;
 
 /**
@@ -41,7 +40,6 @@ public class BitMap {
 		this.bitvec = (bytes != null) ? BitVector.from(bytes) : BitVector.create(width * height);
 	}
 	
-	
 	public int getWidth() {
 		return this.width;
 	}
@@ -61,6 +59,12 @@ public class BitMap {
 		return bitvec.get(y * width + x);
 	}
 	
+	/**
+	 * Returns {@code true} is the specified element is set (1),
+	 * {@code false} otherwise (0).
+	 * @param p the x/y-coordinate (point)
+	 * @return as described
+	 */
 	public boolean get(PntInt p) {
 		return bitvec.get(p.y * width + p.x);
 	}
@@ -81,6 +85,12 @@ public class BitMap {
 		}
 	}
 	
+	/**
+	 * Sets the specified bit-element to the given boolean value
+	 * (1 for {@code true}, 0 for {@code false}).
+	 * @param p the x/y-coordinate (point)
+	 * @param val a boolean value
+	 */
 	public void set(PntInt p, boolean val) {
 		set(p.x, p.y, val);
 	}
@@ -94,6 +104,10 @@ public class BitMap {
 		bitvec.set(y * width + x);
 	}
 	
+	/**
+	 * Sets the specified element (to bit-value 1).
+	 * @param p the x/y-coordinate (point)
+	 */
 	public void set(PntInt p) {
 		bitvec.set(p.y * width + p.x);
 	}
@@ -107,19 +121,23 @@ public class BitMap {
 		bitvec.unset(y * width + x);
 	}
 	
+	/**
+	 * Unsets the specified element (to bit-value 0).
+	 * @param p the x/y-coordinate (point)
+	 */
 	public void unset(PntInt p) {
 		bitvec.unset(p.y * width + p.x);
 	}
 	
 	/**
-	 * Sets all element values to 1.
+	 * Sets all elements to 1.
 	 */
 	public void setAll() {
 		bitvec.setAll();
 	}
 	
 	/**
-	 * Sets all element values to 0.
+	 * Sets all elements to 0.
 	 */
 	public void unsetAll() {
 		bitvec.unsetAll();
@@ -127,7 +145,7 @@ public class BitMap {
 	
 	/**
 	 * Returns the underlying 1D {@link BitVector}.
-	 * @return the bitvector
+	 * @return the bit vector
 	 */
 	public BitVector getBitVector() {
 		return this.bitvec;
@@ -139,7 +157,7 @@ public class BitMap {
 	 * Creates a new 2D bitmap of the specified size.
 	 * @param width the width of the new bitmap
 	 * @param height the height of the new bitmap
-	 * @return a new bitmap
+	 * @return the new bitmap
 	 */
 	public static BitMap create(int width, int height) {
 		return new BitMap(width, height);

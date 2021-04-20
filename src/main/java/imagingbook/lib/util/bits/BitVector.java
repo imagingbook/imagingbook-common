@@ -7,12 +7,11 @@ package imagingbook.lib.util.bits;
  * implements variable-sized vectors and additional functionality.
  * 
  * @author WB
- *
  */
 public interface BitVector {
 	
 	/**
-	 * Returns {@code true} is the specified element is set (1),
+	 * Returns {@code true} is the specified bit-element is set (1),
 	 * {@code false} otherwise (0).
 	 * @param i the element index
 	 * @return as described

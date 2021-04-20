@@ -16,7 +16,7 @@ import java.util.Locale;
  * Methods are mostly defined to be compatible with 
  * org.apache.commons.math3.complex.Complex and (newer)
  * org.apache.commons.numbers.complex.Complex.
- * Arithmetic operations are generally more accurate than with the
+ * Arithmetic operations are generally more precise than with the
  * Apache implementation.
  * 
  * @author W. Burger
@@ -24,8 +24,11 @@ import java.util.Locale;
  */
 public class Complex {
 	
+	/** Real unit value (z = 1 + i 0). */
 	public static final Complex ONE = new Complex(1, 0);
+	/** Complex zero value (z = 0 + i 0). */
 	public static final Complex ZERO = new Complex(0, 0);
+	/** Imaginary unit value (z = 0 + i 1). */
 	public static final Complex I = new Complex(0, 1);
 
 	/** The real part of this complex number */
@@ -92,7 +95,6 @@ public class Complex {
 	/**
      * Returns the conjugate {@code z*} of this complex number, i.e,
      * if {@code z = a + i b} then {@code z* = a - i b}.
-     *
      * @return the complex conjugate
      */
 	public Complex conjugate() {

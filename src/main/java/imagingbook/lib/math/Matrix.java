@@ -35,10 +35,12 @@ import imagingbook.lib.settings.PrintPrecision;
  * Only arrays of type {@code float} and {@code double} are supported.
  * All matrices are assumed to be rectangular (i.e., all rows are of equal length).</p>
  * 
- * <p>Methods named with a trailing 'D' (e.g., {@code multiplyD()}) operate destructively,
+ * <p>Methods named with a trailing 'D' (e.g., {@link #multiplyD(double, double[])}) operate destructively,
  * i.e., modify one of the passed arguments.</p>
  * 
  * <p>Most methods are self-explanatory and are therefore left undocumented.</p>
+ * 
+ * <p>See also {@link RealEigensolver} and implementations.</p>
  * 
  * @author W. Burger
  * @version 2019/01/05
@@ -137,6 +139,11 @@ public abstract class Matrix {
 	
 	// Checking vector/matrix dimensions
 	
+	/**
+	 * Checks if all rows of the given matrix have the same length.
+	 * @param A a matrix
+	 * @return true iff the matrix is rectangular
+	 */
 	public static boolean isRectangular(float[][] A) {
 		final int nCols = A[0].length;
 		for (int i = 0; i < A.length; i++) {
@@ -147,6 +154,11 @@ public abstract class Matrix {
 		return true;
 	}
 	
+	/**
+	 * Checks if all rows of the given matrix have the same length.
+	 * @param A a matrix
+	 * @return true iff the matrix is rectangular
+	 */
 	public static boolean isRectangular(double[][] A) {
 		final int nCols = A[0].length;
 		for (int i = 0; i < A.length; i++) {
@@ -157,26 +169,60 @@ public abstract class Matrix {
 		return true;
 	}
 	
+	/** Checks it the given matrix has the same number of rows
+	 * and columns.
+	 * @param A a matrix
+	 * @return true iff the matrix is square
+	 */
 	public static boolean isSquare(double[][] A) {
 		return A.length > 0 && A.length == A[0].length;
 	}
 	
+	/** Checks it the given matrix has the same number of rows
+	 * and columns.
+	 * @param A a matrix
+	 * @return true iff the matrix is square
+	 */
 	public static boolean isSquare(float[][] A) {
 		return A.length > 0 && A.length == A[0].length;
 	}
 	
+	/**
+	 * Checks if the given vectors have the same length.
+	 * @param a first vector
+	 * @param b second vector
+	 * @return true iff both vectors have the same length
+	 */
 	public static boolean sameSize(double[] a, double[] b) {
 		return a.length == b.length;
 	}
 	
+	/**
+	 * Checks if the given vectors have the same length.
+	 * @param a first vector
+	 * @param b second vector
+	 * @return true iff both vectors have the same length
+	 */
 	public static boolean sameSize(float[] a, float[] b) {
 		return a.length == b.length;
 	}
 	
+	/**
+	 * Checks if the given matrices have the same size.
+	 * @param A first matrix
+	 * @param B second matrix
+	 * @return true iff both matrices have the same size
+	 */
 	public static boolean sameSize(double[][] A, double[][] B) {
 		return (A.length == B.length) && (A[0].length == B[0].length);
 	}
 	
+	/**
+	 * Checks if the given matrices have the same size.
+	 * @param A first matrix
+	 * @param B second matrix
+	 * @return true iff both matrices have the same size
+	 */
 	public static boolean sameSize(float[][] A, float[][] B) {
 		return (A.length == B.length) && (A[0].length == B[0].length);
 	}
@@ -1120,6 +1166,7 @@ public abstract class Matrix {
 	/**
 	 * Converts a Cartesian vector to an equivalent homogeneous
 	 * vector, which contains an additional 1-element.
+	 * See also {@link #toCartesian(double[])}.
 	 * @param xc a Cartesian vector
 	 * @return an equivalent homogeneous vector
 	 */
@@ -1135,6 +1182,7 @@ public abstract class Matrix {
 	/**
 	 * Converts a homogeneous vector to its equivalent Cartesian
 	 * vector, which is one element shorter.
+	 * See also {@link #toHomogeneous(double[])}.
 	 * @param xh a homogeneous vector
 	 * @return the equivalent Cartesian vector
 	 */
@@ -1167,12 +1215,12 @@ public abstract class Matrix {
 		if (A.length != 3 || A[0].length != 3)
 			throw new IncompatibleDimensionsException();
 		return
-				A[0][0] * A[1][1] * A[2][2] +
-				A[0][1] * A[1][2] * A[2][0] +
-				A[0][2] * A[1][0] * A[2][1] -
-				A[2][0] * A[1][1] * A[0][2] -
-				A[2][1] * A[1][2] * A[0][0] -
-				A[2][2] * A[1][0] * A[0][1] ;
+			A[0][0] * A[1][1] * A[2][2] +
+			A[0][1] * A[1][2] * A[2][0] +
+			A[0][2] * A[1][0] * A[2][1] -
+			A[2][0] * A[1][1] * A[0][2] -
+			A[2][1] * A[1][2] * A[0][0] -
+			A[2][2] * A[1][0] * A[0][1] ;
 	}
 
 	public static double determinant3x3(final double[][] A) throws IncompatibleDimensionsException {
@@ -1267,12 +1315,12 @@ public abstract class Matrix {
 	// ------------------------------------------------------------------------
 	
 	/**
-	 * Finds the exact solution x for the linear systems of equations
+	 * Finds the exact solution x for the linear system of equations
 	 * A * x = b. Exceptions are thrown if the supplied matrix is
 	 * not square or ill-conditioned (singular).
 	 * @param A a square matrix of size n x n
 	 * @param b a vector of length n
-	 * @return the solution vector of length n
+	 * @return the solution vector (x) of length n
 	 */
 	public static double[] solve(final double[][] A, double[] b) {
 		RealMatrix AA = MatrixUtils.createRealMatrix(A);
