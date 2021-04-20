@@ -41,14 +41,14 @@
 <span class="sourceLineNo">031</span><a id="line.31">                </a>
 <span class="sourceLineNo">032</span><a id="line.32">                Eigensolver2x2 solver = new Eigensolver2x2(M);</a>
 <span class="sourceLineNo">033</span><a id="line.33">                double[]   eigenvalues  = solver.getEigenvalues();</a>
-<span class="sourceLineNo">034</span><a id="line.34">                double[][] eigenvectors = solver.getEigenvectors();</a>
+<span class="sourceLineNo">034</span><a id="line.34">                //double[][] eigenvectors = solver.getEigenvectors();</a>
 <span class="sourceLineNo">035</span><a id="line.35">                </a>
 <span class="sourceLineNo">036</span><a id="line.36">                System.out.println("eigenvalues/eigenvectors: check if M*x = \u03BB*x \n");</a>
 <span class="sourceLineNo">037</span><a id="line.37">                </a>
 <span class="sourceLineNo">038</span><a id="line.38">                for (int i = 1; i &lt;= 2; i++) {</a>
 <span class="sourceLineNo">039</span><a id="line.39">                        // get the eigen-pair &lt;lambda_i, x_i&gt;</a>
 <span class="sourceLineNo">040</span><a id="line.40">                        double lambda = eigenvalues[i-1];</a>
-<span class="sourceLineNo">041</span><a id="line.41">                        double[] x = eigenvectors[i-1];</a>
+<span class="sourceLineNo">041</span><a id="line.41">                        double[] x = solver.getEigenvector(i-1);</a>
 <span class="sourceLineNo">042</span><a id="line.42">                        </a>
 <span class="sourceLineNo">043</span><a id="line.43">                        System.out.format("\u03BB_%d  = %.6f\n", i, lambda);</a>
 <span class="sourceLineNo">044</span><a id="line.44">                        System.out.format("x_%d = %s\n", i, Matrix.toString(x));</a>

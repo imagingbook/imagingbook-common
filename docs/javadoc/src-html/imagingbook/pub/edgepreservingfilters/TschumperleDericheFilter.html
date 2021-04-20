@@ -173,9 +173,9 @@
 <span class="sourceLineNo">163</span><a id="line.163">                        throw new RuntimeException("undefined eigenvalues in " + </a>
 <span class="sourceLineNo">164</span><a id="line.164">                                        this.getClass().getSimpleName());</a>
 <span class="sourceLineNo">165</span><a id="line.165">                }</a>
-<span class="sourceLineNo">166</span><a id="line.166">                double lambda1 = solver.getEigenvalue1();</a>
-<span class="sourceLineNo">167</span><a id="line.167">                double lambda2 = solver.getEigenvalue2();</a>
-<span class="sourceLineNo">168</span><a id="line.168">                double[] evec1 = solver.getEigenvector1();</a>
+<span class="sourceLineNo">166</span><a id="line.166">                double lambda1 = solver.getEigenvalue(0);</a>
+<span class="sourceLineNo">167</span><a id="line.167">                double lambda2 = solver.getEigenvalue(1);</a>
+<span class="sourceLineNo">168</span><a id="line.168">                double[] evec1 = solver.getEigenvector(0);</a>
 <span class="sourceLineNo">169</span><a id="line.169">                normalize(evec1);               </a>
 <span class="sourceLineNo">170</span><a id="line.170">                double arg = 1.0 + lambda1 + lambda2;   // 1 + lambda_1 + lambda_2</a>
 <span class="sourceLineNo">171</span><a id="line.171">                float c1 = (float) Math.pow(arg, -a1);</a>

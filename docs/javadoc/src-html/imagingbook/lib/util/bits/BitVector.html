@@ -61,17 +61,33 @@
 <span class="sourceLineNo">051</span><a id="line.51">         */</a>
 <span class="sourceLineNo">052</span><a id="line.52">        public int getLength();</a>
 <span class="sourceLineNo">053</span><a id="line.53">        </a>
-<span class="sourceLineNo">054</span><a id="line.54">        /**</a>
-<span class="sourceLineNo">055</span><a id="line.55">         * Factory method. Creates and returns a new bitvector of type</a>
-<span class="sourceLineNo">056</span><a id="line.56">         * {@link BitVector64}.</a>
-<span class="sourceLineNo">057</span><a id="line.57">         * @param length the length of the bit vector</a>
-<span class="sourceLineNo">058</span><a id="line.58">         * @return a new bit vector</a>
-<span class="sourceLineNo">059</span><a id="line.59">         */</a>
-<span class="sourceLineNo">060</span><a id="line.60">        public static BitVector create(int length) {</a>
-<span class="sourceLineNo">061</span><a id="line.61">                return new BitVector64(length);</a>
-<span class="sourceLineNo">062</span><a id="line.62">        }</a>
-<span class="sourceLineNo">063</span><a id="line.63"></a>
-<span class="sourceLineNo">064</span><a id="line.64">}</a>
+<span class="sourceLineNo">054</span><a id="line.54">        // static methods -----------------------------------------------</a>
+<span class="sourceLineNo">055</span><a id="line.55">        </a>
+<span class="sourceLineNo">056</span><a id="line.56">        public static byte[] toByteArray(BitVector bitvector) {</a>
+<span class="sourceLineNo">057</span><a id="line.57">                byte[] bytes = new byte[bitvector.getLength()];</a>
+<span class="sourceLineNo">058</span><a id="line.58">                for (int i = 0; i &lt; bytes.length; i++) {</a>
+<span class="sourceLineNo">059</span><a id="line.59">                        if (bitvector.get(i)) {</a>
+<span class="sourceLineNo">060</span><a id="line.60">                                bytes[i] = (byte) 0xFF;</a>
+<span class="sourceLineNo">061</span><a id="line.61">                        }</a>
+<span class="sourceLineNo">062</span><a id="line.62">                }</a>
+<span class="sourceLineNo">063</span><a id="line.63">                return bytes;</a>
+<span class="sourceLineNo">064</span><a id="line.64">        }</a>
+<span class="sourceLineNo">065</span><a id="line.65">        </a>
+<span class="sourceLineNo">066</span><a id="line.66">        public static BitVector from(byte[] bytes) {</a>
+<span class="sourceLineNo">067</span><a id="line.67">                return new BitVector64(bytes);</a>
+<span class="sourceLineNo">068</span><a id="line.68">        }</a>
+<span class="sourceLineNo">069</span><a id="line.69">        </a>
+<span class="sourceLineNo">070</span><a id="line.70">        /**</a>
+<span class="sourceLineNo">071</span><a id="line.71">         * Factory method. Creates and returns a new bitvector of type</a>
+<span class="sourceLineNo">072</span><a id="line.72">         * {@link BitVector64}.</a>
+<span class="sourceLineNo">073</span><a id="line.73">         * @param length the length of the bit vector</a>
+<span class="sourceLineNo">074</span><a id="line.74">         * @return a new bit vector</a>
+<span class="sourceLineNo">075</span><a id="line.75">         */</a>
+<span class="sourceLineNo">076</span><a id="line.76">        public static BitVector create(int length) {</a>
+<span class="sourceLineNo">077</span><a id="line.77">                return new BitVector64(length);</a>
+<span class="sourceLineNo">078</span><a id="line.78">        }</a>
+<span class="sourceLineNo">079</span><a id="line.79"></a>
+<span class="sourceLineNo">080</span><a id="line.80">}</a>
 
 
 

@@ -1,6 +1,6 @@
 package imagingbook.lib.math;
 
-public interface Eigensolver {
+public interface RealEigensolver {
 	
 	public boolean isReal();
 	public double[] getEigenvalues();

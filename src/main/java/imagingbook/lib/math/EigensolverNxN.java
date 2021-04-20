@@ -12,18 +12,17 @@ import org.apache.commons.math3.linear.EigenDecomposition;
 import org.apache.commons.math3.linear.MatrixUtils;
 
 /**
- * Implements the calculation of eigenvalues and eigenvectors on
- * square matrices of arbitrary size.
+ * Calculates eigenvalues and eigenvectors of square matrices of arbitrary size.
  * Eigenvalues are sorted by magnitude (in descending order).
  * A matrix may have complex eigenvalues but only real eigenvalues (and their
  * associated eigenvectors) are considered.
- * Uses class {@link #EigenDecomposition} of the Apache Commons Math (3) library.
+ * Uses class {@link EigenDecomposition} of the Apache Commons Math (3) library.
  * 
  * @author WB
  * @version 2021/04/20
  *
  */
-public class EigensolverNxN implements Eigensolver {
+public class EigensolverNxN implements RealEigensolver {
 
 	private final EigenDecomposition ed;
 	private final double[] eVals;

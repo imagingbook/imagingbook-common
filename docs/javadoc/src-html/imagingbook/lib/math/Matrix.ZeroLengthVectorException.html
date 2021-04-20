@@ -1088,314 +1088,351 @@
 <span class="sourceLineNo">1078</span><a id="line.1078">                return va;</a>
 <span class="sourceLineNo">1079</span><a id="line.1079">        }</a>
 <span class="sourceLineNo">1080</span><a id="line.1080">        </a>
-<span class="sourceLineNo">1081</span><a id="line.1081">        // Homogeneous coordinates ---------------------------------</a>
+<span class="sourceLineNo">1081</span><a id="line.1081">        // Vector linear interpolation ---------------------------------</a>
 <span class="sourceLineNo">1082</span><a id="line.1082">        </a>
 <span class="sourceLineNo">1083</span><a id="line.1083">        /**</a>
-<span class="sourceLineNo">1084</span><a id="line.1084">         * Converts a Cartesian vector to an equivalent homogeneous</a>
-<span class="sourceLineNo">1085</span><a id="line.1085">         * vector, which contains an additional 1-element.</a>
-<span class="sourceLineNo">1086</span><a id="line.1086">         * @param xc a Cartesian vector</a>
-<span class="sourceLineNo">1087</span><a id="line.1087">         * @return an equivalent homogeneous vector</a>
-<span class="sourceLineNo">1088</span><a id="line.1088">         */</a>
-<span class="sourceLineNo">1089</span><a id="line.1089">        public static double[] toHomogeneous(double[] xc) {</a>
-<span class="sourceLineNo">1090</span><a id="line.1090">                double[] xh = new double[xc.length + 1];</a>
-<span class="sourceLineNo">1091</span><a id="line.1091">                for (int i = 0; i &lt; xc.length; i++) {</a>
-<span class="sourceLineNo">1092</span><a id="line.1092">                        xh[i] = xc[i];</a>
-<span class="sourceLineNo">1093</span><a id="line.1093">                        xh[xh.length - 1] = 1;</a>
-<span class="sourceLineNo">1094</span><a id="line.1094">                }</a>
-<span class="sourceLineNo">1095</span><a id="line.1095">                return xh;</a>
-<span class="sourceLineNo">1096</span><a id="line.1096">        }</a>
-<span class="sourceLineNo">1097</span><a id="line.1097">        </a>
-<span class="sourceLineNo">1098</span><a id="line.1098">        /**</a>
-<span class="sourceLineNo">1099</span><a id="line.1099">         * Converts a homogeneous vector to its equivalent Cartesian</a>
-<span class="sourceLineNo">1100</span><a id="line.1100">         * vector, which is one element shorter.</a>
-<span class="sourceLineNo">1101</span><a id="line.1101">         * @param xh a homogeneous vector</a>
-<span class="sourceLineNo">1102</span><a id="line.1102">         * @return the equivalent Cartesian vector</a>
-<span class="sourceLineNo">1103</span><a id="line.1103">         */</a>
-<span class="sourceLineNo">1104</span><a id="line.1104">        public static double[] toCartesian(double[] xh) throws DivideByZeroException {</a>
-<span class="sourceLineNo">1105</span><a id="line.1105">                double[] xc = new double[xh.length - 1];</a>
-<span class="sourceLineNo">1106</span><a id="line.1106">                final double s = 1 / xh[xh.length - 1];</a>
-<span class="sourceLineNo">1107</span><a id="line.1107">                if (!Double.isFinite(s))        // isZero(s)</a>
-<span class="sourceLineNo">1108</span><a id="line.1108">                        throw new DivideByZeroException();</a>
-<span class="sourceLineNo">1109</span><a id="line.1109">                for (int i = 0; i &lt; xh.length - 1; i++) {</a>
-<span class="sourceLineNo">1110</span><a id="line.1110">                        xc[i] = s * xh[i];</a>
-<span class="sourceLineNo">1111</span><a id="line.1111">                }</a>
-<span class="sourceLineNo">1112</span><a id="line.1112">                return xc;</a>
-<span class="sourceLineNo">1113</span><a id="line.1113">        }</a>
-<span class="sourceLineNo">1114</span><a id="line.1114">        </a>
-<span class="sourceLineNo">1115</span><a id="line.1115">        // Determinants --------------------------------------------</a>
+<span class="sourceLineNo">1084</span><a id="line.1084">         * Performs linear interpolation between two vectors {@code a} and {@code b}, </a>
+<span class="sourceLineNo">1085</span><a id="line.1085">         * which must have the same length.</a>
+<span class="sourceLineNo">1086</span><a id="line.1086">         * Returns a new vector {@code c = a + t * (b - a)}.</a>
+<span class="sourceLineNo">1087</span><a id="line.1087">         * @param a first vector (to be interpolated from)</a>
+<span class="sourceLineNo">1088</span><a id="line.1088">         * @param b second vector (to be interpolated to)</a>
+<span class="sourceLineNo">1089</span><a id="line.1089">         * @param t interpolation coefficient, expected to be in [0,1]</a>
+<span class="sourceLineNo">1090</span><a id="line.1090">         * @return the interpolated vector</a>
+<span class="sourceLineNo">1091</span><a id="line.1091">         */</a>
+<span class="sourceLineNo">1092</span><a id="line.1092">        public static float[] lerp(float[] a, float[] b, final float t) {</a>
+<span class="sourceLineNo">1093</span><a id="line.1093">                float[] c = new float[a.length];</a>
+<span class="sourceLineNo">1094</span><a id="line.1094">                for (int i = 0; i &lt; a.length; i++) {</a>
+<span class="sourceLineNo">1095</span><a id="line.1095">                        c[i] = a[i] + t * (b[i] - a[i]);</a>
+<span class="sourceLineNo">1096</span><a id="line.1096">                }</a>
+<span class="sourceLineNo">1097</span><a id="line.1097">                return c;</a>
+<span class="sourceLineNo">1098</span><a id="line.1098">        }</a>
+<span class="sourceLineNo">1099</span><a id="line.1099">        </a>
+<span class="sourceLineNo">1100</span><a id="line.1100">        /**</a>
+<span class="sourceLineNo">1101</span><a id="line.1101">         * Performs linear interpolation between two vectors {@code a} and {@code b}, </a>
+<span class="sourceLineNo">1102</span><a id="line.1102">         * which must have the same length.</a>
+<span class="sourceLineNo">1103</span><a id="line.1103">         * Returns a new vector {@code c = a + t * (b - a)}.</a>
+<span class="sourceLineNo">1104</span><a id="line.1104">         * @param a first vector (to be interpolated from)</a>
+<span class="sourceLineNo">1105</span><a id="line.1105">         * @param b second vector (to be interpolated to)</a>
+<span class="sourceLineNo">1106</span><a id="line.1106">         * @param t interpolation coefficient, expected to be in [0,1]</a>
+<span class="sourceLineNo">1107</span><a id="line.1107">         * @return the interpolated vector</a>
+<span class="sourceLineNo">1108</span><a id="line.1108">         */</a>
+<span class="sourceLineNo">1109</span><a id="line.1109">        public static double[] lerp(double[] a, double[] b, final double t) {</a>
+<span class="sourceLineNo">1110</span><a id="line.1110">                double[] c = new double[a.length];</a>
+<span class="sourceLineNo">1111</span><a id="line.1111">                for (int i = 0; i &lt; a.length; i++) {</a>
+<span class="sourceLineNo">1112</span><a id="line.1112">                        c[i] = a[i] + t * (b[i] - a[i]);</a>
+<span class="sourceLineNo">1113</span><a id="line.1113">                }</a>
+<span class="sourceLineNo">1114</span><a id="line.1114">                return c;</a>
+<span class="sourceLineNo">1115</span><a id="line.1115">        }</a>
 <span class="sourceLineNo">1116</span><a id="line.1116">        </a>
-<span class="sourceLineNo">1117</span><a id="line.1117">        public static float determinant2x2(final float[][] A) throws IncompatibleDimensionsException {</a>
-<span class="sourceLineNo">1118</span><a id="line.1118">                if (A.length != 2 || A[0].length != 2)</a>
-<span class="sourceLineNo">1119</span><a id="line.1119">                        throw new IncompatibleDimensionsException();</a>
-<span class="sourceLineNo">1120</span><a id="line.1120">                return A[0][0] * A[1][1] - A[0][1] * A[1][0];</a>
-<span class="sourceLineNo">1121</span><a id="line.1121">        }</a>
-<span class="sourceLineNo">1122</span><a id="line.1122">        </a>
-<span class="sourceLineNo">1123</span><a id="line.1123">        public static double determinant2x2(final double[][] A) throws IncompatibleDimensionsException {</a>
-<span class="sourceLineNo">1124</span><a id="line.1124">                if (A.length != 2 || A[0].length != 2)</a>
-<span class="sourceLineNo">1125</span><a id="line.1125">                        throw new IncompatibleDimensionsException();</a>
-<span class="sourceLineNo">1126</span><a id="line.1126">                return A[0][0] * A[1][1] - A[0][1] * A[1][0];</a>
-<span class="sourceLineNo">1127</span><a id="line.1127">        }</a>
-<span class="sourceLineNo">1128</span><a id="line.1128">        </a>
-<span class="sourceLineNo">1129</span><a id="line.1129">        public static float determinant3x3(final float[][] A) throws IncompatibleDimensionsException {</a>
-<span class="sourceLineNo">1130</span><a id="line.1130">                if (A.length != 3 || A[0].length != 3)</a>
-<span class="sourceLineNo">1131</span><a id="line.1131">                        throw new IncompatibleDimensionsException();</a>
-<span class="sourceLineNo">1132</span><a id="line.1132">                return</a>
-<span class="sourceLineNo">1133</span><a id="line.1133">                                A[0][0] * A[1][1] * A[2][2] +</a>
-<span class="sourceLineNo">1134</span><a id="line.1134">                                A[0][1] * A[1][2] * A[2][0] +</a>
-<span class="sourceLineNo">1135</span><a id="line.1135">                                A[0][2] * A[1][0] * A[2][1] -</a>
-<span class="sourceLineNo">1136</span><a id="line.1136">                                A[2][0] * A[1][1] * A[0][2] -</a>
-<span class="sourceLineNo">1137</span><a id="line.1137">                                A[2][1] * A[1][2] * A[0][0] -</a>
-<span class="sourceLineNo">1138</span><a id="line.1138">                                A[2][2] * A[1][0] * A[0][1] ;</a>
-<span class="sourceLineNo">1139</span><a id="line.1139">        }</a>
-<span class="sourceLineNo">1140</span><a id="line.1140"></a>
-<span class="sourceLineNo">1141</span><a id="line.1141">        public static double determinant3x3(final double[][] A) throws IncompatibleDimensionsException {</a>
-<span class="sourceLineNo">1142</span><a id="line.1142">                if (A.length != 3 || A[0].length != 3)</a>
-<span class="sourceLineNo">1143</span><a id="line.1143">                        throw new IncompatibleDimensionsException();</a>
-<span class="sourceLineNo">1144</span><a id="line.1144">                return </a>
-<span class="sourceLineNo">1145</span><a id="line.1145">                        A[0][0] * A[1][1] * A[2][2] + </a>
-<span class="sourceLineNo">1146</span><a id="line.1146">                        A[0][1] * A[1][2] * A[2][0]     + </a>
-<span class="sourceLineNo">1147</span><a id="line.1147">                        A[0][2] * A[1][0] * A[2][1] - </a>
-<span class="sourceLineNo">1148</span><a id="line.1148">                        A[2][0] * A[1][1] * A[0][2] - </a>
-<span class="sourceLineNo">1149</span><a id="line.1149">                        A[2][1] * A[1][2] * A[0][0] - </a>
-<span class="sourceLineNo">1150</span><a id="line.1150">                        A[2][2] * A[1][0] * A[0][1] ;</a>
-<span class="sourceLineNo">1151</span><a id="line.1151">        }</a>
-<span class="sourceLineNo">1152</span><a id="line.1152">        </a>
-<span class="sourceLineNo">1153</span><a id="line.1153">        public static double determinant(final double[][] A) throws NonsquareMatrixException {</a>
-<span class="sourceLineNo">1154</span><a id="line.1154">                if (!isSquare(A))</a>
-<span class="sourceLineNo">1155</span><a id="line.1155">                        throw new NonsquareMatrixException();</a>
-<span class="sourceLineNo">1156</span><a id="line.1156">                RealMatrix M = MatrixUtils.createRealMatrix(A);</a>
-<span class="sourceLineNo">1157</span><a id="line.1157">                return new LUDecomposition(M).getDeterminant();</a>
+<span class="sourceLineNo">1117</span><a id="line.1117">        </a>
+<span class="sourceLineNo">1118</span><a id="line.1118">        // Homogeneous coordinates ---------------------------------</a>
+<span class="sourceLineNo">1119</span><a id="line.1119">        </a>
+<span class="sourceLineNo">1120</span><a id="line.1120">        /**</a>
+<span class="sourceLineNo">1121</span><a id="line.1121">         * Converts a Cartesian vector to an equivalent homogeneous</a>
+<span class="sourceLineNo">1122</span><a id="line.1122">         * vector, which contains an additional 1-element.</a>
+<span class="sourceLineNo">1123</span><a id="line.1123">         * @param xc a Cartesian vector</a>
+<span class="sourceLineNo">1124</span><a id="line.1124">         * @return an equivalent homogeneous vector</a>
+<span class="sourceLineNo">1125</span><a id="line.1125">         */</a>
+<span class="sourceLineNo">1126</span><a id="line.1126">        public static double[] toHomogeneous(double[] xc) {</a>
+<span class="sourceLineNo">1127</span><a id="line.1127">                double[] xh = new double[xc.length + 1];</a>
+<span class="sourceLineNo">1128</span><a id="line.1128">                for (int i = 0; i &lt; xc.length; i++) {</a>
+<span class="sourceLineNo">1129</span><a id="line.1129">                        xh[i] = xc[i];</a>
+<span class="sourceLineNo">1130</span><a id="line.1130">                        xh[xh.length - 1] = 1;</a>
+<span class="sourceLineNo">1131</span><a id="line.1131">                }</a>
+<span class="sourceLineNo">1132</span><a id="line.1132">                return xh;</a>
+<span class="sourceLineNo">1133</span><a id="line.1133">        }</a>
+<span class="sourceLineNo">1134</span><a id="line.1134">        </a>
+<span class="sourceLineNo">1135</span><a id="line.1135">        /**</a>
+<span class="sourceLineNo">1136</span><a id="line.1136">         * Converts a homogeneous vector to its equivalent Cartesian</a>
+<span class="sourceLineNo">1137</span><a id="line.1137">         * vector, which is one element shorter.</a>
+<span class="sourceLineNo">1138</span><a id="line.1138">         * @param xh a homogeneous vector</a>
+<span class="sourceLineNo">1139</span><a id="line.1139">         * @return the equivalent Cartesian vector</a>
+<span class="sourceLineNo">1140</span><a id="line.1140">         */</a>
+<span class="sourceLineNo">1141</span><a id="line.1141">        public static double[] toCartesian(double[] xh) throws DivideByZeroException {</a>
+<span class="sourceLineNo">1142</span><a id="line.1142">                double[] xc = new double[xh.length - 1];</a>
+<span class="sourceLineNo">1143</span><a id="line.1143">                final double s = 1 / xh[xh.length - 1];</a>
+<span class="sourceLineNo">1144</span><a id="line.1144">                if (!Double.isFinite(s))        // isZero(s)</a>
+<span class="sourceLineNo">1145</span><a id="line.1145">                        throw new DivideByZeroException();</a>
+<span class="sourceLineNo">1146</span><a id="line.1146">                for (int i = 0; i &lt; xh.length - 1; i++) {</a>
+<span class="sourceLineNo">1147</span><a id="line.1147">                        xc[i] = s * xh[i];</a>
+<span class="sourceLineNo">1148</span><a id="line.1148">                }</a>
+<span class="sourceLineNo">1149</span><a id="line.1149">                return xc;</a>
+<span class="sourceLineNo">1150</span><a id="line.1150">        }</a>
+<span class="sourceLineNo">1151</span><a id="line.1151">        </a>
+<span class="sourceLineNo">1152</span><a id="line.1152">        // Determinants --------------------------------------------</a>
+<span class="sourceLineNo">1153</span><a id="line.1153">        </a>
+<span class="sourceLineNo">1154</span><a id="line.1154">        public static float determinant2x2(final float[][] A) throws IncompatibleDimensionsException {</a>
+<span class="sourceLineNo">1155</span><a id="line.1155">                if (A.length != 2 || A[0].length != 2)</a>
+<span class="sourceLineNo">1156</span><a id="line.1156">                        throw new IncompatibleDimensionsException();</a>
+<span class="sourceLineNo">1157</span><a id="line.1157">                return A[0][0] * A[1][1] - A[0][1] * A[1][0];</a>
 <span class="sourceLineNo">1158</span><a id="line.1158">        }</a>
 <span class="sourceLineNo">1159</span><a id="line.1159">        </a>
-<span class="sourceLineNo">1160</span><a id="line.1160">        // Matrix trace ---------------------------------------</a>
-<span class="sourceLineNo">1161</span><a id="line.1161">        </a>
-<span class="sourceLineNo">1162</span><a id="line.1162">        public static double trace(final double[][] A) throws NonsquareMatrixException {</a>
-<span class="sourceLineNo">1163</span><a id="line.1163">                final int m = getNumberOfRows(A);</a>
-<span class="sourceLineNo">1164</span><a id="line.1164">                final int n = getNumberOfColumns(A);</a>
-<span class="sourceLineNo">1165</span><a id="line.1165">                if (m != n) </a>
-<span class="sourceLineNo">1166</span><a id="line.1166">                        throw new NonsquareMatrixException();</a>
-<span class="sourceLineNo">1167</span><a id="line.1167">                double s = 0;</a>
-<span class="sourceLineNo">1168</span><a id="line.1168">                for (int i = 0; i &lt; m; i++) {</a>
-<span class="sourceLineNo">1169</span><a id="line.1169">                                s = s + A[i][i];</a>
-<span class="sourceLineNo">1170</span><a id="line.1170">                }</a>
-<span class="sourceLineNo">1171</span><a id="line.1171">                return s;</a>
-<span class="sourceLineNo">1172</span><a id="line.1172">        }</a>
-<span class="sourceLineNo">1173</span><a id="line.1173">        </a>
-<span class="sourceLineNo">1174</span><a id="line.1174">        // Matrix transposition ---------------------------------------</a>
-<span class="sourceLineNo">1175</span><a id="line.1175">        </a>
-<span class="sourceLineNo">1176</span><a id="line.1176">        public static float[][] transpose(float[][] A) {</a>
-<span class="sourceLineNo">1177</span><a id="line.1177">                final int m = getNumberOfRows(A);</a>
-<span class="sourceLineNo">1178</span><a id="line.1178">                final int n = getNumberOfColumns(A);</a>
-<span class="sourceLineNo">1179</span><a id="line.1179">                float[][] At = new float[n][m];</a>
-<span class="sourceLineNo">1180</span><a id="line.1180">                for (int i = 0; i &lt; m; i++) {</a>
-<span class="sourceLineNo">1181</span><a id="line.1181">                        for (int j = 0; j &lt; n; j++) {</a>
-<span class="sourceLineNo">1182</span><a id="line.1182">                                At[j][i] = A[i][j];</a>
-<span class="sourceLineNo">1183</span><a id="line.1183">                        }</a>
-<span class="sourceLineNo">1184</span><a id="line.1184">                }</a>
-<span class="sourceLineNo">1185</span><a id="line.1185">                return At;</a>
-<span class="sourceLineNo">1186</span><a id="line.1186">        }</a>
-<span class="sourceLineNo">1187</span><a id="line.1187">        </a>
-<span class="sourceLineNo">1188</span><a id="line.1188">        public static double[][] transpose(double[][] A) {</a>
-<span class="sourceLineNo">1189</span><a id="line.1189">                final int m = getNumberOfRows(A);</a>
-<span class="sourceLineNo">1190</span><a id="line.1190">                final int n = getNumberOfColumns(A);</a>
-<span class="sourceLineNo">1191</span><a id="line.1191">                double[][] At = new double[n][m];</a>
-<span class="sourceLineNo">1192</span><a id="line.1192">                for (int i = 0; i &lt; m; i++) {</a>
-<span class="sourceLineNo">1193</span><a id="line.1193">                        for (int j = 0; j &lt; n; j++) {</a>
-<span class="sourceLineNo">1194</span><a id="line.1194">                                At[j][i] = A[i][j];</a>
-<span class="sourceLineNo">1195</span><a id="line.1195">                        }</a>
-<span class="sourceLineNo">1196</span><a id="line.1196">                }</a>
-<span class="sourceLineNo">1197</span><a id="line.1197">                return At;</a>
-<span class="sourceLineNo">1198</span><a id="line.1198">        }</a>
-<span class="sourceLineNo">1199</span><a id="line.1199">        </a>
-<span class="sourceLineNo">1200</span><a id="line.1200">        // Matrix inversion ---------------------------------------</a>
-<span class="sourceLineNo">1201</span><a id="line.1201">        </a>
-<span class="sourceLineNo">1202</span><a id="line.1202">        /**</a>
-<span class="sourceLineNo">1203</span><a id="line.1203">         * Calculates and returns the inverse of the given matrix, which</a>
-<span class="sourceLineNo">1204</span><a id="line.1204">         * must be square. Exceptions are n if the supplied matrix is</a>
-<span class="sourceLineNo">1205</span><a id="line.1205">         * not square or ill-conditioned (singular).</a>
-<span class="sourceLineNo">1206</span><a id="line.1206">         * @param A a square matrix</a>
-<span class="sourceLineNo">1207</span><a id="line.1207">         * @return the inverse matrix</a>
-<span class="sourceLineNo">1208</span><a id="line.1208">         */</a>
-<span class="sourceLineNo">1209</span><a id="line.1209">        public static double[][] inverse(final double[][] A) throws NonsquareMatrixException {</a>
-<span class="sourceLineNo">1210</span><a id="line.1210">                if (!isSquare(A))</a>
-<span class="sourceLineNo">1211</span><a id="line.1211">                        throw new NonsquareMatrixException();</a>
-<span class="sourceLineNo">1212</span><a id="line.1212">                RealMatrix M = MatrixUtils.createRealMatrix(A);</a>
-<span class="sourceLineNo">1213</span><a id="line.1213">                return MatrixUtils.inverse(M).getData();</a>
-<span class="sourceLineNo">1214</span><a id="line.1214">        }</a>
-<span class="sourceLineNo">1215</span><a id="line.1215">        </a>
-<span class="sourceLineNo">1216</span><a id="line.1216">        /**</a>
-<span class="sourceLineNo">1217</span><a id="line.1217">         * Calculates and returns the inverse of the given matrix, which</a>
-<span class="sourceLineNo">1218</span><a id="line.1218">         * must be square. Exceptions are thrown if the supplied matrix is</a>
-<span class="sourceLineNo">1219</span><a id="line.1219">         * not square or ill-conditioned (singular).</a>
-<span class="sourceLineNo">1220</span><a id="line.1220">         * @param A a square matrix</a>
-<span class="sourceLineNo">1221</span><a id="line.1221">         * @return the inverse matrix</a>
-<span class="sourceLineNo">1222</span><a id="line.1222">         */</a>
-<span class="sourceLineNo">1223</span><a id="line.1223">        public static float[][] inverse(final float[][] A) throws NonsquareMatrixException {</a>
-<span class="sourceLineNo">1224</span><a id="line.1224">                if (!isSquare(A))</a>
-<span class="sourceLineNo">1225</span><a id="line.1225">                        throw new NonsquareMatrixException();</a>
-<span class="sourceLineNo">1226</span><a id="line.1226">                double[][] Ad = toDouble(A);</a>
-<span class="sourceLineNo">1227</span><a id="line.1227">                return toFloat(inverse(Ad));</a>
-<span class="sourceLineNo">1228</span><a id="line.1228">        }</a>
-<span class="sourceLineNo">1229</span><a id="line.1229"></a>
-<span class="sourceLineNo">1230</span><a id="line.1230">        // ------------------------------------------------------------------------</a>
-<span class="sourceLineNo">1231</span><a id="line.1231">        </a>
-<span class="sourceLineNo">1232</span><a id="line.1232">        /**</a>
-<span class="sourceLineNo">1233</span><a id="line.1233">         * Finds the exact solution x for the linear systems of equations</a>
-<span class="sourceLineNo">1234</span><a id="line.1234">         * A * x = b. Exceptions are thrown if the supplied matrix is</a>
-<span class="sourceLineNo">1235</span><a id="line.1235">         * not square or ill-conditioned (singular).</a>
-<span class="sourceLineNo">1236</span><a id="line.1236">         * @param A a square matrix of size n x n</a>
-<span class="sourceLineNo">1237</span><a id="line.1237">         * @param b a vector of length n</a>
-<span class="sourceLineNo">1238</span><a id="line.1238">         * @return the solution vector of length n</a>
-<span class="sourceLineNo">1239</span><a id="line.1239">         */</a>
-<span class="sourceLineNo">1240</span><a id="line.1240">        public static double[] solve(final double[][] A, double[] b) {</a>
-<span class="sourceLineNo">1241</span><a id="line.1241">                RealMatrix AA = MatrixUtils.createRealMatrix(A);</a>
-<span class="sourceLineNo">1242</span><a id="line.1242">                RealVector bb = MatrixUtils.createRealVector(b);</a>
-<span class="sourceLineNo">1243</span><a id="line.1243">                DecompositionSolver solver = new LUDecomposition(AA).getSolver();</a>
-<span class="sourceLineNo">1244</span><a id="line.1244">//              double[] x = null;</a>
-<span class="sourceLineNo">1245</span><a id="line.1245">//              try {</a>
-<span class="sourceLineNo">1246</span><a id="line.1246">//                      x = solver.solve(bb).toArray();</a>
-<span class="sourceLineNo">1247</span><a id="line.1247">//              } catch (SingularMatrixException e) {}</a>
-<span class="sourceLineNo">1248</span><a id="line.1248">                return solver.solve(bb).toArray();</a>
-<span class="sourceLineNo">1249</span><a id="line.1249">        }</a>
-<span class="sourceLineNo">1250</span><a id="line.1250">        </a>
-<span class="sourceLineNo">1251</span><a id="line.1251">        // Output to strings and streams ------------------------------------------</a>
+<span class="sourceLineNo">1160</span><a id="line.1160">        public static double determinant2x2(final double[][] A) throws IncompatibleDimensionsException {</a>
+<span class="sourceLineNo">1161</span><a id="line.1161">                if (A.length != 2 || A[0].length != 2)</a>
+<span class="sourceLineNo">1162</span><a id="line.1162">                        throw new IncompatibleDimensionsException();</a>
+<span class="sourceLineNo">1163</span><a id="line.1163">                return A[0][0] * A[1][1] - A[0][1] * A[1][0];</a>
+<span class="sourceLineNo">1164</span><a id="line.1164">        }</a>
+<span class="sourceLineNo">1165</span><a id="line.1165">        </a>
+<span class="sourceLineNo">1166</span><a id="line.1166">        public static float determinant3x3(final float[][] A) throws IncompatibleDimensionsException {</a>
+<span class="sourceLineNo">1167</span><a id="line.1167">                if (A.length != 3 || A[0].length != 3)</a>
+<span class="sourceLineNo">1168</span><a id="line.1168">                        throw new IncompatibleDimensionsException();</a>
+<span class="sourceLineNo">1169</span><a id="line.1169">                return</a>
+<span class="sourceLineNo">1170</span><a id="line.1170">                                A[0][0] * A[1][1] * A[2][2] +</a>
+<span class="sourceLineNo">1171</span><a id="line.1171">                                A[0][1] * A[1][2] * A[2][0] +</a>
+<span class="sourceLineNo">1172</span><a id="line.1172">                                A[0][2] * A[1][0] * A[2][1] -</a>
+<span class="sourceLineNo">1173</span><a id="line.1173">                                A[2][0] * A[1][1] * A[0][2] -</a>
+<span class="sourceLineNo">1174</span><a id="line.1174">                                A[2][1] * A[1][2] * A[0][0] -</a>
+<span class="sourceLineNo">1175</span><a id="line.1175">                                A[2][2] * A[1][0] * A[0][1] ;</a>
+<span class="sourceLineNo">1176</span><a id="line.1176">        }</a>
+<span class="sourceLineNo">1177</span><a id="line.1177"></a>
+<span class="sourceLineNo">1178</span><a id="line.1178">        public static double determinant3x3(final double[][] A) throws IncompatibleDimensionsException {</a>
+<span class="sourceLineNo">1179</span><a id="line.1179">                if (A.length != 3 || A[0].length != 3)</a>
+<span class="sourceLineNo">1180</span><a id="line.1180">                        throw new IncompatibleDimensionsException();</a>
+<span class="sourceLineNo">1181</span><a id="line.1181">                return </a>
+<span class="sourceLineNo">1182</span><a id="line.1182">                        A[0][0] * A[1][1] * A[2][2] + </a>
+<span class="sourceLineNo">1183</span><a id="line.1183">                        A[0][1] * A[1][2] * A[2][0]     + </a>
+<span class="sourceLineNo">1184</span><a id="line.1184">                        A[0][2] * A[1][0] * A[2][1] - </a>
+<span class="sourceLineNo">1185</span><a id="line.1185">                        A[2][0] * A[1][1] * A[0][2] - </a>
+<span class="sourceLineNo">1186</span><a id="line.1186">                        A[2][1] * A[1][2] * A[0][0] - </a>
+<span class="sourceLineNo">1187</span><a id="line.1187">                        A[2][2] * A[1][0] * A[0][1] ;</a>
+<span class="sourceLineNo">1188</span><a id="line.1188">        }</a>
+<span class="sourceLineNo">1189</span><a id="line.1189">        </a>
+<span class="sourceLineNo">1190</span><a id="line.1190">        public static double determinant(final double[][] A) throws NonsquareMatrixException {</a>
+<span class="sourceLineNo">1191</span><a id="line.1191">                if (!isSquare(A))</a>
+<span class="sourceLineNo">1192</span><a id="line.1192">                        throw new NonsquareMatrixException();</a>
+<span class="sourceLineNo">1193</span><a id="line.1193">                RealMatrix M = MatrixUtils.createRealMatrix(A);</a>
+<span class="sourceLineNo">1194</span><a id="line.1194">                return new LUDecomposition(M).getDeterminant();</a>
+<span class="sourceLineNo">1195</span><a id="line.1195">        }</a>
+<span class="sourceLineNo">1196</span><a id="line.1196">        </a>
+<span class="sourceLineNo">1197</span><a id="line.1197">        // Matrix trace ---------------------------------------</a>
+<span class="sourceLineNo">1198</span><a id="line.1198">        </a>
+<span class="sourceLineNo">1199</span><a id="line.1199">        public static double trace(final double[][] A) throws NonsquareMatrixException {</a>
+<span class="sourceLineNo">1200</span><a id="line.1200">                final int m = getNumberOfRows(A);</a>
+<span class="sourceLineNo">1201</span><a id="line.1201">                final int n = getNumberOfColumns(A);</a>
+<span class="sourceLineNo">1202</span><a id="line.1202">                if (m != n) </a>
+<span class="sourceLineNo">1203</span><a id="line.1203">                        throw new NonsquareMatrixException();</a>
+<span class="sourceLineNo">1204</span><a id="line.1204">                double s = 0;</a>
+<span class="sourceLineNo">1205</span><a id="line.1205">                for (int i = 0; i &lt; m; i++) {</a>
+<span class="sourceLineNo">1206</span><a id="line.1206">                                s = s + A[i][i];</a>
+<span class="sourceLineNo">1207</span><a id="line.1207">                }</a>
+<span class="sourceLineNo">1208</span><a id="line.1208">                return s;</a>
+<span class="sourceLineNo">1209</span><a id="line.1209">        }</a>
+<span class="sourceLineNo">1210</span><a id="line.1210">        </a>
+<span class="sourceLineNo">1211</span><a id="line.1211">        // Matrix transposition ---------------------------------------</a>
+<span class="sourceLineNo">1212</span><a id="line.1212">        </a>
+<span class="sourceLineNo">1213</span><a id="line.1213">        public static float[][] transpose(float[][] A) {</a>
+<span class="sourceLineNo">1214</span><a id="line.1214">                final int m = getNumberOfRows(A);</a>
+<span class="sourceLineNo">1215</span><a id="line.1215">                final int n = getNumberOfColumns(A);</a>
+<span class="sourceLineNo">1216</span><a id="line.1216">                float[][] At = new float[n][m];</a>
+<span class="sourceLineNo">1217</span><a id="line.1217">                for (int i = 0; i &lt; m; i++) {</a>
+<span class="sourceLineNo">1218</span><a id="line.1218">                        for (int j = 0; j &lt; n; j++) {</a>
+<span class="sourceLineNo">1219</span><a id="line.1219">                                At[j][i] = A[i][j];</a>
+<span class="sourceLineNo">1220</span><a id="line.1220">                        }</a>
+<span class="sourceLineNo">1221</span><a id="line.1221">                }</a>
+<span class="sourceLineNo">1222</span><a id="line.1222">                return At;</a>
+<span class="sourceLineNo">1223</span><a id="line.1223">        }</a>
+<span class="sourceLineNo">1224</span><a id="line.1224">        </a>
+<span class="sourceLineNo">1225</span><a id="line.1225">        public static double[][] transpose(double[][] A) {</a>
+<span class="sourceLineNo">1226</span><a id="line.1226">                final int m = getNumberOfRows(A);</a>
+<span class="sourceLineNo">1227</span><a id="line.1227">                final int n = getNumberOfColumns(A);</a>
+<span class="sourceLineNo">1228</span><a id="line.1228">                double[][] At = new double[n][m];</a>
+<span class="sourceLineNo">1229</span><a id="line.1229">                for (int i = 0; i &lt; m; i++) {</a>
+<span class="sourceLineNo">1230</span><a id="line.1230">                        for (int j = 0; j &lt; n; j++) {</a>
+<span class="sourceLineNo">1231</span><a id="line.1231">                                At[j][i] = A[i][j];</a>
+<span class="sourceLineNo">1232</span><a id="line.1232">                        }</a>
+<span class="sourceLineNo">1233</span><a id="line.1233">                }</a>
+<span class="sourceLineNo">1234</span><a id="line.1234">                return At;</a>
+<span class="sourceLineNo">1235</span><a id="line.1235">        }</a>
+<span class="sourceLineNo">1236</span><a id="line.1236">        </a>
+<span class="sourceLineNo">1237</span><a id="line.1237">        // Matrix inversion ---------------------------------------</a>
+<span class="sourceLineNo">1238</span><a id="line.1238">        </a>
+<span class="sourceLineNo">1239</span><a id="line.1239">        /**</a>
+<span class="sourceLineNo">1240</span><a id="line.1240">         * Calculates and returns the inverse of the given matrix, which</a>
+<span class="sourceLineNo">1241</span><a id="line.1241">         * must be square. Exceptions are n if the supplied matrix is</a>
+<span class="sourceLineNo">1242</span><a id="line.1242">         * not square or ill-conditioned (singular).</a>
+<span class="sourceLineNo">1243</span><a id="line.1243">         * @param A a square matrix</a>
+<span class="sourceLineNo">1244</span><a id="line.1244">         * @return the inverse matrix</a>
+<span class="sourceLineNo">1245</span><a id="line.1245">         */</a>
+<span class="sourceLineNo">1246</span><a id="line.1246">        public static double[][] inverse(final double[][] A) throws NonsquareMatrixException {</a>
+<span class="sourceLineNo">1247</span><a id="line.1247">                if (!isSquare(A))</a>
+<span class="sourceLineNo">1248</span><a id="line.1248">                        throw new NonsquareMatrixException();</a>
+<span class="sourceLineNo">1249</span><a id="line.1249">                RealMatrix M = MatrixUtils.createRealMatrix(A);</a>
+<span class="sourceLineNo">1250</span><a id="line.1250">                return MatrixUtils.inverse(M).getData();</a>
+<span class="sourceLineNo">1251</span><a id="line.1251">        }</a>
 <span class="sourceLineNo">1252</span><a id="line.1252">        </a>
-<span class="sourceLineNo">1253</span><a id="line.1253">        public static String toString(double[] x) {</a>
-<span class="sourceLineNo">1254</span><a id="line.1254">                ByteArrayOutputStream bas = new ByteArrayOutputStream();</a>
-<span class="sourceLineNo">1255</span><a id="line.1255">                PrintStream strm = new PrintStream(bas);</a>
-<span class="sourceLineNo">1256</span><a id="line.1256">                printToStream(x, strm);</a>
-<span class="sourceLineNo">1257</span><a id="line.1257">                return bas.toString();</a>
-<span class="sourceLineNo">1258</span><a id="line.1258">        }</a>
-<span class="sourceLineNo">1259</span><a id="line.1259">        </a>
-<span class="sourceLineNo">1260</span><a id="line.1260">        public static String toString(float[] x) {</a>
-<span class="sourceLineNo">1261</span><a id="line.1261">                ByteArrayOutputStream bas = new ByteArrayOutputStream();</a>
-<span class="sourceLineNo">1262</span><a id="line.1262">                PrintStream strm = new PrintStream(bas);</a>
-<span class="sourceLineNo">1263</span><a id="line.1263">                printToStream(x, strm);</a>
-<span class="sourceLineNo">1264</span><a id="line.1264">                return bas.toString();</a>
+<span class="sourceLineNo">1253</span><a id="line.1253">        /**</a>
+<span class="sourceLineNo">1254</span><a id="line.1254">         * Calculates and returns the inverse of the given matrix, which</a>
+<span class="sourceLineNo">1255</span><a id="line.1255">         * must be square. Exceptions are thrown if the supplied matrix is</a>
+<span class="sourceLineNo">1256</span><a id="line.1256">         * not square or ill-conditioned (singular).</a>
+<span class="sourceLineNo">1257</span><a id="line.1257">         * @param A a square matrix</a>
+<span class="sourceLineNo">1258</span><a id="line.1258">         * @return the inverse matrix</a>
+<span class="sourceLineNo">1259</span><a id="line.1259">         */</a>
+<span class="sourceLineNo">1260</span><a id="line.1260">        public static float[][] inverse(final float[][] A) throws NonsquareMatrixException {</a>
+<span class="sourceLineNo">1261</span><a id="line.1261">                if (!isSquare(A))</a>
+<span class="sourceLineNo">1262</span><a id="line.1262">                        throw new NonsquareMatrixException();</a>
+<span class="sourceLineNo">1263</span><a id="line.1263">                double[][] Ad = toDouble(A);</a>
+<span class="sourceLineNo">1264</span><a id="line.1264">                return toFloat(inverse(Ad));</a>
 <span class="sourceLineNo">1265</span><a id="line.1265">        }</a>
-<span class="sourceLineNo">1266</span><a id="line.1266">        </a>
-<span class="sourceLineNo">1267</span><a id="line.1267">        public static String toString(double[][] A) {</a>
-<span class="sourceLineNo">1268</span><a id="line.1268">                ByteArrayOutputStream bas = new ByteArrayOutputStream();</a>
-<span class="sourceLineNo">1269</span><a id="line.1269">                PrintStream strm = new PrintStream(bas);</a>
-<span class="sourceLineNo">1270</span><a id="line.1270">                printToStream(A, strm);</a>
-<span class="sourceLineNo">1271</span><a id="line.1271">                return bas.toString();</a>
-<span class="sourceLineNo">1272</span><a id="line.1272">        }</a>
-<span class="sourceLineNo">1273</span><a id="line.1273">        </a>
-<span class="sourceLineNo">1274</span><a id="line.1274">        public static String toString(float[][] A) {</a>
-<span class="sourceLineNo">1275</span><a id="line.1275">                ByteArrayOutputStream bas = new ByteArrayOutputStream();</a>
-<span class="sourceLineNo">1276</span><a id="line.1276">                PrintStream strm = new PrintStream(bas);</a>
-<span class="sourceLineNo">1277</span><a id="line.1277">                printToStream(A, strm);</a>
-<span class="sourceLineNo">1278</span><a id="line.1278">                return bas.toString();</a>
-<span class="sourceLineNo">1279</span><a id="line.1279">        }</a>
-<span class="sourceLineNo">1280</span><a id="line.1280">        </a>
-<span class="sourceLineNo">1281</span><a id="line.1281">        // --------------------</a>
-<span class="sourceLineNo">1282</span><a id="line.1282">        </a>
-<span class="sourceLineNo">1283</span><a id="line.1283">        public static void printToStream(double[] x, PrintStream strm) {</a>
-<span class="sourceLineNo">1284</span><a id="line.1284">                String fStr = PrintPrecision.getFormatStringFloat();</a>
-<span class="sourceLineNo">1285</span><a id="line.1285">                strm.format("%c", LeftDelimitChar);</a>
-<span class="sourceLineNo">1286</span><a id="line.1286">                for (int i = 0; i &lt; x.length; i++) {</a>
-<span class="sourceLineNo">1287</span><a id="line.1287">                        if (i &gt; 0)</a>
-<span class="sourceLineNo">1288</span><a id="line.1288">                                strm.format("%c ", SeparationChar);</a>
-<span class="sourceLineNo">1289</span><a id="line.1289">                        strm.format(PrintLocale, fStr, x[i]);</a>
-<span class="sourceLineNo">1290</span><a id="line.1290">                }</a>
-<span class="sourceLineNo">1291</span><a id="line.1291">                strm.format("%c", RightDelimitChar);</a>
-<span class="sourceLineNo">1292</span><a id="line.1292">                strm.flush();</a>
-<span class="sourceLineNo">1293</span><a id="line.1293">        }</a>
-<span class="sourceLineNo">1294</span><a id="line.1294">        </a>
-<span class="sourceLineNo">1295</span><a id="line.1295">        public static void printToStream(double[][] A, PrintStream strm) {</a>
-<span class="sourceLineNo">1296</span><a id="line.1296">                String fStr = PrintPrecision.getFormatStringFloat();</a>
-<span class="sourceLineNo">1297</span><a id="line.1297">                strm.format("%c", LeftDelimitChar);</a>
-<span class="sourceLineNo">1298</span><a id="line.1298">                for (int i=0; i&lt; A.length; i++) {</a>
-<span class="sourceLineNo">1299</span><a id="line.1299">                        if (i == 0)</a>
-<span class="sourceLineNo">1300</span><a id="line.1300">                                strm.format("%c", LeftDelimitChar);</a>
-<span class="sourceLineNo">1301</span><a id="line.1301">                        else</a>
-<span class="sourceLineNo">1302</span><a id="line.1302">                                strm.format("%c \n%c", SeparationChar, LeftDelimitChar);</a>
-<span class="sourceLineNo">1303</span><a id="line.1303">                        for (int j=0; j&lt; A[i].length; j++) {</a>
-<span class="sourceLineNo">1304</span><a id="line.1304">                                if (j == 0) </a>
-<span class="sourceLineNo">1305</span><a id="line.1305">                                        strm.format(PrintLocale, fStr, A[i][j]);</a>
-<span class="sourceLineNo">1306</span><a id="line.1306">                                else</a>
-<span class="sourceLineNo">1307</span><a id="line.1307">                                        strm.format(PrintLocale, "%c " + fStr, SeparationChar, A[i][j]);</a>
-<span class="sourceLineNo">1308</span><a id="line.1308">                        }</a>
-<span class="sourceLineNo">1309</span><a id="line.1309">                        strm.format("%c", RightDelimitChar);</a>
-<span class="sourceLineNo">1310</span><a id="line.1310">                }</a>
-<span class="sourceLineNo">1311</span><a id="line.1311">                strm.format("%c", RightDelimitChar);</a>
-<span class="sourceLineNo">1312</span><a id="line.1312">                strm.flush();</a>
-<span class="sourceLineNo">1313</span><a id="line.1313">        }</a>
-<span class="sourceLineNo">1314</span><a id="line.1314">        </a>
-<span class="sourceLineNo">1315</span><a id="line.1315">        public static void printToStream(float[] A, PrintStream strm) {</a>
-<span class="sourceLineNo">1316</span><a id="line.1316">                String fStr = PrintPrecision.getFormatStringFloat();</a>
-<span class="sourceLineNo">1317</span><a id="line.1317">                strm.format("%c", LeftDelimitChar);</a>
-<span class="sourceLineNo">1318</span><a id="line.1318">                for (int i = 0; i &lt; A.length; i++) {</a>
-<span class="sourceLineNo">1319</span><a id="line.1319">                        if (i &gt; 0)</a>
-<span class="sourceLineNo">1320</span><a id="line.1320">                                strm.format("%c ", SeparationChar);</a>
-<span class="sourceLineNo">1321</span><a id="line.1321">                        strm.format(PrintLocale, fStr, A[i]);</a>
-<span class="sourceLineNo">1322</span><a id="line.1322">                }</a>
-<span class="sourceLineNo">1323</span><a id="line.1323">                strm.format("%c", RightDelimitChar);</a>
-<span class="sourceLineNo">1324</span><a id="line.1324">                strm.flush();</a>
-<span class="sourceLineNo">1325</span><a id="line.1325">        }</a>
-<span class="sourceLineNo">1326</span><a id="line.1326">        </a>
-<span class="sourceLineNo">1327</span><a id="line.1327">        public static void printToStream(float[][] A, PrintStream strm) {</a>
-<span class="sourceLineNo">1328</span><a id="line.1328">                String fStr = PrintPrecision.getFormatStringFloat();</a>
-<span class="sourceLineNo">1329</span><a id="line.1329">                strm.format("%c", LeftDelimitChar);</a>
-<span class="sourceLineNo">1330</span><a id="line.1330">                for (int i=0; i&lt; A.length; i++) {</a>
-<span class="sourceLineNo">1331</span><a id="line.1331">                        if (i == 0)</a>
-<span class="sourceLineNo">1332</span><a id="line.1332">                                strm.format("%c", LeftDelimitChar);</a>
-<span class="sourceLineNo">1333</span><a id="line.1333">                        else</a>
-<span class="sourceLineNo">1334</span><a id="line.1334">                                strm.format("%c \n%c", SeparationChar, LeftDelimitChar);</a>
-<span class="sourceLineNo">1335</span><a id="line.1335">                        for (int j = 0; j &lt; A[i].length; j++) {</a>
-<span class="sourceLineNo">1336</span><a id="line.1336">                                if (j == 0) </a>
-<span class="sourceLineNo">1337</span><a id="line.1337">                                        strm.format(PrintLocale, fStr, A[i][j]);</a>
-<span class="sourceLineNo">1338</span><a id="line.1338">                                else</a>
-<span class="sourceLineNo">1339</span><a id="line.1339">                                        strm.format(PrintLocale, "%c " + fStr, SeparationChar, A[i][j]);</a>
-<span class="sourceLineNo">1340</span><a id="line.1340">                        }</a>
-<span class="sourceLineNo">1341</span><a id="line.1341">                        strm.format("%c", RightDelimitChar);</a>
-<span class="sourceLineNo">1342</span><a id="line.1342">                }</a>
-<span class="sourceLineNo">1343</span><a id="line.1343">                strm.format("%c", RightDelimitChar);</a>
-<span class="sourceLineNo">1344</span><a id="line.1344">                strm.flush();</a>
-<span class="sourceLineNo">1345</span><a id="line.1345">        }</a>
-<span class="sourceLineNo">1346</span><a id="line.1346"></a>
-<span class="sourceLineNo">1347</span><a id="line.1347">        // Exceptions ---------------------</a>
-<span class="sourceLineNo">1348</span><a id="line.1348">        </a>
-<span class="sourceLineNo">1349</span><a id="line.1349">        public static class IncompatibleDimensionsException extends RuntimeException {</a>
-<span class="sourceLineNo">1350</span><a id="line.1350">                private static final long serialVersionUID = 1L;</a>
-<span class="sourceLineNo">1351</span><a id="line.1351">                </a>
-<span class="sourceLineNo">1352</span><a id="line.1352">                public IncompatibleDimensionsException() {</a>
-<span class="sourceLineNo">1353</span><a id="line.1353">                        super("incompatible matrix-vector dimensions");</a>
-<span class="sourceLineNo">1354</span><a id="line.1354">                }</a>
-<span class="sourceLineNo">1355</span><a id="line.1355">        }</a>
-<span class="sourceLineNo">1356</span><a id="line.1356">        </a>
-<span class="sourceLineNo">1357</span><a id="line.1357">        public static class NonsquareMatrixException extends RuntimeException {</a>
-<span class="sourceLineNo">1358</span><a id="line.1358">                private static final long serialVersionUID = 1L;</a>
-<span class="sourceLineNo">1359</span><a id="line.1359">                </a>
-<span class="sourceLineNo">1360</span><a id="line.1360">                public NonsquareMatrixException() {</a>
-<span class="sourceLineNo">1361</span><a id="line.1361">                        super("square matrix expected");</a>
-<span class="sourceLineNo">1362</span><a id="line.1362">                }</a>
-<span class="sourceLineNo">1363</span><a id="line.1363">        }</a>
-<span class="sourceLineNo">1364</span><a id="line.1364">        </a>
-<span class="sourceLineNo">1365</span><a id="line.1365">        public static class SameSourceTargetException extends RuntimeException {</a>
-<span class="sourceLineNo">1366</span><a id="line.1366">                private static final long serialVersionUID = 1L;</a>
-<span class="sourceLineNo">1367</span><a id="line.1367">                </a>
-<span class="sourceLineNo">1368</span><a id="line.1368">                public SameSourceTargetException() {</a>
-<span class="sourceLineNo">1369</span><a id="line.1369">                        super("source and target must not be the same");</a>
-<span class="sourceLineNo">1370</span><a id="line.1370">                }</a>
-<span class="sourceLineNo">1371</span><a id="line.1371">        }</a>
-<span class="sourceLineNo">1372</span><a id="line.1372">        </a>
-<span class="sourceLineNo">1373</span><a id="line.1373">        public static class ZeroLengthVectorException extends RuntimeException {</a>
-<span class="sourceLineNo">1374</span><a id="line.1374">                private static final long serialVersionUID = 1L;</a>
-<span class="sourceLineNo">1375</span><a id="line.1375">                </a>
-<span class="sourceLineNo">1376</span><a id="line.1376">                public ZeroLengthVectorException() {</a>
-<span class="sourceLineNo">1377</span><a id="line.1377">                        super("vector length must be greater that 0");</a>
-<span class="sourceLineNo">1378</span><a id="line.1378">                }</a>
-<span class="sourceLineNo">1379</span><a id="line.1379">        }</a>
-<span class="sourceLineNo">1380</span><a id="line.1380">        </a>
-<span class="sourceLineNo">1381</span><a id="line.1381">//      public static void main(String[] args) {</a>
-<span class="sourceLineNo">1382</span><a id="line.1382">//              double s = Double.NaN;</a>
-<span class="sourceLineNo">1383</span><a id="line.1383">//              s = -1.0 / 1E-200; // / 1E-200;</a>
-<span class="sourceLineNo">1384</span><a id="line.1384">//              System.out.println(Double.isFinite(s));</a>
-<span class="sourceLineNo">1385</span><a id="line.1385">//              </a>
-<span class="sourceLineNo">1386</span><a id="line.1386">//      }</a>
-<span class="sourceLineNo">1387</span><a id="line.1387"></a>
-<span class="sourceLineNo">1388</span><a id="line.1388">}</a>
+<span class="sourceLineNo">1266</span><a id="line.1266"></a>
+<span class="sourceLineNo">1267</span><a id="line.1267">        // ------------------------------------------------------------------------</a>
+<span class="sourceLineNo">1268</span><a id="line.1268">        </a>
+<span class="sourceLineNo">1269</span><a id="line.1269">        /**</a>
+<span class="sourceLineNo">1270</span><a id="line.1270">         * Finds the exact solution x for the linear systems of equations</a>
+<span class="sourceLineNo">1271</span><a id="line.1271">         * A * x = b. Exceptions are thrown if the supplied matrix is</a>
+<span class="sourceLineNo">1272</span><a id="line.1272">         * not square or ill-conditioned (singular).</a>
+<span class="sourceLineNo">1273</span><a id="line.1273">         * @param A a square matrix of size n x n</a>
+<span class="sourceLineNo">1274</span><a id="line.1274">         * @param b a vector of length n</a>
+<span class="sourceLineNo">1275</span><a id="line.1275">         * @return the solution vector of length n</a>
+<span class="sourceLineNo">1276</span><a id="line.1276">         */</a>
+<span class="sourceLineNo">1277</span><a id="line.1277">        public static double[] solve(final double[][] A, double[] b) {</a>
+<span class="sourceLineNo">1278</span><a id="line.1278">                RealMatrix AA = MatrixUtils.createRealMatrix(A);</a>
+<span class="sourceLineNo">1279</span><a id="line.1279">                RealVector bb = MatrixUtils.createRealVector(b);</a>
+<span class="sourceLineNo">1280</span><a id="line.1280">                DecompositionSolver solver = new LUDecomposition(AA).getSolver();</a>
+<span class="sourceLineNo">1281</span><a id="line.1281">//              double[] x = null;</a>
+<span class="sourceLineNo">1282</span><a id="line.1282">//              try {</a>
+<span class="sourceLineNo">1283</span><a id="line.1283">//                      x = solver.solve(bb).toArray();</a>
+<span class="sourceLineNo">1284</span><a id="line.1284">//              } catch (SingularMatrixException e) {}</a>
+<span class="sourceLineNo">1285</span><a id="line.1285">                return solver.solve(bb).toArray();</a>
+<span class="sourceLineNo">1286</span><a id="line.1286">        }</a>
+<span class="sourceLineNo">1287</span><a id="line.1287">        </a>
+<span class="sourceLineNo">1288</span><a id="line.1288">        // Output to strings and streams ------------------------------------------</a>
+<span class="sourceLineNo">1289</span><a id="line.1289">        </a>
+<span class="sourceLineNo">1290</span><a id="line.1290">        public static String toString(double[] x) {</a>
+<span class="sourceLineNo">1291</span><a id="line.1291">                ByteArrayOutputStream bas = new ByteArrayOutputStream();</a>
+<span class="sourceLineNo">1292</span><a id="line.1292">                PrintStream strm = new PrintStream(bas);</a>
+<span class="sourceLineNo">1293</span><a id="line.1293">                printToStream(x, strm);</a>
+<span class="sourceLineNo">1294</span><a id="line.1294">                return bas.toString();</a>
+<span class="sourceLineNo">1295</span><a id="line.1295">        }</a>
+<span class="sourceLineNo">1296</span><a id="line.1296">        </a>
+<span class="sourceLineNo">1297</span><a id="line.1297">        public static String toString(float[] x) {</a>
+<span class="sourceLineNo">1298</span><a id="line.1298">                ByteArrayOutputStream bas = new ByteArrayOutputStream();</a>
+<span class="sourceLineNo">1299</span><a id="line.1299">                PrintStream strm = new PrintStream(bas);</a>
+<span class="sourceLineNo">1300</span><a id="line.1300">                printToStream(x, strm);</a>
+<span class="sourceLineNo">1301</span><a id="line.1301">                return bas.toString();</a>
+<span class="sourceLineNo">1302</span><a id="line.1302">        }</a>
+<span class="sourceLineNo">1303</span><a id="line.1303">        </a>
+<span class="sourceLineNo">1304</span><a id="line.1304">        public static String toString(double[][] A) {</a>
+<span class="sourceLineNo">1305</span><a id="line.1305">                ByteArrayOutputStream bas = new ByteArrayOutputStream();</a>
+<span class="sourceLineNo">1306</span><a id="line.1306">                PrintStream strm = new PrintStream(bas);</a>
+<span class="sourceLineNo">1307</span><a id="line.1307">                printToStream(A, strm);</a>
+<span class="sourceLineNo">1308</span><a id="line.1308">                return bas.toString();</a>
+<span class="sourceLineNo">1309</span><a id="line.1309">        }</a>
+<span class="sourceLineNo">1310</span><a id="line.1310">        </a>
+<span class="sourceLineNo">1311</span><a id="line.1311">        public static String toString(float[][] A) {</a>
+<span class="sourceLineNo">1312</span><a id="line.1312">                ByteArrayOutputStream bas = new ByteArrayOutputStream();</a>
+<span class="sourceLineNo">1313</span><a id="line.1313">                PrintStream strm = new PrintStream(bas);</a>
+<span class="sourceLineNo">1314</span><a id="line.1314">                printToStream(A, strm);</a>
+<span class="sourceLineNo">1315</span><a id="line.1315">                return bas.toString();</a>
+<span class="sourceLineNo">1316</span><a id="line.1316">        }</a>
+<span class="sourceLineNo">1317</span><a id="line.1317">        </a>
+<span class="sourceLineNo">1318</span><a id="line.1318">        // --------------------</a>
+<span class="sourceLineNo">1319</span><a id="line.1319">        </a>
+<span class="sourceLineNo">1320</span><a id="line.1320">        public static void printToStream(double[] x, PrintStream strm) {</a>
+<span class="sourceLineNo">1321</span><a id="line.1321">                String fStr = PrintPrecision.getFormatStringFloat();</a>
+<span class="sourceLineNo">1322</span><a id="line.1322">                strm.format("%c", LeftDelimitChar);</a>
+<span class="sourceLineNo">1323</span><a id="line.1323">                for (int i = 0; i &lt; x.length; i++) {</a>
+<span class="sourceLineNo">1324</span><a id="line.1324">                        if (i &gt; 0)</a>
+<span class="sourceLineNo">1325</span><a id="line.1325">                                strm.format("%c ", SeparationChar);</a>
+<span class="sourceLineNo">1326</span><a id="line.1326">                        strm.format(PrintLocale, fStr, x[i]);</a>
+<span class="sourceLineNo">1327</span><a id="line.1327">                }</a>
+<span class="sourceLineNo">1328</span><a id="line.1328">                strm.format("%c", RightDelimitChar);</a>
+<span class="sourceLineNo">1329</span><a id="line.1329">                strm.flush();</a>
+<span class="sourceLineNo">1330</span><a id="line.1330">        }</a>
+<span class="sourceLineNo">1331</span><a id="line.1331">        </a>
+<span class="sourceLineNo">1332</span><a id="line.1332">        public static void printToStream(double[][] A, PrintStream strm) {</a>
+<span class="sourceLineNo">1333</span><a id="line.1333">                String fStr = PrintPrecision.getFormatStringFloat();</a>
+<span class="sourceLineNo">1334</span><a id="line.1334">                strm.format("%c", LeftDelimitChar);</a>
+<span class="sourceLineNo">1335</span><a id="line.1335">                for (int i=0; i&lt; A.length; i++) {</a>
+<span class="sourceLineNo">1336</span><a id="line.1336">                        if (i == 0)</a>
+<span class="sourceLineNo">1337</span><a id="line.1337">                                strm.format("%c", LeftDelimitChar);</a>
+<span class="sourceLineNo">1338</span><a id="line.1338">                        else</a>
+<span class="sourceLineNo">1339</span><a id="line.1339">                                strm.format("%c \n%c", SeparationChar, LeftDelimitChar);</a>
+<span class="sourceLineNo">1340</span><a id="line.1340">                        for (int j=0; j&lt; A[i].length; j++) {</a>
+<span class="sourceLineNo">1341</span><a id="line.1341">                                if (j == 0) </a>
+<span class="sourceLineNo">1342</span><a id="line.1342">                                        strm.format(PrintLocale, fStr, A[i][j]);</a>
+<span class="sourceLineNo">1343</span><a id="line.1343">                                else</a>
+<span class="sourceLineNo">1344</span><a id="line.1344">                                        strm.format(PrintLocale, "%c " + fStr, SeparationChar, A[i][j]);</a>
+<span class="sourceLineNo">1345</span><a id="line.1345">                        }</a>
+<span class="sourceLineNo">1346</span><a id="line.1346">                        strm.format("%c", RightDelimitChar);</a>
+<span class="sourceLineNo">1347</span><a id="line.1347">                }</a>
+<span class="sourceLineNo">1348</span><a id="line.1348">                strm.format("%c", RightDelimitChar);</a>
+<span class="sourceLineNo">1349</span><a id="line.1349">                strm.flush();</a>
+<span class="sourceLineNo">1350</span><a id="line.1350">        }</a>
+<span class="sourceLineNo">1351</span><a id="line.1351">        </a>
+<span class="sourceLineNo">1352</span><a id="line.1352">        public static void printToStream(float[] A, PrintStream strm) {</a>
+<span class="sourceLineNo">1353</span><a id="line.1353">                String fStr = PrintPrecision.getFormatStringFloat();</a>
+<span class="sourceLineNo">1354</span><a id="line.1354">                strm.format("%c", LeftDelimitChar);</a>
+<span class="sourceLineNo">1355</span><a id="line.1355">                for (int i = 0; i &lt; A.length; i++) {</a>
+<span class="sourceLineNo">1356</span><a id="line.1356">                        if (i &gt; 0)</a>
+<span class="sourceLineNo">1357</span><a id="line.1357">                                strm.format("%c ", SeparationChar);</a>
+<span class="sourceLineNo">1358</span><a id="line.1358">                        strm.format(PrintLocale, fStr, A[i]);</a>
+<span class="sourceLineNo">1359</span><a id="line.1359">                }</a>
+<span class="sourceLineNo">1360</span><a id="line.1360">                strm.format("%c", RightDelimitChar);</a>
+<span class="sourceLineNo">1361</span><a id="line.1361">                strm.flush();</a>
+<span class="sourceLineNo">1362</span><a id="line.1362">        }</a>
+<span class="sourceLineNo">1363</span><a id="line.1363">        </a>
+<span class="sourceLineNo">1364</span><a id="line.1364">        public static void printToStream(float[][] A, PrintStream strm) {</a>
+<span class="sourceLineNo">1365</span><a id="line.1365">                String fStr = PrintPrecision.getFormatStringFloat();</a>
+<span class="sourceLineNo">1366</span><a id="line.1366">                strm.format("%c", LeftDelimitChar);</a>
+<span class="sourceLineNo">1367</span><a id="line.1367">                for (int i=0; i&lt; A.length; i++) {</a>
+<span class="sourceLineNo">1368</span><a id="line.1368">                        if (i == 0)</a>
+<span class="sourceLineNo">1369</span><a id="line.1369">                                strm.format("%c", LeftDelimitChar);</a>
+<span class="sourceLineNo">1370</span><a id="line.1370">                        else</a>
+<span class="sourceLineNo">1371</span><a id="line.1371">                                strm.format("%c \n%c", SeparationChar, LeftDelimitChar);</a>
+<span class="sourceLineNo">1372</span><a id="line.1372">                        for (int j = 0; j &lt; A[i].length; j++) {</a>
+<span class="sourceLineNo">1373</span><a id="line.1373">                                if (j == 0) </a>
+<span class="sourceLineNo">1374</span><a id="line.1374">                                        strm.format(PrintLocale, fStr, A[i][j]);</a>
+<span class="sourceLineNo">1375</span><a id="line.1375">                                else</a>
+<span class="sourceLineNo">1376</span><a id="line.1376">                                        strm.format(PrintLocale, "%c " + fStr, SeparationChar, A[i][j]);</a>
+<span class="sourceLineNo">1377</span><a id="line.1377">                        }</a>
+<span class="sourceLineNo">1378</span><a id="line.1378">                        strm.format("%c", RightDelimitChar);</a>
+<span class="sourceLineNo">1379</span><a id="line.1379">                }</a>
+<span class="sourceLineNo">1380</span><a id="line.1380">                strm.format("%c", RightDelimitChar);</a>
+<span class="sourceLineNo">1381</span><a id="line.1381">                strm.flush();</a>
+<span class="sourceLineNo">1382</span><a id="line.1382">        }</a>
+<span class="sourceLineNo">1383</span><a id="line.1383"></a>
+<span class="sourceLineNo">1384</span><a id="line.1384">        // Exceptions ---------------------</a>
+<span class="sourceLineNo">1385</span><a id="line.1385">        </a>
+<span class="sourceLineNo">1386</span><a id="line.1386">        public static class IncompatibleDimensionsException extends RuntimeException {</a>
+<span class="sourceLineNo">1387</span><a id="line.1387">                private static final long serialVersionUID = 1L;</a>
+<span class="sourceLineNo">1388</span><a id="line.1388">                </a>
+<span class="sourceLineNo">1389</span><a id="line.1389">                public IncompatibleDimensionsException() {</a>
+<span class="sourceLineNo">1390</span><a id="line.1390">                        super("incompatible matrix-vector dimensions");</a>
+<span class="sourceLineNo">1391</span><a id="line.1391">                }</a>
+<span class="sourceLineNo">1392</span><a id="line.1392">        }</a>
+<span class="sourceLineNo">1393</span><a id="line.1393">        </a>
+<span class="sourceLineNo">1394</span><a id="line.1394">        public static class NonsquareMatrixException extends RuntimeException {</a>
+<span class="sourceLineNo">1395</span><a id="line.1395">                private static final long serialVersionUID = 1L;</a>
+<span class="sourceLineNo">1396</span><a id="line.1396">                </a>
+<span class="sourceLineNo">1397</span><a id="line.1397">                public NonsquareMatrixException() {</a>
+<span class="sourceLineNo">1398</span><a id="line.1398">                        super("square matrix expected");</a>
+<span class="sourceLineNo">1399</span><a id="line.1399">                }</a>
+<span class="sourceLineNo">1400</span><a id="line.1400">        }</a>
+<span class="sourceLineNo">1401</span><a id="line.1401">        </a>
+<span class="sourceLineNo">1402</span><a id="line.1402">        public static class SameSourceTargetException extends RuntimeException {</a>
+<span class="sourceLineNo">1403</span><a id="line.1403">                private static final long serialVersionUID = 1L;</a>
+<span class="sourceLineNo">1404</span><a id="line.1404">                </a>
+<span class="sourceLineNo">1405</span><a id="line.1405">                public SameSourceTargetException() {</a>
+<span class="sourceLineNo">1406</span><a id="line.1406">                        super("source and target must not be the same");</a>
+<span class="sourceLineNo">1407</span><a id="line.1407">                }</a>
+<span class="sourceLineNo">1408</span><a id="line.1408">        }</a>
+<span class="sourceLineNo">1409</span><a id="line.1409">        </a>
+<span class="sourceLineNo">1410</span><a id="line.1410">        public static class ZeroLengthVectorException extends RuntimeException {</a>
+<span class="sourceLineNo">1411</span><a id="line.1411">                private static final long serialVersionUID = 1L;</a>
+<span class="sourceLineNo">1412</span><a id="line.1412">                </a>
+<span class="sourceLineNo">1413</span><a id="line.1413">                public ZeroLengthVectorException() {</a>
+<span class="sourceLineNo">1414</span><a id="line.1414">                        super("vector length must be greater that 0");</a>
+<span class="sourceLineNo">1415</span><a id="line.1415">                }</a>
+<span class="sourceLineNo">1416</span><a id="line.1416">        }</a>
+<span class="sourceLineNo">1417</span><a id="line.1417">        </a>
+<span class="sourceLineNo">1418</span><a id="line.1418">//      public static void main(String[] args) {</a>
+<span class="sourceLineNo">1419</span><a id="line.1419">//              double s = Double.NaN;</a>
+<span class="sourceLineNo">1420</span><a id="line.1420">//              s = -1.0 / 1E-200; // / 1E-200;</a>
+<span class="sourceLineNo">1421</span><a id="line.1421">//              System.out.println(Double.isFinite(s));</a>
+<span class="sourceLineNo">1422</span><a id="line.1422">//              </a>
+<span class="sourceLineNo">1423</span><a id="line.1423">//      }</a>
+<span class="sourceLineNo">1424</span><a id="line.1424"></a>
+<span class="sourceLineNo">1425</span><a id="line.1425">}</a>
 
 
 

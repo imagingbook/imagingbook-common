@@ -185,9 +185,9 @@
 <span class="sourceLineNo">175</span><a id="line.175">                                float mag = (float) Math.sqrt(es.getEigenvalues()[0]);</a>
 <span class="sourceLineNo">176</span><a id="line.176">                                Emag.setf(u, v, mag);</a>
 <span class="sourceLineNo">177</span><a id="line.177">                                </a>
-<span class="sourceLineNo">178</span><a id="line.178">                                double[] eVecs = es.getEigenvectors()[0];</a>
-<span class="sourceLineNo">179</span><a id="line.179">                                Ex.setf(u, v, (float) eVecs[0]);</a>
-<span class="sourceLineNo">180</span><a id="line.180">                                Ey.setf(u, v, (float) eVecs[1]);</a>
+<span class="sourceLineNo">178</span><a id="line.178">                                double[] eVec1 = es.getEigenvector(0);</a>
+<span class="sourceLineNo">179</span><a id="line.179">                                Ex.setf(u, v, (float) eVec1[0]);</a>
+<span class="sourceLineNo">180</span><a id="line.180">                                Ey.setf(u, v, (float) eVec1[1]);</a>
 <span class="sourceLineNo">181</span><a id="line.181">                        }</a>
 <span class="sourceLineNo">182</span><a id="line.182">                }</a>
 <span class="sourceLineNo">183</span><a id="line.183">                // normalize gradient magnitude </a>

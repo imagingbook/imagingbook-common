@@ -134,22 +134,13 @@ public class BitMap {
 		return this.bitvec;
 	}
 	
-	// static methods (could be placed in some abstract class) --------------------------------------------------
+	// static methods --------------------------------------------------
 	
-	/**
-	 * 
-	 * @param bp
-	 * @return
-	 */
 	public static BitMap from(ByteProcessor bp) {
 		return new BitMap(bp.getWidth(), bp.getHeight(), (byte[]) bp.getPixels());
 	}
 	
-	/**
-	 * 
-	 * @param bitmap
-	 * @return
-	 */
+
 	public static ByteProcessor toByteProcessor(BitMap bitmap) {
 		byte[] pixels = BitVector.toByteArray(bitmap.getBitVector());
 		return new ByteProcessor(bitmap.width, bitmap.height, pixels);

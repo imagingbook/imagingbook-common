@@ -43,13 +43,13 @@ imagingbook.pub.geometry.lines
 imagingbook.pub.geometry.mappings
 imagingbook.pub.geometry.mappings.linear
 imagingbook.pub.geometry.mappings.nonlinear
+imagingbook.pub.geometry.moments
 imagingbook.pub.histogram
 imagingbook.pub.hough
 imagingbook.pub.hough.lines
 imagingbook.pub.lucaskanade
 imagingbook.pub.lucaskanade.utils
 imagingbook.pub.matching
-imagingbook.pub.moments
 imagingbook.pub.morphology
 imagingbook.pub.noise.hashing
 imagingbook.pub.noise.perlin

@@ -37,7 +37,7 @@ package imagingbook.lib.math;
  * @author W. Burger
  * @version 2020-02-09
  */
-public class Eigensolver2x2 implements Eigensolver {
+public class Eigensolver2x2 implements RealEigensolver {
 	
 	private final boolean isReal;
 	private final double[] eVals = {Double.NaN, Double.NaN};
