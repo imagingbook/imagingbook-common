@@ -9,8 +9,6 @@
 
 package imagingbook.lib.math;
 
-//import imagingbook.lib.math.Matrix;
-//import imagingbook.lib.settings.PrintPrecision;
 
 /**
  * Implements an efficient, closed form algorithm for calculating the real 
@@ -35,7 +33,7 @@ package imagingbook.lib.math;
  * </p>
  * 
  * @author W. Burger
- * @version 2020-02-09
+ * @version 2021-04-21
  */
 public class Eigensolver2x2 implements RealEigensolver {
 	
@@ -63,6 +61,11 @@ public class Eigensolver2x2 implements RealEigensolver {
 	 */
 	public Eigensolver2x2(double A, double B, double C, double D) {
 		this.isReal = this.solve(A, B, C, D);
+	}
+	
+	@Override
+	public int getSize() {
+		return 2;
 	}
 	
 	private boolean solve(double A, double B, double C, double D) {
@@ -182,7 +185,7 @@ public class Eigensolver2x2 implements RealEigensolver {
 	 * Note that the method returns a reference to an internal
 	 * array and thus results should be used read-only!
 	 * @param k index (0 or 1)
-	 * @return the kth eigenvector
+	 * @return the k-th eigenvector
 	 */
 	@Override
 	public double[] getEigenvector(int k) {
