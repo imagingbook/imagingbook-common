@@ -7,7 +7,7 @@ import org.junit.Test;
 
 import imagingbook.lib.util.ResourceLocation;
 
-public class IccProfilesTest {
+public class IccProfilesResourceTest {
 	
 	private ResourceLocation loc = new imagingbook.lib.color.DATA.iccProfiles.Resources();
 

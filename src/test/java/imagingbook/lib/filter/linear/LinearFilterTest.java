@@ -1,4 +1,4 @@
-package imagingbook.lib.filters;
+package imagingbook.lib.filter.linear;
 
 import static org.junit.Assert.assertTrue;
 

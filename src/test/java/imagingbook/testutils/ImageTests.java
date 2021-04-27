@@ -79,6 +79,7 @@ public class ImageTests {
 				Arrays.toString(rgb1), Arrays.toString(rgb2));
 	}
 	
+	@SuppressWarnings("unused")
 	private static String msgInt(int u, int v, int v1, int v2) {
 		return String.format(Locale.US, "different pixel values at pos. (%d, %d) : %d vs. %d", u, v, v1, v2);
 	}
