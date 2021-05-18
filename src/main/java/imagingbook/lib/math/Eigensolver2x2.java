@@ -24,7 +24,8 @@ package imagingbook.lib.math;
  * such that M&middot;x<sub>k</sub> = &lambda;<sub>k</sub>&middot;x<sub>k</sub>.
  * The resulting eigensystems are ordered such that
  * |&lambda;<sub>1</sub> &geq; |&lambda;<sub>2</sub>|.
- * Eigenvectors are not normalized (i.e., no unit vectors).
+ * Eigenvectors are not normalized (i.e., no unit vectors), noting that
+ * any scalar multiple of an Eigenvector is an Eigenvector too.
  * </p>
  * <p>
  * This implementation is inspired by Blinn, Jim: "Jim Blinn's Corner: 
@@ -53,6 +54,9 @@ public class Eigensolver2x2 implements RealEigensolver { // to check: http://www
 	 */
 	public Eigensolver2x2(double[][] M) {
 		this(M[0][0], M[0][1], M[1][0], M[1][1]);
+		if (Matrix.getNumberOfRows(M) != 2 || Matrix.getNumberOfColumns(M) != 2) {
+			throw new IllegalArgumentException("matrix not of size 2x2");
+		}
 	}
 	
 	/**

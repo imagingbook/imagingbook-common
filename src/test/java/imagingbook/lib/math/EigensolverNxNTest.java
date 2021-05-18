@@ -65,6 +65,22 @@ public class EigensolverNxNTest {
 	}
 	
 	@Test
+	public void testEigensolver2x2H() {
+		double[][] M = {
+				{0, -1},
+				{2, 0}};
+		runTest(M, false);
+	}
+	
+	@Test
+	public void testEigensolver2x2I() {
+		double[][] M = {
+				{4, -1},
+				{2, 4}};
+		runTest(M, false);
+	}
+	
+	@Test
 	public void testEigensolverNxNh() {
 		double[][] M = {
 				{5, 2, 0},
@@ -91,24 +107,19 @@ public class EigensolverNxNTest {
 
 	private void runTest(double[][] M, boolean shouldBeReal) {
 		EigensolverNxN solver = new EigensolverNxN(M);	
-		if (shouldBeReal)
+		if (shouldBeReal) {
 			assertTrue(solver.isReal());
-		else
+		}
+		else {
 			assertFalse(solver.isReal());
+			return;
+		}
 		
 		double[] eigenvals = solver.getEigenvalues();
 		
-		//System.out.println("eigenvals = " + Matrix.toString(eigenvals));
-		
-		for (int k = 0; k < eigenvals.length - 1; k++) {
-			if (Double.isNaN(eigenvals[k])) {
-				continue;
-			}
-			for (int j = k + 1; j < eigenvals.length; j++) {
-				if (!Double.isNaN(eigenvals[j])) {
-					assertTrue(Math.abs(eigenvals[k]) >= Math.abs(eigenvals[j]));
-				}
-			}
+//		System.out.format("λ1 = %.4f, λ2 = %.4f\n", eigenvals[0], eigenvals[1]);
+		for (int k = 1; k < eigenvals.length; k++) {
+			assertTrue(Math.abs(eigenvals[k-1]) >= Math.abs(eigenvals[k]));		// |λ_k-1| >= |λ_k|
 		}
 		
 		for (int k = 0; k < eigenvals.length; k++) {
@@ -118,7 +129,7 @@ public class EigensolverNxNTest {
 			//System.out.println("testing " + eigenvals[k]);
 			double lambda = eigenvals[k];
 			double[] x = solver.getEigenvector(k);
-			// check: M * x = λ * x
+			// check: M * x_k = λ_k * x_k
 			assertArrayEquals(Matrix.multiply(M, x), Matrix.multiply(lambda, x), 1E-6);
 		}
 	}
