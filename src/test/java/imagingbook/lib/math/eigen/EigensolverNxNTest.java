@@ -1,10 +1,12 @@
-package imagingbook.lib.math;
+package imagingbook.lib.math.eigen;
 
 import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+
+import java.util.Random;
 
 import org.junit.Test;
+
+import imagingbook.lib.math.Matrix;
 
 public class EigensolverNxNTest {
 
@@ -99,6 +101,27 @@ public class EigensolverNxNTest {
 		runTest(M, false);
 	}
 	
+	@Test
+	public void testRandomMatrix2x2() {
+		Random RG = new Random();
+		final int N = 1000;
+		//int cnt = 0;
+		for (int i = 0; i < N; i++) {
+			double[][] A = RealEigensolverTest.makeRandomMatrix2x2(RG);
+			RealEigensolver solver = new EigensolverNxN(A);
+			if (solver.isReal()) {
+				//cnt++;
+				double[] eigenvals = solver.getEigenvalues();
+				for (int k = 0; k < eigenvals.length; k++) {
+					double lambda = eigenvals[k];
+					double[] x = solver.getEigenvector(k);
+					assertArrayEquals(Matrix.multiply(A, x), Matrix.multiply(lambda, x), 1E-6);
+				}
+			}
+		}
+		//System.out.println("real solutions: " + cnt + " out of " + N);
+	}
+	
 	// ---------------------------------------------------------
 	
 	private void runTest(double[][] M) {
@@ -106,32 +129,8 @@ public class EigensolverNxNTest {
 	}
 
 	private void runTest(double[][] M, boolean shouldBeReal) {
-		EigensolverNxN solver = new EigensolverNxN(M);	
-		if (shouldBeReal) {
-			assertTrue(solver.isReal());
-		}
-		else {
-			assertFalse(solver.isReal());
-			return;
-		}
-		
-		double[] eigenvals = solver.getEigenvalues();
-		
-//		System.out.format("λ1 = %.4f, λ2 = %.4f\n", eigenvals[0], eigenvals[1]);
-		for (int k = 1; k < eigenvals.length; k++) {
-			assertTrue(Math.abs(eigenvals[k-1]) >= Math.abs(eigenvals[k]));		// |λ_k-1| >= |λ_k|
-		}
-		
-		for (int k = 0; k < eigenvals.length; k++) {
-			if (Double.isNaN(eigenvals[k])) {
-				continue;
-			}
-			//System.out.println("testing " + eigenvals[k]);
-			double lambda = eigenvals[k];
-			double[] x = solver.getEigenvector(k);
-			// check: M * x_k = λ_k * x_k
-			assertArrayEquals(Matrix.multiply(M, x), Matrix.multiply(lambda, x), 1E-6);
-		}
+		RealEigensolver solver = new EigensolverNxN(M);	
+		RealEigensolverTest.run(solver, M, shouldBeReal);
 	}
 
 }

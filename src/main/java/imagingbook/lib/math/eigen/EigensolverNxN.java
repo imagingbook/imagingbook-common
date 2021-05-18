@@ -1,4 +1,4 @@
-package imagingbook.lib.math;
+package imagingbook.lib.math.eigen;
 
 import static imagingbook.lib.math.Arithmetic.sqr;
 
@@ -10,6 +10,9 @@ import java.util.List;
 
 import org.apache.commons.math3.linear.EigenDecomposition;
 import org.apache.commons.math3.linear.MatrixUtils;
+
+import imagingbook.lib.math.Arithmetic;
+import imagingbook.lib.math.Matrix;
 
 /**
  * Calculates eigenvalues and eigenvectors of square matrices of arbitrary size.

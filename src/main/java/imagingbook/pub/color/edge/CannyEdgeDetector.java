@@ -20,7 +20,7 @@ import ij.process.ColorProcessor;
 import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
 import imagingbook.lib.filter.linear.GaussianKernel1D;
-import imagingbook.lib.math.Eigensolver2x2;
+import imagingbook.lib.math.eigen.Eigensolver2x2;
 
 /**
  * This class implements a Canny edge detector for grayscale and RGB images.

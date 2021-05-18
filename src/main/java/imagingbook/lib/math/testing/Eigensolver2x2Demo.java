@@ -1,7 +1,7 @@
 package imagingbook.lib.math.testing;
 
-import imagingbook.lib.math.Eigensolver2x2;
 import imagingbook.lib.math.Matrix;
+import imagingbook.lib.math.eigen.Eigensolver2x2;
 //import imagingbook.lib.math.Eigensolver2x2;
 //import imagingbook.lib.math.Matrix;
 import imagingbook.lib.settings.PrintPrecision;

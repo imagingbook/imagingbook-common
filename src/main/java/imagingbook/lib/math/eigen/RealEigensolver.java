@@ -1,4 +1,4 @@
-package imagingbook.lib.math;
+package imagingbook.lib.math.eigen;
 
 public interface RealEigensolver {
 	
