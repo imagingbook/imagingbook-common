@@ -768,6 +768,18 @@ public abstract class Matrix {
 		return (float) sum;
 	}
 	
+	// Normalize vectors
+	
+	public static double[] normalize(final double[] x) {
+		double[] xx = duplicate(x);
+		normalizeD(xx);
+		return xx;
+	}
+	
+	public static void normalizeD(final double[] x) {
+		multiplyD(1.0 / normL2(x), x);
+	}
+	
 	// Distance between vectors ---------------------------------------
 	
 	/** 
@@ -1336,6 +1348,9 @@ public abstract class Matrix {
 	// Output to strings and streams ------------------------------------------
 	
 	public static String toString(double[] x) {
+		if (x == null) {
+			return String.valueOf(x);
+		}
 		ByteArrayOutputStream bas = new ByteArrayOutputStream();
 		PrintStream strm = new PrintStream(bas);
 		printToStream(x, strm);
@@ -1343,6 +1358,9 @@ public abstract class Matrix {
 	}
 	
 	public static String toString(float[] x) {
+		if (x == null) {
+			return String.valueOf(x);
+		}
 		ByteArrayOutputStream bas = new ByteArrayOutputStream();
 		PrintStream strm = new PrintStream(bas);
 		printToStream(x, strm);
@@ -1350,6 +1368,9 @@ public abstract class Matrix {
 	}
 	
 	public static String toString(double[][] A) {
+		if (A == null) {
+			return String.valueOf(A);
+		}
 		ByteArrayOutputStream bas = new ByteArrayOutputStream();
 		PrintStream strm = new PrintStream(bas);
 		printToStream(A, strm);
@@ -1357,6 +1378,9 @@ public abstract class Matrix {
 	}
 	
 	public static String toString(float[][] A) {
+		if (A == null) {
+			return String.valueOf(A);
+		}
 		ByteArrayOutputStream bas = new ByteArrayOutputStream();
 		PrintStream strm = new PrintStream(bas);
 		printToStream(A, strm);
@@ -1463,11 +1487,11 @@ public abstract class Matrix {
 		}
 	}
 	
-//	public static void main(String[] args) {
-//		double s = Double.NaN;
-//		s = -1.0 / 1E-200; // / 1E-200;
-//		System.out.println(Double.isFinite(s));
-//		
-//	}
+	public static void main(String[] args) {
+		double s = Double.NaN;
+		s = -1.0 / 1E-200; // / 1E-200;
+		System.out.println(Double.isFinite(s));
+		System.out.println((double[]) null);
+	}
 
 }
