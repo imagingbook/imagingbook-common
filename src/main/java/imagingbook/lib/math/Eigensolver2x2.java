@@ -11,6 +11,7 @@ package imagingbook.lib.math;
 
 
 /**
+ * </p> 
  * Implements an efficient, closed form algorithm for calculating the real 
  * eigenvalues (&lambda;) and eigenvectors (x) of a 2x2 matrix M of the form
  * <pre>
@@ -21,22 +22,27 @@ package imagingbook.lib.math;
  * &lang;&lambda;<sub>1</sub>, x<sub>1</sub>&rang;,
  * &lang;&lambda;<sub>2</sub>, x<sub>2</sub>&rang;
  * such that M&middot;x<sub>k</sub> = &lambda;<sub>k</sub>&middot;x<sub>k</sub>.
+ * The resulting eigensystems are ordered such that
+ * |&lambda;<sub>1</sub> &geq; |&lambda;<sub>2</sub>|.
+ * Eigenvectors are not normalized (i.e., no unit vectors).
+ * </p>
  * <p>
  * This implementation is inspired by Blinn, Jim: "Jim Blinn's Corner: 
  * Notation, Notation, Notation", Morgan Kaufmann (2002) -
  * Ch. 5 ("Consider the Lowly 2x2 Matrix").
- * Note that Blinn uses the (common computer graphics) notation 
- * x&middot;M = &lambda;&middot;x,
+ * Note that Blinn uses the notation 
+ * x&middot;M = &lambda;&middot;x (common computer graphics),
  * while this implementation adopts the notation 
- * M&middot;x = &lambda;&middot;x, 
- * i.e., the matrix M is transposed (elements B/C are exchanged).
+ * M&middot;x = &lambda;&middot;x.
+ * Thus matrix M is transposed (elements B/C are exchanged).
  * </p>
+ * This implementation is considerably (ca. factor 5) faster than the general solution
+ * in {@link EigensolverNxN} (based on Apache Commons Math) for 2x2 matrices.
  * 
  * @author W. Burger
- * @version 2021-04-21
+ * @version 2021-05-18
  */
-public class Eigensolver2x2 implements RealEigensolver {
-	
+public class Eigensolver2x2 implements RealEigensolver { // to check: http://www.akiti.ca/Eig2Solv.html
 	private final boolean isReal;
 	private final double[] eVals = {Double.NaN, Double.NaN};
 	private final double[][] eVecs = new double[2][];
@@ -73,7 +79,12 @@ public class Eigensolver2x2 implements RealEigensolver {
 		final double S = (A - D) / 2;
 		final double rho = S * S + B * C;
 		
+//		System.out.format("S^2 = %.4f\n", S * S);
+//		System.out.format("BC = %.4f\n", B * C);
+//		System.out.format("rho = %.4f\n", rho);
+		
 		if (rho < 0) {	// no real-valued eigenvalues
+//			System.out.println("Case 0");
 			return false;
 		}
 		
@@ -81,32 +92,54 @@ public class Eigensolver2x2 implements RealEigensolver {
 		this.eVals[0] = R + T;
 		this.eVals[1] = R - T;
 		if (A - D > 0) {
+//			System.out.println("Case 1");
 			this.eVecs[0] = new double[] { S + T, C };
 			this.eVecs[1] = new double[] { B, -S - T };
 		}
 		else if (A - D < 0) {
+//			System.out.println("Case 2");  
 			this.eVecs[0] = new double[] { B, -S + T};
 			this.eVecs[1] = new double[] { S - T, C};
 		}
 		else {		// (A - D) == 0
-			
+//			System.out.println("Case 3");  
 			final double aB = Math.abs(B);
 			final double aC = Math.abs(C);
 			final double sBC = Math.sqrt(B * C);
 			if (aB < aC) {							// |B| < |C|
+//				System.out.println("Case 3A"); 
 				this.eVecs[0] = new double[] { sBC, C};
 				this.eVecs[1] = new double[] {-sBC, C};
 			}
 			else if (aB > aC) { 					// |B| > |C|
+//				System.out.println("Case 3B");
 				this.eVecs[0] = new double[] { B,  sBC};
 				this.eVecs[1] = new double[] { B, -sBC};
 			}
-			else {									// |B| == |C|
+			else {
+//				System.out.println("Case 3C");// |B| == |C|
 				this.eVecs[0] = new double[] { C, C};
 				this.eVecs[1] = new double[] {-C, C};
 			}
 		}
+		
+		if (Math.abs(eVals[0]) < Math.abs(eVals[1])) {	// reorder eigenvalues by absolute value
+			swap();
+		}
 		return true;
+	}
+	
+	/**
+	 * Reorders eigenvalues and eigenvectors such that
+	 * |&lambda;<sub>1</sub> &geq; |&lambda;<sub>2</sub>|.
+	 */
+	private void swap() {
+		double l = eVals[0];
+		eVals[0] = eVals[1];
+		eVals[1] = l;
+		double[] x = eVecs[0];
+		eVecs[0] = eVecs[1];
+		eVecs[1] = x;
 	}
 	
 	@Override
@@ -200,6 +233,17 @@ public class Eigensolver2x2 implements RealEigensolver {
 	@Deprecated
 	public double[] getEigenvector2() {
 		return this.eVecs[1];
+	}
+	
+	@Override
+	public String toString() {
+		if (this.isReal) {
+			return String.format("<%.4f, %.4f, %s, %s>", 
+				eVals[0], eVals[1], Matrix.toString(eVecs[0]),  Matrix.toString(eVecs[1]));
+		}
+		else {
+			return "not real";
+		}
 	}
 		
 }
