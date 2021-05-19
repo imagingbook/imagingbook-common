@@ -63,8 +63,16 @@ public abstract class Matrix {
 		return new double[length];
 	}
 	
+	public static double[] createDoubleVector(double... values) {
+		return values;
+	}
+	
 	public static float[] createFloatVector(int length) {
 		return new float[length];
+	}
+	
+	public static float[] createFloatVector(float... values) {
+		return values;
 	}
 	
 	public static double[][] createDoubleMatrix(int rows, int columns) {

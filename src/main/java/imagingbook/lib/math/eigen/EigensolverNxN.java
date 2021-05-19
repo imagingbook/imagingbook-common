@@ -23,13 +23,14 @@ import imagingbook.lib.math.Matrix;
  * <br>
  * Usage example (retrieving all eigenvalues and associated eigenvectors):
  * <pre>
- * double[][] M = {
+ * double[][] A = {
  * 	{ 5, 2, 0, 1 },
  * 	{ 2, 5, 0, 7 },
  * 	{ -3, 4, 6, 0 },
  * 	{ 1, 2, 3, 4 }};
  * 
- * RealEigensolver solver = new EigensolverNxN(M);
+ * RealEigensolver solver = new EigensolverNxN(A);
+ * 
  * double[] eigenvals = solver.getEigenvalues();
  * for (int k = 0; k &lt; solver.getSize(); k++) {
  * 	double lambda = solver.getEigenvalue(k);
@@ -45,28 +46,28 @@ import imagingbook.lib.math.Matrix;
 public class EigensolverNxN implements RealEigensolver {
 
 	private final EigenDecomposition ed;
-	private final int N;
+	private final int n;
 	private final double[] eVals;
 	private final int[] permutation;
 
 	/**
 	 * Constructor, takes a NxN (square) matrix.
-	 * @param M a NxN matrix
+	 * @param A a NxN matrix
 	 */
-	public EigensolverNxN(double[][] M) {
-		if (!Matrix.isSquare(M)) {
-			throw new IllegalArgumentException("matrix M must be square");
+	public EigensolverNxN(double[][] A) {
+		if (!Matrix.isSquare(A)) {
+			throw new IllegalArgumentException("matrix A must be square");
 		}
-		this.N = M.length;
-		this.ed = new EigenDecomposition(MatrixUtils.createRealMatrix(M));
-		this.eVals = new double[M.length];
+		this.n = A.length;
+		this.ed = new EigenDecomposition(MatrixUtils.createRealMatrix(A));
+		this.eVals = new double[A.length];
 		this.permutation = sortEigenvalues(ed.getRealEigenvalues(), ed.getImagEigenvalues());
 		//print();
 	}
 	
 	@Override
 	public int getSize() {
-		return N;
+		return n;
 	}
 	
 	@Override
@@ -152,34 +153,40 @@ public class EigensolverNxN implements RealEigensolver {
 	 * @hidden
 	 */
 	public static void main(String[] args) {
-//		double[][] M = {
+//		double[][] A = {
 //				{3, -2},
 //				{-4, 1}};
-//		double[][] M = {
+//		double[][] A = {	// no real eigenvalues
+//				{0, -1},
+//				{2, 0}};
+//		double[][] A = {	// no real eigenvalues
+//				{4, -1},
+//				{2, 4}};
+//		double[][] A = {
 //				{5, 2, 0},
 //				{2, 5, 0},
 //				{-3, 4, 6}};
-		double[][] M = {
+		double[][] A = {	// 2 real eigenvalues
 				{5, 2, 0, 1},
 				{2, 5, 0, 7},
 				{-3, 4, 6, 0},
 				{1 , 2, 3, 4}};
 		
 		
-		System.out.println("M = \n" + Matrix.toString(M));
-		RealEigensolver solver = new EigensolverNxN(M);	
+		System.out.println("A = \n" + Matrix.toString(A));
+		RealEigensolver solver = new EigensolverNxN(A);	
 
 		System.out.println("isReal = " + solver.isReal());
 		double[] eigenvals = solver.getEigenvalues();
-		System.out.println("evals = " + Arrays.toString(eigenvals));
+		System.out.println("evals = " + Matrix.toString(eigenvals));
 		for (int k = 0; k < solver.getSize(); k++) {
 			double lambda = solver.getEigenvalue(k);
 			if (!Double.isNaN(lambda)) {
 				double[] x = solver.getEigenvector(k);
-				System.out.format("λ_%d = %s\n", k, lambda);
-				System.out.format("x_%d = %s\n", k, Arrays.toString(x));
-				System.out.format("   M*x = %s\n", Arrays.toString(Matrix.multiply(M, x)));
-				System.out.format("   λ*M = %s\n", Arrays.toString(Matrix.multiply(lambda, x)));
+				System.out.format("λ_%d = %.6f\n", k, lambda);
+				System.out.format("x_%d = %s\n", k, Matrix.toString(x));
+				System.out.format("   M*x = %s\n", Matrix.toString(Matrix.multiply(A, x)));
+				System.out.format("   λ*M = %s\n", Matrix.toString(Matrix.multiply(lambda, x)));
 			}
 		}
 	}

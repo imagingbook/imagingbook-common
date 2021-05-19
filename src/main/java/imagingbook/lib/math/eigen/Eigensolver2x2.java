@@ -10,39 +10,43 @@
 package imagingbook.lib.math.eigen;
 
 import imagingbook.lib.math.Matrix;
+import static imagingbook.lib.math.Matrix.createDoubleVector;
 
 /**
  * </p> 
  * Implements an efficient, closed form algorithm for calculating the real 
  * eigenvalues (&lambda;) and eigenvectors (x) of a 2x2 matrix M of the form
  * <pre>
- *   | A B |
- *   | C D | </pre>
+ *   | a b |
+ *   | c d | </pre>
  * There are typically (but not in general) two pairs of real-valued 
  * solutions 
  * &lang;&lambda;<sub>1</sub>, x<sub>1</sub>&rang;,
  * &lang;&lambda;<sub>2</sub>, x<sub>2</sub>&rang;
- * such that M&middot;x<sub>k</sub> = &lambda;<sub>k</sub>&middot;x<sub>k</sub>.
+ * such that A&middot;x<sub>k</sub> = &lambda;<sub>k</sub>&middot;x<sub>k</sub>.
  * The resulting eigensystems are ordered such that
  * |&lambda;<sub>1</sub> &geq; |&lambda;<sub>2</sub>|.
- * Eigenvectors are not normalized (i.e., no unit vectors), noting that
- * any scalar multiple of an Eigenvector is an Eigenvector too.
+ * Eigenvectors are not normalized, i.e., no unit vectors
+ * (any scalar multiple of an Eigenvector is an Eigenvector too).
+ * Non-real eigenvalues are not handled.
+ * Clients should call method {@link #isReal} to check if the resulting eigenvalues
+ * are real or not.
  * </p>
  * <p>
  * This implementation is inspired by Blinn, Jim: "Jim Blinn's Corner: 
  * Notation, Notation, Notation", Morgan Kaufmann (2002) -
  * Ch. 5 ("Consider the Lowly 2x2 Matrix").
  * Note that Blinn uses the notation 
- * x&middot;M = &lambda;&middot;x (common computer graphics),
+ * x&middot;A = &lambda;&middot;x for the matrix-vector product (common computer graphics),
  * while this implementation adopts the notation 
- * M&middot;x = &lambda;&middot;x.
- * Thus matrix M is transposed (elements B/C are exchanged).
+ * A&middot;x = &lambda;&middot;x.
+ * Thus matrix A is transposed (elements b/c are exchanged).
  * </p>
  * This implementation is considerably (ca. factor 5) faster than the general solution
  * in {@link EigensolverNxN} (based on Apache Commons Math) for 2x2 matrices.
  * 
  * @author W. Burger
- * @version 2021-05-18
+ * @version 2021-05-19
  */
 public class Eigensolver2x2 implements RealEigensolver { // to check: http://www.akiti.ca/Eig2Solv.html
 	private final boolean isReal;
@@ -51,27 +55,27 @@ public class Eigensolver2x2 implements RealEigensolver { // to check: http://www
 	
 	/**
 	 * Constructor, takes a 2x2 matrix.
-	 * @param M a 2x2 matrix
+	 * @param A a 2x2 matrix
 	 */
-	public Eigensolver2x2(double[][] M) {
-		this(M[0][0], M[0][1], M[1][0], M[1][1]);
-		if (Matrix.getNumberOfRows(M) != 2 || Matrix.getNumberOfColumns(M) != 2) {
+	public Eigensolver2x2(double[][] A) {
+		this(A[0][0], A[0][1], A[1][0], A[1][1]);
+		if (Matrix.getNumberOfRows(A) != 2 || Matrix.getNumberOfColumns(A) != 2) {
 			throw new IllegalArgumentException("matrix not of size 2x2");
 		}
 	}
 	
 	/**
-	 * Constructor, takes the individual elements of a 2x2 matrix:
+	 * Constructor, takes the individual elements of a 2x2 matrix A:
 	 * <pre>
-	 *   A B
-	 *   C D</pre>
-	 * @param A matrix element M[0,0]
-	 * @param B matrix element M[0,1]
-	 * @param C matrix element M[1,0]
-	 * @param D matrix element M[1,1]
+	 *   | a b |
+	 *   | c d | </pre>
+	 * @param a matrix element A[0,0]
+	 * @param b matrix element A[0,1]
+	 * @param c matrix element A[1,0]
+	 * @param d matrix element A[1,1]
 	 */
-	public Eigensolver2x2(double A, double B, double C, double D) {
-		this.isReal = this.solve(A, B, C, D);
+	public Eigensolver2x2(double a, double b, double c, double d) {
+		isReal = solve(a, b, c, d);
 	}
 	
 	@Override
@@ -79,62 +83,59 @@ public class Eigensolver2x2 implements RealEigensolver { // to check: http://www
 		return 2;
 	}
 	
-	private boolean solve(double A, double B, double C, double D) {
-		final double R = (A + D) / 2;
-		final double S = (A - D) / 2;
-		final double rho = S * S + B * C;
+	private boolean solve(final double a, final double b, final double c, final double d) {
+		final double r = (a + d) / 2;
+		final double s = (a - d) / 2;
+		final double rho = s * s + b * c;
 		
-		if (rho < 0) {	// no real-valued eigenvalues
-			return false;
+		if (rho < 0) {	
+			return false;		// no real-valued eigenvalues
 		}
 		
-		final double T = Math.sqrt(rho);
-		this.eVals[0] = R + T;
-		this.eVals[1] = R - T;
-		if (A - D > 0) {
-			this.eVecs[0] = new double[] { S + T, C };
-			this.eVecs[1] = new double[] { B, -S - T };
+		final double t = Math.sqrt(rho);
+		final double lambda1 = r + t;
+		final double lambda2 = r - t;	
+		final double[] x1, x2;
+		
+		if (a - d > 0) {
+			x1 = createDoubleVector(s + t, c);
+			x2 = createDoubleVector(b, -s - t);
 		}
-		else if (A - D < 0) {
-			this.eVecs[0] = new double[] { B, -S + T};
-			this.eVecs[1] = new double[] { S - T, C};
+		else if (a - d < 0) {
+			x1 = createDoubleVector(b, -s + t);
+			x2 = createDoubleVector(s - t, c);
 		}
 		else {		// (A - D) == 0
-			final double aB = Math.abs(B);
-			final double aC = Math.abs(C);
-			final double sBC = Math.sqrt(B * C);
-			if (aB < aC) {							// |B| < |C|
-				this.eVecs[0] = new double[] { sBC, C};
-				this.eVecs[1] = new double[] {-sBC, C};
+			final double bA = Math.abs(b);
+			final double cA = Math.abs(c);
+			final double bcS = Math.sqrt(b * c);
+			if (bA < cA) {							// |b| < |c|
+				x1 = createDoubleVector(bcS, c);
+				x2 = createDoubleVector(-bcS, c);
 			}
-			else if (aB > aC) { 					// |B| > |C|
-				this.eVecs[0] = new double[] { B,  sBC};
-				this.eVecs[1] = new double[] { B, -sBC};
+			else if (bA > cA) { 					// |b| > |c|
+				x1 = createDoubleVector(b, bcS);
+				x2 = createDoubleVector(b, -bcS);
 			}
 			else { 				// |B| == |C|
-				this.eVecs[0] = new double[] { C, C};
-				this.eVecs[1] = new double[] {-C, C};
+				x1 = createDoubleVector(c, c);
+				x2 = createDoubleVector(-c, c);
 			}
 		}
 		
-		if (Math.abs(eVals[0]) < Math.abs(eVals[1])) {	// reorder eigenvalues by absolute value
-			swap();
+		if (Math.abs(lambda1) >= Math.abs(lambda2)) {	// order eigenvalues by magnitude
+			eVals[0] = lambda1;
+			eVals[1] = lambda2;
+			eVecs[0] = x1;
+			eVecs[1] = x2;
 		}
-		return true;
-	}
-	
-	/**
-	 * Reorders eigenvalues and eigenvectors such that
-	 * |&lambda;<sub>1</sub> &geq; |&lambda;<sub>2</sub>|.
-	 */
-	private void swap() {
-		double l = eVals[0];
-		eVals[0] = eVals[1];
-		eVals[1] = l;
-		
-		double[] x = eVecs[0];
-		eVecs[0] = eVecs[1];
-		eVecs[1] = x;
+		else {
+			eVals[0] = lambda2;
+			eVals[1] = lambda1;
+			eVecs[0] = x2;
+			eVecs[1] = x1;
+		}
+		return true;	// real eigenvalues
 	}
 	
 	@Override
@@ -173,7 +174,7 @@ public class Eigensolver2x2 implements RealEigensolver { // to check: http://www
 	 * @deprecated
 	 */
 	public double getEigenvalue1() {
-		return this.eVals[0];
+		return eVals[0];
 	}
 	
 	/**
@@ -182,7 +183,7 @@ public class Eigensolver2x2 implements RealEigensolver { // to check: http://www
 	 * @deprecated
 	 */
 	public double getEigenvalue2() {
-		return this.eVals[1];
+		return eVals[1];
 	}
 	
 	/**
@@ -203,7 +204,7 @@ public class Eigensolver2x2 implements RealEigensolver { // to check: http://www
 	 * @deprecated
 	 */
 	public double[][] getEigenvectors() {
-		return this.eVecs;
+		return eVecs;
 	}
 	
 	/**
@@ -217,27 +218,27 @@ public class Eigensolver2x2 implements RealEigensolver { // to check: http://www
 	 */
 	@Override
 	public double[] getEigenvector(int k) {
-		return this.eVecs[k];
+		return eVecs[k];
 	}
 	
 	@Deprecated
 	public double[] getEigenvector1() {
-		return this.eVecs[0];
+		return eVecs[0];
 	}
 	
 	@Deprecated
 	public double[] getEigenvector2() {
-		return this.eVecs[1];
+		return eVecs[1];
 	}
 	
 	@Override
 	public String toString() {
 		if (this.isReal) {
 			return String.format("<%.4f, %.4f, %s, %s>", 
-				eVals[0], eVals[1], Matrix.toString(eVecs[0]),  Matrix.toString(eVecs[1]));
+				eVals[0], eVals[1], Matrix.toString(eVecs[0]), Matrix.toString(eVecs[1]));
 		}
 		else {
-			return "not real";
+			return "<not real>";
 		}
 	}
 		

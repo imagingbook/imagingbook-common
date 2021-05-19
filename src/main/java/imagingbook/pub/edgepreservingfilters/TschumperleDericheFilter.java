@@ -166,7 +166,7 @@ public class TschumperleDericheFilter extends GenericFilter {
 		double lambda1 = solver.getEigenvalue(0);
 		double lambda2 = solver.getEigenvalue(1);
 		double[] evec1 = solver.getEigenvector(0);
-		normalize(evec1);		
+		normalize(evec1);	
 		double arg = 1.0 + lambda1 + lambda2;	// 1 + lambda_1 + lambda_2
 		float c1 = (float) Math.pow(arg, -a1);
 		float c2 = (float) Math.pow(arg, -a2);

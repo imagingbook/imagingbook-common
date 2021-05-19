@@ -1,5 +1,10 @@
 package imagingbook.lib.math.eigen;
 
+
+/**
+ * Interface for classes performing eigenvalue/eigenvector calculations.
+ *
+ */
 public interface RealEigensolver {
 	
 	/**
@@ -19,8 +24,6 @@ public interface RealEigensolver {
 	 * i.e. |&lambda;<sub>0</sub>| &ge; |&lambda;<sub>1</sub>| &ge; ... &ge; |&lambda;<sub>N-1</sub>| for 
 	 * all &lambda;<sub>k</sub> &ne; NaN.
 	 * {@code NaN} is inserted for complex eigenvalues.
-	 * Note that the method returns a reference to an internal
-	 * array and thus results should be used read-only!
 	 * @return an array of eigenvalues
 	 */
 	public double[] getEigenvalues();
