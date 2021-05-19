@@ -13,7 +13,6 @@ import imagingbook.lib.math.Matrix;
 import static imagingbook.lib.math.Matrix.createDoubleVector;
 
 /**
- * </p> 
  * Implements an efficient, closed form algorithm for calculating the real 
  * eigenvalues (&lambda;) and eigenvectors (x) of a 2x2 matrix M of the form
  * <pre>
@@ -25,13 +24,12 @@ import static imagingbook.lib.math.Matrix.createDoubleVector;
  * &lang;&lambda;<sub>2</sub>, x<sub>2</sub>&rang;
  * such that A&middot;x<sub>k</sub> = &lambda;<sub>k</sub>&middot;x<sub>k</sub>.
  * The resulting eigensystems are ordered such that
- * |&lambda;<sub>1</sub> &geq; |&lambda;<sub>2</sub>|.
+ * |&lambda;<sub>1</sub> &ge; |&lambda;<sub>2</sub>|.
  * Eigenvectors are not normalized, i.e., no unit vectors
  * (any scalar multiple of an Eigenvector is an Eigenvector too).
  * Non-real eigenvalues are not handled.
  * Clients should call method {@link #isReal} to check if the resulting eigenvalues
  * are real or not.
- * </p>
  * <p>
  * This implementation is inspired by Blinn, Jim: "Jim Blinn's Corner: 
  * Notation, Notation, Notation", Morgan Kaufmann (2002) -

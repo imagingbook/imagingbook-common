@@ -27,8 +27,8 @@
 <span class="sourceLineNo">017</span><a id="line.17">import imagingbook.lib.filter.linear.LinearFilter;</a>
 <span class="sourceLineNo">018</span><a id="line.18">import imagingbook.lib.image.data.PixelPack;</a>
 <span class="sourceLineNo">019</span><a id="line.19">import imagingbook.lib.image.data.PixelPack.PixelSlice;</a>
-<span class="sourceLineNo">020</span><a id="line.20">import imagingbook.lib.math.Eigensolver2x2;</a>
-<span class="sourceLineNo">021</span><a id="line.21">import imagingbook.lib.math.Matrix;</a>
+<span class="sourceLineNo">020</span><a id="line.20">import imagingbook.lib.math.Matrix;</a>
+<span class="sourceLineNo">021</span><a id="line.21">import imagingbook.lib.math.eigen.Eigensolver2x2;</a>
 <span class="sourceLineNo">022</span><a id="line.22">import imagingbook.pub.edgepreservingfilters.TschumperleDericheF.Parameters;</a>
 <span class="sourceLineNo">023</span><a id="line.23"></a>
 <span class="sourceLineNo">024</span><a id="line.24">/**</a>
@@ -176,7 +176,7 @@
 <span class="sourceLineNo">166</span><a id="line.166">                double lambda1 = solver.getEigenvalue(0);</a>
 <span class="sourceLineNo">167</span><a id="line.167">                double lambda2 = solver.getEigenvalue(1);</a>
 <span class="sourceLineNo">168</span><a id="line.168">                double[] evec1 = solver.getEigenvector(0);</a>
-<span class="sourceLineNo">169</span><a id="line.169">                normalize(evec1);               </a>
+<span class="sourceLineNo">169</span><a id="line.169">                normalize(evec1);       </a>
 <span class="sourceLineNo">170</span><a id="line.170">                double arg = 1.0 + lambda1 + lambda2;   // 1 + lambda_1 + lambda_2</a>
 <span class="sourceLineNo">171</span><a id="line.171">                float c1 = (float) Math.pow(arg, -a1);</a>
 <span class="sourceLineNo">172</span><a id="line.172">                float c2 = (float) Math.pow(arg, -a2);</a>

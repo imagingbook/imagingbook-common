@@ -10,6 +10,7 @@ imagingbook.lib.image.access
 imagingbook.lib.image.data
 imagingbook.lib.interpolation
 imagingbook.lib.math
+imagingbook.lib.math.eigen
 imagingbook.lib.math.testing
 imagingbook.lib.settings
 imagingbook.lib.tuples
