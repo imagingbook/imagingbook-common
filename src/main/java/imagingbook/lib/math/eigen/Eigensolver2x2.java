@@ -14,11 +14,11 @@ import static imagingbook.lib.math.Matrix.createDoubleVector;
 
 /**
  * Implements an efficient, closed form algorithm for calculating the real 
- * eigenvalues (&lambda;) and eigenvectors (x) of a 2x2 matrix M of the form
+ * eigenvalues (&lambda;) and eigenvectors (x) of a 2x2 matrix of the form
  * <pre>
  *   | a b |
  *   | c d | </pre>
- * There are typically (but not in general) two pairs of real-valued 
+ * There are typically (but not always) two pairs of real-valued 
  * solutions 
  * &lang;&lambda;<sub>1</sub>, x<sub>1</sub>&rang;,
  * &lang;&lambda;<sub>2</sub>, x<sub>2</sub>&rang;
@@ -28,20 +28,20 @@ import static imagingbook.lib.math.Matrix.createDoubleVector;
  * Eigenvectors are not normalized, i.e., no unit vectors
  * (any scalar multiple of an Eigenvector is an Eigenvector too).
  * Non-real eigenvalues are not handled.
- * Clients should call method {@link #isReal} to check if the resulting eigenvalues
- * are real or not.
+ * Clients should call method {@link #isReal()} to check if the resulting eigenvalues
+ * are all real or not.
  * <p>
  * This implementation is inspired by Blinn, Jim: "Jim Blinn's Corner: 
  * Notation, Notation, Notation", Morgan Kaufmann (2002) -
  * Ch. 5 ("Consider the Lowly 2x2 Matrix").
  * Note that Blinn uses the notation 
- * x&middot;A = &lambda;&middot;x for the matrix-vector product (common computer graphics),
+ * x&middot;A = &lambda;&middot;x for the matrix-vector product (as common in computer graphics),
  * while this implementation adopts the notation 
  * A&middot;x = &lambda;&middot;x.
- * Thus matrix A is transposed (elements b/c are exchanged).
+ * Thus x is treated as a column vector and matrix A is transposed (elements b/c are exchanged).
  * </p>
  * This implementation is considerably (ca. factor 5) faster than the general solution
- * in {@link EigensolverNxN} (based on Apache Commons Math) for 2x2 matrices.
+ * available in {@link EigensolverNxN} (based on Apache Commons Math) for 2x2 matrices.
  * 
  * @author W. Burger
  * @version 2021-05-19
@@ -143,7 +143,7 @@ public class Eigensolver2x2 implements RealEigensolver { // to check: http://www
 	
 	/**
 	 * Returns a vector holding the two real eigenvalues. Both are
-	 * {@code NaN} if the associated matrix has no real eigenvalues.
+	 * {@code NaN} if the input matrix has any non-real (complex) eigenvalues.
 	 * Otherwise the first eigenvalue has greater magnitude than the second.
 	 * Note that the method returns a reference to an internal
 	 * array and thus results should be used read-only!
