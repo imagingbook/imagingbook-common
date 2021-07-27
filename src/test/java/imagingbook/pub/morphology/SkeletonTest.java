@@ -13,7 +13,7 @@ import ij.ImagePlus;
 import ij.process.ByteProcessor;
 import ij.process.ImageProcessor;
 import imagingbook.lib.ij.IjUtils;
-import imagingbook.lib.util.ResourceLocation;
+import imagingbook.lib.util.resource.ResourceLocation;
 
 public class SkeletonTest {
 	
@@ -24,10 +24,10 @@ public class SkeletonTest {
 	@Test
 	public void test() {
 		
-		Path origPath   = loc.getResourcePath(origName);
+		Path origPath   = loc.getPath(origName);
 		assertNotNull(origPath);
 		
-		Path resultPath = loc.getResourcePath(resultName);
+		Path resultPath = loc.getPath(resultName);
 		assertNotNull(resultPath);
 		
 		ImagePlus origIm = IjUtils.openImage(origPath);

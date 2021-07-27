@@ -194,7 +194,7 @@ public class SegmentationRegionContourTest {
 	}
 	
 	private static ByteProcessor openImage(String imgName) {
-		Path path = new Resources().getResourcePath(imgName);
+		Path path = new Resources().getPath(imgName);
 		return (ByteProcessor) IjUtils.openImage(path).getProcessor();
 	}
 	

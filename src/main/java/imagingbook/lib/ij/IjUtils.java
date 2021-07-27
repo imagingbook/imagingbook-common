@@ -260,18 +260,17 @@ public abstract class IjUtils {
 		return new FloatProcessor(width, height, fPixels);
 	}
 	
-	// Open image from path (used with resources)
 	
 	/**
 	 * Opens the image from the specified path and returns it
 	 * as a {@link ImagePlus} instance.
 	 * 
-	 * @param name The simple name of the image file (including extension)
+	 * @param path The simple name of the image file (including extension)
 	 * @return A new {@link ImagePlus} instance or {@code null} if not found
 	 */
-	public static ImagePlus openImage(Path name) {
-		Objects.requireNonNull(name);
-		return new Opener().openImage(name.toString());
+	public static ImagePlus openImage(Path path) {
+		Objects.requireNonNull(path);
+		return new Opener().openImage(path.toString());
 	}
 	
 	

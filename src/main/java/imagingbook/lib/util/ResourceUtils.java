@@ -28,6 +28,7 @@ import java.util.stream.Stream;
 
 import ij.ImagePlus;
 import ij.io.Opener;
+import imagingbook.lib.util.resource.ResourceLocation;
 
 /**
  * This class defines static methods for accessing resources.

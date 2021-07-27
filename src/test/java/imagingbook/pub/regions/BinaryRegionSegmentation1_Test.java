@@ -30,7 +30,7 @@ public class BinaryRegionSegmentation1_Test {
 	final ByteProcessor bp;
 	
 	public BinaryRegionSegmentation1_Test() {
-		path = new Resources().getResourcePath(ImgName);
+		path = new Resources().getPath(ImgName);
 		bp = (ByteProcessor) IjUtils.openImage(path).getProcessor();
 		Assert.assertNotNull(bp);
 	}

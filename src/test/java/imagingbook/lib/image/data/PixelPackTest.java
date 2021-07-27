@@ -12,8 +12,8 @@ import imagingbook.testutils.ImageTests;
 
 public class PixelPackTest {
 
-	private Path path1 = new imagingbook.DATA.images.Resources().getResourcePath("monastery-small.png");
-	private Path path2 = new imagingbook.DATA.images.Resources().getResourcePath("clown.png");
+	private Path path1 = new imagingbook.DATA.images.Resources().getPath("monastery-small.png");
+	private Path path2 = new imagingbook.DATA.images.Resources().getPath("clown.png");
 
 	@Test
 	public void testByteImage() {

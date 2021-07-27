@@ -5,7 +5,7 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import imagingbook.lib.util.ResourceLocation;
+import imagingbook.lib.util.resource.ResourceLocation;
 
 public class IccProfilesResourceTest {
 	
@@ -13,7 +13,7 @@ public class IccProfilesResourceTest {
 
 	@Test
 	public void test() {
-		assertNotNull(loc.getResourcePath("AdobeRGB1998.icc"));
+		assertNotNull(loc.getPath("AdobeRGB1998.icc"));
 		assertEquals("wrong resource count", 7, loc.getResourceNames().length);
 	}
 

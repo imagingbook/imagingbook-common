@@ -13,7 +13,7 @@ import ij.ImagePlus;
 import ij.process.ByteProcessor;
 import ij.process.ImageProcessor;
 import imagingbook.lib.ij.IjUtils;
-import imagingbook.lib.util.ResourceLocation;
+import imagingbook.lib.util.resource.ResourceLocation;
 
 
 public class GeneralResourcesTest {
@@ -25,16 +25,16 @@ public class GeneralResourcesTest {
 		
 		ResourceLocation loc = new imagingbook.DATA.images.Resources();
 		
-		path = loc.getResourcePath(name);
+		path = loc.getPath(name);
 		assertNotNull("existing resource not found" + name, path);
 		
-		path = loc.getResourcePath("nonexistant");
+		path = loc.getPath("nonexistant");
 		assertNull("nonexisting resource found: " + name, path);
 		
 		// check if all listed resource names really exist
 		String[] names = loc.getResourceNames();
 		for (String n : names) {
-			assertNotNull("listed resource not found: " + name, loc.getResourcePath(n));
+			assertNotNull("listed resource not found: " + name, loc.getPath(n));
 		}
 	}
 	
@@ -43,7 +43,7 @@ public class GeneralResourcesTest {
 		String name = "boats.png";
 		
 		ResourceLocation loc = new imagingbook.DATA.images.Resources();
-		Path path = loc.getResourcePath(name);
+		Path path = loc.getPath(name);
 		assertNotNull("image resource not found" + name, path);
 		
 		ImagePlus im = IjUtils.openImage(path);

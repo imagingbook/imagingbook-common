@@ -27,11 +27,11 @@ public class LinearFilterTest {
 			{2, 4, 2},
 			{1, 2, 1}};
 	
-	Path path1A = new imagingbook.DATA.images.Resources().getResourcePath("monastery-small.png");
-	Path path1B = new imagingbook.DATA.images.Resources().getResourcePath("monastery-small-filter3x3.png");
+	Path path1A = new imagingbook.DATA.images.Resources().getPath("monastery-small.png");
+	Path path1B = new imagingbook.DATA.images.Resources().getPath("monastery-small-filter3x3.png");
 	
-	Path path2A = new imagingbook.DATA.images.Resources().getResourcePath("clown.png");
-	Path path2B = new imagingbook.DATA.images.Resources().getResourcePath("clown-filter3x3.png");
+	Path path2A = new imagingbook.DATA.images.Resources().getPath("clown.png");
+	Path path2B = new imagingbook.DATA.images.Resources().getPath("clown-filter3x3.png");
 	
 	@Test
 	public void testLinearFilterUnitKernel() {

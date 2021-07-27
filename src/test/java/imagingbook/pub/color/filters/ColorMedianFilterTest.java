@@ -16,8 +16,8 @@ public class ColorMedianFilterTest {
 
 	@Test
 	public void testScalarMedianFilter() {
-		Path pathA = new imagingbook.DATA.images.Resources().getResourcePath("clown.png");
-		Path pathB = new imagingbook.DATA.images.Resources().getResourcePath("clown-median-scalar-3.png");
+		Path pathA = new imagingbook.DATA.images.Resources().getPath("clown.png");
+		Path pathB = new imagingbook.DATA.images.Resources().getPath("clown-median-scalar-3.png");
 		ImageProcessor ipA = IjUtils.openImage(pathA).getProcessor();
 		ImageProcessor ipB = IjUtils.openImage(pathB).getProcessor();
 		
@@ -32,8 +32,8 @@ public class ColorMedianFilterTest {
 	
 	@Test
 	public void testVectorMedianFilter() {
-		Path pathA = new imagingbook.DATA.images.Resources().getResourcePath("clown.png");
-		Path pathB = new imagingbook.DATA.images.Resources().getResourcePath("clown-median-vector-3-L1.png");
+		Path pathA = new imagingbook.DATA.images.Resources().getPath("clown.png");
+		Path pathB = new imagingbook.DATA.images.Resources().getPath("clown-median-vector-3-L1.png");
 		ImageProcessor ipA = IjUtils.openImage(pathA).getProcessor();
 		ImageProcessor ipB = IjUtils.openImage(pathB).getProcessor();
 		
@@ -49,8 +49,8 @@ public class ColorMedianFilterTest {
 	
 	@Test
 	public void testVectorMedianFilterSharpen() {
-		Path pathA = new imagingbook.DATA.images.Resources().getResourcePath("clown.png");
-		Path pathB = new imagingbook.DATA.images.Resources().getResourcePath("clown-median-vectorsharpen-3-L1.png");
+		Path pathA = new imagingbook.DATA.images.Resources().getPath("clown.png");
+		Path pathB = new imagingbook.DATA.images.Resources().getPath("clown-median-vectorsharpen-3-L1.png");
 		ImageProcessor ipA = IjUtils.openImage(pathA).getProcessor();
 		ImageProcessor ipB = IjUtils.openImage(pathB).getProcessor();
 		

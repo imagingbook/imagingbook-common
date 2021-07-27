@@ -16,11 +16,11 @@ public class GaussianFilterTest {
 	static double SIGMA = 3.0;
 	static float TOL = 1f;	// deviations +/-1 are possible due to rounding to integer images
 	
-	Path path1A = new imagingbook.DATA.images.Resources().getResourcePath("monastery-small.png");
-	Path path1B = new imagingbook.DATA.images.Resources().getResourcePath("monastery-small-gauss3.png");
+	Path path1A = new imagingbook.DATA.images.Resources().getPath("monastery-small.png");
+	Path path1B = new imagingbook.DATA.images.Resources().getPath("monastery-small-gauss3.png");
 	
-	Path path2A = new imagingbook.DATA.images.Resources().getResourcePath("clown.png");
-	Path path2B = new imagingbook.DATA.images.Resources().getResourcePath("clown-gauss3.png");
+	Path path2A = new imagingbook.DATA.images.Resources().getPath("clown.png");
+	Path path2B = new imagingbook.DATA.images.Resources().getPath("clown-gauss3.png");
 
 	// -----------------------------------------------------------------------
 	
