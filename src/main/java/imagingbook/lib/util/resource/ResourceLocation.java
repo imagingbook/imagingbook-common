@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import java.util.jar.JarFile;
 import java.util.stream.Stream;
 
 import ij.ImagePlus;
@@ -84,15 +85,14 @@ public abstract class ResourceLocation {
 	private final Class<? extends ResourceLocation> resourceLocationClass;
 	private final boolean injar;
 	private final URI uri;
-	private final Path path;
-//	private final List<Resource> resources;
+//	private final Path path;
 	private final HashMap<String, Resource> resourceMap;
 	
 	protected ResourceLocation() {
 		this.resourceLocationClass = this.getClass();
 		this.injar = insideJAR(resourceLocationClass);
 		this.uri = this.getURI("");
-		this.path = uriToPath(this.uri);
+//		this.path = uriToPath(this.uri);
 //		this.resources = collectResources();
 		this.resourceMap = collectResources();
 	}
@@ -116,14 +116,15 @@ public abstract class ResourceLocation {
 		return injar;
 	}
 	
-//	public URI getURI() {
-//		// return getPath("");
-//		return this.uri;
-//	}
+	public URI getURI() {
+		// return getPath("");
+		return this.uri;
+	}
 
 	public Path getPath() {
 		// return getPath("");
-		return this.path;
+		//return this.path;
+		return uriToPath(this.uri);
 	}
 	
 	/**
@@ -176,22 +177,6 @@ public abstract class ResourceLocation {
 		}
 		return uri;
 	}
-	
-	
-//	/**
-//	 * Helper method to avoid try/catch in constructor.
-//	 * Converts an URL to a URI.
-//	 * 
-//	 * @param url the specified URL
-//	 * @return the associated URI
-//	 */
-//	private static URI urlToUri(URL url) {
-//		URI uri = null;
-//		try {
-//			uri = url.toURI();
-//		} catch (URISyntaxException e) {}
-//		return uri;
-//	}
 	
 	/**
 	 * Converts an {@link URI} to a {@link Path} for objects that are either
@@ -260,6 +245,7 @@ public abstract class ResourceLocation {
 	public String[] getResourceNames() {
 		final String className = resourceLocationClass.getSimpleName();
 		Path[] paths = getResourcePaths(getPath(""));
+		//Path[] paths = getResourcePaths();
 		List<String> nameList = new ArrayList<>(paths.length);
 		for (Path p : paths) {
 			String name = p.getFileName().toString();
@@ -274,7 +260,6 @@ public abstract class ResourceLocation {
 		return sa;
 	}
 
-	
 	/**
 	 * Returns the paths to all files in a directory specified
 	 * by a path. This should work in an ordinary file system
@@ -291,47 +276,31 @@ public abstract class ResourceLocation {
 		}
 		
 		List<Path> pathList = new ArrayList<Path>();
-		Stream<Path> walk = null;
-		try {
-			walk = Files.walk(path, 1);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		for (Iterator<Path> it = walk.iterator(); it.hasNext();){
-			Path p = it.next();
-			if (Files.isRegularFile(p) && Files.isReadable(p)) {
-				pathList.add(p);
+		try (Stream<Path> walk = Files.walk(path, 1)) {
+			for (Iterator<Path> it = walk.iterator(); it.hasNext();) {
+				Path p = it.next();
+				if (Files.isRegularFile(p) && Files.isReadable(p)) {
+					pathList.add(p);
+				}
 			}
-		}
-		walk.close();
+			walk.close();
+		} catch (IOException e) { }
+
 		return pathList.toArray(new Path[0]);
+	}
+	
+	public Path[] getResourcePaths() {
+		return getResourcePaths(this.getPath()); 
+		//return getResourcePaths(Paths.get(getURI()));  // why not working???
 	}
 	
 	// -------------------------------------------------------------------------------------
 	
-//	public List<Resource> collectResources() {
-//		final String className = this.resourceLocationClass.getSimpleName();
-//		//Path[] paths = getResourcePaths(getPath(""));
-//		Path[] paths = getResourcePaths(this.path);
-//		//List<String> nameList = new ArrayList<>(paths.length);
-//		List<Resource> resList = new ArrayList<>(paths.length);
-//		for (Path p : paths) {
-//			String n = p.getFileName().toString();
-//			// exclude .java and .class files of THIS class
-//			String nameOnly = FileUtils.stripFileExtension(n);
-//			if (!nameOnly.equals(className)) {
-//				resList.add(new Resource(n, p));
-//			}
-//		}
-//		return resList;
-//	}
-	
 	private HashMap<String, Resource> collectResources() {
 		final String className = this.resourceLocationClass.getSimpleName();
-		//Path[] paths = getResourcePaths(getPath(""));
-		Path[] paths = getResourcePaths(this.path);
-		//List<String> nameList = new ArrayList<>(paths.length);
+		//Path[] paths = getResourcePaths(this.path);
+		//Path[] paths = getResourcePaths(this.getPath());
+		Path[] paths = getResourcePaths();
 		HashMap<String, Resource> resTable = new HashMap<>();
 		for (Path p : paths) {
 			String n = p.getFileName().toString();
@@ -369,6 +338,7 @@ public abstract class ResourceLocation {
 		
 		private final String name;
 		private final Path path;
+		public URL url = null;
 		
 		Resource(String name, Path path) {
 			this.name = name;
