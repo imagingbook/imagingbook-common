@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Stream;
 
@@ -156,7 +157,7 @@ public abstract class ResourceLocation {
 			try {
 				uri = new URI(compPath);
 			} catch (URISyntaxException e) {
-				// throw new RuntimeException("getResourceURI: " + e.toString());
+				throw new RuntimeException(e.toString());
 			}	
 		}
 		else {	// regular file path
@@ -193,9 +194,10 @@ public abstract class ResourceLocation {
 			
 			if (fs == null) {	// must not create the file system twice
 				try {
-					fs = FileSystems.newFileSystem(uri, Collections.<String, Object>emptyMap());
+					Map<String, Object> map = Collections.emptyMap();
+					fs = FileSystems.newFileSystem(uri, map);	// FileSystems.newFileSystem(uri, Collections.<String, Object>emptyMap());
 				} catch (IOException e) {
-					throw new RuntimeException("uriToPath: " + e.toString());
+					throw new RuntimeException(e.toString());
 				}
 			}
 			
@@ -358,7 +360,7 @@ public abstract class ResourceLocation {
 	 * This is a non-static inner class, i.e., a {@link Resource} can only be instantiated
 	 * (exist) within the context of a surrounding {@link ResourceLocation}.
 	 */
-	public class Resource {
+	public static class Resource {
 		
 		private final String name;
 //		private final Path path;
@@ -378,30 +380,31 @@ public abstract class ResourceLocation {
 			return name;
 		}
 		
-//		public Path getPath() {
-//			return path;
-//		}
+		public Path getPath() {
+			return uriToPath(uri);
+		}
 		
 		public URI getURI() {
 			return uri;
 		}
 		
-//		// untested!
-//		public URL getURL() {
-//			URL url = null;
-//			try {
-//				url = path.toUri().toURL();
-//			} catch (MalformedURLException e) {	}
-//			return url;
-//		}
+		public URL getURL() {
+			URL url = null;
+			try {
+				url = getPath().toUri().toURL();
+			} catch (MalformedURLException e) {	
+				throw new RuntimeException(e.toString());}
+			return url;
+		}
 		
 		public ImagePlus openAsImage() {
+			IJ.log("uri = " + uri);
 			URL url2 = null;
-			Path path = uriToPath(uri);	
+			Path path = getPath(); // uriToPath(uri);	
 
 			try {
 				URL url1 = uri.toURL(); 		// does not work
-				url2 = path.toUri().toURL();	// works -- what is the difference?
+				url2 = this.getURL(); //path.toUri().toURL();	// works -- what is the difference?
 				IJ.log("url1 = " + url1);
 				IJ.log("url2 = " + url2);
 				IJ.log("path = " + path);
