@@ -2,22 +2,22 @@ package imagingbook.lib.image.data;
 
 import static org.junit.Assert.assertTrue;
 
-import java.nio.file.Path;
-
 import org.junit.Test;
 
 import ij.process.ImageProcessor;
-import imagingbook.lib.ij.IjUtils;
+import imagingbook.lib.util.resource.ResourceLocation;
+import imagingbook.lib.util.resource.ResourceLocation.Resource;
 import imagingbook.testutils.ImageTests;
 
 public class PixelPackTest {
 
-	private Path path1 = new imagingbook.DATA.images.Resources().getPath("monastery-small.png");
-	private Path path2 = new imagingbook.DATA.images.Resources().getPath("clown.png");
+	ResourceLocation loc = new imagingbook.DATA.images.Resources();
+	private Resource path1 = loc.getResource("monastery-small.png");
+	private Resource path2 = loc.getResource("clown.png");
 
 	@Test
 	public void testByteImage() {
-		ImageProcessor ip1 = IjUtils.openImage(path1).getProcessor();
+		ImageProcessor ip1 = path1.openAsImage().getProcessor();
     	PixelPack pack = new PixelPack(ip1);
     	ImageProcessor ip2 = ip1.duplicate();
     	pack.copyToImageProcessor(ip2);
@@ -26,7 +26,7 @@ public class PixelPackTest {
 	
 	@Test
 	public void testShortImage() {
-		ImageProcessor ip1 = IjUtils.openImage(path1).getProcessor().convertToShortProcessor();
+		ImageProcessor ip1 = path1.openAsImage().getProcessor().convertToShortProcessor();
 		PixelPack pack = new PixelPack(ip1);
     	ImageProcessor ip2 = ip1.duplicate();
     	pack.copyToImageProcessor(ip2);
@@ -35,7 +35,7 @@ public class PixelPackTest {
 	
 	@Test
 	public void testFloatImage() {
-		ImageProcessor ip1 = IjUtils.openImage(path1).getProcessor().convertToFloatProcessor();
+		ImageProcessor ip1 = path1.openAsImage().getProcessor().convertToFloatProcessor();
 		PixelPack pack = new PixelPack(ip1);
     	ImageProcessor ip2 = ip1.duplicate();
     	pack.copyToImageProcessor(ip2);
@@ -44,7 +44,7 @@ public class PixelPackTest {
 	
 	@Test
 	public void testColorImage() {
-		ImageProcessor ip1 = IjUtils.openImage(path2).getProcessor();
+		ImageProcessor ip1 = path2.openAsImage().getProcessor();
 		PixelPack pack = new PixelPack(ip1);
     	ImageProcessor ip2 = ip1.duplicate();
     	pack.copyToImageProcessor(ip2);

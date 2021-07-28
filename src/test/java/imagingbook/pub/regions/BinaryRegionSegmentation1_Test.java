@@ -12,6 +12,7 @@ import org.junit.Test;
 import ij.process.ByteProcessor;
 import imagingbook.DATA.images.Resources;
 import imagingbook.lib.ij.IjUtils;
+import imagingbook.lib.util.resource.ResourceLocation.Resource;
 import imagingbook.pub.regions.BinaryRegionSegmentation.BinaryRegion;
 
 /**
@@ -26,12 +27,12 @@ public class BinaryRegionSegmentation1_Test {
 	static int RegionCount_N4 = 26;
 	static int RegionCount_N8 = 9;
 	
-	final Path path;
+	final Resource path;
 	final ByteProcessor bp;
 	
 	public BinaryRegionSegmentation1_Test() {
-		path = new Resources().getPath(ImgName);
-		bp = (ByteProcessor) IjUtils.openImage(path).getProcessor();
+		path = new Resources().getResource(ImgName);
+		bp = (ByteProcessor) path.openAsImage().getProcessor();
 		Assert.assertNotNull(bp);
 	}
 

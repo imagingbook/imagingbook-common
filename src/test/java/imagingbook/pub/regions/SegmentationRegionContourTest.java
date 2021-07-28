@@ -12,6 +12,7 @@ import org.junit.Test;
 import ij.process.ByteProcessor;
 import imagingbook.DATA.images.Resources;
 import imagingbook.lib.ij.IjUtils;
+import imagingbook.lib.util.resource.ResourceLocation.Resource;
 import imagingbook.pub.regions.BinaryRegionSegmentation.BinaryRegion;
 
 public class SegmentationRegionContourTest {
@@ -194,8 +195,8 @@ public class SegmentationRegionContourTest {
 	}
 	
 	private static ByteProcessor openImage(String imgName) {
-		Path path = new Resources().getPath(imgName);
-		return (ByteProcessor) IjUtils.openImage(path).getProcessor();
+		Resource path = new Resources().getResource(imgName);
+		return (ByteProcessor) path.openAsImage().getProcessor();
 	}
 	
 	private static int findFirstRegionWithHole(List<BinaryRegion> regions) {

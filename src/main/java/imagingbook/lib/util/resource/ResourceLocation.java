@@ -3,7 +3,6 @@ package imagingbook.lib.util.resource;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -25,7 +24,6 @@ import java.util.stream.Stream;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.io.Opener;
-
 import imagingbook.lib.util.FileUtils;
 
 /**
@@ -43,13 +41,16 @@ import imagingbook.lib.util.FileUtils;
  * thereby avoiding the use of strings to specify sub-directories.
  * Here is an example how to access the associated resources from some other class:
  * <pre>
- * ResourceLocation rd = new imagingbook.DATA.images.Resources();
- * Path path = rd.getResourcePath("boats.png");</pre>
+ * ResourceLocation loc = new imagingbook.DATA.images.Resources();
+ * Resource res = loc.getResource("boats.png");
+ * URI uri = res.getUri();
+ * InputStream strm = res.getStream();
+ * ... * </pre>
  * 
  * Specifically, an image can be opened as follows:
  * <pre>
- * Path path = rd.getResourcePath("boats.png");
- * ImagePlus im = IjUtils.openImage(path);
+ * Resource res = loc.getResource("boats.png");
+ * ImagePlus im = res.openAsImage();
  * ImageProcessor ip = im.getProcessor();
  * ...</pre>
  * 
@@ -79,7 +80,7 @@ import imagingbook.lib.util.FileUtils;
  * 
  * 
  * @author WB
- * @version 2020/11/22
+ * @version 2021/07/28
  */
 public abstract class ResourceLocation {
 	
@@ -87,11 +88,11 @@ public abstract class ResourceLocation {
 	private final URI baseURI;
 	
 	protected ResourceLocation() {
-		this.injar = classInsideJAR(this.getClass());
-		this.baseURI = this.getURI("");
+		this.injar = classInsideJar(this.getClass());
+		this.baseURI = this.getResourceUri("");
 	}
 	
-	private static boolean classInsideJAR(Class<?> clazz) {
+	private static boolean classInsideJar(Class<?> clazz) {
 		URL url = clazz.getProtectionDomain().getCodeSource().getLocation();
 		String path = url.getPath();
 		File file = new File(path);
@@ -110,27 +111,12 @@ public abstract class ResourceLocation {
 		return injar;
 	}
 	
-	public URI getURI() {
+	public URI getUri() {
 		return baseURI;
 	}
 
 	public Path getPath() {
 		return toPath(baseURI);
-	}
-	
-	/**
-	 * Returns the path to specified resource in this resource location.
-	 *  
-	 * @param resourceName The resource's simple name (including the file extension).
-	 * If empty or {@code null}, the path to the resource container location (directory)
-	 * is returned.
-	 * @return The path to the specified resource or {@code null} if not found
-	 * @deprecated // will become private!
-	 */
-	public Path getPath(String resourceName) {
-		Objects.requireNonNull(resourceName);
-		URI uri = getURI(resourceName);
-		return (uri == null) ? null : toPath(uri);
 	}
 	
 	/**
@@ -141,7 +127,7 @@ public abstract class ResourceLocation {
 	 * @param resourceName The resource's simple name (including file extension, e.g., {@code "myimage.tif"}).
 	 * @return The resource's {@link URI} or {@code null} if the resource was not found
 	 */
-	private URI getURI(String resourceName) {
+	private URI getResourceUri(String resourceName) {
 		Objects.requireNonNull(resourceName);
 		URI uri = null;
 		if (injar) {
@@ -166,18 +152,6 @@ public abstract class ResourceLocation {
 			}
 		}
 		return uri;
-	}
-	
-	/**
-	 * Returns the specified resource as an {@link InputStream}.
-	 * This is essentially a wrapper to {@link Class#getResourceAsStream(String)}.
-	 * 
-	 * @param resourceName The resource's simple name (including file extension)
-	 * @return A stream or {@code null} if the resource is not found.
-	 * @deprecated  // use method on Resource instance!
-	 */
-	public InputStream getResourceAsStream(String resourceName) {
-		return this.getClass().getResourceAsStream(resourceName);
 	}
 	
 	/**
@@ -280,7 +254,7 @@ public abstract class ResourceLocation {
 	// --- these are the only methods exposed: -----
 	
 	public Resource getResource(String resourceName) {
-		URI uri = getURI(resourceName);
+		URI uri = getResourceUri(resourceName);
 		return (uri == null) ? null : new Resource(resourceName, uri);
 	}
 
@@ -328,7 +302,7 @@ public abstract class ResourceLocation {
 		 * Returns the {@link URI} for the associated resource object.
 		 * @return the resource's {@link URI} 
 		 */
-		public URI getURI() {
+		public URI getUri() {
 			return uri;
 		}
 

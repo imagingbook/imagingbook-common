@@ -5,15 +5,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.nio.file.Path;
-
 import org.junit.Test;
 
 import ij.ImagePlus;
 import ij.process.ByteProcessor;
 import ij.process.ImageProcessor;
-import imagingbook.lib.ij.IjUtils;
 import imagingbook.lib.util.resource.ResourceLocation;
+import imagingbook.lib.util.resource.ResourceLocation.Resource;
 
 public class SkeletonTest {
 	
@@ -24,13 +22,13 @@ public class SkeletonTest {
 	@Test
 	public void test() {
 		
-		Path origPath   = loc.getPath(origName);
+		Resource origPath   = loc.getResource(origName);
 		assertNotNull(origPath);
 		
-		Path resultPath = loc.getPath(resultName);
+		Resource resultPath = loc.getResource(resultName);
 		assertNotNull(resultPath);
 		
-		ImagePlus origIm = IjUtils.openImage(origPath);
+		ImagePlus origIm = origPath.openAsImage();
 		assertNotNull(origIm);		
 		ImageProcessor origIp = origIm.getProcessor();
 		
@@ -38,7 +36,7 @@ public class SkeletonTest {
 		int k = morph.thin((ByteProcessor)origIp);
 		assertEquals("thinning iterations expected", 12, k);
 		
-		ImagePlus resultIm = IjUtils.openImage(resultPath);
+		ImagePlus resultIm = resultPath.openAsImage();
 		assertNotNull(resultIm);
 		ImageProcessor resultIp = resultIm.getProcessor();
 		

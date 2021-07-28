@@ -3,7 +3,6 @@ package imagingbook.pub.regions;
 import static imagingbook.pub.regions.NeighborhoodType.N4;
 import static imagingbook.pub.regions.NeighborhoodType.N8;
 
-import java.nio.file.Path;
 import java.util.List;
 
 import org.junit.Assert;
@@ -11,7 +10,7 @@ import org.junit.Test;
 
 import ij.process.ByteProcessor;
 import imagingbook.DATA.images.Resources;
-import imagingbook.lib.ij.IjUtils;
+import imagingbook.lib.util.resource.ResourceLocation.Resource;
 import imagingbook.pub.regions.BinaryRegionSegmentation.BinaryRegion;
 
 /**
@@ -26,12 +25,12 @@ public class BinaryRegionSegmentation3_Test {
 	static int RegionCount_N4 = 88;
 	static int RegionCount_N8 = 9;
 	
-	final Path path;
+	final Resource path;
 	final ByteProcessor bp;
 	
 	public BinaryRegionSegmentation3_Test() {
-		path = new Resources().getPath(ImgName);
-		bp = (ByteProcessor) IjUtils.openImage(path).getProcessor();
+		path = new Resources().getResource(ImgName);
+		bp = (ByteProcessor) path.openAsImage().getProcessor();
 		Assert.assertNotNull(bp);
 	}
 

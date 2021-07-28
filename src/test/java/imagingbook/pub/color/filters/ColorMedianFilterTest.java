@@ -2,24 +2,26 @@ package imagingbook.pub.color.filters;
 
 import static org.junit.Assert.assertTrue;
 
-import java.nio.file.Path;
-
 import org.junit.Test;
 
 import ij.process.ImageProcessor;
-import imagingbook.lib.ij.IjUtils;
 import imagingbook.lib.image.access.OutOfBoundsStrategy;
 import imagingbook.lib.math.VectorNorm.NormType;
+import imagingbook.lib.util.resource.ResourceLocation;
+import imagingbook.lib.util.resource.ResourceLocation.Resource;
 import imagingbook.testutils.ImageTests;
 
 public class ColorMedianFilterTest {
+	
+	private final ResourceLocation loc = new imagingbook.DATA.images.Resources();
 
 	@Test
 	public void testScalarMedianFilter() {
-		Path pathA = new imagingbook.DATA.images.Resources().getPath("clown.png");
-		Path pathB = new imagingbook.DATA.images.Resources().getPath("clown-median-scalar-3.png");
-		ImageProcessor ipA = IjUtils.openImage(pathA).getProcessor();
-		ImageProcessor ipB = IjUtils.openImage(pathB).getProcessor();
+		
+		Resource pathA = loc.getResource("clown.png");
+		Resource pathB = loc.getResource("clown-median-scalar-3.png");
+		ImageProcessor ipA = pathA.openAsImage().getProcessor();
+		ImageProcessor ipB = pathB.openAsImage().getProcessor();
 		
 		ScalarMedianFilter.Parameters params = new ScalarMedianFilter.Parameters();
 		params.radius = 3.0;
@@ -32,10 +34,10 @@ public class ColorMedianFilterTest {
 	
 	@Test
 	public void testVectorMedianFilter() {
-		Path pathA = new imagingbook.DATA.images.Resources().getPath("clown.png");
-		Path pathB = new imagingbook.DATA.images.Resources().getPath("clown-median-vector-3-L1.png");
-		ImageProcessor ipA = IjUtils.openImage(pathA).getProcessor();
-		ImageProcessor ipB = IjUtils.openImage(pathB).getProcessor();
+		Resource pathA = loc.getResource("clown.png");
+		Resource pathB = loc.getResource("clown-median-vector-3-L1.png");
+		ImageProcessor ipA = pathA.openAsImage().getProcessor();
+		ImageProcessor ipB = pathB.openAsImage().getProcessor();
 		
 		VectorMedianFilter.Parameters params = new VectorMedianFilter.Parameters();
 		params.radius = 3.0;
@@ -49,10 +51,10 @@ public class ColorMedianFilterTest {
 	
 	@Test
 	public void testVectorMedianFilterSharpen() {
-		Path pathA = new imagingbook.DATA.images.Resources().getPath("clown.png");
-		Path pathB = new imagingbook.DATA.images.Resources().getPath("clown-median-vectorsharpen-3-L1.png");
-		ImageProcessor ipA = IjUtils.openImage(pathA).getProcessor();
-		ImageProcessor ipB = IjUtils.openImage(pathB).getProcessor();
+		Resource pathA = loc.getResource("clown.png");
+		Resource pathB = loc.getResource("clown-median-vectorsharpen-3-L1.png");
+		ImageProcessor ipA = pathA.openAsImage().getProcessor();
+		ImageProcessor ipB = pathB.openAsImage().getProcessor();
 		
 		VectorMedianFilterSharpen.Parameters params = new VectorMedianFilterSharpen.Parameters();
 		params.radius = 3.0;
