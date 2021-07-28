@@ -16,7 +16,6 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +25,7 @@ import java.util.stream.Stream;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.io.Opener;
+
 import imagingbook.lib.util.FileUtils;
 
 /**
@@ -85,21 +85,19 @@ public abstract class ResourceLocation {
 	
 	private final boolean injar;
 	private final URI baseURI;
-//	private final HashMap<String, Resource> resourceMap;
 	
 	protected ResourceLocation() {
-		this.injar = insideJAR(getClass());
+		this.injar = classInsideJAR(this.getClass());
 		this.baseURI = this.getURI("");
-//		this.resourceMap = collectResources();
 	}
 	
-	private static boolean insideJAR(Class<?> clazz) {
+	private static boolean classInsideJAR(Class<?> clazz) {
 		URL url = clazz.getProtectionDomain().getCodeSource().getLocation();
 		String path = url.getPath();
 		File file = new File(path);
 		return file.isFile();
 	}
-
+	
 	/**
 	 * Determines if this class was loaded from
 	 * a JAR file or from the file system.
@@ -113,14 +111,11 @@ public abstract class ResourceLocation {
 	}
 	
 	public URI getURI() {
-		// return getPath("");
-		return this.baseURI;
+		return baseURI;
 	}
 
 	public Path getPath() {
-		// return getPath("");
-		//return this.path;
-		return uriToPath(this.baseURI);
+		return toPath(baseURI);
 	}
 	
 	/**
@@ -135,7 +130,7 @@ public abstract class ResourceLocation {
 	public Path getPath(String resourceName) {
 		Objects.requireNonNull(resourceName);
 		URI uri = getURI(resourceName);
-		return (uri == null) ? null : uriToPath(uri);
+		return (uri == null) ? null : toPath(uri);
 	}
 	
 	/**
@@ -146,10 +141,10 @@ public abstract class ResourceLocation {
 	 * @param resourceName The resource's simple name (including file extension, e.g., {@code "myimage.tif"}).
 	 * @return The resource's {@link URI} or {@code null} if the resource was not found
 	 */
-	public URI getURI(String resourceName) {
+	private URI getURI(String resourceName) {
 		Objects.requireNonNull(resourceName);
 		URI uri = null;
-		if (insideJAR()) {
+		if (injar) {
 			String classPath = this.getClass().getProtectionDomain().getCodeSource().getLocation().getFile();
 			//String packagePath = clazz.getPackage().getName().replace('.', File.separatorChar);
 			String packagePath = this.getClass().getPackage().getName().replace('.', '/');
@@ -174,13 +169,61 @@ public abstract class ResourceLocation {
 	}
 	
 	/**
+	 * Returns the specified resource as an {@link InputStream}.
+	 * This is essentially a wrapper to {@link Class#getResourceAsStream(String)}.
+	 * 
+	 * @param resourceName The resource's simple name (including file extension)
+	 * @return A stream or {@code null} if the resource is not found.
+	 * @deprecated  // use method on Resource instance!
+	 */
+	public InputStream getResourceAsStream(String resourceName) {
+		return this.getClass().getResourceAsStream(resourceName);
+	}
+	
+	/**
+	 * Returns an array of all resource names in this class's immediate directory
+	 * (excluding this class's .java/.class files).
+	 * 
+	 * @return a sorted array of names (possibly empty)
+	 */
+	public String[] getResourceNames() {
+		Path path = this.getPath();
+		// with help from http://stackoverflow.com/questions/1429172/how-do-i-list-the-files-inside-a-jar-file, #10
+		if (!Files.isDirectory(path)) {
+			throw new IllegalArgumentException("path is not a directory: " + path.toString());
+		}
+		
+		List<String> nameList = new ArrayList<>();
+		try (Stream<Path> walk = Files.walk(path, 1)) {		// walk is auto-closed!
+			final String className = this.getClass().getSimpleName();
+			for (Iterator<Path> it = walk.iterator(); it.hasNext();) {
+				Path p = it.next();
+				if (Files.isRegularFile(p) && Files.isReadable(p)) {	
+					String name = p.getFileName().toString();
+					// exclude .java and .class files of THIS class
+					String nameOnly = FileUtils.stripFileExtension(name);
+					if (!nameOnly.equals(className)) {
+						nameList.add(name);
+					}
+				}
+			}
+		} catch (IOException e) { }
+
+		String[] sa = nameList.toArray(new String[0]);
+		Arrays.sort(sa);
+		return sa;
+	}
+	
+	// -------------------------------------------------------------------------------------
+	
+	/**
 	 * Converts an {@link URI} to a {@link Path} for objects that are either
 	 * in the file system or inside a JAR file.
 	 * 
 	 * @param uri the specified {@link URI}
 	 * @return the associated {@link Path}
 	 */
-	public static Path uriToPath(URI uri) {
+	public static Path toPath(URI uri) {
 		Path path = null;
 		String scheme = uri.getScheme();
 		switch (scheme) {
@@ -217,110 +260,6 @@ public abstract class ResourceLocation {
 		return path;
 	}
 	
-	/**
-	 * Returns the specified resource as an {@link InputStream}.
-	 * This is essentially a wrapper to {@link Class#getResourceAsStream(String)}.
-	 * 
-	 * @param resourceName The resource's simple name (including file extension)
-	 * @return A stream or {@code null} if the resource is not found.
-	 * @deprecated  // use method on Resource instance!
-	 */
-	public InputStream getResourceAsStream(String resourceName) {
-		return this.getClass().getResourceAsStream(resourceName);
-	}
-	
-	/**
-	 * Returns the simple names of all resources within this class's directory
-	 * (excluding the class file itself).
-	 * This should work in an ordinary file system as well as a (possibly nested) 
-	 * JAR file.
-	 * 
-	 * @return A sorted array of names (possibly empty)
-	 * @deprecated // use getResources()
-	 */
-	public String[] getResourceNamesOld() {
-		final String className = this.getClass().getSimpleName();
-		Path[] paths = getResourcePaths(getPath(""));
-		//Path[] paths = getResourcePaths();
-		List<String> nameList = new ArrayList<>(paths.length);
-		for (Path p : paths) {
-			String name = p.getFileName().toString();
-			// exclude .java and .class files of THIS class
-			String nameOnly = FileUtils.stripFileExtension(name);
-			if (!nameOnly.equals(className)) {
-				nameList.add(name);
-			}
-		}
-		String[] sa = nameList.toArray(new String[0]);
-		Arrays.sort(sa);
-		return sa;
-	}
-
-	/**
-	 * Returns the paths to all files in a directory specified
-	 * by a path. This should work in an ordinary file system
-	 * as well as a (possibly nested) JAR file.
-	 * 
-	 * @param path The path to a directory (may be contained in a JAR file) 
-	 * @return An array of paths or {@code null} if the specified path 
-	 * is not a directory
-	 */
-	private static Path[] getResourcePaths(Path path) {
-		// with help from http://stackoverflow.com/questions/1429172/how-do-i-list-the-files-inside-a-jar-file, #10
-		if (!Files.isDirectory(path)) {
-			throw new IllegalArgumentException("path is not a directory: " + path.toString());
-		}
-		
-		List<Path> pathList = new ArrayList<Path>();
-		try (Stream<Path> walk = Files.walk(path, 1)) {
-			for (Iterator<Path> it = walk.iterator(); it.hasNext();) {
-				Path p = it.next();
-				if (Files.isRegularFile(p) && Files.isReadable(p)) {
-					pathList.add(p);
-				}
-			}
-			walk.close();
-		} catch (IOException e) { }
-
-		return pathList.toArray(new Path[0]);
-	}
-	
-	public Path[] getResourcePaths() {
-		return getResourcePaths(this.getPath()); 
-		//return getResourcePaths(Paths.get(getURI()));  // why not working???
-	}
-	
-	
-	public String[] getResourceNames() {
-		Path path = this.getPath();
-		// with help from http://stackoverflow.com/questions/1429172/how-do-i-list-the-files-inside-a-jar-file, #10
-		if (!Files.isDirectory(path)) {
-			throw new IllegalArgumentException("path is not a directory: " + path.toString());
-		}
-		
-		//List<Path> pathList = new ArrayList<Path>();
-		List<String> nameList = new ArrayList<>();
-		try (Stream<Path> walk = Files.walk(path, 1)) {
-			final String className = this.getClass().getSimpleName();
-			for (Iterator<Path> it = walk.iterator(); it.hasNext();) {
-				Path p = it.next();
-				if (Files.isRegularFile(p) && Files.isReadable(p)) {	
-					String name = p.getFileName().toString();
-					// exclude .java and .class files of THIS class
-					String nameOnly = FileUtils.stripFileExtension(name);
-					if (!nameOnly.equals(className)) {
-						nameList.add(name);
-					}
-				}
-			}
-			//walk.close();
-		} catch (IOException e) { }
-
-		return nameList.toArray(new String[0]);
-	}
-	
-	// -------------------------------------------------------------------------------------
-	
 //	private HashMap<String, Resource> collectResources() {
 //		final String className = this.getClass().getSimpleName();
 //		//Path[] paths = getResourcePaths(this.path);
@@ -341,78 +280,60 @@ public abstract class ResourceLocation {
 	// --- these are the only methods exposed: -----
 	
 	public Resource getResource(String resourceName) {
-		Path p = getPath(resourceName);
 		URI uri = getURI(resourceName);
-		return (p == null) ? null : new Resource(resourceName, uri);
-//		return resourceMap.get(resourceName);
+		return (uri == null) ? null : new Resource(resourceName, uri);
 	}
-	
+
+
 //	public Resource[] getResources() {
 //		return this.resources.toArray(new Resource[0]);
 //		return this.resourceMap.values().toArray(new Resource[0]);
 //	}
 	
 	// -------------------------------------------------------------------------------------
-	
+
 	/**
 	 * Instances of this class represent individual resources contained in
 	 * a particular {@link ResourceLocation}.
-	 * This is a non-static inner class, i.e., a {@link Resource} can only be instantiated
-	 * (exist) within the context of a surrounding {@link ResourceLocation}.
+	 * This is a non-static class, since {@link Resource} instances can only
+	 * exist in the context of a {@link ResourceLocation}.
 	 */
-	public static class Resource {
-		
+	public class Resource {
+
 		private final String name;
-//		private final Path path;
 		private final URI uri;
-		
-		Resource(String name, URI uri) {
+
+		private Resource(String name, URI uri) {
 			this.name = name;
-			this.uri = uri;
+			this.uri = toPath(uri).toUri();	// trick to get absolute URIs like "jar:file:///D:/..."
 		}
-		
-//		Resource(String name, Path path) {
-//			this.name = name;
-//			this.path = path;
-//		}
-		
+
+		/**
+		 * Returns the name of this resource.
+		 * @return the name of this resource
+		 */
 		public String getName() {
 			return name;
 		}
-		
+
+		/**
+		 * Returns the {@link Path} to the associated resource object.
+		 * @return the resource's {@link Path} 
+		 */
 		public Path getPath() {
-			return uriToPath(uri);
+			return toPath(uri);
 		}
-		
+
+		/**
+		 * Returns the {@link URI} for the associated resource object.
+		 * @return the resource's {@link URI} 
+		 */
 		public URI getURI() {
 			return uri;
 		}
-		
-		public URL getURL() {
-			URL url = null;
-			try {
-				url = getPath().toUri().toURL();
-			} catch (MalformedURLException e) {	
-				throw new RuntimeException(e.toString());}
-			return url;
-		}
-		
-		public ImagePlus openAsImage() {
-			IJ.log("uri = " + uri);
-			URL url2 = null;
-			Path path = getPath(); // uriToPath(uri);	
 
-			try {
-				URL url1 = uri.toURL(); 		// does not work
-				url2 = this.getURL(); //path.toUri().toURL();	// works -- what is the difference?
-				IJ.log("url1 = " + url1);
-				IJ.log("url2 = " + url2);
-				IJ.log("path = " + path);
-			} catch (MalformedURLException e) {	}
-			if (url2 == null)
-				return null;
-			else
-				return new Opener().openImage(url2.toString());
+		public ImagePlus openAsImage() {
+			return new Opener().openImage(uri.toString());
 		}
 		
 		/**
@@ -421,9 +342,10 @@ public abstract class ResourceLocation {
 		 * @return an {@link InputStream} for this resource
 		 */
 		public InputStream getStream() {
-			return super.getClass().getResourceAsStream(name);
+			Class<?> clazz = ResourceLocation.this.getClass();
+			IJ.log("clazz = " + clazz.getName());
+			return clazz.getResourceAsStream(name);
 		}
 
 	}
-	
 }

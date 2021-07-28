@@ -13,7 +13,7 @@ public class IccProfilesResourceTest {
 
 	@Test
 	public void test() {
-		assertNotNull(loc.getPath("AdobeRGB1998.icc"));
+		assertNotNull(loc.getResource("AdobeRGB1998.icc"));
 		assertEquals("wrong resource count", 7, loc.getResourceNames().length);
 	}
 

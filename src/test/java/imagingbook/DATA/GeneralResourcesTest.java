@@ -5,15 +5,13 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import java.nio.file.Path;
-
 import org.junit.Test;
 
 import ij.ImagePlus;
 import ij.process.ByteProcessor;
 import ij.process.ImageProcessor;
-import imagingbook.lib.ij.IjUtils;
 import imagingbook.lib.util.resource.ResourceLocation;
+import imagingbook.lib.util.resource.ResourceLocation.Resource;
 
 
 public class GeneralResourcesTest {
@@ -21,20 +19,20 @@ public class GeneralResourcesTest {
 	@Test
 	public void testResourcesBasic() {
 		String name = "boats.png";
-		Path path = null;
+		Resource res = null;
 		
 		ResourceLocation loc = new imagingbook.DATA.images.Resources();
 		
-		path = loc.getPath(name);
-		assertNotNull("existing resource not found" + name, path);
+		res = loc.getResource(name);
+		assertNotNull("existing resource not found" + name, res);
 		
-		path = loc.getPath("nonexistant");
-		assertNull("nonexisting resource found: " + name, path);
+		res = loc.getResource("nonexistant");
+		assertNull("nonexisting resource found: " + name, res);
 		
 		// check if all listed resource names really exist
 		String[] names = loc.getResourceNames();
 		for (String n : names) {
-			assertNotNull("listed resource not found: " + name, loc.getPath(n));
+			assertNotNull("listed resource not found: " + name, loc.getResource(n));
 		}
 	}
 	
@@ -43,10 +41,11 @@ public class GeneralResourcesTest {
 		String name = "boats.png";
 		
 		ResourceLocation loc = new imagingbook.DATA.images.Resources();
-		Path path = loc.getPath(name);
-		assertNotNull("image resource not found" + name, path);
+		Resource res = loc.getResource(name);
+		assertNotNull("image resource not found" + name, res);
 		
-		ImagePlus im = IjUtils.openImage(path);
+		ImagePlus im = res.openAsImage();
+		assertNotNull(im);
 		ImageProcessor ip = im.getProcessor();
 		assertNotNull(ip);
 		assertTrue("ByteProcessor expected", ip instanceof ByteProcessor);

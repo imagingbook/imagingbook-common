@@ -2,15 +2,12 @@ package imagingbook.lib.filter.linear;
 
 import static org.junit.Assert.assertTrue;
 
-import java.nio.file.Path;
-
 import org.junit.Test;
 
 import ij.process.ImageProcessor;
-import imagingbook.lib.filter.linear.Kernel2D;
-import imagingbook.lib.filter.linear.LinearFilter;
-import imagingbook.lib.ij.IjUtils;
 import imagingbook.lib.image.access.OutOfBoundsStrategy;
+import imagingbook.lib.util.resource.ResourceLocation;
+import imagingbook.lib.util.resource.ResourceLocation.Resource;
 import imagingbook.testutils.ImageTests;
 
 public class LinearFilterTest {
@@ -27,15 +24,17 @@ public class LinearFilterTest {
 			{2, 4, 2},
 			{1, 2, 1}};
 	
-	Path path1A = new imagingbook.DATA.images.Resources().getPath("monastery-small.png");
-	Path path1B = new imagingbook.DATA.images.Resources().getPath("monastery-small-filter3x3.png");
+	ResourceLocation loc = new imagingbook.DATA.images.Resources();
 	
-	Path path2A = new imagingbook.DATA.images.Resources().getPath("clown.png");
-	Path path2B = new imagingbook.DATA.images.Resources().getPath("clown-filter3x3.png");
+	Resource path1A = loc.getResource("monastery-small.png");
+	Resource path1B = loc.getResource("monastery-small-filter3x3.png");
+	
+	Resource path2A = loc.getResource("clown.png");
+	Resource path2B = loc.getResource("clown-filter3x3.png");
 	
 	@Test
 	public void testLinearFilterUnitKernel() {
-		ImageProcessor ipA = IjUtils.openImage(path1A).getProcessor();
+		ImageProcessor ipA = path1A.openAsImage().getProcessor();
 		float[][] H = H1;
 		ImageProcessor ipAf = ipA.duplicate();
 		new LinearFilter(new Kernel2D(H)).applyTo(ipAf, OBS);
@@ -44,8 +43,8 @@ public class LinearFilterTest {
 	
 	@Test
 	public void testLinearFilter3x3gray() {
-		ImageProcessor ipA = IjUtils.openImage(path1A).getProcessor();
-		ImageProcessor ipB = IjUtils.openImage(path1B).getProcessor();
+		ImageProcessor ipA = path1A.openAsImage().getProcessor();
+		ImageProcessor ipB = path1B.openAsImage().getProcessor();
 		float[][] H = H2;
 		new LinearFilter(new Kernel2D(H)).applyTo(ipA, OBS);
 		assertTrue(ImageTests.match(ipA, ipB, 1E-6));
@@ -53,8 +52,8 @@ public class LinearFilterTest {
 	
 	@Test
 	public void testLinearFilter3x3float() {
-		ImageProcessor ipA = IjUtils.openImage(path1A).getProcessor();
-		ImageProcessor ipB = IjUtils.openImage(path1B).getProcessor();
+		ImageProcessor ipA = path1A.openAsImage().getProcessor();
+		ImageProcessor ipB = path1B.openAsImage().getProcessor();
 		float[][] H = H2;
 		ImageProcessor ipAf = ipA.convertToFloatProcessor();
 		new LinearFilter(new Kernel2D(H)).applyTo(ipAf, OBS);
@@ -63,8 +62,8 @@ public class LinearFilterTest {
 	
 	@Test
 	public void testLinearFilter3x3rgb() {
-		ImageProcessor ipA = IjUtils.openImage(path2A).getProcessor();
-		ImageProcessor ipB = IjUtils.openImage(path2B).getProcessor();
+		ImageProcessor ipA = path2A.openAsImage().getProcessor();
+		ImageProcessor ipB = path2B.openAsImage().getProcessor();
 		float[][] H = H2;
 		
 		ImageProcessor ipAf = ipA.duplicate();
