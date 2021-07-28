@@ -17,7 +17,7 @@ public class SkeletonTest {
 	
 	private String origName = "cat.png";
 	private String resultName = "cat-skeleton.png";
-	private ResourceLocation loc = new imagingbook.DATA.images.Resources();
+	private ResourceLocation loc = new imagingbook.DATA.images.RLOC();
 
 	@Test
 	public void test() {

@@ -14,7 +14,7 @@ public class GaussianFilterTest {
 	static double SIGMA = 3.0;
 	static float TOL = 1f;	// deviations +/-1 are possible due to rounding to integer images
 	
-	ResourceLocation loc = new imagingbook.DATA.images.Resources();
+	ResourceLocation loc = new imagingbook.DATA.images.RLOC();
 	
 	Resource path1A = loc.getResource("monastery-small.png");
 	Resource path1B = loc.getResource("monastery-small-gauss3.png");

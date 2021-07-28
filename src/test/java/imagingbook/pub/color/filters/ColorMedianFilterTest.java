@@ -13,7 +13,7 @@ import imagingbook.testutils.ImageTests;
 
 public class ColorMedianFilterTest {
 	
-	private final ResourceLocation loc = new imagingbook.DATA.images.Resources();
+	private final ResourceLocation loc = new imagingbook.DATA.images.RLOC();
 
 	@Test
 	public void testScalarMedianFilter() {

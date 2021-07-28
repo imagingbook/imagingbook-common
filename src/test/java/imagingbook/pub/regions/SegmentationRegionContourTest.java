@@ -10,7 +10,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import ij.process.ByteProcessor;
-import imagingbook.DATA.images.Resources;
+import imagingbook.DATA.images.RLOC;
 import imagingbook.lib.ij.IjUtils;
 import imagingbook.lib.util.resource.ResourceLocation.Resource;
 import imagingbook.pub.regions.BinaryRegionSegmentation.BinaryRegion;
@@ -195,7 +195,7 @@ public class SegmentationRegionContourTest {
 	}
 	
 	private static ByteProcessor openImage(String imgName) {
-		Resource path = new Resources().getResource(imgName);
+		Resource path = new RLOC().getResource(imgName);
 		return (ByteProcessor) path.openAsImage().getProcessor();
 	}
 	

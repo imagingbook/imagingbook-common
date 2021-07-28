@@ -24,7 +24,7 @@ public class LinearFilterTest {
 			{2, 4, 2},
 			{1, 2, 1}};
 	
-	ResourceLocation loc = new imagingbook.DATA.images.Resources();
+	ResourceLocation loc = new imagingbook.DATA.images.RLOC();
 	
 	Resource path1A = loc.getResource("monastery-small.png");
 	Resource path1B = loc.getResource("monastery-small-filter3x3.png");

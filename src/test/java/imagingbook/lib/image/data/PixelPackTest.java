@@ -11,7 +11,7 @@ import imagingbook.testutils.ImageTests;
 
 public class PixelPackTest {
 
-	ResourceLocation loc = new imagingbook.DATA.images.Resources();
+	ResourceLocation loc = new imagingbook.DATA.images.RLOC();
 	private Resource path1 = loc.getResource("monastery-small.png");
 	private Resource path2 = loc.getResource("clown.png");
 

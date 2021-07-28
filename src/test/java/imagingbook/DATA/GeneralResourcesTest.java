@@ -21,7 +21,7 @@ public class GeneralResourcesTest {
 		String name = "boats.png";
 		Resource res = null;
 		
-		ResourceLocation loc = new imagingbook.DATA.images.Resources();
+		ResourceLocation loc = new imagingbook.DATA.images.RLOC();
 		
 		res = loc.getResource(name);
 		assertNotNull("existing resource not found" + name, res);
@@ -40,7 +40,7 @@ public class GeneralResourcesTest {
 	public void openBoatsImage() {
 		String name = "boats.png";
 		
-		ResourceLocation loc = new imagingbook.DATA.images.Resources();
+		ResourceLocation loc = new imagingbook.DATA.images.RLOC();
 		Resource res = loc.getResource(name);
 		assertNotNull("image resource not found" + name, res);
 		

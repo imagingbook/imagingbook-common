@@ -9,7 +9,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import ij.process.ByteProcessor;
-import imagingbook.DATA.images.Resources;
+import imagingbook.DATA.images.RLOC;
 import imagingbook.lib.util.resource.ResourceLocation.Resource;
 import imagingbook.pub.regions.BinaryRegionSegmentation.BinaryRegion;
 
@@ -29,7 +29,7 @@ public class BinaryRegionSegmentation4_Test {
 	final ByteProcessor bp;
 	
 	public BinaryRegionSegmentation4_Test() {
-		path = new Resources().getResource(ImgName);
+		path = new RLOC().getResource(ImgName);
 		bp = (ByteProcessor) path.openAsImage().getProcessor();
 		Assert.assertNotNull(bp);
 	}

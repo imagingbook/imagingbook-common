@@ -19,35 +19,48 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.ToDoubleBiFunction;
 import java.util.stream.Stream;
 
-import ij.IJ;
 import ij.ImagePlus;
 import ij.io.Opener;
 import imagingbook.lib.util.FileUtils;
 
 /**
- * Any resource directory is supposed to contain a "marker" class 
- * (any legal class name is OK) extending this class ({@link ResourceLocation}).
- * This is to make sure that every resource location
- * is also a Java package known to exist at compile time.
- * For example, a marker class is defined in file {@code imagingbook.DATA.images.Resources.java} 
- * as follows:
+ * <p>Access to Java resources is not trivial and there are quite a few pitfalls
+ * to avoid. The aim of this class is to simplify access to resources contained in
+ * the local file system or inside JAR files.</p>
+ * 
+ * <p>In ordinary Java, resources can be located relative to any class in the package hierarchy.
+ * Resources are found by their relative path and may be placed in nested sub-directories.
+ * This is error-prone since there is no way at compile time to ascertain that a required
+ * resource actually exists. If a resource does not exists this will cause a run-time error.
+ * The goal of this setup is to reduce this potential danger by a few restrictions:</p>
+ * 
+ * <ul>
+ * <li>A "resource location" (RL) is a flat directory (i.e., all resources are at the same level, 
+ * 		no resources in sub-directories).</li>
+ * <li>A RL contains the definition of a "marker class" which extends <strong>this</strong> class 
+ * 		({@link ResourceLocation}). This is to make sure that every resource location
+ * 		is also a Java package known to exist at compile time.</li>
+ * <li>In principle, any legal name can be used for the marker class. We typically name such classes "RLOC" to
+ * 		stand out against ordinary Java classes.</li>
+ * </ul>
+ * <p>For example, a marker class in {@link imagingbook.DATA.images.RLOC.java} is defined as follows:</p>
  * <pre>
  * package imagingbook.DATA.images;
- * public class Resources extends ResourceLocation { }</pre>
- * 
- * All resources are assumed to be local in the SAME directory ONLY,
- * thereby avoiding the use of strings to specify sub-directories.
- * Here is an example how to access the associated resources from some other class:
+ * public class RLOC extends ResourceLocation { }
+ * </pre>
+ * <p>Nothing else is needed to mark the associated package as a resource location.
+ * Here is an example how to access the associated resources from some other class:</p>
  * <pre>
- * ResourceLocation loc = new imagingbook.DATA.images.Resources();
+ * ResourceLocation loc = new imagingbook.DATA.images.RLOC();
  * Resource res = loc.getResource("boats.png");
  * URI uri = res.getUri();
  * InputStream strm = res.getStream();
- * ... * </pre>
+ * ... </pre>
  * 
- * Specifically, an image can be opened as follows:
+ * <p>Specifically, an image can be opened (with ImageJ) as follows:
  * <pre>
  * Resource res = loc.getResource("boats.png");
  * ImagePlus im = res.openAsImage();
@@ -57,17 +70,19 @@ import imagingbook.lib.util.FileUtils;
  * Note that under the canonical Maven project structure, the associated file 
  * locations (package structure) are:
  * <pre>
- * src/main/java/imagingbook/DATA/images/Resources.java (the marker class extending {@link ResourceLocation})
- * src/main/resources/imagingbook/DATA/images/boats.png ... (the actual resource files)</pre>
+ * src/main/java/imagingbook/DATA/images/RLOC.java
+ * src/main/resources/imagingbook/DATA/images/boats.png
+ * ... (other resources)</pre>
  * 
  * or (if resources are used for testing only)
  * <pre>
- * src/test/java/imagingbook/DATA/images/Resources.java (the marker class extending {@link ResourceLocation})
- * src/test/resources/imagingbook/DATA/images/boats.png ... (the actual resource files)</pre>
+ * src/test/java/imagingbook/DATA/images/RLOC.java
+ * src/test/resources/imagingbook/DATA/images/boats.png
+ * ... (other resources)</pre>
  * 
  * <p>
- * Note: To avoid marker classes showing up in the JavaDoc documentation,
- * we use the following (internal) "convention":
+ * Final note: To avoid marker classes showing up in the JavaDoc documentation,
+ * we use the following (internal) "convention" (currently under revision):
  * </p>
  * <ul>
  * <li>All root resource packages/directories are named {@code DATA} (deliberately
@@ -317,7 +332,6 @@ public abstract class ResourceLocation {
 		 */
 		public InputStream getStream() {
 			Class<?> clazz = ResourceLocation.this.getClass();
-			IJ.log("clazz = " + clazz.getName());
 			return clazz.getResourceAsStream(name);
 		}
 
