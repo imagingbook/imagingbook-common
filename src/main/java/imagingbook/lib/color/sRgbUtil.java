@@ -11,7 +11,6 @@ package imagingbook.lib.color;
 
 import java.awt.Color;
 
-import ij.IJ;
 import imagingbook.lib.math.Matrix;
 
 /*

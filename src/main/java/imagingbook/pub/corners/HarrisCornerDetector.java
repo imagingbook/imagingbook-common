@@ -16,7 +16,7 @@ import ij.process.ImageProcessor;
  * This is an implementation of the Harris corner detector, as described in
  * <blockquote>
  *  C. G. Harris and M. Stephens. A combined corner and edge
- *  detector. In C. J. Taylor, editor, “4th Alvey Vision Conference”,
+ *  detector. In C. J. Taylor, editor, 4th Alvey Vision Conference,
  *  pp. 147–151, Manchester (1988).
  *  </blockquote>
  * This class extends {@link GradientCornerDetector} (where most

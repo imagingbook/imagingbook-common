@@ -3,7 +3,6 @@ package imagingbook.pub.regions;
 import static imagingbook.pub.regions.NeighborhoodType.N4;
 import static imagingbook.pub.regions.NeighborhoodType.N8;
 
-import java.nio.file.Path;
 import java.util.List;
 
 import org.junit.Assert;
@@ -11,7 +10,6 @@ import org.junit.Test;
 
 import ij.process.ByteProcessor;
 import imagingbook.DATA.images.RLOC;
-import imagingbook.lib.ij.IjUtils;
 import imagingbook.lib.util.resource.ResourceLocation.Resource;
 import imagingbook.pub.regions.BinaryRegionSegmentation.BinaryRegion;
 

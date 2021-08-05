@@ -24,11 +24,11 @@
 <span class="sourceLineNo">014</span><a id="line.14"></a>
 <span class="sourceLineNo">015</span><a id="line.15">/**</a>
 <span class="sourceLineNo">016</span><a id="line.16"> * Implements an efficient, closed form algorithm for calculating the real </a>
-<span class="sourceLineNo">017</span><a id="line.17"> * eigenvalues (&amp;lambda;) and eigenvectors (x) of a 2x2 matrix M of the form</a>
+<span class="sourceLineNo">017</span><a id="line.17"> * eigenvalues (&amp;lambda;) and eigenvectors (x) of a 2x2 matrix of the form</a>
 <span class="sourceLineNo">018</span><a id="line.18"> * &lt;pre&gt;</a>
 <span class="sourceLineNo">019</span><a id="line.19"> *   | a b |</a>
 <span class="sourceLineNo">020</span><a id="line.20"> *   | c d | &lt;/pre&gt;</a>
-<span class="sourceLineNo">021</span><a id="line.21"> * There are typically (but not in general) two pairs of real-valued </a>
+<span class="sourceLineNo">021</span><a id="line.21"> * There are typically (but not always) two pairs of real-valued </a>
 <span class="sourceLineNo">022</span><a id="line.22"> * solutions </a>
 <span class="sourceLineNo">023</span><a id="line.23"> * &amp;lang;&amp;lambda;&lt;sub&gt;1&lt;/sub&gt;, x&lt;sub&gt;1&lt;/sub&gt;&amp;rang;,</a>
 <span class="sourceLineNo">024</span><a id="line.24"> * &amp;lang;&amp;lambda;&lt;sub&gt;2&lt;/sub&gt;, x&lt;sub&gt;2&lt;/sub&gt;&amp;rang;</a>
@@ -38,20 +38,20 @@
 <span class="sourceLineNo">028</span><a id="line.28"> * Eigenvectors are not normalized, i.e., no unit vectors</a>
 <span class="sourceLineNo">029</span><a id="line.29"> * (any scalar multiple of an Eigenvector is an Eigenvector too).</a>
 <span class="sourceLineNo">030</span><a id="line.30"> * Non-real eigenvalues are not handled.</a>
-<span class="sourceLineNo">031</span><a id="line.31"> * Clients should call method {@link #isReal} to check if the resulting eigenvalues</a>
-<span class="sourceLineNo">032</span><a id="line.32"> * are real or not.</a>
+<span class="sourceLineNo">031</span><a id="line.31"> * Clients should call method {@link #isReal()} to check if the resulting eigenvalues</a>
+<span class="sourceLineNo">032</span><a id="line.32"> * are all real or not.</a>
 <span class="sourceLineNo">033</span><a id="line.33"> * &lt;p&gt;</a>
 <span class="sourceLineNo">034</span><a id="line.34"> * This implementation is inspired by Blinn, Jim: "Jim Blinn's Corner: </a>
 <span class="sourceLineNo">035</span><a id="line.35"> * Notation, Notation, Notation", Morgan Kaufmann (2002) -</a>
 <span class="sourceLineNo">036</span><a id="line.36"> * Ch. 5 ("Consider the Lowly 2x2 Matrix").</a>
 <span class="sourceLineNo">037</span><a id="line.37"> * Note that Blinn uses the notation </a>
-<span class="sourceLineNo">038</span><a id="line.38"> * x&amp;middot;A = &amp;lambda;&amp;middot;x for the matrix-vector product (common computer graphics),</a>
+<span class="sourceLineNo">038</span><a id="line.38"> * x&amp;middot;A = &amp;lambda;&amp;middot;x for the matrix-vector product (as common in computer graphics),</a>
 <span class="sourceLineNo">039</span><a id="line.39"> * while this implementation adopts the notation </a>
 <span class="sourceLineNo">040</span><a id="line.40"> * A&amp;middot;x = &amp;lambda;&amp;middot;x.</a>
-<span class="sourceLineNo">041</span><a id="line.41"> * Thus matrix A is transposed (elements b/c are exchanged).</a>
+<span class="sourceLineNo">041</span><a id="line.41"> * Thus x is treated as a column vector and matrix A is transposed (elements b/c are exchanged).</a>
 <span class="sourceLineNo">042</span><a id="line.42"> * &lt;/p&gt;</a>
 <span class="sourceLineNo">043</span><a id="line.43"> * This implementation is considerably (ca. factor 5) faster than the general solution</a>
-<span class="sourceLineNo">044</span><a id="line.44"> * in {@link EigensolverNxN} (based on Apache Commons Math) for 2x2 matrices.</a>
+<span class="sourceLineNo">044</span><a id="line.44"> * available in {@link EigensolverNxN} (based on Apache Commons Math) for 2x2 matrices.</a>
 <span class="sourceLineNo">045</span><a id="line.45"> * </a>
 <span class="sourceLineNo">046</span><a id="line.46"> * @author W. Burger</a>
 <span class="sourceLineNo">047</span><a id="line.47"> * @version 2021-05-19</a>
@@ -153,7 +153,7 @@
 <span class="sourceLineNo">143</span><a id="line.143">        </a>
 <span class="sourceLineNo">144</span><a id="line.144">        /**</a>
 <span class="sourceLineNo">145</span><a id="line.145">         * Returns a vector holding the two real eigenvalues. Both are</a>
-<span class="sourceLineNo">146</span><a id="line.146">         * {@code NaN} if the associated matrix has no real eigenvalues.</a>
+<span class="sourceLineNo">146</span><a id="line.146">         * {@code NaN} if the input matrix has any non-real (complex) eigenvalues.</a>
 <span class="sourceLineNo">147</span><a id="line.147">         * Otherwise the first eigenvalue has greater magnitude than the second.</a>
 <span class="sourceLineNo">148</span><a id="line.148">         * Note that the method returns a reference to an internal</a>
 <span class="sourceLineNo">149</span><a id="line.149">         * array and thus results should be used read-only!</a>

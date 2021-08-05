@@ -9,7 +9,6 @@ import static imagingbook.lib.math.Matrix.dotProduct;
 import static imagingbook.lib.math.Matrix.multiply;
 import static imagingbook.lib.math.Matrix.normL2;
 
-import imagingbook.lib.math.Matrix;
 import imagingbook.lib.util.Enums.Description;
 
 /**

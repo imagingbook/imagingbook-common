@@ -19,9 +19,9 @@ import ij.process.ImageProcessor;
  * This is an implementation of the Shi-Tomasi corner detector, as 
  * described in
  * <blockquote>
- *  J. Shi and C. Tomasi. Good features to track. In “Proceedings
+ *  J. Shi and C. Tomasi. Good features to track. In Proceedings
  *  of IEEE Conference on Computer Vision and Pattern Recognition,
- *  CVPR’94”, pp. 593–600, Seattle, WA, USA (1994).
+ *  CVPR’94, pp. 593–600, Seattle, WA, USA (1994).
  * </blockquote>
  * This class extends {@link GradientCornerDetector} (where most
  * of the work is done) by defining a specific corner score function

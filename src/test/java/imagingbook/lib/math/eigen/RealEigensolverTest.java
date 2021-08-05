@@ -7,7 +7,6 @@ import static org.junit.Assert.assertTrue;
 import java.util.Random;
 
 import imagingbook.lib.math.Matrix;
-import imagingbook.lib.math.eigen.RealEigensolver;
 
 /**
  * Contains common methods for testing eigen-solvers.

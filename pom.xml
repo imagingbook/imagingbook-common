@@ -23,6 +23,7 @@
 	</properties>
 
 	<dependencies>
+            
 		<dependency>
 			<groupId>net.imagej</groupId>
 			<artifactId>ij</artifactId>

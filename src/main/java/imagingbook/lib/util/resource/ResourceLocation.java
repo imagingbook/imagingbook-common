@@ -19,7 +19,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.function.ToDoubleBiFunction;
 import java.util.stream.Stream;
 
 import ij.ImagePlus;
@@ -46,7 +45,7 @@ import imagingbook.lib.util.FileUtils;
  * <li>In principle, any legal name can be used for the marker class. We typically name such classes "RLOC" to
  * 		stand out against ordinary Java classes.</li>
  * </ul>
- * <p>For example, a marker class in {@link imagingbook.DATA.images.RLOC.java} is defined as follows:</p>
+ * <p>For example, a marker class in {@code imagingbook.DATA.images.RLOC.java} would be defined as follows:</p>
  * <pre>
  * package imagingbook.DATA.images;
  * public class RLOC extends ResourceLocation { }

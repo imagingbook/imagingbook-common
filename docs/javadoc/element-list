@@ -1,5 +1,4 @@
 imagingbook
-imagingbook.lib
 imagingbook.lib.color
 imagingbook.lib.filter
 imagingbook.lib.filter.examples
@@ -19,7 +18,7 @@ imagingbook.lib.util.bits
 imagingbook.lib.util.choice
 imagingbook.lib.util.progress
 imagingbook.lib.util.progress.ij
-imagingbook.pub
+imagingbook.lib.util.resource
 imagingbook.pub.color.edge
 imagingbook.pub.color.filters
 imagingbook.pub.color.image
