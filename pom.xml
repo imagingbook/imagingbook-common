@@ -11,15 +11,7 @@
 		<relativePath />		
 	</parent>
 	
-	<repositories>
-		<repository>
-			<id>imagingbook-maven-repository</id>
-			<url>https://raw.github.com/imagingbook/imagingbook-maven-repository/master</url>
-		</repository>
-	</repositories>
-	
 	<properties>
-		<main.basedir>${project.parent.basedir}</main.basedir>
 	</properties>
 
 	<dependencies>
