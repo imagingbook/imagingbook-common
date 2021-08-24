@@ -197,12 +197,31 @@ public class Complex {
 	public double[] toArray() {
 		return new double[] {this.re, this.im};
 	}
+	
+	@Override
+	public boolean equals(Object o) {
+        if (o == this) {
+            return true;
+        }       
+        if (o instanceof Complex) {
+	        final Complex c = (Complex) o;
+	        return Double.compare(this.re, c.re) == 0 && Double.compare(this.im, c.im) == 0;
+        }
+        return false;
+	}
+	
+	public boolean equals(double a, double b) {
+		return Double.compare(this.re, a) == 0 && Double.compare(this.im, b) == 0;
+	}
 
 	//------------ TESTING only ------------------------------
 
 //	public static void main(String[] args) {
 //		Complex z1 = new Complex(0.3, 0.6);
 //		Complex z2 = new Complex(-1, 0.2);
+//		
+//		System.out.println("z1 = " + z1);
+//		System.out.println("z2 = " + z2);
 //		
 //		System.out.println("z1 + z2 = " + z1.add(z2));
 //		System.out.println("z2 + z1 = " + z2.add(z1));
@@ -222,8 +241,14 @@ public class Complex {
 
 }
 /*
-z1 = (0.3, 0.6)
-z2 = (-1.0, 0.2)
-z3 = (-0.42, -0.54)
-z4 = (-0.42, -0.54)
+z1 = (0.300000000, 0.600000000)
+z2 = (-1.000000000, 0.200000000)
+z1 + z2 = (-0.700000000, 0.800000000)
+z2 + z1 = (-0.700000000, 0.800000000)
+z1 = (0.300000000, 0.600000000)
+z2 = (-1.000000000, 0.200000000)
+z1 * z2 = (-0.420000000, -0.540000000)
+z2 * z1 = (-0.420000000, -0.540000000)
+z1.pow(5) = (0.099630000, -0.092340000)
+z1.rotate(0.1) = (0.238601200, 0.626952524)
 */
