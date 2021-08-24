@@ -167,16 +167,19 @@ public interface Pnt2d {
 	
 	// ----------------------------------------------------------
 
-	/**
-	 * Tests if this point matches the given point, i.e., if
-	 * both coordinate differences are zero (&lt; {@link #TOLERANCE}).
-	 * 
-	 * @param p the point to be matched to
-	 * @return true if both points match
-	 */
-	public default boolean equals(Pnt2d p) {
-		return this.equals(p, TOLERANCE);
-	}
+//	/**
+//	 * Tests if this point matches the given point, i.e., if
+//	 * both coordinate differences are zero (&lt; {@link #TOLERANCE}).
+//	 * 
+//	 * @param p the point to be matched to
+//	 * @return true if both points match
+//	 */
+//	public default boolean equals(Pnt2d p) {
+//		if (this == p) {
+//			return true;
+//		}
+//		return this.equals(p, TOLERANCE);
+//	}
 	
 	/**
 	 * Tests if this point matches the given point, i.e., if
@@ -364,6 +367,19 @@ public interface Pnt2d {
 			return new PntDouble(this.x - p.getX(), this.y - p.getY());
 		}
 		
+		// equality -----------------------------------
+		
+		@Override
+		public boolean equals(Object p) {
+			if (this == p) {
+				return true;
+			}
+			if (p instanceof Pnt2d) {
+				return this.equals((Pnt2d) p, TOLERANCE);
+			}
+			return false;
+		}
+		
 		// misc -----------------------------------
 		
 		@Override
@@ -377,7 +393,9 @@ public interface Pnt2d {
 	        long bits = java.lang.Double.doubleToLongBits(this.x);
 	        bits ^= java.lang.Double.doubleToLongBits(this.y) * 31;
 	        return (((int) bits) ^ ((int) (bits >> 32)));
-	    }	
+	    }
+		
+		// 
 	}
 	
 	// ----------------------------------------------------------
@@ -543,27 +561,35 @@ public interface Pnt2d {
 		// equality -----------------------------------
 		
 		@Override
-		public boolean equals(Pnt2d p) {
+		public boolean equals(Object p) {
+			if (this == p) {
+				return true;
+			}
 			if (p instanceof PntInt) {
-				return this.equals((PntInt) p);
+				PntInt pp = (PntInt) p;
+				return (this.x == pp.x) && (this.y == pp.y);
 			}
-			else {
-				return Pnt2d.super.equals(p);
+			if (p instanceof Pnt2d) {
+				return this.equals((Pnt2d) p, TOLERANCE);
 			}
+			return false;
 		}
 		
-		/**
-		 * Tests if this point matches the given point, i.e., if
-		 * both coordinate differences are zero.
-		 * Since both points are of type {@link PntInt} the match
-		 * is exact.
-		 * 
-		 * @param p the point to be matched to
-		 * @return true if both points match
-		 */
-		public boolean equals(PntInt p) {
-			return (this.x == p.x) && (this.y == p.y);
-		}
+//		/**
+//		 * Tests if this integer point matches another integer point, i.e., if
+//		 * both coordinate differences are zero.
+//		 * Since both points are of type {@link PntInt} the match must be exact.
+//		 * 
+//		 * @param p the integer point to be matched to
+//		 * @return true if both points match
+//		 */
+//		public boolean equals(PntInt p) {
+//			if (this == p) {
+//				return true;
+//			}
+//			return (this.x == p.x) && (this.y == p.y);
+//		}
+		
 		
 		// misc -----------------------------------
 		
