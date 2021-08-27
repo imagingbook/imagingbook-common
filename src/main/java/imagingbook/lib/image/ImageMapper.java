@@ -12,7 +12,10 @@ import imagingbook.pub.geometry.mappings.Mapping2D;
  * on images. The geometric transformation (mapping) must be specified at
  * construction, optionally a pixel interpolation method can be specified.
  * 
- * @version 2019/01/04
+ * The specified geometric mapping is supposed to be INVERTED, i.e. transforming
+ * <strong>target to source</strong> coordinates!
+ * 
+ * @version 2021/08/27
  *
  */
 public class ImageMapper {
@@ -21,26 +24,26 @@ public class ImageMapper {
 	public static InterpolationMethod DefaultInterpolationMethod = InterpolationMethod.Bicubic;	
 	
 	private final InterpolationMethod im;
-	private final Mapping2D mp;
+	private final Mapping2D mapping;
 	
 	/**
 	 * Creates a new instance with the specified geometric mapping.
 	 * The default pixel interpolation method is used
 	 * (see {@link DefaultInterpolationMethod}).
-	 * @param mp the geometric mapping
+	 * @param targetToSourceMapping the geometric mapping
 	 */
-	public ImageMapper(Mapping2D mp) {
-		this(mp, DefaultInterpolationMethod);
+	public ImageMapper(Mapping2D targetToSourceMapping) {
+		this(targetToSourceMapping, DefaultInterpolationMethod);
 	}
 
 	/**
 	 * Creates a new instance with the specified geometric mapping
 	 * and pixel interpolation method.
-	 * @param mp the geometric mapping
+	 * @param targetToSourceMapping the geometric mapping
 	 * @param im the pixel interpolation method
 	 */
-	public ImageMapper(Mapping2D mp, InterpolationMethod im) {
-		this.mp = mp;
+	public ImageMapper(Mapping2D targetToSourceMapping, InterpolationMethod im) {
+		this.mapping = targetToSourceMapping;
 		this.im = im;
 	}
 	
@@ -49,8 +52,6 @@ public class ImageMapper {
 	/**
 	 * Destructively transforms the passed image using this geometric
 	 * mapping and the specified pixel interpolation method.
-	 * The geometric mapping is supposed to be INVERTED, i.e. transforming
-	 * target to source image coordinates!
 	 * 
 	 * @param ip target image to which this mapping is applied
 	 */
@@ -101,7 +102,7 @@ public class ImageMapper {
 		if (targetAcc.getProcessor() == sourceAcc.getProcessor()) {
 			throw new IllegalArgumentException("Source and target image must not be the same!");
 		}
-		Mapping2D invMap = mp; 		// this always IS an inverse mapping!!
+		Mapping2D invMap = mapping; 		// this always IS an inverse mapping!!
 		ImageProcessor target = targetAcc.getProcessor();
 		final int w = target.getWidth();
 		final int h = target.getHeight();
