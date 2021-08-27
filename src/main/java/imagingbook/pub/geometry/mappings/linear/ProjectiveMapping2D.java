@@ -10,6 +10,7 @@
 package imagingbook.pub.geometry.mappings.linear;
 
 import imagingbook.lib.math.Arithmetic;
+import imagingbook.lib.math.Matrix;
 import imagingbook.lib.settings.PrintPrecision;
 import imagingbook.pub.geometry.basic.Pnt2d;
 import imagingbook.pub.geometry.basic.Pnt2d.PntDouble;
@@ -178,12 +179,29 @@ public class ProjectiveMapping2D extends LinearMapping2D {
 	
 	/**
 	 * Creates a projective mapping from a transformation matrix A,
-	 * which must be at least of size 3 x 3.
+	 * of arbitrary size. All relevant elements of A are inserted into
+	 * actual 3x3 transformation matrix, except element (2,2) which
+	 * is ignored and always set to 1 (to keep the transformation projective).
 	 * If A is larger than 3 x 3, the remaining elements are ignored.
-	 * @param A a 2 x 3(or larger) matrix
+	 * 
+	 * @param A a transformation matrix of arbitrary size
 	 */
 	public ProjectiveMapping2D(double[][] A) {
-		this(new LinearMapping2D(A));
+		//this(new LinearMapping2D(A));
+		super(extractProjectiveMatrix(A));
+	}
+	
+	private static double[][] extractProjectiveMatrix(double[][] A) {
+		double[][] M = Matrix.idMatrix(3);
+		final int m = Math.min(3, A.length);	// max. 3 rows
+		for (int i = 0; i < m; i++) {
+			final int n = Math.min(3, A[i].length);	// max. 3 columns
+			for (int j = 0; j < n; j++) {
+				M[i][j] = A[i][j];
+			}
+		}
+		M[2][2] = 1;
+		return M;
 	}
 
 	

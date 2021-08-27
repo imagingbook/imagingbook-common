@@ -88,11 +88,25 @@ public class AffineMapping2D extends ProjectiveMapping2D {
 	/**
 	 * Creates a linear mapping from a transformation matrix A,
 	 * which must be at least of size 2 x 3.
+	 * The elements of A are copied into a 3x3 identity matrix.
 	 * If A is larger than 2 x 3, the remaining elements are ignored.
 	 * @param A a 2 x 3(or larger) matrix
 	 */
 	public AffineMapping2D(double[][] A) {
-		super(A[0][0], A[0][1], A[0][2], A[1][0], A[1][1], A[1][2], 0, 0);
+		//super(A[0][0], A[0][1], A[0][2], A[1][0], A[1][1], A[1][2], 0, 0);
+		super(extractAffineMatrix(A));
+	}
+	
+	private static double[][] extractAffineMatrix(double[][] A) {
+		double[][] M = Matrix.idMatrix(3);
+		final int m = Math.min(2, A.length);	// max. 2 rows
+		for (int i = 0; i < m; i++) {
+			final int n = Math.min(3, A[i].length);	// max. 3 columns
+			for (int j = 0; j < n; j++) {
+				M[i][j] = A[i][j];
+			}
+		}
+		return M;
 	}
 
 	/**

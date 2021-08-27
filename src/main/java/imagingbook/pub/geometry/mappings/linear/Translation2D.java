@@ -23,7 +23,7 @@ public class Translation2D extends AffineMapping2D {
 	 * @param tx translation in x
 	 * @param ty translation in y
 	 */
-	public Translation2D(double tx, double ty){
+	public Translation2D(double tx, double ty) {
 		super(1, 0, tx, 0, 1, ty);
 	}
 

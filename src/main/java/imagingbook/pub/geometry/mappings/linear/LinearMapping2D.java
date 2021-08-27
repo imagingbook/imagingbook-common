@@ -38,19 +38,50 @@ public class LinearMapping2D implements Mapping2D {
 	}
 	
 	/**
-	 * Creates a linear mapping from a transformation matrix A.
-	 * @param A a (3,3) or (2,3) matrix
+	 * Creates a linear mapping from a transformation matrix
+	 * of arbitrary size (may be even empty). The actual transformation 
+	 * matrix is formed by inserting the given matrix into
+	 * a 3x3 identity matrix starting at position (0,0).
+	 * 
+	 * @param A a matrix of arbitrary size
 	 */
 	public LinearMapping2D(double[][] A) {
-		a00 = A[0][0]; a01 = A[0][1]; a02 = A[0][2];
-		a10 = A[1][0]; a11 = A[1][1]; a12 = A[1][2];
-		if (A.length == 3) {
-			a20 = A[2][0]; a21 = A[2][1]; a22 = A[2][2];
-		}
-		else {
-			a20 = 0; a21 = 0; a22 = 1;
-		}
+		double[][] M = extractLinearMatrix(A);
+		a00 = M[0][0]; a01 = M[0][1]; a02 = M[0][2];
+		a10 = M[1][0]; a11 = M[1][1]; a12 = M[1][2];
+		a20 = M[2][0]; a21 = M[2][1]; a22 = M[2][2];
 	}
+	
+	/**
+	 * Inserts the given matrix into a new 3x3 identity matrix,
+	 * starting at element (0,0). All elements outside
+	 * 3x3 are ignored. If the matrix is 
+	 * 
+	 * @param A the original matrix
+	 * @return a 3x3 matrix
+	 */
+	private static double[][] extractLinearMatrix(double[][] A) {
+		double[][] M = Matrix.idMatrix(3);
+		final int m = Math.min(3, A.length);	// max. 3 rows
+		for (int i = 0; i < m; i++) {
+			final int n = Math.min(3, A[i].length);	// max. 3 columns
+			for (int j = 0; j < n; j++) {
+				M[i][j] = A[i][j];
+			}
+		}
+		return M;
+	}
+	
+//	public LinearMapping2D(double[][] A) {
+//		a00 = A[0][0]; a01 = A[0][1]; a02 = A[0][2];
+//		a10 = A[1][0]; a11 = A[1][1]; a12 = A[1][2];
+//		if (A.length == 3) {
+//			a20 = A[2][0]; a21 = A[2][1]; a22 = A[2][2];
+//		}
+//		else {
+//			a20 = 0; a21 = 0; a22 = 1;
+//		}
+//	}
 
 	/**
 	 * Creates an arbitrary linear mapping from the specified matrix elements.
