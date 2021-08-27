@@ -279,6 +279,8 @@ public abstract class BinaryRegionSegmentation {
 			this.label = label;
 		}
 		
+		// ------- public methods --------------------------
+		
 		/**
 		 * Obsolete - use {@link #getCenter()} instead!
 		 * Get the x-value of the region's centroid.
@@ -371,8 +373,23 @@ public abstract class BinaryRegionSegmentation {
 			double mu11 = xySum - x1Sum * y1Sum / n;
 			return new double[] {mu10, mu01, mu20, mu02, mu11};
 		}
-
-		// ------- public methods --------------------------
+		
+		/**
+		 * Returns the 2x2 covariance matrix for the pixel coordinates
+		 * contained in this region:
+		 * <pre>
+		 * | &sigma;<sub>20</sub> &sigma;<sub>11</sub> | 
+		 * | &sigma;<sub>11</sub> &sigma;<sub>02</sub> | 
+		 * </pre>
+		 * @return the covariance matrix
+		 */
+		public double[][] getCovarianceMatrix() {
+			double[] mu = getCentralMoments(); // = (mu10, mu01, mu20, mu02, mu11)
+			double[][] S = {
+					{mu[2]/size, mu[4]/size},
+					{mu[4]/size, mu[3]/size}};
+			return S;
+		}
 		
 		/**
 		 * Get the label associated with this region.
