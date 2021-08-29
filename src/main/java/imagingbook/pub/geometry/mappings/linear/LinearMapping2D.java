@@ -11,6 +11,7 @@ package imagingbook.pub.geometry.mappings.linear;
 
 import imagingbook.lib.math.Arithmetic;
 import imagingbook.lib.math.Matrix;
+import imagingbook.lib.settings.PrintPrecision;
 import imagingbook.pub.geometry.basic.Pnt2d;
 import imagingbook.pub.geometry.basic.Pnt2d.PntDouble;
 import imagingbook.pub.geometry.mappings.Mapping2D;
@@ -237,13 +238,13 @@ public class LinearMapping2D implements Mapping2D {
 //		double[][] I = Matrix.multiply(A, Ai);
 //		System.out.println("\ntest: should be the  identity matrix: = \n" + Matrix.toString(I));
 //		
-//		ProjectiveMapping pA = (new LinearMapping2D(A)).normalize();
+//		ProjectiveMapping2D pA = (new LinearMapping2D(A)).normalize();
 //		System.out.println("mapping pA = \n" + pA.toString());
 //		
-//		ProjectiveMapping AA1 = pA.concat(pA);
+//		ProjectiveMapping2D AA1 = pA.concat(pA);
 //		System.out.println("mapping AA1 = \n" + AA1.toString());
 //		
-//		ProjectiveMapping AA2 = LinearMapping2D.concatenate(pA, pA).normalize();
+//		ProjectiveMapping2D AA2 = LinearMapping2D.concatenate(pA, pA).normalize();
 //		System.out.println("mapping AA1 = \n" + AA2.toString());
 //	}
 

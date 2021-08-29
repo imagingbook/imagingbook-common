@@ -16,6 +16,12 @@ import imagingbook.lib.ij.IjUtils;
 
 public class ImageTests {
 	
+	public static float TOLERANCE = 1E-6f;
+	
+	public static boolean match(ImageProcessor ip1, ImageProcessor ip2) {
+		return match(ip1, ip2, TOLERANCE);
+	}
+	
 	public static boolean match(ImageProcessor ip1, ImageProcessor ip2, double tolerance) {
 		assertTrue("images are of different type", IjUtils.sameType(ip1, ip2));
 		assertTrue("images are of different size", IjUtils.sameSize(ip1, ip2));

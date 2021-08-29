@@ -8,6 +8,7 @@ import org.junit.Test;
 import imagingbook.lib.math.Arithmetic.DivideByZeroException;
 import imagingbook.lib.math.Matrix.IncompatibleDimensionsException;
 import imagingbook.lib.math.Matrix.NonsquareMatrixException;
+import imagingbook.testutils.ArrayTests;
 
 
 public class MatrixTest {
@@ -29,12 +30,12 @@ public class MatrixTest {
 		
 		Assert.assertEquals(2, Matrix.getNumberOfRows(B));
 		Assert.assertEquals(3, Matrix.getNumberOfColumns(B));
-		Assert.assertEquals(2.0, A[0][1], MathTestUtils.TOLERANCE);
+		Assert.assertEquals(2.0, A[0][1], ArrayTests.TOLERANCE);
 	}
 	
 	@Test
 	public void testMatrixDeterminant() {
-		Assert.assertEquals(6.0, Matrix.determinant3x3(A), MathTestUtils.TOLERANCE);
+		Assert.assertEquals(6.0, Matrix.determinant3x3(A), ArrayTests.TOLERANCE);
 	}
 	
 	@Test(expected = IncompatibleDimensionsException.class)
@@ -44,11 +45,11 @@ public class MatrixTest {
 
 	@Test
 	public void testMatrixRowColumnSums() {
-		Assert.assertArrayEquals(new float[] {10, 15, 18}, Matrix.sumColumns(A), MathTestUtils.TOLERANCE);
-		Assert.assertArrayEquals(new float[] {4, 15, 24}, Matrix.sumRows(A), MathTestUtils.TOLERANCE);
+		Assert.assertArrayEquals(new float[] {10, 15, 18}, Matrix.sumColumns(A), ArrayTests.TOLERANCE);
+		Assert.assertArrayEquals(new float[] {4, 15, 24}, Matrix.sumRows(A), ArrayTests.TOLERANCE);
 		
-		Assert.assertArrayEquals(new double[] {3, 7, 9}, Matrix.sumColumns(B), MathTestUtils.TOLERANCE);
-		Assert.assertArrayEquals(new double[] {4, 15}, Matrix.sumRows(B), MathTestUtils.TOLERANCE);
+		Assert.assertArrayEquals(new double[] {3, 7, 9}, Matrix.sumColumns(B), ArrayTests.TOLERANCE);
+		Assert.assertArrayEquals(new double[] {4, 15}, Matrix.sumRows(B), ArrayTests.TOLERANCE);
 	}
 	
 	@Test
@@ -59,20 +60,20 @@ public class MatrixTest {
 	
 	@Test
 	public void testMatrixTrace() {
-		Assert.assertEquals(13.0, Matrix.trace(Matrix.toDouble(A)), MathTestUtils.TOLERANCE);
+		Assert.assertEquals(13.0, Matrix.trace(Matrix.toDouble(A)), ArrayTests.TOLERANCE);
 	}
 	
 	@Test
 	public void testMatrixInverseFloat() {
 		float[][] Ai = Matrix.inverse(A);
-		MathTestUtils.assertArrayEquals(A, Matrix.inverse(Ai), MathTestUtils.TOLERANCE * 10);
+		ArrayTests.assertArrayEquals(A, Matrix.inverse(Ai), ArrayTests.TOLERANCE * 10);
 	}
 	
 	@Test
 	public void testMatrixInverseDouble() {
 		double[][] AA = Matrix.toDouble(A);
 		double[][] AAi = Matrix.inverse(AA);
-		MathTestUtils.assertArrayEquals(AA, Matrix.inverse(AAi), MathTestUtils.TOLERANCE);
+		ArrayTests.assertArrayEquals(AA, Matrix.inverse(AAi), ArrayTests.TOLERANCE);
 	}
 	
 	@Test(expected = NonsquareMatrixException.class)
@@ -88,7 +89,7 @@ public class MatrixTest {
 	
 	@Test
 	public void testMatrixDeterminants() {
-		Assert.assertEquals((double) Matrix.determinant3x3(A), Matrix.determinant(Matrix.toDouble(A)), MathTestUtils.TOLERANCE);
+		Assert.assertEquals((double) Matrix.determinant3x3(A), Matrix.determinant(Matrix.toDouble(A)), ArrayTests.TOLERANCE);
 	}
 	
 	// --------------------------------------------------------------------
@@ -99,17 +100,17 @@ public class MatrixTest {
 		float[] v2 = {4,5,6,7};
 		float[] v3 = {};
 		float[] v4 = {8};		
-		Assert.assertArrayEquals(new float[] {1, 2, 3, 4, 5, 6, 7, 8}, Matrix.join(v1, v2, v3, v4), MathTestUtils.TOLERANCE);
+		Assert.assertArrayEquals(new float[] {1, 2, 3, 4, 5, 6, 7, 8}, Matrix.join(v1, v2, v3, v4), ArrayTests.TOLERANCE);
 	}
 	
 	@Test
 	public void testMatrixMinMax() {
 		float[] x = {-20,30,60,-40, 0};
 		double[] y = {-20,30,60,-40, 0};
-		Assert.assertEquals(Matrix.min(x), -40, MathTestUtils.TOLERANCE);
-		Assert.assertEquals(Matrix.min(y), -40, MathTestUtils.TOLERANCE);
-		Assert.assertEquals(Matrix.max(x), 60, MathTestUtils.TOLERANCE);
-		Assert.assertEquals(Matrix.max(y), 60, MathTestUtils.TOLERANCE);
+		Assert.assertEquals(Matrix.min(x), -40, ArrayTests.TOLERANCE);
+		Assert.assertEquals(Matrix.min(y), -40, ArrayTests.TOLERANCE);
+		Assert.assertEquals(Matrix.max(x), 60, ArrayTests.TOLERANCE);
+		Assert.assertEquals(Matrix.max(y), 60, ArrayTests.TOLERANCE);
 	}
 	
 	// --------------------------------------------------------------------
@@ -118,9 +119,9 @@ public class MatrixTest {
 	public void testMatrixHomogeneous() {
 		double[] x = {2, -7, 3};
 		double[] xh = {2, -7, 3, 1};
-		Assert.assertArrayEquals(xh, Matrix.toHomogeneous(x), MathTestUtils.TOLERANCE);
-		Assert.assertArrayEquals(x, Matrix.toCartesian(xh), MathTestUtils.TOLERANCE);
-		Assert.assertArrayEquals(x, Matrix.toCartesian(Matrix.multiply(-5, xh)), MathTestUtils.TOLERANCE);
+		Assert.assertArrayEquals(xh, Matrix.toHomogeneous(x), ArrayTests.TOLERANCE);
+		Assert.assertArrayEquals(x, Matrix.toCartesian(xh), ArrayTests.TOLERANCE);
+		Assert.assertArrayEquals(x, Matrix.toCartesian(Matrix.multiply(-5, xh)), ArrayTests.TOLERANCE);
 	}
 	
 	@Test (expected = DivideByZeroException.class)

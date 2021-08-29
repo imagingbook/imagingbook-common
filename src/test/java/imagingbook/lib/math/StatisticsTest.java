@@ -2,6 +2,8 @@ package imagingbook.lib.math;
 
 import org.junit.Test;
 
+import imagingbook.testutils.ArrayTests;
+
 public class StatisticsTest extends Statistics {
 	
 	// example: n = 4 samples of dimension m = 3:
@@ -23,7 +25,7 @@ public class StatisticsTest extends Statistics {
 				{-470.4375, -53.1875, 278.1875}};
 		
 		double[][] cov = covarianceMatrix(samples, BIAS_CORRECT);
-		MathTestUtils.assertArrayEquals(covExpected, cov, 1E-3);
+		ArrayTests.assertArrayEquals(covExpected, cov, 1E-3);
 	}
 	
 	@Test
@@ -36,7 +38,7 @@ public class StatisticsTest extends Statistics {
 				{-627.250, -70.917, 370.917}};
 		
 		double[][] cov = covarianceMatrix(samples, BIAS_CORRECT);
-		MathTestUtils.assertArrayEquals(covExpected, cov, 1E-3);
+		ArrayTests.assertArrayEquals(covExpected, cov, 1E-3);
 	}
 
 }
