@@ -366,12 +366,12 @@ public abstract class BinaryRegionSegmentation {
 				throw new IllegalStateException("empty region, moments are undefined");
 			}
 			double n = size;
-			double mu10 = x1Sum / n;
-			double mu01 = y1Sum / n;
+//			double mu10 = ;	// always zero
+//			double mu01 = ; // always zero
 			double mu20 = x2Sum - x1Sum * x1Sum / n;
 			double mu02 = y2Sum - y1Sum * y1Sum / n;
 			double mu11 = xySum - x1Sum * y1Sum / n;
-			return new double[] {mu10, mu01, mu20, mu02, mu11};
+			return new double[] {mu20, mu02, mu11};
 		}
 		
 		/**
@@ -384,10 +384,10 @@ public abstract class BinaryRegionSegmentation {
 		 * @return the covariance matrix
 		 */
 		public double[][] getCovarianceMatrix() {
-			double[] mu = getCentralMoments(); // = (mu10, mu01, mu20, mu02, mu11)
+			double[] mu = getCentralMoments(); // = (mu20, mu02, mu11)
 			double[][] S = {
-					{mu[2]/size, mu[4]/size},
-					{mu[4]/size, mu[3]/size}};
+					{mu[0]/size, mu[2]/size},
+					{mu[2]/size, mu[1]/size}};
 			return S;
 		}
 		

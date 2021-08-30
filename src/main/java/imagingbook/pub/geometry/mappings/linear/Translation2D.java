@@ -14,30 +14,40 @@ import imagingbook.pub.geometry.basic.Pnt2d;
 /**
  * This class represents a pure 2D translation (as a special case of 
  * affine transformation).
- * It can be assumed that every instance of this class is indeed a translation.
+ * Instances are immutable and it can be assumed that every instance of
+ * this class is indeed a translation.
  */
 public class Translation2D extends AffineMapping2D {
 
 	/**
-	 * Constructor. Creates a new translation mapping.
+	 * Constructor. Creates a new 2D translation mapping.
 	 * @param tx translation in x
 	 * @param ty translation in y
 	 */
 	public Translation2D(double tx, double ty) {
 		super(1, 0, tx, 0, 1, ty);
 	}
+	
+	/**
+	 * Constructor. Creates a new 2D translation mapping.
+	 * @param txy translation in x/y (2-element array)
+	 */
+	public Translation2D(double[] txy) {
+		this(txy[0], txy[1]);
+	}
 
 	/** 
 	 * Constructor. Creates a new translation instance from a given translation.
-	 * @param m a translation
+	 * @param m a 2D translation mapping
 	 */
 	public Translation2D(Translation2D m) {
 		this(m.a02, m.a12);
 	}
 	
 	/**
-	 * Creates a new translation that maps between the two given points.
-	 * @param p the first point
+	 * Creates a new translation that maps between the first point
+	 * to the second point specified.
+	 * @param p the first point 
 	 * @param q the second point
 	 * @return a new translation instance
 	 */

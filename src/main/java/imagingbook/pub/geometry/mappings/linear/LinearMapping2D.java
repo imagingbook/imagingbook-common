@@ -11,7 +11,6 @@ package imagingbook.pub.geometry.mappings.linear;
 
 import imagingbook.lib.math.Arithmetic;
 import imagingbook.lib.math.Matrix;
-import imagingbook.lib.settings.PrintPrecision;
 import imagingbook.pub.geometry.basic.Pnt2d;
 import imagingbook.pub.geometry.basic.Pnt2d.PntDouble;
 import imagingbook.pub.geometry.mappings.Mapping2D;
@@ -72,17 +71,6 @@ public class LinearMapping2D implements Mapping2D {
 		}
 		return M;
 	}
-	
-//	public LinearMapping2D(double[][] A) {
-//		a00 = A[0][0]; a01 = A[0][1]; a02 = A[0][2];
-//		a10 = A[1][0]; a11 = A[1][1]; a12 = A[1][2];
-//		if (A.length == 3) {
-//			a20 = A[2][0]; a21 = A[2][1]; a22 = A[2][2];
-//		}
-//		else {
-//			a20 = 0; a21 = 0; a22 = 1;
-//		}
-//	}
 
 	/**
 	 * Creates an arbitrary linear mapping from the specified matrix elements.
@@ -142,14 +130,6 @@ public class LinearMapping2D implements Mapping2D {
 		double y1 = (a10 * x + a11 * y + a12) / h;
 		return PntDouble.from(x1, y1);
 	}
-	
-//	@Override
-//	public double[] applyTo (double x, double y) {
-//		double h =  (a20 * x + a21 * y + a22);
-//		double x1 = (a00 * x + a01 * y + a02) / h;
-//		double y1 = (a10 * x + a11 * y + a12) / h;
-//		return new double[] {x1, y1};
-//	}
 	
 	/**
 	 * Calculates and returns the inverse mapping.

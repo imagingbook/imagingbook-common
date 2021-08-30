@@ -1,8 +1,5 @@
 package imagingbook.pub.geometry.moments;
 
-
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -54,23 +51,29 @@ public abstract class Moments2D {
 	}
 	
 	
-//	public static void main(String[] args) {
-//		Set<Pnt2d> points = new HashSet<>();
-//		points.add(Pnt2d.from(10, 15));
-//		points.add(Pnt2d.from(3, 7));
-//		points.add(Pnt2d.from(-1, 5));
-//		points.add(Pnt2d.from(-1, 5));
-//		System.out.println("set size = " + points.size());
-//		
-//		System.out.println("m00 = " + ordinaryMoment(points, 0, 0));
-//		System.out.println("m10 = " + ordinaryMoment(points, 1, 0));
-//		System.out.println("m01 = " + ordinaryMoment(points, 0, 1));
-//		
-//		double a = ordinaryMoment(points, 0, 0);
-//		System.out.println("a = " + a);
-//		System.out.println("xc = " + (ordinaryMoment(points, 1, 0) / a));
-//		System.out.println("yc = " + (ordinaryMoment(points, 0, 1) / a));	
-//	}
+	public static void main(String[] args) {
+		Set<Pnt2d> points = new HashSet<>();
+		points.add(Pnt2d.from(10, 15));
+		points.add(Pnt2d.from(3, 7));
+		points.add(Pnt2d.from(-1, 5));
+		points.add(Pnt2d.from(-1, 5));
+		System.out.println("set size = " + points.size());
+		
+		System.out.println("m00 = " + ordinaryMoment(points, 0, 0));
+		System.out.println("m10 = " + ordinaryMoment(points, 1, 0));
+		System.out.println("m01 = " + ordinaryMoment(points, 0, 1));
+		
+		double a = ordinaryMoment(points, 0, 0);
+		System.out.println("a = " + a);
+		System.out.println("xc = " + (ordinaryMoment(points, 1, 0) / a));
+		System.out.println("yc = " + (ordinaryMoment(points, 0, 1) / a));	
+		
+		System.out.println("mu10 = " + centralMoment(points, 1, 0));
+		System.out.println("mu01 = " + centralMoment(points, 0, 1));
+		System.out.println("mu11 = " + centralMoment(points, 1, 1));
+		System.out.println("mu20 = " + centralMoment(points, 2, 0));
+		System.out.println("mu02 = " + centralMoment(points, 0, 2));
+	}
 	
 }
 
@@ -82,4 +85,9 @@ m01 = 27.0
 a = 3.0
 xc = 4.0
 yc = 9.0
+mu10 = 0.0
+mu01 = 0.0
+mu11 = 58.0
+mu20 = 62.0
+mu02 = 56.0
 */
