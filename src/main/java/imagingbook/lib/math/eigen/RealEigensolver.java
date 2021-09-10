@@ -39,7 +39,7 @@ public interface RealEigensolver {
 	public double getEigenvalue(int k);
 	
 	/**
-	 * Returns the k-th eigenvector.
+	 * Returns the k-th eigenvector (x_k, for k = 0,...,N-1).
 	 * The ordering of the returned eigenvectors is the same as for the
 	 * eigenvalues returned by {@link #getEigenvalues()}.
 	 * @param k index

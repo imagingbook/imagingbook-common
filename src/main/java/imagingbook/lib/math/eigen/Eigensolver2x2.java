@@ -20,11 +20,11 @@ import static imagingbook.lib.math.Matrix.createDoubleVector;
  *   | c d | </pre>
  * There are typically (but not always) two pairs of real-valued 
  * solutions 
- * &lang;&lambda;<sub>1</sub>, x<sub>1</sub>&rang;,
- * &lang;&lambda;<sub>2</sub>, x<sub>2</sub>&rang;
+ * &lang;&lambda;<sub>1</sub>, x<sub>0</sub>&rang;,
+ * &lang;&lambda;<sub>2</sub>, x<sub>1</sub>&rang;
  * such that A&middot;x<sub>k</sub> = &lambda;<sub>k</sub>&middot;x<sub>k</sub>.
  * The resulting eigensystems are ordered such that
- * |&lambda;<sub>1</sub> &ge; |&lambda;<sub>2</sub>|.
+ * |&lambda;<sub>0</sub> &ge; |&lambda;<sub>1</sub>|.
  * Eigenvectors are not normalized, i.e., no unit vectors
  * (any scalar multiple of an Eigenvector is an Eigenvector too).
  * Non-real eigenvalues are not handled.
@@ -36,7 +36,7 @@ import static imagingbook.lib.math.Matrix.createDoubleVector;
  * Ch. 5 ("Consider the Lowly 2x2 Matrix").
  * Note that Blinn uses the notation 
  * x&middot;A = &lambda;&middot;x for the matrix-vector product (as common in computer graphics),
- * while this implementation adopts the notation 
+ * while this implementation uses 
  * A&middot;x = &lambda;&middot;x.
  * Thus x is treated as a column vector and matrix A is transposed (elements b/c are exchanged).
  * </p>

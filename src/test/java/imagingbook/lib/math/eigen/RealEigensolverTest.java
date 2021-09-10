@@ -12,7 +12,7 @@ import imagingbook.lib.math.Matrix;
  * Contains common methods for testing eigen-solvers.
  *
  */
-public class RealEigensolverTest {
+public abstract class RealEigensolverTest {
 
 	static void run(RealEigensolver solver, double[][] M, boolean shouldBeReal) {
 		
@@ -26,7 +26,7 @@ public class RealEigensolverTest {
 		
 		double[] eigenvals = solver.getEigenvalues();
 		
-//		System.out.format("λ1 = %.4f, λ2 = %.4f\n", eigenvals[0], eigenvals[1]);
+//		System.out.format("λ0 = %.4f, λ1 = %.4f\n", eigenvals[0], eigenvals[1]);
 		for (int k = 1; k < eigenvals.length; k++) {
 			assertTrue(Math.abs(eigenvals[k-1]) >= Math.abs(eigenvals[k]));		// |λ_k-1| >= |λ_k|
 		}
