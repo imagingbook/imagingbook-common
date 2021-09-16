@@ -58,6 +58,7 @@ public class ScaleLevel extends FloatProcessor {	// TODO: make IJ independent, u
 		new GaussianFilterSeparable(sigma).applyTo(this);	// TODO: validate change!
 	}
 	
+	@Override
 	public ScaleLevel duplicate() {
 		return new ScaleLevel(this);
 	}

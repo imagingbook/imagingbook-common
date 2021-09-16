@@ -15,9 +15,7 @@ import static imagingbook.lib.math.Arithmetic.sqr;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 
-import ij.IJ;
 import ij.process.FloatProcessor;
 import imagingbook.lib.math.Arithmetic;
 import imagingbook.lib.math.Matrix;
@@ -118,7 +116,7 @@ public class SiftDetector {
 	 */
 	@SuppressWarnings("unused")
 	private  List<KeyPoint> makeRichKeypoints(List<KeyPoint> keypoints) {
-		if (params.DEBUG) {IJ.log("makeSiftDescriptors...");}
+//		if (params.DEBUG) {IJ.log("makeSiftDescriptors...");}
 		//int cnt = 0;
 		List<KeyPoint> richKeyPoints = new ArrayList<KeyPoint>();
 		for (KeyPoint kp : keypoints) {
@@ -127,9 +125,9 @@ public class SiftDetector {
 			smoothCircular(oh,params.n_Smooth);
 			kp.orientation_histogram = oh;	// TODO: remove, for testing only!!
 			List<Double> peakOrientations = findPeakOrientationIndices(oh);
-			if (params.DEBUG && peakOrientations.size() == 0) {
-				IJ.log("insufficient orientations at " + kp.u + "/" + kp.v);
-			}
+//			if (params.DEBUG && peakOrientations.size() == 0) {
+//				IJ.log("insufficient orientations at " + kp.u + "/" + kp.v);
+//			}
 			for (double km : peakOrientations) {
 				//for (int i=0; i<Math.min(1, peakOrientations.length); i++) {	// use only 1 descriptor!
 				float phi = (float) (km * 2 * Math.PI / oh.length);	// 0 <= phi < 2 PI. Should be in range +/-PI?
@@ -138,7 +136,7 @@ public class SiftDetector {
 				richKeyPoints.add(rkp);
 			}
 		}
-		if (params.DEBUG) {IJ.log("makeSiftDescriptors...done");}
+//		if (params.DEBUG) {IJ.log("makeSiftDescriptors...done");}
 		return richKeyPoints;
 	}
 
@@ -305,7 +303,7 @@ public class SiftDetector {
 					if (Math.abs(Dpeak) > tPeak && detHxy > 0) { // check peak magnitude
 						final float a = sqr(dxx + dyy) / detHxy;
 						if (a <= aMax) { 					// check curvature ratio (edgeness)
-							if (params.DEBUG) IJ.log(k.toString() + String.format(": added after %d tries, alpha = %f", n, a));
+//							if (params.DEBUG) IJ.log(k.toString() + String.format(": added after %d tries, alpha = %f", n, a));
 							kr = k;	//  the passed keypoint is reused for the refined keypoint, with p,q,u,v unchanged
 							kr.x = u + xx;
 							kr.y = v + yy;
@@ -447,13 +445,6 @@ public class SiftDetector {
 		hess[1][0] = dxy;  hess[1][1] = dyy;  hess[1][2] = dys;
 		hess[2][0] = dxs;  hess[2][1] = dys;  hess[2][2] = dss;
 		return hess;
-	}
-
-	@SuppressWarnings("unused")
-	private void printMatrix3x3(float[][] A) {
-		IJ.log(String.format(Locale.US, "{{%.6f, %.6f, %.6f},", A[0][0], A[0][1], A[0][2]));
-		IJ.log(String.format(Locale.US, " {%.6f, %.6f, %.6f},", A[1][0], A[1][1], A[1][2]));
-		IJ.log(String.format(Locale.US, " {%.6f, %.6f, %.6f}}", A[2][0], A[2][1], A[2][2]));
 	}
 
 	/*

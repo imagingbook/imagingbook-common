@@ -9,18 +9,16 @@
 
 package imagingbook.pub.sift.scalespace;
 
-import ij.IJ;
-
 public abstract class HierarchicalScaleSpace {
 	
-	final int P;	// number of octaves
-	final int Q; 	// number of levels per octave
-	final double sigma_s;	// absolute scale of original image
-	final double sigma_0;	// absolute base scale of first octave (level 0,0)
-	final int botLevel, topLevel;  // bottom and top level index in each octave
-	final ScaleOctave[] octaves;
-
-	HierarchicalScaleSpace(int P, int Q, double sigma_s, double sigma_0, int botLevel, int topLevel) {
+	protected final int P;						// number of octaves
+	protected final int Q; 						// number of levels per octave
+	protected final double sigma_s;				// absolute scale of original image
+	protected final double sigma_0;				// absolute base scale of first octave (level 0,0)
+	protected final int botLevel, topLevel; 	// bottom and top level index in each octave
+	protected final ScaleOctave[] octaves;		
+	
+	protected HierarchicalScaleSpace(int P, int Q, double sigma_s, double sigma_0, int botLevel, int topLevel) {
 		this.Q = Q;
 		this.P = P;
 		this.sigma_s = sigma_s;
@@ -81,10 +79,26 @@ public abstract class HierarchicalScaleSpace {
 		return Math.sqrt(scaleB*scaleB - scaleA*scaleA);
 	}
 	
+	/**
+	 * Calculates and returns the real (unscaled) x-position for a
+	 * local coordinate at the specified octave.
+	 * 
+	 * @param p the octave index
+	 * @param xp the local coordinate
+	 * @return
+	 */
 	public double getRealX(int p, double xp) {
 		return Math.pow(2, p) * xp;	// TODO: optimize (precalculate Math.pow(p, 2))
 	}
 	
+	/**
+	 * Calculates and returns the real (unscaled) y-position for a
+	 * local coordinate at the specified octave.
+	 * 
+	 * @param p
+	 * @param yp
+	 * @return
+	 */
 	public double getRealY(int p, double yp) {
 		return Math.pow(2, p) * yp;
 	}
@@ -102,11 +116,11 @@ public abstract class HierarchicalScaleSpace {
 		}
 	}
 	
-	public void print() {
-		IJ.log("Hierarchical Scale Space (" + this.getClass().toString() + ")");
-		for (ScaleOctave oct : octaves) {
-			oct.print();
-		}
-		
-	}
+//	@Deprecated
+//	public void print() {
+//		IJ.log("Hierarchical Scale Space (" + this.getClass().toString() + ")");
+//		for (ScaleOctave oct : octaves) {
+//			oct.print();
+//		}
+//	}
 }

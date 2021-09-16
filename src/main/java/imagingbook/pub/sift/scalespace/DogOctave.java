@@ -30,7 +30,7 @@ public class DogOctave extends ScaleOctave {
 		final float[] pixelsA = (float[]) A.getPixels();
 		final float[] pixelsB = (float[]) B.getPixels();
 		final float[] pixelsC = (float[]) C.getPixels();
-		for (int i=0; i<pixelsA.length; i++) {
+		for (int i = 0; i < pixelsA.length; i++) {
 			pixelsC[i] = pixelsA[i] - pixelsB[i];
 		}
 		C.setAbsoluteScale(B.getAbsoluteScale());

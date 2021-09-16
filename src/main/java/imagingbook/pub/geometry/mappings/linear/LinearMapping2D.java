@@ -134,6 +134,7 @@ public class LinearMapping2D implements Mapping2D {
 	/**
 	 * Calculates and returns the inverse mapping.
 	 */
+	@Override
 	public LinearMapping2D getInverse() {
 		// System.out.println("LinearMapping getInverse()");
 		double[][] ai = Matrix.inverse(this.getTransformationMatrix());

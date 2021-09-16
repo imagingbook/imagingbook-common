@@ -19,7 +19,7 @@ public class GaussianScaleSpace extends HierarchicalScaleSpace {
 	}
 	
 	private final void build(FloatProcessor fp) {
-		double scale_b = getAbsoluteScale(0, -1) ;	// absolute scale of level(0,-1)
+		double scale_b = getAbsoluteScale(0, -1) ;	// get absolute scale of level(0,-1)
 		double sigma_b = getRelativeScale(sigma_s, scale_b);
 		
 		ScaleLevel Ginit = new ScaleLevel(fp, sigma_s);

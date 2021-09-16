@@ -11,7 +11,7 @@ package imagingbook.pub.sift;
 
 import java.util.Locale;
 
-class KeyPoint implements Cloneable, Comparable<KeyPoint> {
+public class KeyPoint implements Cloneable, Comparable<KeyPoint> {
 	public final int p;	// octave index
 	public final int q;	// level index
 	
@@ -26,17 +26,8 @@ class KeyPoint implements Cloneable, Comparable<KeyPoint> {
 	
 	public final float magnitude;	// magnitude of DoG response
 	
-	public float[] orientation_histogram;	// for debugging only
-	public double orientation;	// dominant orientation
-	
-//	protected KeyPoint(int p, int q, int u, int v) {
-//		this.p = p;
-//		this.q = q;
-//		this.u = u;
-//		this.v = v;
-//		this.x = u;
-//		this.y = v;
-//	}
+	protected float[] orientation_histogram;	// for debugging only
+	protected double orientation;				// dominant orientation (for debugging only)
 	
 	protected KeyPoint(int p, int q, int u, int v, float x, float y, float x_real, float y_real, float scale, float magnitude) {
 		this.p = p;
@@ -51,10 +42,12 @@ class KeyPoint implements Cloneable, Comparable<KeyPoint> {
 		this.magnitude = magnitude;
 	}
 	
+	@Override
 	public String toString() {
 		return String.format(Locale.US, "p=%d, q=%d, u=%d, v=%d, scale=%.2f, mag=%.2f", p, q, u, v, scale, magnitude);
 	}
 	
+	@Override
 	public KeyPoint clone() {
 		try {
 			return (KeyPoint) super.clone();
@@ -64,11 +57,13 @@ class KeyPoint implements Cloneable, Comparable<KeyPoint> {
 		return null;
 	}
 
-	public int compareTo(KeyPoint c2) {
+	@Override
+	public int compareTo(KeyPoint other) {
 		//used for sorting keypoints by magnitude
-		if (this.magnitude > c2.magnitude) return -1;
-		if (this.magnitude < c2.magnitude) return 1;
-		else return 0;
+		return Float.compare(other.magnitude, this.magnitude);
+//		if (this.magnitude > other.magnitude) return -1;
+//		if (this.magnitude < other.magnitude) return 1;
+//		else return 0;
 	}
 	
 	

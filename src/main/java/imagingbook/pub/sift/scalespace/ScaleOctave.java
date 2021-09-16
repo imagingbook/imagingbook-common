@@ -9,7 +9,6 @@
 
 package imagingbook.pub.sift.scalespace;
 
-import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
 import imagingbook.lib.util.LinearContainer;
@@ -22,13 +21,12 @@ import java.util.Locale;
  */
 public abstract class ScaleOctave {
 	
-	double sigma_0 = 1.6;
-	int Q = 3;			// levels per doubling scale factor
-	final int p;		// octave index
-	final int width, height;
-	final int botLevelIndex, topLevelIndex;
-	
-	final LinearContainer<ScaleLevel> levels;
+	protected double sigma_0 = 1.6;	// TODO: make field final
+	protected final int Q; 			// number of levels per doubling scale factor
+	protected final int p;			// octave index
+	protected final int width, height;
+	protected final int botLevelIndex, topLevelIndex;	
+	protected final LinearContainer<ScaleLevel> levels;
 	
 	ScaleOctave (int p, int Q, int width, int height, int botLevelIndex, int topLevelIndex) {
 		this.p = p;
@@ -95,22 +93,22 @@ public abstract class ScaleOctave {
 	 */
 	public void getNeighborhood(int q, int u, int v, final float[][][] nh) {
 		// nh[s][x][y]
-		for (int s=0, level=q-1; s<3; s++, level++) {
+		for (int s = 0, level = q - 1; s < 3; s++, level++) {
 			getLevel(level).get3x3Neighborhood(u, v, nh[s]);
 		}
 	}
 	
 	// for debugging only:
-	public void print() {
-		IJ.log("  Scale Octave p=" + p);
-		for (int q = botLevelIndex; q <= topLevelIndex; q++) {
-			ScaleLevel level = getLevel(q);
-			if (level != null) {
-				double scale = level.getAbsoluteScale();
-				IJ.log(String.format(Locale.US, "   level (p=%d, q=%d, \u03C3=%.4f)", p, q, scale));
-			}
-		}
-	}
+//	public void print() {
+//		IJ.log("  Scale Octave p=" + p);
+//		for (int q = botLevelIndex; q <= topLevelIndex; q++) {
+//			ScaleLevel level = getLevel(q);
+//			if (level != null) {
+//				double scale = level.getAbsoluteScale();
+//				IJ.log(String.format(Locale.US, "   level (p=%d, q=%d, \u03C3=%.4f)", p, q, scale));
+//			}
+//		}
+//	}
 	
 	public void show(String name, int p) {
 		for (int q = botLevelIndex; q <= topLevelIndex; q++) {
