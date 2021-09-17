@@ -181,8 +181,9 @@ public class Contour implements Comparable<Contour>, Iterable<Pnt2d> {
 		
 	// Compare method for sorting contours by length (longer contours at front)
 	@Override
-	public int compareTo(Contour c2) {
-		return c2.points.size() - this.points.size();
+	public int compareTo(Contour other) {
+		//return other.points.size() - this.points.size();
+		return Integer.compare(other.points.size(), this.points.size());
 	}
 
 	@Override
