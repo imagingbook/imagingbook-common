@@ -12,14 +12,16 @@ package imagingbook.pub.sift.scalespace;
 import ij.ImagePlus;
 import ij.ImageStack;
 import imagingbook.lib.util.LinearContainer;
+import imagingbook.lib.util.PrintsToStream;
 
+import java.io.PrintStream;
 import java.util.Locale;
 
 /**
  * Represents a stack of scale levels within an octave. Basically this is 
  * only an array with flexible bottom and top index.
  */
-public abstract class ScaleOctave {
+public abstract class ScaleOctave implements PrintsToStream {
 	
 	protected double sigma_0 = 1.6;	// TODO: make field final
 	protected final int Q; 			// number of levels per doubling scale factor
@@ -98,17 +100,20 @@ public abstract class ScaleOctave {
 		}
 	}
 	
+	// ---------------------------------------------------------
+	
 	// for debugging only:
-//	public void print() {
-//		IJ.log("  Scale Octave p=" + p);
-//		for (int q = botLevelIndex; q <= topLevelIndex; q++) {
-//			ScaleLevel level = getLevel(q);
-//			if (level != null) {
-//				double scale = level.getAbsoluteScale();
-//				IJ.log(String.format(Locale.US, "   level (p=%d, q=%d, \u03C3=%.4f)", p, q, scale));
-//			}
-//		}
-//	}
+	@Override
+	public void printToStream(PrintStream strm) {
+		strm.println("  Scale Octave p=" + p);
+		for (int q = botLevelIndex; q <= topLevelIndex; q++) {
+			ScaleLevel level = getLevel(q);
+			if (level != null) {
+				double scale = level.getAbsoluteScale();
+				strm.format(Locale.US, "   level (p=%d, q=%d, scale=%.4f)\n", p, q, scale);
+			}
+		}
+	}
 	
 	public void show(String name, int p) {
 		for (int q = botLevelIndex; q <= topLevelIndex; q++) {

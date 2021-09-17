@@ -9,7 +9,11 @@
 
 package imagingbook.pub.sift.scalespace;
 
-public abstract class HierarchicalScaleSpace {
+import java.io.PrintStream;
+
+import imagingbook.lib.util.PrintsToStream;
+
+public abstract class HierarchicalScaleSpace implements PrintsToStream {
 	
 	protected final int P;						// number of octaves
 	protected final int Q; 						// number of levels per octave
@@ -103,6 +107,19 @@ public abstract class HierarchicalScaleSpace {
 		return Math.pow(2, p) * yp;
 	}
 	
+	// ----------------------------------------------------------------
+	
+	@Override
+	public void printToStream(PrintStream strm) {
+		strm.println("Hierarchical Scale Space (" + this.getClass().getSimpleName() + ")");
+		for (ScaleOctave oct : octaves) {
+			oct.printToStream(strm);
+			strm.println();
+		}
+	}
+	
+	// ----------------------------------------------------------------
+	
 	public void show() {
 		show("");
 	}
@@ -116,11 +133,4 @@ public abstract class HierarchicalScaleSpace {
 		}
 	}
 	
-//	@Deprecated
-//	public void print() {
-//		IJ.log("Hierarchical Scale Space (" + this.getClass().toString() + ")");
-//		for (ScaleOctave oct : octaves) {
-//			oct.print();
-//		}
-//	}
 }
