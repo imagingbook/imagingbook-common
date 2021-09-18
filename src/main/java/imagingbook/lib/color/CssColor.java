@@ -174,12 +174,12 @@ public enum CssColor {
 		return b;
 	}
 
-	public Color getColor() {
+	public Color toColor() {
 		return new Color(r, g, b);
 	}
 
 	public int getRGB() {
-		return getColor().getRGB();
+		return toColor().getRGB();
 	}
 
 	public String getRGBString() {
@@ -197,7 +197,7 @@ public enum CssColor {
 	public static Color[] getColors(CssColor ... wcols) {
 		Color[] rgbColors = new Color[wcols.length];
 		for (int i=0; i<wcols.length; i++) {
-			rgbColors[i] = wcols[i].getColor();
+			rgbColors[i] = wcols[i].toColor();
 		}
 		return rgbColors;
 	}
