@@ -90,7 +90,7 @@ public abstract class Arithmetic {
 	 */
 	public static double mod(double a, double b) {
 		if (isZero(b))
-				throw new DivideByZeroException();
+				throw new IllegalArgumentException("zero divisor in mod");
 		return a - b * Math.floor(a / b);
 	}
 	
@@ -177,17 +177,17 @@ public abstract class Arithmetic {
 	
 	// -------------------------------------
 	
-//	public static void main(String[] args) {
-//		System.out.println(Arithmetic.mod(13, 4));
-//		System.out.println(Arithmetic.mod(13, -4));
-//		System.out.println(Arithmetic.mod(-13, 4));
-//		System.out.println(Arithmetic.mod(-13, -4));
-//		
-//		int b = 7;
-//		System.out.format("   i  -> floor |  mod\n");
-//		for (int i = -25; i < 25; i++) {
-//			System.out.format("%4d  -> %4d  | %4d \n", i, Math.floorMod(i, b), Arithmetic.mod(i, b));
-//		}
-//	}
+	public static void main(String[] args) {
+		System.out.println(Arithmetic.mod(13, 4));
+		System.out.println(Arithmetic.mod(13, -4));
+		System.out.println(Arithmetic.mod(-13, 4));
+		System.out.println(Arithmetic.mod(-13, -4));
+		
+		int b = 7;
+		System.out.format("   i  -> floor |  mod\n");
+		for (int i = -25; i < 25; i++) {
+			System.out.format("%4d  -> %4d  | %4d \n", i, Math.floorMod(i, b), Arithmetic.mod(i, b));
+		}
+	}
 
 }
