@@ -56,11 +56,9 @@ public abstract class Arithmetic {
 	/**
 	 * Integer version of the modulus operator ({@code a mod b}).
 	 * Also see <a href="http://en.wikipedia.org/wiki/Modulo_operation">here</a>.
-	 * This implementation has the same behavior as the {@code Math.floorMod(a,b)},
-	 * available in Java 8 and higher.
-	 * An exception is thrown if b is zero.
-	 * @param a the dividend
-	 * @param b the divisor
+	 * Calls {@code Math.floorMod(a,b)} (available in Java 8 and higher).
+	 * @param a dividend
+	 * @param b divisor (modulus), must be nonzero
 	 * @return {@code a mod b}
 	 */
 	public static int mod(int a, int b) {
@@ -80,17 +78,24 @@ public abstract class Arithmetic {
 
 	
 	/**
-	 * Non-integer version of modulus operator, with results identical to Mathematica. 
-	 * Calculates {@code a mod b}.
-	 * Also see <a href="http://en.wikipedia.org/wiki/Modulo_operation">here</a>.
-	 * An exception is thrown if b is zero.
+	 * Non-integer version of modulus operator using floored division
+	 * (see <a href="http://en.wikipedia.org/wiki/Modulo_operation">here</a>),
+	 * with results identical to Mathematica. 
+	 * Calculates {@code a mod b} for floating-point arguments.
+	 * An exception is thrown if  {@code b} is zero.
+	 * Examples:
+	 * <pre>
+	 * mod( 3.5, 2.1) ->  1.4
+	 * mod(-3.5, 2.1) ->  0.7
+	 * mod( 3.5,-2.1) -> -0.7
+	 * mod(-3.5,-2.1) -> -1.4</pre>
 	 * @param a dividend
-	 * @param b divisor
+	 * @param b divisor (modulus), must be nonzero
 	 * @return {@code a mod b}
 	 */
 	public static double mod(double a, double b) {
 		if (isZero(b))
-				throw new IllegalArgumentException("zero divisor in mod");
+				throw new IllegalArgumentException("zero modulus in mod");
 		return a - b * Math.floor(a / b);
 	}
 	
