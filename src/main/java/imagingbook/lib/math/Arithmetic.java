@@ -157,6 +157,10 @@ public abstract class Arithmetic {
 		return Arithmetic.isZero(x - y);
 	}
 	
+	public static boolean equals(double x, double y, double tolerance) {
+		return Arithmetic.isZero(x - y, tolerance);
+	}
+	
 	/**
 	 * Test for numerical equality (float version) using a predefined tolerance.
 	 * Returns true if the absolute difference of the arguments
@@ -167,6 +171,10 @@ public abstract class Arithmetic {
 	 */
 	public static boolean equals(float x, float y) {
 		return Arithmetic.isZero(x - y);
+	}
+	
+	public static boolean equals(float x, float y, float tolerance) {
+		return Arithmetic.isZero(x - y, tolerance);
 	}
 	
 	//--------------------------------------------------------------------------
@@ -182,17 +190,17 @@ public abstract class Arithmetic {
 	
 	// -------------------------------------
 	
-	public static void main(String[] args) {
-		System.out.println(Arithmetic.mod(13, 4));
-		System.out.println(Arithmetic.mod(13, -4));
-		System.out.println(Arithmetic.mod(-13, 4));
-		System.out.println(Arithmetic.mod(-13, -4));
-		
-		int b = 7;
-		System.out.format("   i  -> floor |  mod\n");
-		for (int i = -25; i < 25; i++) {
-			System.out.format("%4d  -> %4d  | %4d \n", i, Math.floorMod(i, b), Arithmetic.mod(i, b));
-		}
-	}
+//	public static void main(String[] args) {
+//		System.out.println(Arithmetic.mod(13, 4));
+//		System.out.println(Arithmetic.mod(13, -4));
+//		System.out.println(Arithmetic.mod(-13, 4));
+//		System.out.println(Arithmetic.mod(-13, -4));
+//		
+//		int b = 7;
+//		System.out.format("   i  -> floor |  mod\n");
+//		for (int i = -25; i < 25; i++) {
+//			System.out.format("%4d  -> %4d  | %4d \n", i, Math.floorMod(i, b), Arithmetic.mod(i, b));
+//		}
+//	}
 
 }
