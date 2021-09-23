@@ -14,6 +14,10 @@ package imagingbook.pub.color.image;
  * @version 2013-12-25
 */
 public class HsvConverter {
+	
+	public HsvConverter() {
+		
+	}
 
 	public float[] RGBtoHSV (int[] RGB) {
 		int R = RGB[0], G = RGB[1], B = RGB[2]; // R,G,B in [0,255]
