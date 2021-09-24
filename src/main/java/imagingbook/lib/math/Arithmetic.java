@@ -177,6 +177,104 @@ public abstract class Arithmetic {
 		return Arithmetic.isZero(x - y, tolerance);
 	}
 	
+	// ---------------------------------------------------------------------------
+	
+	/**
+	 * Returns the maximum of one or more integer values.
+	 * @param a the first value
+	 * @param vals more values
+	 * @return the maximum value
+	 */
+	public static int max(int a, int... vals) {
+		int maxVal = a;
+		for (int v : vals) {
+			if (v > maxVal) {
+				maxVal = v;
+			}
+		}
+		return maxVal;
+	}
+	
+	/**
+	 * Returns the minimum of one or more integer values.
+	 * @param a the first value
+	 * @param vals more values
+	 * @return the minimum value
+	 */
+	public static int min(int a, int... vals) {
+		int minVal = a;
+		for (int v : vals) {
+			if (v < minVal) {
+				minVal = v;
+			}
+		}
+		return minVal;
+	}
+	
+	/**
+	 * Returns the maximum of one or more float values.
+	 * @param a the first value
+	 * @param vals more values
+	 * @return the maximum value
+	 */
+	public static float max(float a, float... vals) {
+		float maxVal = a;
+		for (float v : vals) {
+			if (v > maxVal) {
+				maxVal = v;
+			}
+		}
+		return maxVal;
+	}
+	
+	/**
+	 * Returns the minimum of one or more float values.
+	 * @param a the first value
+	 * @param vals more values
+	 * @return the minimum value
+	 */
+	public static float min(float a, float... vals) {
+		float minVal = a;
+		for (float v : vals) {
+			if (v < minVal) {
+				minVal = v;
+			}
+		}
+		return minVal;
+	}
+	
+	/**
+	 * Returns the maximum of one or more double values.
+	 * @param a the first value
+	 * @param vals more values
+	 * @return the maximum value
+	 */
+	public static double max(double a, double... vals) {
+		double maxVal = a;
+		for (double v : vals) {
+			if (v > maxVal) {
+				maxVal = v;
+			}
+		}
+		return maxVal;
+	}
+	
+	/**
+	 * Returns the minimum of one or more double values.
+	 * @param a the first value
+	 * @param vals more values
+	 * @return the minimum value
+	 */
+	public static double min(double a, double... vals) {
+		double minVal = a;
+		for (double v : vals) {
+			if (v < minVal) {
+				minVal = v;
+			}
+		}
+		return minVal;
+	}
+	
 	//--------------------------------------------------------------------------
 	
 	public static class DivideByZeroException extends ArithmeticException {
@@ -201,6 +299,15 @@ public abstract class Arithmetic {
 //		for (int i = -25; i < 25; i++) {
 //			System.out.format("%4d  -> %4d  | %4d \n", i, Math.floorMod(i, b), Arithmetic.mod(i, b));
 //		}
+//	}
+	
+//	public static void main(String[] args) {	// TODO: add to tests
+//		System.out.println(Arithmetic.max(13));
+//		System.out.println(Arithmetic.max(13, 7, 22));
+//		System.out.println(Math.max(13,Math.max(7,22)));
+//		
+//		System.out.println(Arithmetic.min(13));
+//		System.out.println(Arithmetic.min(13, 7, 22));
 //	}
 
 }
