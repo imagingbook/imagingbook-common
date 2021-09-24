@@ -11,7 +11,7 @@ package imagingbook.pub.color.image;
 
 //import java.util.Locale;
 
-public class CieUtil {
+public abstract class CieUtil {
 	
 	/**
 	 * Calculates the XYZ coordinates for a given point (x,y) in the CIE

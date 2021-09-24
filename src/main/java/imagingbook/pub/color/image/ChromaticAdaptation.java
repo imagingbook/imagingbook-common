@@ -11,26 +11,18 @@ package imagingbook.pub.color.image;
 
 public abstract class ChromaticAdaptation {
 	
-	protected float[] white1 = null;
-	protected float[] white2 = null;
+	protected final float[] white1, white2;
 
 	// actual transformation of color coordinates.
 	// XYZ1 are interpreted relative to white point W1.
 	// Returns a new color adapted to white point W2.
-	public abstract float[] apply (float[] XYZ1);
+	public abstract float[] apply(float[] XYZ);
 	
-	protected ChromaticAdaptation() {
-	}
-
 	protected ChromaticAdaptation (float[] white1, float[] white2) {
 		this.white1 = white1.clone();
 		this.white2 = white2.clone();
 	}
 	
-	protected ChromaticAdaptation(Illuminant illum1, Illuminant illum2) {
-		this(illum1.getXyzFloat(), illum2.getXyzFloat());
-	}
-
 	public float[] getSourceWhite() {
 		return white1;
 	}
