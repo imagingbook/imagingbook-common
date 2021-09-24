@@ -29,13 +29,13 @@ import java.awt.color.ColorSpace;
 public class LabColorSpace extends ColorSpace {
 	
 	// D65 reference white point:
-	static final double Xref = D65.X; 	// 0.950456
-	static final double Yref = D65.Y; 	// 1.000000
-	static final double Zref = D65.Z;	// 1.088754
+	private static final double Xref = D65.X; 	// 0.950456
+	private static final double Yref = D65.Y; 	// 1.000000
+	private static final double Zref = D65.Z;	// 1.088754
 	
 	// chromatic adaptation objects:
-	static final ChromaticAdaptation catD65toD50 = new BradfordAdaptation(D65, D50);
-	static final ChromaticAdaptation catD50toD65 = new BradfordAdaptation(D50, D65);
+	private static final ChromaticAdaptation catD65toD50 = new BradfordAdaptation(D65, D50);
+	private static final ChromaticAdaptation catD50toD65 = new BradfordAdaptation(D50, D65);
 	
 	// the only constructor:
 	public LabColorSpace() {
@@ -43,6 +43,7 @@ public class LabColorSpace extends ColorSpace {
 	}
 
 	// XYZ50->CIELab: returns Lab values from XYZ (relative to D50)
+	@Override
 	public float[] fromCIEXYZ(float[] XYZ50) {	
 		float[] XYZ65 = catD50toD65.apply(XYZ50);	
 		return fromCIEXYZ65(XYZ65);
@@ -60,6 +61,7 @@ public class LabColorSpace extends ColorSpace {
 	}
 	
 	// CIELab->XYZ50: returns XYZ values (relative to D50) from Lab
+	@Override
 	public float[] toCIEXYZ(float[] Lab) {
 		float[] XYZ65 = toCIEXYZ65(Lab);
 		return catD65toD50.apply(XYZ65);
@@ -75,6 +77,7 @@ public class LabColorSpace extends ColorSpace {
 	}
 
 	//sRGB->CIELab (direct, without adaptation to D50)
+	@Override
 	public float[] fromRGB(float[] srgb) {
 		// get linear rgb components:
 		double r = sRgbUtil.gammaInv(srgb[0]);
@@ -91,6 +94,7 @@ public class LabColorSpace extends ColorSpace {
 	}
 	
 	//CIELab->sRGB (direct, without adaptation to D50)
+	@Override
 	public float[] toRGB(float[] Lab) {
 		float[] XYZ65 = toCIEXYZ65(Lab);
 		double X = XYZ65[0];
@@ -111,11 +115,11 @@ public class LabColorSpace extends ColorSpace {
 	
 	//---------------------------------------------------------------------
 	
-	static final double epsilon = 216.0/24389;
-	static final double kappa = 841.0/108;
+	private static final double epsilon = 216.0/24389;
+	private static final double kappa = 841.0/108;
 	
 	// Gamma correction for L* (forward)
-	double f1 (double c) {
+	private double f1 (double c) {
 		if (c > epsilon) // 0.008856
 			return Math.cbrt(c);
 		else
@@ -123,7 +127,7 @@ public class LabColorSpace extends ColorSpace {
 	}
 	
 	// Gamma correction for L* (inverse)
-	double f2 (double c) {
+	private double f2 (double c) {
 		double c3 = c * c * c; //Math.pow(c, 3.0);
 		if (c3 > epsilon)
 			return c3;
@@ -132,7 +136,7 @@ public class LabColorSpace extends ColorSpace {
 	}
 	
    
-    public static void main(String[] args) {
+    public static void main(String[] args) {	// TODO: move to tests
        	int sr = 128;
     	int sg = 1;
     	int sb = 128;

@@ -26,6 +26,7 @@ public class sRgb65ColorSpace extends ColorSpace {
 	}
 
 	// XYZ (D65) -> sRGB
+	@Override
 	public float[] fromCIEXYZ(float[] xyz) {
 		final double X = xyz[0];
 		final double Y = xyz[1];
@@ -35,6 +36,7 @@ public class sRgb65ColorSpace extends ColorSpace {
 		final double r =  3.240479 * X + -1.537150 * Y + -0.498535 * Z;
 		final double g = -0.969256 * X +  1.875992 * Y +  0.041556 * Z;
 		final double b =  0.055648 * X + -0.204043 * Y +  1.057311 * Z;
+		
 		// RGB -> sRGB (nonlinear components)
 		float rr = (float) sRgbUtil.gammaFwd(r);
 		float gg = (float) sRgbUtil.gammaFwd(g);
@@ -42,11 +44,13 @@ public class sRgb65ColorSpace extends ColorSpace {
 		return new float[] {rr,gg,bb} ;
 	}
 
+	@Override
 	public float[] fromRGB(float[] srgb) {
 		return srgb;
 	}
 
 	// sRGB -> XYZ (D65)
+	@Override
 	public float[] toCIEXYZ(float[] srgb) {
 		// get linear rgb components:
 		final double r = sRgbUtil.gammaInv(srgb[0]);

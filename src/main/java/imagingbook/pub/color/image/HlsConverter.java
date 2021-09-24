@@ -11,9 +11,6 @@ package imagingbook.pub.color.image;
 import static imagingbook.lib.math.Arithmetic.max;
 import static imagingbook.lib.math.Arithmetic.min;
 
-import java.util.Arrays;
-import java.util.Random;
-
 /**
  * Methods for converting between RGB and HLS color spaces.
  * @author W. Burger
@@ -24,13 +21,16 @@ public class HlsConverter {
 	public HlsConverter() {	
 	}
 
+	@Deprecated
 	public float[] RGBtoHLS (int[] RGB) {
-		int R = RGB[0], G = RGB[1], B = RGB[2]; // R, G, B assumed to be in [0,255]
-//		int cHi = Math.max(R, Math.max(G, B)); // highest component value
-//		int cLo = Math.min(R, Math.min(G, B)); // lowest component value
-		int cHi = max(R, G, B);		// highest component value
-		int cLo = min(R, G, B);		// lowest component value
-		int cRng = cHi - cLo;		// component range
+		return fromRGB(RGB);
+	}
+	
+	public float[] fromRGB (int[] RGB) {
+		final int R = RGB[0], G = RGB[1], B = RGB[2]; // R, G, B assumed to be in [0,255]
+		final int cHi = max(R, G, B);		// max. component value
+		final int cLo = min(R, G, B);		// min. component value
+		final int cRng = cHi - cLo;			// component range
 		
 		// Calculate lightness L
 		float L = ((cHi + cLo) / 255f) / 2;
@@ -62,9 +62,13 @@ public class HlsConverter {
 		return new float[] {H, L, S};
 	}
 	
-	
+	@Deprecated
 	public int[] HLStoRGB (float[] HLS) {
-		float H = HLS[0], L = HLS[1], S = HLS[2]; // H,L,S in [0,1]
+		return toRGB(HLS);
+	}
+	
+	public int[] toRGB (float[] HLS) {
+		final float H = HLS[0], L = HLS[1], S = HLS[2]; // H,L,S in [0,1]
 		float r = 0, g = 0, b = 0; 	
 		if (L <= 0)				// black
 			r = g = b = 0;
@@ -94,33 +98,33 @@ public class HlsConverter {
 		return new int[] {R, G, B};
 	}
 	
-	public static void main(String[] args) {	// TODO: move to unit tests!
-		doCheck(new int[] {0, 0, 0});
-		doCheck(new int[] {255, 255, 255});
-		doCheck(new int[] {177, 0, 0});
-		doCheck(new int[] {0, 177, 0});
-		doCheck(new int[] {0, 0, 177});
-		doCheck(new int[] {19, 3, 174});
-		Random rd = new Random();
-		for (int i = 0; i < 10000; i++) {
-			int r = rd.nextInt(256);
-			int g = rd.nextInt(256);
-			int b = rd.nextInt(256);
-			doCheck(new int[] {r, g, b});
-		}
-	}
+//	public static void main(String[] args) {	// TODO: move to unit tests!
+//		doCheck(new int[] {0, 0, 0});
+//		doCheck(new int[] {255, 255, 255});
+//		doCheck(new int[] {177, 0, 0});
+//		doCheck(new int[] {0, 177, 0});
+//		doCheck(new int[] {0, 0, 177});
+//		doCheck(new int[] {19, 3, 174});
+//		Random rd = new Random();
+//		for (int i = 0; i < 10000; i++) {
+//			int r = rd.nextInt(256);
+//			int g = rd.nextInt(256);
+//			int b = rd.nextInt(256);
+//			doCheck(new int[] {r, g, b});
+//		}
+//	}
 	
-	private static void doCheck(int[] rgb1) {
-		HlsConverter hlsC = new HlsConverter();
-//		System.out.println();
-//		System.out.println("rgb1 = " + Arrays.toString(rgb1));
-		float[] hsv = hlsC.RGBtoHLS(rgb1);
-//		System.out.println("hsv = " + Arrays.toString(hsv));
-		int[] rgb2 = hlsC.HLStoRGB(hsv);
-//		System.out.println("rgb2 = " + Arrays.toString(rgb2));
-		if (rgb1[0] != rgb2[0] || rgb1[1] != rgb2[1] || rgb1[1] != rgb2[1]) {
-			System.out.println("** problem with " + Arrays.toString(rgb1) + " -> " + Arrays.toString(rgb2));
-		}
-	}
+//	private static void doCheck(int[] rgb1) {
+//		HlsConverter hlsC = new HlsConverter();
+////		System.out.println();
+////		System.out.println("rgb1 = " + Arrays.toString(rgb1));
+//		float[] hsv = hlsC.RGBtoHLS(rgb1);
+////		System.out.println("hsv = " + Arrays.toString(hsv));
+//		int[] rgb2 = hlsC.HLStoRGB(hsv);
+////		System.out.println("rgb2 = " + Arrays.toString(rgb2));
+//		if (rgb1[0] != rgb2[0] || rgb1[1] != rgb2[1] || rgb1[1] != rgb2[1]) {
+//			System.out.println("** problem with " + Arrays.toString(rgb1) + " -> " + Arrays.toString(rgb2));
+//		}
+//	}
 
 }

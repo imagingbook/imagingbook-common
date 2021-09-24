@@ -24,22 +24,23 @@ import java.awt.color.ColorSpace;
 public class LuvColorSpace extends ColorSpace {
 		
 	// D65 reference white point:
-	static final double Xref = Illuminant.D65.X; 	// 0.950456
-	static final double Yref = Illuminant.D65.Y; 	// 1.000000
-	static final double Zref = Illuminant.D65.Z;	// 1.088754
+	private static final double Xref = Illuminant.D65.X; 	// 0.950456
+	private static final double Yref = Illuminant.D65.Y; 	// 1.000000
+	private static final double Zref = Illuminant.D65.Z;	// 1.088754
 	
-	static final double uuref = fu(Xref, Yref, Zref); // u'_n
-	static final double vvref = fv(Xref, Yref, Zref); // v'_n
+	private static final double uuref = fu(Xref, Yref, Zref); // u'_n
+	private static final double vvref = fv(Xref, Yref, Zref); // v'_n
 	
 	// chromatic adaptation objects:
-	static final ChromaticAdaptation catD65toD50 = new BradfordAdaptation(Illuminant.D65, Illuminant.D50);
-	static final ChromaticAdaptation catD50toD65 = new BradfordAdaptation(Illuminant.D50, Illuminant.D65);
+	private static final ChromaticAdaptation catD65toD50 = new BradfordAdaptation(Illuminant.D65, Illuminant.D50);
+	private static final ChromaticAdaptation catD50toD65 = new BradfordAdaptation(Illuminant.D50, Illuminant.D65);
 	
 	public LuvColorSpace() {
 		super(TYPE_Lab,3);
 	}
 	
 	// XYZ50->CIELuv: returns Luv values from XYZ (relative to D50)
+	@Override
 	public float[] fromCIEXYZ(float[] XYZ50) {	
 		float[] XYZ65 = catD50toD65.apply(XYZ50);
 		return fromCIEXYZ65(XYZ65);
@@ -60,6 +61,7 @@ public class LuvColorSpace extends ColorSpace {
 	}
 	
 	// CIELab->XYZ50: returns XYZ values (relative to D50) from Luv
+	@Override
 	public float[] toCIEXYZ(float[] Luv) {
 		float[] XYZ65 = toCIEXYZ65(Luv);
 		return catD65toD50.apply(XYZ65);
@@ -79,6 +81,7 @@ public class LuvColorSpace extends ColorSpace {
 	}
 	
 	//sRGB->CIELuv
+	@Override
 	public float[] fromRGB(float[] srgb) {
 		// get linear rgb components:
 		double r = sRgbUtil.gammaInv(srgb[0]);
@@ -95,6 +98,7 @@ public class LuvColorSpace extends ColorSpace {
 	}
 	
 	//CIELuv->sRGB
+	@Override
 	public float[] toRGB(float[] Luv) {
 		float[] XYZ65 = toCIEXYZ65(Luv);
 		double X = XYZ65[0];
@@ -120,11 +124,11 @@ public class LuvColorSpace extends ColorSpace {
 	
 	//---------------------------------------------------------------------
 	
-	static final double epsilon = 216.0/24389;
-	static final double kappa = 841.0/108;
+	private static final double epsilon = 216.0/24389;
+	private static final double kappa = 841.0/108;
 	
 	// Gamma correction for L* (forward)
-	double f1 (double c) {
+	private double f1 (double c) {
 		if (c > epsilon) // 0.008856
 			return Math.cbrt(c);
 		else
@@ -132,7 +136,7 @@ public class LuvColorSpace extends ColorSpace {
 	}
 	
 	// Gamma correction for L* (inverse)
-	double f2 (double c) {
+	private double f2 (double c) {
 		double c3 = c * c * c; //Math.pow(c, 3.0);
 		if (c3 > epsilon)
 			return c3;
@@ -140,14 +144,14 @@ public class LuvColorSpace extends ColorSpace {
 			return (c - 16.0 / 116) / kappa;
 	}
 	
-	static double fu (double X, double Y, double Z) { // X,Y,Z must be positive
+	private static double fu (double X, double Y, double Z) { // X,Y,Z must be positive
 		if (X < 0.00001)	// fails if 0.001 is used!
 			return 0;
 		else
 			return (4 * X) / (X + 15 * Y + 3 * Z);
 	}
 	
-	static double fv (double X, double Y, double Z) { // X,Y,Z must be positive
+	private static double fv (double X, double Y, double Z) { // X,Y,Z must be positive
 		if (Y < 0.00001)
 			return 0;
 		else
