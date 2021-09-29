@@ -38,7 +38,7 @@ public interface Mapping2D extends Cloneable {
 	 * @param xy the 2D position to calculate the Jacobian for
 	 * @return the Jacobian matrix
 	 */
-	default double[][] getJacobian(Pnt2d xy) {
+	default double[][] getJacobian(Pnt2d pnt) {
 		throw new UnsupportedOperationException("No Jacobian available for this mapping");
 	}
 }
