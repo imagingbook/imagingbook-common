@@ -21,6 +21,7 @@ import imagingbook.pub.geometry.mappings.Mapping2D;
  * @author WB
  *
  */
+@Deprecated
 public class RippleMapping implements Mapping2D {
 	final double xWavel; // = 20;
 	final double yWavel ; // = 100;
