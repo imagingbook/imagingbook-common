@@ -19,8 +19,8 @@ import imagingbook.pub.geometry.mappings.Mapping2D;
  * coordinates.
  * 
  * @author WB
- *
  */
+@Deprecated
 public class SphereMapping implements Mapping2D {
 	
 	static double DefaultRefIdx = 1.8;
