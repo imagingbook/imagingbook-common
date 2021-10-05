@@ -27,18 +27,18 @@ public class SphereMapping implements Mapping2D {
 			
 	private final double xc;			// center of sphere
 	private final double yc;
-	private final double rad;			// radius of sphere
-	private final double refIdx;		// refraction index
+	private final double rmax;			// radius of sphere
+	private final double rho;			// refraction index
    
-	public SphereMapping(double xc, double yc, double rad) {
-		this(xc, yc, rad, DefaultRefIdx);
+	public SphereMapping(double xc, double yc, double rmax) {
+		this(xc, yc, rmax, DefaultRefIdx);
 	}
 	
-	public SphereMapping(double xc, double yc, double rad, double refIdx) {
+	public SphereMapping(double xc, double yc, double rad, double rho) {
 		this.xc = xc;
 		this.yc = yc;
-		this.rad = rad;
-		this.refIdx = refIdx;
+		this.rmax = rad;
+		this.rho = rho;
 	}
 
 	@Override
@@ -49,7 +49,7 @@ public class SphereMapping implements Mapping2D {
 		double dy = y - yc;
 		double dx2 = dx * dx;
 		double dy2 = dy * dy;
-		double rad2 = rad * rad;
+		double rad2 = rmax * rmax;
 
 		double r2 = dx * dx + dy * dy;
 
@@ -58,11 +58,11 @@ public class SphereMapping implements Mapping2D {
 			double z = Math.sqrt(z2);
 
 			double xAlpha = Math.asin(dx / Math.sqrt(dx2 + z2));
-			double xBeta = xAlpha - xAlpha * (1 / refIdx);
+			double xBeta = xAlpha - xAlpha * (1 / rho);
 			double x1 = x - z * Math.tan(xBeta);
 
 			double yAlpha = Math.asin(dy / Math.sqrt(dy2 + z2));
-			double yBeta = yAlpha - yAlpha * (1 / refIdx);
+			double yBeta = yAlpha - yAlpha * (1 / rho);
 			double y1 = y - z * Math.tan(yBeta);
 			return PntDouble.from(x1, y1);
 		}
