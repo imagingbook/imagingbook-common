@@ -19,6 +19,10 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.jar.Manifest;
 
+import javax.swing.JFileChooser;
+import javax.swing.LookAndFeel;
+import javax.swing.UIManager;
+
 
 /**
  * This class defines various static methods for managing
@@ -176,6 +180,62 @@ public abstract class FileUtils {
 		return manifest;
 	}
 	
+	// ----------------------------------------------------------------
+	
+	
+	/**
+	 * Opens a dialog for the user to select a single folder (no files).
+	 * Contained files and sub-folders are shown.
+	 * Uses native (system) look-and-feel; original look-and-feel is restored.
+	 * 
+	 * @param startDirectory the directory to start from (pass {@code ""} or {@code "."} for the current directory)
+	 * @param dialogTitle the string shown in the title bar of the dialog window
+	 * @return a {@link File} object representing the selected directory or {@code null} if the dialog was canceled 
+	 */
+	public static File selectFolder(String startDirectory, String dialogTitle) {
+		File startDir = new File(startDirectory);
+		if (!startDir.exists()) {
+			startDir = new File(".");
+		}
+		
+		JFileChooser chooser = null;
+		LookAndFeel laf = UIManager.getLookAndFeel();	// get current look-and-feel
+
+		try { 
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName()); // use native look and feel
+			chooser = new JFileChooser(startDir) {
+				private static final long serialVersionUID = 1L;
+				public void approveSelection() {
+					if (getSelectedFile().isFile()) {
+						return;
+					} else {
+						super.approveSelection();
+					}
+				} 
+			};
+			UIManager.setLookAndFeel(laf);	// reset look-and-feel
+		} 
+		catch (Exception e) { }
+		
+		if (chooser == null)
+			return null;
+		
+		chooser.setDialogTitle(dialogTitle);
+		chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+		chooser.setAcceptAllFileFilterUsed(true);
+		chooser.setMultiSelectionEnabled(false);
+		chooser.setSelectedFile(new File("."));	// see https://stackoverflow.com/a/48316113
+
+		if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+			File selected = chooser.getSelectedFile();
+			if (selected == null)
+				throw new RuntimeException("selected directory is null");
+			return selected;
+		}
+		else {	// dialog was canceled
+			return null;
+		}
+	}
 	
 	// ----------------------------------------------------
 	
