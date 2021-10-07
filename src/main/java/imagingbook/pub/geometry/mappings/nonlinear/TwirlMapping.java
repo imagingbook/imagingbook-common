@@ -13,6 +13,10 @@ import imagingbook.pub.geometry.basic.Pnt2d;
 import imagingbook.pub.geometry.basic.Pnt2d.PntDouble;
 import imagingbook.pub.geometry.mappings.Mapping2D;
 
+/*
+ * Note: This class has been deprecated and substituted by an ImageJ plugin.
+ */
+@Deprecated
 public class TwirlMapping implements Mapping2D {
 	
 	private final double xc, yc, angle, rad;
