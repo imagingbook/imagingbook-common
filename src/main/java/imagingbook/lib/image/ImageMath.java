@@ -14,7 +14,7 @@ import ij.process.ImageProcessor;
 
 /**
  * This class provides some static utility methods for ImageJ's ImageProcessors.
- * 2013-08-23: static methods converted to use generics.
+ * @version 2013/08/23: static methods converted to use generics.
  */
 public abstract class ImageMath {
 	
