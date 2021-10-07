@@ -24,12 +24,12 @@ import imagingbook.pub.geometry.mappings.Mapping2D;
  * </pre>
  * Note that this is a non-linear transformation because of the mixed term.
  */
-public class BilinearMapping implements Mapping2D {
+public class BilinearMapping2D implements Mapping2D {
 	
 	private final double a0, a1, a2, a3;
 	private final double b0, b1, b2, b3;
 	
-	public BilinearMapping(
+	public BilinearMapping2D(
 			double a0, double a1, double a2, double a3,
 			double b0, double b1, double b2, double b3) {
 		this.a0 = a0;   this.a1 = a1;   this.a2 = a2;   this.a3 = a3;
@@ -44,7 +44,7 @@ public class BilinearMapping implements Mapping2D {
 	 * @param Q the second point sequence
 	 * @return a new bilinear mapping
 	 */
-	public static BilinearMapping fromPoints(Pnt2d[] P, Pnt2d[] Q) {	
+	public static BilinearMapping2D fromPoints(Pnt2d[] P, Pnt2d[] Q) {	
 		//define column vectors x, y
 		double[] x = {Q[0].getX(), Q[1].getX(), Q[2].getX(), Q[3].getX()};
 		double[] y = {Q[0].getY(), Q[1].getY(), Q[2].getY(), Q[3].getY()};		
@@ -60,7 +60,7 @@ public class BilinearMapping implements Mapping2D {
 		double a2 = a[1];		double b2 = b[1];
 		double a3 = a[2];		double b3 = b[2];
 		double a4 = a[3];		double b4 = b[3];
-		return new BilinearMapping(a1, a2, a3, a4, b1, b2, b3, b4);
+		return new BilinearMapping2D(a1, a2, a3, a4, b1, b2, b3, b4);
 	}
 
 	@Override
@@ -99,7 +99,7 @@ public class BilinearMapping implements Mapping2D {
 				PntInt.from(7,5),
 				};
 		
-		BilinearMapping bm = fromPoints(P, Q);
+		BilinearMapping2D bm = fromPoints(P, Q);
 		System.out.println("\nbilinear mapping = \n" + bm.toString());
 		
 		for (int i = 0; i < P.length; i++) {

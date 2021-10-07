@@ -206,20 +206,27 @@ public class AffineMapping2D extends ProjectiveMapping2D {
 	 */
 	public static void main(String[] args) {
 		PrintPrecision.set(6);
-		double[][] a = 
-				{{-2, 4, -3}, 
-				{3, 7, 2}, 
-				{0, 0, 1}};
-		System.out.println("a = \n" + Matrix.toString(a));
+		double[][] A = 
+			{{-2, 4, -3}, 
+			{3, 7, 2}, 
+			{0, 0, 1}};
+		System.out.println("a = \n" + Matrix.toString(A));
 		System.out.println();
-		double[][] ai = Matrix.inverse(a);
+		double[][] ai = Matrix.inverse(A);
 		System.out.println("ai = \n" + Matrix.toString(ai));
 		
 		LinearMapping2D Ai = new LinearMapping2D(ai);
 		System.out.println("Ai is affine: " + isAffine(Ai));
 		
-		double[][] I = Matrix.multiply(a, ai);
+		double[][] I = Matrix.multiply(A, ai);
 		System.out.println("\ntest: should be the  identity matrix: = \n" + Matrix.toString(I));
+		
+		double[][] B = 
+			{{-2, 4, -3}, 
+			{3, 7, 2}};
+		
+		LinearMapping2D am = new AffineMapping2D(B);
+		System.out.println("an = \n" + Matrix.toString(am.getTransformationMatrix()));
 	}
 
 }
