@@ -9,6 +9,8 @@
 
 package imagingbook.lib.filter.linear;
 
+import imagingbook.lib.math.Arithmetic;
+
 /**
  * This class implements a separable 2D Gaussian filter by extending
  * {@link LinearFilterSeparable}.
@@ -28,13 +30,23 @@ public class GaussianFilterSeparable extends LinearFilterSeparable {
 	
 	/**
 	 * Constructor.
-	 * TODO: Provide ways to filter only in ONE direction!
+	 * Passes {@code null} as kernel to super constructor ({@link LinearFilterSeparable}) if any
+	 * sigma &leq; 0 or NaN, i.e., the corresponding x- or y-pass is not performed
 	 * 
 	 * @param sigmaX the width of the 2D Gaussian in x-direction
 	 * @param sigmaY the width of the 2D Gaussian in y-direction
 	 */
 	public GaussianFilterSeparable(double sigmaX, double sigmaY) {
-		super(new GaussianKernel1D(sigmaX), new GaussianKernel1D(sigmaY));
+		super(makeKernel(sigmaX), makeKernel(sigmaY));
+	}
+	
+	private static GaussianKernel1D makeKernel(double sigma) {
+		if (Double.isFinite(sigma) && sigma > Arithmetic.EPSILON_DOUBLE) {
+			return new GaussianKernel1D(sigma);
+		}
+		else {
+			return null;
+		}
 	}
 	
 }

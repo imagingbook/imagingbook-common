@@ -21,6 +21,9 @@ import imagingbook.lib.image.data.PixelPack.PixelSlice;
  */
 public abstract class GenericFilterScalarSeparable extends GenericFilter {
 	
+	protected boolean doX = true;	// allow implementing sub-classes to deactivate x/y pass
+	protected boolean doY = true;
+	
 	// for progress reporting only
 	private int slice;
 	private int sliceMax = 1;
@@ -47,23 +50,24 @@ public abstract class GenericFilterScalarSeparable extends GenericFilter {
 		this.iterMax = width * height * 2;
 		this.iter = 0;
 		
-		// X-part
 		//IJ.log("doing X-part =============================== ");
-		for (int v = 0; v < height; v++) {
-			for (int u = 0; u < width; u++) {
-				target.setVal(u, v, doPixelX(source, u, v));
-				this.iter++;
+		if (doX) {
+			for (int v = 0; v < height; v++) {
+				for (int u = 0; u < width; u++) {
+					target.setVal(u, v, doPixelX(source, u, v));
+					this.iter++;
+				}
 			}
 		}
 		
-		target.copyTo(source);
-		
-		// Y-part
-		//IJ.log("doing Y-part =============================== ");
-		for (int v = 0; v < height; v++) {
-			for (int u = 0; u < width; u++) {
-				target.setVal(u, v, doPixelY(source, u, v));
-				this.iter++;
+		if (doY) {
+			target.copyTo(source);
+			//IJ.log("doing Y-part =============================== ");
+			for (int v = 0; v < height; v++) {
+				for (int u = 0; u < width; u++) {
+					target.setVal(u, v, doPixelY(source, u, v));
+					this.iter++;
+				}
 			}
 		}
 		
