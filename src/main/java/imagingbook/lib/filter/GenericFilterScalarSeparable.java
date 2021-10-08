@@ -1,5 +1,6 @@
 package imagingbook.lib.filter;
 
+import ij.IJ;
 import imagingbook.lib.image.data.PixelPack;
 import imagingbook.lib.image.data.PixelPack.PixelSlice;
 
@@ -50,19 +51,19 @@ public abstract class GenericFilterScalarSeparable extends GenericFilter {
 		this.iterMax = width * height * 2;
 		this.iter = 0;
 		
-		//IJ.log("doing X-part =============================== ");
 		if (doX) {
+			// IJ.log("doing X-part =============================== ");
 			for (int v = 0; v < height; v++) {
 				for (int u = 0; u < width; u++) {
 					target.setVal(u, v, doPixelX(source, u, v));
 					this.iter++;
 				}
 			}
+			target.copyTo(source);
 		}
 		
 		if (doY) {
-			target.copyTo(source);
-			//IJ.log("doing Y-part =============================== ");
+			// IJ.log("doing Y-part =============================== ");
 			for (int v = 0; v < height; v++) {
 				for (int u = 0; u < width; u++) {
 					target.setVal(u, v, doPixelY(source, u, v));
