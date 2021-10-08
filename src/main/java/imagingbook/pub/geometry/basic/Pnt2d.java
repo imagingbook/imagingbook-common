@@ -201,44 +201,44 @@ public interface Pnt2d {
 	 * Returns the squared L2 distance between this point and the
 	 * given point.
 	 * 
-	 * @param p the other point
+	 * @param other the other point
 	 * @return the squared distance
 	 */
-	public default double distanceSq(Pnt2d p) {
-		return sqr(this.getX() - p.getX()) + sqr(this.getY() - p.getY());
+	public default double distanceSq(Pnt2d other) {
+		return sqr(this.getX() - other.getX()) + sqr(this.getY() - other.getY());
 	}
 	
 	/**
 	 * Returns the L2 (Euclidean) distance between this point and the
 	 * given point. This method is equivalent to {@link #distL2(Pnt2d)}.
 	 * 
-	 * @param p the other point
+	 * @param other the other point
 	 * @return the distance
 	 */
-	public default double distance(Pnt2d p) {
-		return Math.sqrt(this.distanceSq(p));
+	public default double distance(Pnt2d other) {
+		return Math.sqrt(this.distanceSq(other));
 	}
 	
 	/**
 	 * Returns the L2 (Euclidean) distance between this point and the
 	 * given point. This method is equivalent to {@link #distance(Pnt2d)}.
 	 * 
-	 * @param p the other point
+	 * @param other the other point
 	 * @return the distance
 	 */
-	public default double distL2(Pnt2d p) {
-		return distance(p);
+	public default double distL2(Pnt2d other) {
+		return distance(other);
 	}
 	
 	/**
 	 * Returns the L1 (Manhattan) distance between this point and the
 	 * given point. 
 	 * 
-	 * @param p the other point
+	 * @param other the other point
 	 * @return the distance
 	 */
-	public default double distL1(Pnt2d p) {
-		return Math.abs(this.getX() - p.getX()) + Math.abs(this.getY() - p.getY());
+	public default double distL1(Pnt2d other) {
+		return Math.abs(this.getX() - other.getX()) + Math.abs(this.getY() - other.getY());
 	}
 	
 	// ----------------------------------------------------------
@@ -394,8 +394,7 @@ public interface Pnt2d {
 	        bits ^= java.lang.Double.doubleToLongBits(this.y) * 31;
 	        return (((int) bits) ^ ((int) (bits >> 32)));
 	    }
-		
-		// 
+
 	}
 	
 	// ----------------------------------------------------------
@@ -558,6 +557,17 @@ public interface Pnt2d {
 			return Math.abs(this.x - p.x) + Math.abs(this.y - p.y);
 		}
 		
+		/**
+		 * Returns the squared L2 distance between this point and the
+		 * given point.
+		 * 
+		 * @param other the other point
+		 * @return the squared distance
+		 */
+		public int distanceSq(PntInt other) {
+			return sqr(this.x - other.x) + sqr(this.y - other.y);
+		}
+		
 		// equality -----------------------------------
 		
 		@Override
@@ -574,22 +584,6 @@ public interface Pnt2d {
 			}
 			return false;
 		}
-		
-//		/**
-//		 * Tests if this integer point matches another integer point, i.e., if
-//		 * both coordinate differences are zero.
-//		 * Since both points are of type {@link PntInt} the match must be exact.
-//		 * 
-//		 * @param p the integer point to be matched to
-//		 * @return true if both points match
-//		 */
-//		public boolean equals(PntInt p) {
-//			if (this == p) {
-//				return true;
-//			}
-//			return (this.x == p.x) && (this.y == p.y);
-//		}
-		
 		
 		// misc -----------------------------------
 		
@@ -623,5 +617,17 @@ public interface Pnt2d {
 		public Point toAwtPoint() {
 			return new Point(this.x, this.y);
 		}
+	}
+	
+	// -------------------------------------------------------------------------
+	
+	public static void main(String[] args) {
+		PntInt a = PntInt.from(10,  7);
+		PntInt b = PntInt.from(3,  5);
+		System.out.println(" a = " + a.getClass());
+		System.out.println(" b = " + b.getClass());
+		System.out.println("dist1 = " + a.distL1(b));
+		System.out.println("dist2 = " + a.distL1(b));
+		
 	}
 }

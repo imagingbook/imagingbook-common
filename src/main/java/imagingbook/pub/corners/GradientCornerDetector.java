@@ -73,9 +73,9 @@ public abstract class GradientCornerDetector {
 	private final List<Corner> corners;
 	
 	// retained mainly for debugging
-	private FloatProcessor Ixx = null;
-	private FloatProcessor Iyy = null;
-	private FloatProcessor Ixy = null;
+	private FloatProcessor A = null;
+	private FloatProcessor B = null;
+	private FloatProcessor C = null;
 	
 	// ---------------------------------------------------------------------------
 	
@@ -118,25 +118,26 @@ public abstract class GradientCornerDetector {
 		Filter.convolveY(Iy, hd);				// get first derivative in y
 		
 		// gradient products:
-		Ixx = ImageMath.sqr(Ix);				// Ixx = Ix^2
-		Iyy = ImageMath.sqr(Iy);				// Iyy = Iy^2
-		Ixy = ImageMath.mult(Ix, Iy);			// Ixy = Ix * Iy
+		A = ImageMath.sqr(Ix);				// A(u,v) = Ixx(u,v) = (Ix(u,v))^2
+		B = ImageMath.sqr(Iy);				// B(u,v) = Iyy(u,v) = (Iy(u,v))^2
+		C = ImageMath.mult(Ix, Iy);			// C(u,v) = Ixy(u,v) = Ix(u,v)*Iy(u,v)
 		
 		// blur the gradient components with a small Gaussian:
-		float[] gaussKernel = GaussianKernel1D.makeGaussKernel1D(params.sigma);
-		Filter.convolveXY(Ixx, gaussKernel);
-		Filter.convolveXY(Iyy, gaussKernel);
-		Filter.convolveXY(Ixy, gaussKernel);
+		
+		float[] hb = GaussianKernel1D.makeGaussKernel1D(params.sigma);
+		Filter.convolveXY(A, hb);	// TODO: change to use 'GaussianFilterSeparable'
+		Filter.convolveXY(B, hb);
+		Filter.convolveXY(C, hb);
 		
 		FloatProcessor Q = new FloatProcessor(M, N);
 		
-		final float[] A = (float[]) Ixx.getPixels();
-		final float[] B = (float[]) Iyy.getPixels();
-		final float[] C = (float[]) Ixy.getPixels();
-		final float[] q = (float[]) Q.getPixels();
+		final float[] pA = (float[]) A.getPixels();
+		final float[] pB = (float[]) B.getPixels();
+		final float[] pC = (float[]) C.getPixels();
+		final float[] pQ = (float[]) Q.getPixels();
 		
 		for (int i = 0; i < M * N; i++) {
-			q[i] = getCornerScore(A[i], B[i], C[i]);
+			pQ[i] = getCornerScore(pA[i], pB[i], pC[i]);
 		}
 		
 //		(new ImagePlus("Ixx", Ixx)).show();
@@ -156,16 +157,16 @@ public abstract class GradientCornerDetector {
 		return this.Q;
 	}
 	
-	public FloatProcessor getIxx() {
-		return this.Ixx;
+	public FloatProcessor getA() {
+		return this.A;
 	}
 	
-	public FloatProcessor getIyy() {
-		return this.Iyy;
+	public FloatProcessor getB() {
+		return this.B;
 	}
 	
-	public FloatProcessor getIxy() {
-		return this.Ixy;
+	public FloatProcessor getC() {
+		return this.C;
 	}
 	
 	public List<Corner> getCorners() {	
@@ -227,12 +228,12 @@ public abstract class GradientCornerDetector {
 	private List<Corner> collectCorners() {
 		final float th = (float) params.scoreThreshold;
 		final int border = params.border;
-		List<Corner> C = new ArrayList<Corner>();
+		List<Corner> C = new ArrayList<>();
 		for (int v = border; v < N - border; v++) {
 			for (int u = border; u < M - border; u++) {
-				float[] s = getNeighborhood(Q, u, v);
-				if (s != null && s[0] > th && isLocalMax(s)) {
-					Corner c = makeCorner(u, v, s);
+				float[] qn = getNeighborhood(Q, u, v);
+				if (qn != null && qn[0] > th && isLocalMax(qn)) {
+					Corner c = makeCorner(u, v, qn);
 					if (c != null) {
 						C.add(c);
 					}
@@ -248,7 +249,7 @@ public abstract class GradientCornerDetector {
 		Collections.sort(C);
 		// we use an array of corners for efficiency reasons:
 		Corner[] Ca = C.toArray(new Corner[C.size()]);
-		List<Corner> Cclean = new ArrayList<Corner>(C.size());
+		List<Corner> Cclean = new ArrayList<>(C.size());
 		for (int i = 0; i < Ca.length; i++) {
 			Corner c0 = Ca[i];		// get next strongest corner
 			if (c0 != null) {
@@ -269,17 +270,17 @@ public abstract class GradientCornerDetector {
 	 * position refinement if a {@link #maxLocator} is defined.
 	 * @param u the corner's horizontal position (int)
 	 * @param v the corner's vertical position (int)
-	 * @param s the corner scores in the 3x3 neighborhood
+	 * @param qn the corner scores in the 3x3 neighborhood
 	 * @return a new {@link Corner} instance
 	 */
-	private Corner makeCorner(int u, int v, float[] s) {
+	private Corner makeCorner(int u, int v, float[] qn) {
 		if (maxLocator == null) {
 			// no sub-pixel refinement, use original integer coordinates
-			return new Corner(u, v, s[0]);
+			return new Corner(u, v, qn[0]);
 		}
 		else {
 			// do sub-pixel refinement
-			float[] xyz = maxLocator.getMax(s);
+			float[] xyz = maxLocator.getMax(qn);
 			return (xyz == null) ? null : new Corner(u + xyz[0], v + xyz[1], xyz[2]);
 		}
 	}

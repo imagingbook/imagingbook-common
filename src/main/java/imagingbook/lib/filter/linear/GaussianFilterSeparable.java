@@ -28,6 +28,8 @@ public class GaussianFilterSeparable extends LinearFilterSeparable {
 	
 	/**
 	 * Constructor.
+	 * TODO: Provide ways to filter only in ONE direction!
+	 * 
 	 * @param sigmaX the width of the 2D Gaussian in x-direction
 	 * @param sigmaY the width of the 2D Gaussian in y-direction
 	 */

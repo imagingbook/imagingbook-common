@@ -9,6 +9,7 @@
 
 package imagingbook.pub.corners;
 
+import static imagingbook.lib.math.Arithmetic.sqr;
 import ij.process.ImageProcessor;
 
 
@@ -24,7 +25,7 @@ import ij.process.ImageProcessor;
  * and associated threshold.
  *
  * @author W. Burger
- * @version 2020/10/02
+ * @version 2021/10/08
  */
 public class HarrisCornerDetector extends GradientCornerDetector {
 	
@@ -38,21 +39,23 @@ public class HarrisCornerDetector extends GradientCornerDetector {
 			scoreThreshold = DEFAULT_THRESHOLD;	// individual default threshold
 		}
 	}
+	
+	private final float alphaF;
 
 	// ---------------------------------------------------------------------------
 	
 	public HarrisCornerDetector(ImageProcessor ip, Parameters params) {
 		super(ip, params);
+		this.alphaF = (float) params.alpha;
 	}
 	
 	// ----------------------------------------------------------------------
 
-	@Override	// pass as a function object?
-	protected float getCornerScore(float A, float B, float C) {
-		float alpha = (float) ((Parameters) params).alpha;
-		float det = A * B - C * C;
-		float trace = A + B;
-		return det - alpha * (trace * trace);
+	@Override
+	protected float getCornerScore(float a, float b, float c) {
+		float det = a * b - sqr(c);
+		float trace = a + b;
+		return det - alphaF * sqr(trace);
 	}
 	
 }

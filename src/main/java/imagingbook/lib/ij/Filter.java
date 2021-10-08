@@ -64,8 +64,6 @@ public abstract class Filter {
 		conv.setNormalize(false);
 		conv.convolve(fp, h, h.length, 1);
 		conv.convolve(fp, h, 1, h.length);
-//		convolveX(fp, h);
-//		convolveY(fp, h);
 	}
 
 }
