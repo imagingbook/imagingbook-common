@@ -10,7 +10,7 @@
 package imagingbook.lib.math.eigen;
 
 import imagingbook.lib.math.Matrix;
-import static imagingbook.lib.math.Matrix.createDoubleVector;
+
 
 /**
  * Implements an efficient, closed form algorithm for calculating the real 
@@ -91,47 +91,47 @@ public class Eigensolver2x2 implements RealEigensolver { // to check: http://www
 		}
 		
 		final double t = Math.sqrt(rho);
-		final double lambda1 = r + t;
-		final double lambda2 = r - t;	
-		final double[] x1, x2;
+		final double lambda0 = r + t;	// eigenvalue 0
+		final double lambda1 = r - t;	// eigenvalue 1
+		final double[] x0, x1;			// eigenvectors 0, 1
 		
 		if (a - d > 0) {
-			x1 = createDoubleVector(s + t, c);
-			x2 = createDoubleVector(b, -s - t);
+			x0 = new double[] {s + t, c};
+			x1 = new double[] {b, -s - t};
 		}
 		else if (a - d < 0) {
-			x1 = createDoubleVector(b, -s + t);
-			x2 = createDoubleVector(s - t, c);
+			x0 = new double[] {b, -s + t};
+			x1 = new double[] {s - t, c};
 		}
 		else {		// (A - D) == 0
 			final double bA = Math.abs(b);
 			final double cA = Math.abs(c);
-			final double bcS = Math.sqrt(b * c);
+			final double bcR = Math.sqrt(b * c);
 			if (bA < cA) {							// |b| < |c|
-				x1 = createDoubleVector(bcS, c);
-				x2 = createDoubleVector(-bcS, c);
+				x0 = new double[] { bcR, c};
+				x1 = new double[] {-bcR, c};
 			}
 			else if (bA > cA) { 					// |b| > |c|
-				x1 = createDoubleVector(b, bcS);
-				x2 = createDoubleVector(b, -bcS);
+				x0 = new double[] {b,  bcR};
+				x1 = new double[] {b, -bcR};
 			}
 			else { 				// |B| == |C|
-				x1 = createDoubleVector(c, c);
-				x2 = createDoubleVector(-c, c);
+				x0 = new double[] { c, c};
+				x1 = new double[] {-c, c};
 			}
 		}
 		
-		if (Math.abs(lambda1) >= Math.abs(lambda2)) {	// order eigenvalues by magnitude
-			eVals[0] = lambda1;
-			eVals[1] = lambda2;
-			eVecs[0] = x1;
-			eVecs[1] = x2;
+		if (Math.abs(lambda0) >= Math.abs(lambda1)) {	// order eigenvalues by magnitude
+			eVals[0] = lambda0;
+			eVals[1] = lambda1;
+			eVecs[0] = x0;
+			eVecs[1] = x1;
 		}
 		else {
-			eVals[0] = lambda2;
-			eVals[1] = lambda1;
-			eVecs[0] = x2;
-			eVecs[1] = x1;
+			eVals[0] = lambda1;
+			eVals[1] = lambda0;
+			eVecs[0] = x1;
+			eVecs[1] = x0;
 		}
 		return true;	// real eigenvalues
 	}

@@ -44,36 +44,23 @@ import imagingbook.lib.settings.PrintPrecision;
  * <p>See also {@link RealEigensolver} and implementations.</p>
  * 
  * @author W. Burger
- * @version 2019/01/05
+ * @version 2021/10/10
  */
 public abstract class Matrix {
 	
 	/** Locale used for printing decimal numbers. */
 	public static Locale PrintLocale = Locale.US;
+	
 	/** Character used to separate successive vector and matrix elements. */
 	public static char SeparationChar = ',';
+	
 	/** Leading delimiter used for lists of vector and matrix elements. */
 	public static char LeftDelimitChar = '{';
+	
 	/** Trailing delimiter used for lists of vector and matrix elements. */
 	public static char RightDelimitChar = '}';
 	
-	// ----  Vector and matrix creation -----------------------------
-
-	public static double[] createDoubleVector(int length) {
-		return new double[length];
-	}
-	
-	public static double[] createDoubleVector(double... values) {
-		return values;
-	}
-	
-	public static float[] createFloatVector(int length) {
-		return new float[length];
-	}
-	
-	public static float[] createFloatVector(float... values) {
-		return values;
-	}
+	// ----  Matrix creation -----------------------------
 	
 	public static double[][] createDoubleMatrix(int rows, int columns) {
 		return new double[rows][columns];
