@@ -10,6 +10,7 @@ package imagingbook.pub.geometry.hulls;
 
 import static imagingbook.lib.math.Arithmetic.isZero;
 import static imagingbook.lib.math.Arithmetic.sqr;
+import static imagingbook.lib.math.Arithmetic.radius;
 import static imagingbook.lib.math.Matrix.add;
 import static imagingbook.lib.math.Matrix.multiply;
 import static java.lang.Math.sqrt;
@@ -21,7 +22,7 @@ import imagingbook.pub.geometry.basic.Pnt2d.PntDouble;
  * Represents a major axis-aligned bounding box of a 2D point set.
  * 
  * @author WB
- * @version 2020/10/11
+ * @version 2021/10/11
  * 
  */
 public class AxisAlignedBoundingBox {
@@ -86,47 +87,45 @@ public class AxisAlignedBoundingBox {
 		return corners;
 	}
 
-	
 	private double[] getOrientationVector(Iterable<Pnt2d> points) {
 		double[] centroid = getCentroid(points);
 		final double xc = centroid[0];
 		final double yc = centroid[1];
-		double mu11 = 0;
 		double mu20 = 0;
 		double mu02 = 0;
+		double mu11 = 0;
 
 		for (Pnt2d p : points) {
 			double dx = (p.getX() - xc);
 			double dy = (p.getY() - yc);
-			mu11 = mu11 + dx * dy;
 			mu20 = mu20 + dx * dx;
 			mu02 = mu02 + dy * dy;
+			mu11 = mu11 + dx * dy;
 		}
 		
 		double A = 2 * mu11;
 		double B = mu20 - mu02;
-		double s = sqrt(2 * (sqr(A) + sqr(B) + B * sqrt(sqr(A) + sqr(B))));
-		if (isZero(s)) {
-			return null;
-		}
-		double x0 = (B + sqrt(sqr(A) + sqr(B))) / s;
-		double y0 = A / s;
-		return new double[] {x0, y0};
+		
+		double xTheta = B + sqrt(sqr(A) + sqr(B));
+		double yTheta = A;
+		double d = radius(xTheta, yTheta);
+		
+		return (isZero(d)) ? null : new double[] {xTheta / d, yTheta / d};
 	}
 	
 	private double[] getCentroid(Iterable<Pnt2d> points) {
 		int n = 0;
-		double sumX = 0;
-		double sumY = 0;
+		double su = 0;
+		double sv = 0;
 		for (Pnt2d p : points) {
-			sumX += p.getX();
-			sumY += p.getY();
+			su += p.getX();
+			sv += p.getY();
 			n++;
 		}
 		if (n == 0) {
 			throw new IllegalArgumentException("empty point sequence!");
 		}
-		return new double[] {sumX/n, sumY/n};
+		return new double[] {su/n, sv/n};
 	}
 	
 }

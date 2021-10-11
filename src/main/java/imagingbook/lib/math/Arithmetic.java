@@ -54,6 +54,42 @@ public abstract class Arithmetic {
 	}
 	
 	/**
+	 * Returns the radius of the Cartesian point 
+	 * @param x x-component
+	 * @param y y-component
+	 * @return the radius
+	 */
+	public static double radius(double x, double y) {
+		return Math.hypot(x, y);
+	}
+	
+	/**
+	 * Returns the angle of the Cartesian point (x,y)
+	 * @param x x-component
+	 * @param y y-component
+	 * @return the angle
+	 */
+	public static double angle(double x, double y) {
+		return Math.atan2(y, x);
+	}
+	
+	public static double[] toPolar(double x, double y) {
+		return new double[] {Math.hypot(x, y), Math.atan2(y, x)};
+	}
+	
+	public static double[] toPolar(double[] cart) {
+		return toPolar(cart[0], cart[1]);
+	}
+	
+	public static double[] toCartesian(double radius, double angle) {
+		return new double[] {radius * Math.cos(angle), radius * Math.sin(angle)};
+	}
+	
+	public static double[] toCartesian(double[] polar) {
+		return toCartesian(polar[0], polar[1]);
+	}
+	
+	/**
 	 * Integer version of the modulus operator ({@code a mod b}).
 	 * Also see <a href="http://en.wikipedia.org/wiki/Modulo_operation">here</a>.
 	 * Calls {@code Math.floorMod(a,b)} (available in Java 8 and higher).

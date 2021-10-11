@@ -63,6 +63,18 @@ public interface Pnt2d {
 	}
 	
 	/**
+	 * Creates and returns a new point of type {@link Pnt2d.PntInt}
+	 * with the specified coordinates.
+	 * See also {@link PntInt#from(int[])}.
+	 * 
+	 * @param xy coordinates
+	 * @return the new point
+	 */
+	public static Pnt2d from(int[] xy) {
+		return PntInt.from(xy);
+	}
+	
+	/**
 	 * Creates and returns a new point of type {@link Pnt2d.PntDouble}
 	 * with the specified coordinates.
 	 * See also {@link PntDouble#from(double, double)}.
@@ -73,6 +85,18 @@ public interface Pnt2d {
 	 */
 	public static Pnt2d from(double x, double y) {
 		return PntDouble.from(x, y);
+	}
+	
+	/**
+	 * Creates and returns a new point of type {@link Pnt2d.PntDouble}
+	 * with the specified coordinates.
+	 * See also {@link PntDouble#from(double[])}.
+	 * 
+	 * @param xy coordinates
+	 * @return the new point
+	 */
+	public static Pnt2d from(double[] xy) {
+		return PntDouble.from(xy);
 	}
 	
 	// ----------------------------------------------------------
@@ -464,7 +488,7 @@ public interface Pnt2d {
 		
 		/**
 		 * Returns a new {@link PntInt} instance.
-		 * @param xy x/y-coordinate array
+		 * @param xy x/y-coordinates
 		 * @return the new point
 		 */
 		public static PntInt from(int[] xy) {
@@ -621,13 +645,13 @@ public interface Pnt2d {
 	
 	// -------------------------------------------------------------------------
 	
-	public static void main(String[] args) {
-		PntInt a = PntInt.from(10,  7);
-		PntInt b = PntInt.from(3,  5);
-		System.out.println(" a = " + a.getClass());
-		System.out.println(" b = " + b.getClass());
-		System.out.println("dist1 = " + a.distL1(b));
-		System.out.println("dist2 = " + a.distL1(b));
-		
-	}
+//	public static void main(String[] args) {
+//		PntInt a = PntInt.from(10,  7);
+//		PntInt b = PntInt.from(3,  5);
+//		System.out.println(" a = " + a.getClass());
+//		System.out.println(" b = " + b.getClass());
+//		System.out.println("dist1 = " + a.distL1(b));
+//		System.out.println("dist2 = " + a.distL1(b));
+//		
+//	}
 }
