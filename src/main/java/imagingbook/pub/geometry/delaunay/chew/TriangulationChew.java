@@ -65,18 +65,18 @@ import imagingbook.pub.geometry.delaunay.Utils;
  * DEALINGS IN THE SOFTWARE.
  * </pre>
  * <p>
- * <strong>Original description:</strong> The actual data structure here is a Delaunay Triangulation. The Voronoi Diagram is built on-the-fly
+ * <strong>Original description:</strong> 
+ * <em>The actual data structure here is a Delaunay Triangulation. The Voronoi Diagram is built on-the-fly
  * from the Delaunay Triangulation. The Delaunay Triangulation is built within a large triangle whose vertices
  * are well off-screen. That's why in the Delaunay Triangulation there are lines heading off-screen. 
  * This technique makes the code simpler since otherwise additional code would be needed to handle new sites
- * that are outside the convex hull of the previous sites.
- * </p>
- * <p>
- * The algorithm: To insert a new site, we walk across the triangulation, starting from the most recently created
+ * that are outside the convex hull of the previous sites.</em>
+ * <br>
+ * <em>The algorithm: To insert a new site, we walk across the triangulation, starting from the most recently created
  * triangle, until we find the triangle that contains the new site. This triangle and any adjacent triangles that
  * contain this new site in their circumcircle are eliminated and the resulting empty spot is re-triangulated.
  * The site-insertion part of this technique is commonly called the Bowyer-Watson Algorithm. The expected time to
- * insert a new site is roughly O(n1/2) where n is the current number of sites.
+ * insert a new site is roughly O(n1/2) where n is the current number of sites.</em>
  * </p>
  * 
  * Adapted by W. Burger
