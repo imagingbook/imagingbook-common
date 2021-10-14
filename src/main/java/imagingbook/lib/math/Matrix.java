@@ -21,6 +21,7 @@ import org.apache.commons.math3.linear.LUDecomposition;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.RealVector;
+import org.apache.commons.math3.linear.SingularMatrixException;
 
 import imagingbook.lib.math.Arithmetic.DivideByZeroException;
 import imagingbook.lib.math.eigen.RealEigensolver;
@@ -1324,21 +1325,35 @@ public abstract class Matrix {
 	
 	/**
 	 * Finds the exact solution x for the linear system of equations
-	 * A * x = b. Exceptions are thrown if the supplied matrix is
-	 * not square or ill-conditioned (singular).
+	 * A * x = b. Returns the solution vector x or {@code null}
+	 * if the supplied matrix is ill-conditioned (i.e., singular).
+	 * Exceptions are thrown if A is not square or dimensions are incompatible.
+	 * Uses {@link LUDecomposition} from the Apache Commons Math library.
+	 * 
 	 * @param A a square matrix of size n x n
 	 * @param b a vector of length n
-	 * @return the solution vector (x) of length n
+	 * @return the solution vector (x) of length n or {@code null} if no solution possible
 	 */
 	public static double[] solve(final double[][] A, double[] b) {
+		if (!Matrix.isSquare(A)) {
+			throw new RuntimeException("matrix A must be square");
+		}
+		if (A.length != b.length) {
+			throw new IncompatibleDimensionsException();
+		}
 		RealMatrix AA = MatrixUtils.createRealMatrix(A);
 		RealVector bb = MatrixUtils.createRealVector(b);
 		DecompositionSolver solver = new LUDecomposition(AA).getSolver();
-//		double[] x = null;
-//		try {
-//			x = solver.solve(bb).toArray();
-//		} catch (SingularMatrixException e) {}
-		return solver.solve(bb).toArray();
+		RealVector xx = null;
+		try {
+			xx = solver.solve(bb);
+		} catch (SingularMatrixException e) {}
+		if (xx == null) {
+			return null;
+		}
+		else {
+			return xx.toArray();
+		}
 	}
 	
 	// Output to strings and streams ------------------------------------------
