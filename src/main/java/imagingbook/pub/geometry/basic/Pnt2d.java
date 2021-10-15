@@ -96,7 +96,7 @@ public interface Pnt2d {
 	 * @return the new point
 	 */
 	public static Pnt2d from(double[] xy) {
-		return PntDouble.from(xy);
+		return PntDouble.from(xy[0], xy[1]);
 	}
 	
 	// ----------------------------------------------------------
