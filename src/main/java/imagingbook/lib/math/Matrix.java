@@ -1017,6 +1017,37 @@ public abstract class Matrix {
 	
 	// min/max of vectors ------------------------
 	
+	// TODO: JavaDoc + testing
+	public static int minIdx(double[] x) {
+		if (x.length == 0)
+			throw new ZeroLengthVectorException();
+		double minval = x[0];
+		int minidx = 0;
+		for (int i = 1; i < x.length; i++) {
+			if (x[i] < minval) {
+				minval = x[i];
+				minidx = i;
+			}
+		}
+		return minidx;
+	}
+	
+	// TODO: JavaDoc + testing
+	public static int maxIdx(double[] x) {
+		if (x.length == 0)
+			throw new ZeroLengthVectorException();
+		double maxval = x[0];
+		int maxidx = 0;
+		for (int i = 1; i < x.length; i++) {
+			if (x[i] > maxval) {
+				maxval = x[i];
+				maxidx = i;
+			}
+		}
+		return maxidx;
+	}
+	
+	
 	public static float min(final float[] x) throws ZeroLengthVectorException {
 		if (x.length == 0)
 			throw new ZeroLengthVectorException();
@@ -1040,6 +1071,8 @@ public abstract class Matrix {
 		}
 		return minval;
 	}
+	
+
 	
 	public static float max(final float[] x) throws ZeroLengthVectorException {
 		if (x.length == 0)
