@@ -25,7 +25,7 @@ import imagingbook.pub.geometry.basic.Pnt2d.PntDouble;
  */
 public class AlgebraicLine {
 	
-	protected final double a, b, c;
+	private final double a, b, c;
 
 	// static factory methods ----------------------------------------
 	

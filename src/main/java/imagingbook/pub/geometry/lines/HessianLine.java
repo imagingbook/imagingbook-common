@@ -19,11 +19,15 @@ import imagingbook.pub.geometry.basic.Pnt2d;
  * x * cos(angle) + y * sin(angle) = radius.
  * It is a specialization (subclass) of {@link AlgebraicLine}.
  * Instances are immutable.
+ * 
+ * TODO: This class is unfinished! Handling reference points to be added/completed!
  */
 public class HessianLine extends AlgebraicLine {
 	
-	protected final double angle;
-	protected final double radius;
+	private final double angle;
+	private final double radius;
+	private final Pnt2d refPnt;	// reference point x_r, TODO: always zero!
+	
 	
 	// static factory methods ----------------------------------------
 	
@@ -39,12 +43,13 @@ public class HessianLine extends AlgebraicLine {
 	
 	public HessianLine(double a, double b, double c) {
 		super(a, b, c);	// creates a normalized line
-		this.angle = Math.atan2(this.b, this.a);
-		this.radius = -this.c; // ... / Math.sqrt(sqr(this.a) + sqr(this.b)); 
+		this.angle = Math.atan2(this.getB(), this.getA());
+		this.radius = -this.getC(); // ... / Math.sqrt(sqr(this.a) + sqr(this.b));
+		this.refPnt = Pnt2d.from(0, 0);
 	}
 	
 	public HessianLine(AlgebraicLine L) {
-		this(L.a, L.b, L.c);
+		this(L.getA(), L.getB(), L.getC());
 	}
 	
 	// getter methods ------------------------------------------
@@ -55,6 +60,16 @@ public class HessianLine extends AlgebraicLine {
 
 	public double getRadius() {
 		return radius;
+	}
+	
+	@Override
+	public double getXref() {
+		return refPnt.getX();
+	}
+	
+	@Override
+	public double getYref() {
+		return refPnt.getY();
 	}
 	
 	// -------------------------------------------------------------------
