@@ -1017,8 +1017,17 @@ public abstract class Matrix {
 	
 	// min/max of vectors ------------------------
 	
-	// TODO: JavaDoc + testing
-	public static int minIdx(double[] x) {
+	// TODO:  testing,  add float version
+	/**
+	 * Returns the index of the smallest element in the
+	 * specified vector. If the smallest value is
+	 * not unique, the lowest index is returned.
+	 * An exception is thrown if the vector has zero length.
+	 * 
+	 * @param x a vector
+	 * @return the index of the smallest value
+	 */
+	public static int idxMin(double[] x) {
 		if (x.length == 0)
 			throw new ZeroLengthVectorException();
 		double minval = x[0];
@@ -1032,8 +1041,17 @@ public abstract class Matrix {
 		return minidx;
 	}
 	
-	// TODO: JavaDoc + testing
-	public static int maxIdx(double[] x) {
+	// TODO: testing, add float version
+	/**
+	 * Returns the index of the largest element in the
+	 * specified vector. If the largest value is
+	 * not unique, the lowest index is returned.
+	 * An exception is thrown if the vector has zero length.
+	 * 
+	 * @param x a vector
+	 * @return the index of the largest value
+	 */
+	public static int idxMax(double[] x) {
 		if (x.length == 0)
 			throw new ZeroLengthVectorException();
 		double maxval = x[0];
@@ -1367,26 +1385,44 @@ public abstract class Matrix {
 	 * @param b a vector of length n
 	 * @return the solution vector (x) of length n or {@code null} if no solution possible
 	 */
+	
 	public static double[] solve(final double[][] A, double[] b) {
+		RealVector x = solve(MatrixUtils.createRealMatrix(A), MatrixUtils.createRealVector(b));
 		if (!Matrix.isSquare(A)) {
 			throw new RuntimeException("matrix A must be square");
 		}
-		if (A.length != b.length) {
-			throw new IncompatibleDimensionsException();
-		}
-		RealMatrix AA = MatrixUtils.createRealMatrix(A);
-		RealVector bb = MatrixUtils.createRealVector(b);
-		DecompositionSolver solver = new LUDecomposition(AA).getSolver();
-		RealVector xx = null;
-		try {
-			xx = solver.solve(bb);
-		} catch (SingularMatrixException e) {}
-		if (xx == null) {
+		if (x == null) {
 			return null;
 		}
 		else {
-			return xx.toArray();
+			return x.toArray();
 		}
+	}
+	
+	/**
+	 * Finds the exact solution x for the linear system of equations
+	 * A * x = b. Returns the solution vector x or {@code null}
+	 * if the supplied matrix is ill-conditioned (i.e., singular).
+	 * Exceptions are thrown if A is not square or dimensions are incompatible.
+	 * Uses {@link LUDecomposition} from the Apache Commons Math library.
+	 * 
+	 * @param A a square matrix of size n x n
+	 * @param b a vector of length n
+	 * @return the solution vector (x) of length n or {@code null} if no solution possible
+	 */
+	public static RealVector solve(RealMatrix A, RealVector b) {
+		if (!A.isSquare()) {
+			throw new RuntimeException("matrix A must be square");
+		}
+		if (A.getRowDimension() != b.getDimension()) {
+			throw new IncompatibleDimensionsException();
+		}
+		DecompositionSolver solver = new LUDecomposition(A).getSolver();
+		RealVector x = null;
+		try {
+			x = solver.solve(b);
+		} catch (SingularMatrixException e) {}
+		return x;
 	}
 	
 	// Output to strings and streams ------------------------------------------
