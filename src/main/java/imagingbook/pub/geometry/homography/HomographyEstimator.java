@@ -164,7 +164,8 @@ public class HomographyEstimator {
 				LeastSquaresFactory.model(value, jacobian),
 				MatrixUtils.createRealVector(observed), 
 				MathUtil.getRowPackedVector(Hinit), 
-				null,  // ConvergenceChecker
+				// TODO: add weight matrix (diagonal)?
+				null,  // ConvergenceChecker -- do we need one?
 				MaxLmEvaluations, 
 				MaxLmIterations);
 
@@ -185,6 +186,8 @@ public class HomographyEstimator {
 	private static MultivariateVectorFunction getValueFunction(Pnt2d[] X) {
 		//System.out.println("MultivariateVectorFunction getValueFunction");
 		return new MultivariateVectorFunction() {
+			
+			@Override
 			public double[] value(double[] h) {			
 				final double[] Y = new double[X.length * 2];
 				for (int j = 0; j < X.length; j++) {
@@ -201,6 +204,8 @@ public class HomographyEstimator {
 
 	private static MultivariateMatrixFunction getJacobianFunction(Pnt2d[] X) {
 		return new MultivariateMatrixFunction() {
+			
+			@Override
 			public double[][] value(double[] h) {
 				final double[][] J = new double[2 * X.length][];
 				for (int i = 0; i < X.length; i++) {
