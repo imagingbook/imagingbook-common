@@ -42,6 +42,14 @@ public abstract class CustomOverlay<T> extends Overlay {
 	private Color strokeColor = DefaultStrokeColor;
 	private double strokeWidth = DefaultStrokeWidth;
 	
+	protected CustomOverlay() {
+	}
+	
+	protected CustomOverlay(Color strokeColor, double strokeWidth) {
+		this.strokeColor = strokeColor;
+		this.strokeWidth = strokeWidth;
+	}
+	
 	// -----------------------------------------------------------
 	
 	/**
@@ -55,6 +63,15 @@ public abstract class CustomOverlay<T> extends Overlay {
 	 * @return the resulting {@link Roi} object
 	 */
 	public abstract Roi makeRoi(T item);
+	
+	// Experimental convenience method to specify color/width individually:
+	public Roi makeRoi(T item, Color strokeColor, double strokeWidth) {
+		Roi roi = makeRoi(item);
+		roi.setStrokeColor(strokeColor);
+		roi.setStrokeWidth(strokeWidth);
+		return roi;
+	}
+	
 	
 	// -----------------------------------------------------------
 	

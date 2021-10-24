@@ -99,6 +99,16 @@ public interface Pnt2d {
 		return PntDouble.from(xy[0], xy[1]);
 	}
 	
+	public static Pnt2d from(Point2D p) {
+		if (p instanceof Point) {
+			Point pi = (Point) p;
+			return PntInt.from(pi.x, pi.y);
+		}
+		else {
+			return PntDouble.from(p.getX(), p.getY());
+		}
+	}
+	
 	// ----------------------------------------------------------
 	
 	/**
