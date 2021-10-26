@@ -8,6 +8,8 @@ import ij.IJ;
 import ij.gui.Overlay;
 import ij.gui.Roi;
 import ij.gui.ShapeRoi;
+import imagingbook.lib.ij.overlay.ColoredStroke;
+import imagingbook.lib.ij.overlay.ShapeOverlayAdapter;
 
 /**
  * Defines a subclass of ImageJ's {@link Overlay} class
@@ -26,6 +28,8 @@ import ij.gui.ShapeRoi;
  * Note: ImageJ draws all ROI types except {@link ShapeRoi} with a half-pixel offset.
  * This class redefines the methods {@link Overlay#add(Roi)} 
  * to perform the half-pixel shift.
+ * <br>
+ * TODO: Merge this with {@link ShapeOverlayAdapter} and {@link ColoredStroke} (which is simpler).
  * <br>
  * Note: This is experimental code - do NOT rely on it!
  * 
