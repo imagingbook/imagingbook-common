@@ -3,6 +3,8 @@ package imagingbook.lib.ij.overlay;
 import java.awt.BasicStroke;
 import java.awt.Color;
 
+import imagingbook.lib.math.Matrix;
+
 /**
  * A mirror class of {@link BasicStroke} which adds stroke and fill colors.
  * Instances of this class are cloneable and mutable,
@@ -55,6 +57,23 @@ public class ColoredStroke implements Cloneable {
 		this.fillColor = fillColor;
 	}
 	
+	// convenience constructors 
+	
+	public ColoredStroke(double lineWidth, Color strokeColor, double dashLength) {
+		this();
+		this.setLineWidth(lineWidth);
+		this.setStrokeColor(strokeColor);
+		if (dashLength > 0) {
+			this.setDash(dashLength);
+		}
+	}
+	
+	public ColoredStroke(double lineWidth, Color strokeColor) {
+		this();
+		this.setLineWidth(lineWidth);
+		this.setStrokeColor(strokeColor);
+	}
+	
 	@Override
 	public ColoredStroke clone() {
 		return new ColoredStroke(lineWidth, endCap, lineJoin, 
@@ -95,6 +114,31 @@ public class ColoredStroke implements Cloneable {
 		this.fillColor = fillColor;
 	}
 	
+	// -------------------------------------------------------------
+	
+	/**
+	 * Convenience method to set (unset) the dash pattern
+	 * Usage examples:
+	 * <pre> 
+	 * setDash(6);      // = setDashArray(new float[] {6})
+	 * setDash(6, 4);   // = setDashArray(new float[] {6, 4})
+	 * setDash();       // = setDashArray(null)
+	 * </pre>
+	 * @see BasicStroke
+	 * @see BasicStroke#getDashArray()
+	 * @param dashes a (possibly empty) sequence of dash lengths
+	 */
+	public void setDash(double... dashes) {
+		if (dashes == null || dashes.length == 0) {
+			this.dashArray = null;
+		}
+		else {
+			this.dashArray = Matrix.toFloat(dashes);
+		}
+	}
+	
+	// -------------------------------------------------------------
+	
 	public Color getStrokeColor() {
 		return this.strokeColor;
 	}
@@ -103,6 +147,8 @@ public class ColoredStroke implements Cloneable {
 		return this.fillColor;
 	}
 
+	// -------------------------------------------------------------
+	
 	/**
 	 * Returns a AWT {@link BasicStroke} instance for the current
 	 * state of this stroke (with no color information).
