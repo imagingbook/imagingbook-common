@@ -1342,6 +1342,34 @@ public abstract class Matrix {
 		return At;
 	}
 	
+	// Checking vectors for all zero values  ------------------------------
+	
+	public static boolean isZero(double[] x, double tolerance) {
+		for (int i = 0; i < x.length; i++) {
+			if (!Arithmetic.isZero(x[i], tolerance)) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	public static boolean isZero(double[] x) {
+		return isZero(x, Arithmetic.EPSILON_DOUBLE);
+	}
+	
+	public static boolean isZero(float[] x, float tolerance) {
+		for (int i = 0; i < x.length; i++) {
+			if (!Arithmetic.isZero(x[i], tolerance)) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	public static boolean isZero(float[] x) {
+		return isZero(x, Arithmetic.EPSILON_FLOAT);
+	}
+	
 	// Matrix inversion ---------------------------------------
 	
 	/**
@@ -1533,7 +1561,7 @@ public abstract class Matrix {
 		strm.flush();
 	}
 
-	// Exceptions ---------------------
+	// Exceptions ----------------------------------------------------------------
 	
 	public static class IncompatibleDimensionsException extends RuntimeException {
 		private static final long serialVersionUID = 1L;
@@ -1566,6 +1594,8 @@ public abstract class Matrix {
 			super("vector length must be greater that 0");
 		}
 	}
+	
+	// ------------------------------------------------------------------------
 	
 	public static void main(String[] args) {
 		double s = Double.NaN;
