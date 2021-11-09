@@ -63,18 +63,64 @@ public abstract class Matrix {
 	
 	// ----  Matrix creation -----------------------------
 	
-	public static double[][] createDoubleMatrix(int rows, int columns) {
+	public static double[][] makeDoubleMatrix(int rows, int columns) {
 		return new double[rows][columns];
 	}
 	
-	public static float[][] createFloatMatrix(int rows, int columns) {
+	public static double[][] makeDoubleMatrix(final int rows, final int cols, final double... values) {
+		if (values.length != rows * cols) {
+			throw new IllegalArgumentException("wrong number of matrix values: " 
+					+ values.length + " instead of " + rows*cols);
+		}	
+		final double[][] A = new double[rows][cols];
+		for (int i = 0, r = 0; r < rows; r++) {
+			for (int c = 0; c < cols; c++) {
+				A[r][c] = values[i];
+				i++;
+			}
+		}		
+		return A;
+	}
+	
+	public static float[][] makeFloatMatrix(int rows, int columns) {
 		return new float[rows][columns];
+	}
+	
+	public static float[][] makeFloatMatrix(final int rows, final int cols, final float... values) {
+		if (values.length != rows * cols) {
+			throw new IllegalArgumentException("wrong number of matrix values: " 
+					+ values.length + " instead of " + rows*cols);
+		}	
+		final float[][] A = new float[rows][cols];
+		for (int i = 0, r = 0; r < rows; r++) {
+			for (int c = 0; c < cols; c++) {
+				A[r][c] = values[i];
+				i++;
+			}
+		}		
+		return A;
+	}
+	
+	public static RealMatrix makeRealMatrix(final int rows, final int cols, final double... values) {
+		return MatrixUtils.createRealMatrix(makeDoubleMatrix(rows, cols, values));
+	}
+	
+	public static double[] makeDoubleVector(double... values) {
+		return values;
+	}
+	
+	public static float[] makeFloatVector(float... values) {
+		return values;
+	}
+	
+	public static RealVector makeRealVector(double... values) {
+		return MatrixUtils.createRealVector(values);
 	}
 	
 	// Specific vector/matrix creation:
 	
 	/**
-	 * Creates and returns a new zero-valued vector of the 
+	 * Creates and returns a new zero-valued {@code double} vector of the 
 	 * specified length.
 	 * @param length the length of the vector
 	 * @return a vector with zero values
@@ -591,7 +637,7 @@ public abstract class Matrix {
 	public static double[][] multiply(final double[][] A, final double[][] B) {
 		int m = getNumberOfRows(A);
 		int q = getNumberOfColumns(B);
-		double[][] C = createDoubleMatrix(m, q);
+		double[][] C = makeDoubleMatrix(m, q);
 		multiplyD(A, B, C);
 		return C;
 	}
@@ -622,7 +668,7 @@ public abstract class Matrix {
 		// TODO: also check nA = mB
 		final int mA = getNumberOfRows(A);
 		final int nB = getNumberOfColumns(B);
-		float[][] C = createFloatMatrix(mA, nB);
+		float[][] C = makeFloatMatrix(mA, nB);
 		multiplyD(A, B, C);
 		return C;
 	}
@@ -1602,6 +1648,14 @@ public abstract class Matrix {
 		s = -1.0 / 1E-200; // / 1E-200;
 		System.out.println(Double.isFinite(s));
 		System.out.println((double[]) null);
+		
+		double[][] A = makeDoubleMatrix(5, 4,
+				1,2,3,4,
+				5,6,7,8,
+				9,10,11,12,
+				13,14,15,16,
+				17,18,19,20);
+		System.out.println(toString(A));
 	}
 
 }
