@@ -18,7 +18,7 @@ import imagingbook.lib.math.Matrix;
 /**
  * Solver for generalized symmetric eigenproblems.
  * @author WB
- * @version 2021/11/07
+ * @version 2021/11/11
  */
 public class GeneralizedSymmetricEigenSolver {
 	
