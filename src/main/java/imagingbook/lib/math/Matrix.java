@@ -189,7 +189,7 @@ public abstract class Matrix {
 	 */
 	public static boolean isRectangular(float[][] A) {
 		final int nCols = A[0].length;
-		for (int i = 0; i < A.length; i++) {
+		for (int i = 1; i < A.length; i++) {
 			if (A[i].length != nCols) {
 				return false;
 			}
@@ -204,7 +204,7 @@ public abstract class Matrix {
 	 */
 	public static boolean isRectangular(double[][] A) {
 		final int nCols = A[0].length;
-		for (int i = 0; i < A.length; i++) {
+		for (int i = 1; i < A.length; i++) {
 			if (A[i].length != nCols) {
 				return false;
 			}
@@ -410,7 +410,7 @@ public abstract class Matrix {
 		if (!sameSize(A, B))
 			throw new IncompatibleDimensionsException();
 		for (int i = 0; i < A.length; i++) {
-			for (int j = 0; j < A[j].length; j++) {
+			for (int j = 0; j < A[i].length; j++) {
 				B[i][j] = A[i][j] + B[i][j];
 			}
 		}
@@ -428,7 +428,7 @@ public abstract class Matrix {
 		if (!sameSize(A, B))
 			throw new IncompatibleDimensionsException();
 		for (int i = 0; i < A.length; i++) {
-			for (int j = 0; j < A[j].length; j++) {
+			for (int j = 0; j < A[i].length; j++) {
 				B[i][j] = A[i][j] + B[i][j];
 			}
 		}
@@ -997,12 +997,12 @@ public abstract class Matrix {
 	 */
 	public static double[] sumRows(final double[][] A) {
 		double[] sumVec = new double[getNumberOfRows(A)];
-		for (int r = 0; r < sumVec.length; r++) {
+		for (int i = 0; i < sumVec.length; i++) {
 			double sum = 0;
-			for (int c = 0; c < A[r].length; c++) {
-				sum = sum + A[r][c];
+			for (int j = 0; j < A[i].length; j++) {
+				sum = sum + A[i][j];
 			}
-			sumVec[r] = sum;
+			sumVec[i] = sum;
 		}
 		return sumVec;
 	}
@@ -1015,12 +1015,12 @@ public abstract class Matrix {
 	 */
 	public static float[] sumRows(final float[][] A) {
 		float[] sumVec = new float[getNumberOfRows(A)];
-		for (int r = 0; r < sumVec.length; r++) {
+		for (int i = 0; i < sumVec.length; i++) {
 			double sum = 0;
-			for (int c = 0; c < A[r].length; c++) {
-				sum = sum + A[r][c];
+			for (int j = 0; j < A[i].length; j++) {
+				sum = sum + A[i][j];
 			}
-			sumVec[r] = (float) sum;
+			sumVec[i] = (float) sum;
 		}
 		return sumVec;
 	}
