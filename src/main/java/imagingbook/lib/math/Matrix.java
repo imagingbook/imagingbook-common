@@ -63,16 +63,16 @@ public abstract class Matrix {
 	
 	// ----  Matrix creation -----------------------------
 	
-	public static double[][] makeDoubleMatrix(int rows, int columns) {
-		return new double[rows][columns];
-	}
-	
 	public static double[][] makeDoubleMatrix(final int rows, final int cols, final double... values) {
-		if (values.length != rows * cols) {
+		final double[][] A = new double[rows][cols];
+		if (values == null || values.length == 0) {
+			return A;
+		}
+		else if (values.length != rows * cols) {
 			throw new IllegalArgumentException("wrong number of matrix values: " 
 					+ values.length + " instead of " + rows*cols);
-		}	
-		final double[][] A = new double[rows][cols];
+		}
+		
 		for (int i = 0, r = 0; r < rows; r++) {
 			for (int c = 0; c < cols; c++) {
 				A[r][c] = values[i];
@@ -82,16 +82,16 @@ public abstract class Matrix {
 		return A;
 	}
 	
-	public static float[][] makeFloatMatrix(int rows, int columns) {
-		return new float[rows][columns];
-	}
-	
 	public static float[][] makeFloatMatrix(final int rows, final int cols, final float... values) {
-		if (values.length != rows * cols) {
+		final float[][] A = new float[rows][cols];
+		if (values == null || values.length == 0) {
+			return A;
+		}
+		else if (values.length != rows * cols) {
 			throw new IllegalArgumentException("wrong number of matrix values: " 
 					+ values.length + " instead of " + rows*cols);
 		}	
-		final float[][] A = new float[rows][cols];
+		
 		for (int i = 0, r = 0; r < rows; r++) {
 			for (int c = 0; c < cols; c++) {
 				A[r][c] = values[i];
@@ -1655,7 +1655,10 @@ public abstract class Matrix {
 				9,10,11,12,
 				13,14,15,16,
 				17,18,19,20);
-		System.out.println(toString(A));
+		System.out.println("A = \n" + toString(A));
+		
+		RealMatrix B = makeRealMatrix(5, 4);
+		System.out.println("B = \n" + toString(B.getData()));
 	}
 
 }
