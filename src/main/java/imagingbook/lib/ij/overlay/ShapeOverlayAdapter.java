@@ -2,11 +2,13 @@ package imagingbook.lib.ij.overlay;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 
 import ij.gui.Overlay;
 import ij.gui.ShapeRoi;
+import ij.gui.TextRoi;
 
 /**
  * This is an adapter for ImageJ's {@link Overlay} class to ease the insertion of
@@ -27,14 +29,20 @@ import ij.gui.ShapeRoi;
  */
 public class ShapeOverlayAdapter {
 	
-	public static Color DefaultStrokeColor = Color.black;
+	public static Color DefaultTextColor = Color.black;
 	public static float DefaultStrokeWidth = 0.5f;
+	public static Font DefaultFont = new Font(Font.SANS_SERIF, Font.PLAIN, 10);
+	
+	
 	
 	private static final AffineTransform PixelOffsetTransform = 
 						new AffineTransform(1, 0, 0, 1, 0.5, 0.5); // AWT transformation!
 	
 	private final Overlay overlay;
 	private ColoredStroke stroke;
+	private Color textColor = DefaultTextColor;
+	private Font font = DefaultFont;
+	
 	private boolean pixelOffset = true;
 	
 	// ----------------------------------------------------------
@@ -43,8 +51,13 @@ public class ShapeOverlayAdapter {
 		this.overlay = oly;
 		this.stroke = stroke;
 	}
+	
 	public ShapeOverlayAdapter(Overlay oly) {
 		this(oly, makeDefaultStroke());
+	}
+	
+	public ShapeOverlayAdapter() {
+		this(new Overlay());
 	}
 	
 	// ----------------------------------------------------------
@@ -52,8 +65,17 @@ public class ShapeOverlayAdapter {
 	public ColoredStroke getStroke() {
 		return stroke;
 	}
+	
 	public void setStroke(ColoredStroke stroke) {
 		this.stroke = stroke;
+	}
+	
+	public void setTextColor(Color color) {
+		this.textColor = color;
+	}
+	
+	public void setFont(Font font) {
+		this.font = font;
 	}
 	
 	public void setPixelOffset(boolean pixelOffset) {
@@ -84,13 +106,20 @@ public class ShapeOverlayAdapter {
 	public void addShape(Shape s, ColoredStroke stroke) {
 		overlay.add(shapeToRoi(s, stroke));
 	}
+	
+	// TODO: check font/color settings
+	public void addText(double x, double y, String text) {
+		TextRoi troi = new TextRoi(x, y, text, font);
+		troi.setStrokeColor(textColor);
+		overlay.add(troi);
+	}
 
 	// ----------------------------------------------------------
 	
 	private static ColoredStroke makeDefaultStroke() {
 		ColoredStroke stroke = new ColoredStroke();
 		stroke.setLineWidth(DefaultStrokeWidth);
-		stroke.setStrokeColor(DefaultStrokeColor);
+		stroke.setStrokeColor(DefaultTextColor);
 		return stroke;
 	}
 
