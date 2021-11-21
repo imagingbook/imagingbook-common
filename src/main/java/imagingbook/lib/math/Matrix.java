@@ -16,6 +16,7 @@ import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.Locale;
 
+import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.DecompositionSolver;
 import org.apache.commons.math3.linear.LUDecomposition;
 import org.apache.commons.math3.linear.MatrixUtils;
@@ -114,7 +115,8 @@ public abstract class Matrix {
 	}
 	
 	public static RealVector makeRealVector(double... values) {
-		return MatrixUtils.createRealVector(values);
+		//return MatrixUtils.createRealVector(values);
+		return new ArrayRealVector(values);
 	}
 	
 	// Specific vector/matrix creation:
