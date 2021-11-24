@@ -9,6 +9,7 @@
 
 package imagingbook.lib.ij;
 
+import java.io.File;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -16,7 +17,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
+import ij.IJ;
 import ij.ImagePlus;
+import ij.Prefs;
 import ij.WindowManager;
 import ij.gui.GenericDialog;
 import ij.io.OpenDialog;
@@ -402,10 +405,10 @@ public abstract class IjUtils {
 	public static BitMap convertToBitMap(ByteProcessor bp) {
 		return new BitMap(bp.getWidth(), bp.getHeight(), (byte[]) bp.getPixels());
 	}
-	
-	 public static ByteProcessor convertToByteProcessor(BitMap bitmap) {
-		 byte[] pixels = bitmap.getBitVector().toByteArray();
-		 return new ByteProcessor(bitmap.getWidth(), bitmap.getHeight(), pixels);
-	 }
+
+	public static ByteProcessor convertToByteProcessor(BitMap bitmap) {
+		byte[] pixels = bitmap.getBitVector().toByteArray();
+		return new ByteProcessor(bitmap.getWidth(), bitmap.getHeight(), pixels);
+	}
 
 }

@@ -17,6 +17,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.jar.Manifest;
 
 import javax.swing.JFileChooser;
@@ -237,15 +239,49 @@ public abstract class FileUtils {
 		}
 	}
 	
-	// ----------------------------------------------------
+	// -----------------------------------------------------------------
 	
+	private static final String CurrentDirectoryKey = "imagingbook#currentdir";
 	
+	/**
+	 * Sets a system property to memorize the current directory.
+	 * Use {@link #getCurrentDirectory()} to retrieve this value.
+	 * If the specified pathname is not a directory (i.e., a plain file), 
+	 * its parent directory is used.
+	 * 
+	 * @param pathname a directory of file path
+	 */
+	public static void setCurrentDirectory(String pathname) {
+		File file = new File(pathname);
+		String dir = (file.isDirectory()) ? file.toString() : file.getParent();
+		System.setProperty(CurrentDirectoryKey, dir);
+	}
+	
+	/**
+	 * Returns the current directory path. 
+	 * If the directory was set with {@link #setCurrentDirectory(String)} before
+	 * this path is returned,
+	 * otherwise the value for the "user.dir" system property.
+	 * 
+	 * @return a string with the current directory path
+	 */
+	public static String getCurrentDirectory() {
+		String dir = System.getProperty(CurrentDirectoryKey);
+		return (dir != null) ? dir : System.getProperty("user.dir");
+	}
+	
+	// -----------------------------------------------------------------
+			
 	public static void main(String[] args) {
-		String fileName = ".txt";
-		System.out.println("name = " + fileName);
-		System.out.println("stripped = " + stripFileExtension(fileName));
-		System.out.println("ext = " + getFileExtension(fileName));
-		System.out.println(getClassPath(FileUtils.class));
+//		String fileName = ".txt";
+//		System.out.println("name = " + fileName);
+//		System.out.println("stripped = " + stripFileExtension(fileName));
+//		System.out.println("ext = " + getFileExtension(fileName));
+//		System.out.println(getClassPath(FileUtils.class));
+		
+		System.out.println("dir = " + getCurrentDirectory());
+		setCurrentDirectory("C:/tmp");
+		System.out.println("dir = " + getCurrentDirectory());
 	}
 	
 
