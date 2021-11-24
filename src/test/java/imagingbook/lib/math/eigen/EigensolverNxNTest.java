@@ -1,6 +1,8 @@
 package imagingbook.lib.math.eigen;
 
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Random;
 
@@ -107,7 +109,7 @@ public class EigensolverNxNTest {
 		final int N = 1000;
 		//int cnt = 0;
 		for (int i = 0; i < N; i++) {
-			double[][] A = RealEigensolverTest.makeRandomMatrix2x2(RG);
+			double[][] A = Eigensolver2x2Test.makeRandomMatrix2x2(RG);
 			RealEigensolver solver = new EigensolverNxN(A);
 			if (solver.isReal()) {
 				//cnt++;
@@ -130,7 +132,28 @@ public class EigensolverNxNTest {
 
 	private void runTest(double[][] M, boolean shouldBeReal) {
 		RealEigensolver solver = new EigensolverNxN(M);	
-		RealEigensolverTest.run(solver, M, shouldBeReal);
+
+		if (shouldBeReal) {
+			assertTrue(solver.isReal());
+		}
+		else {
+			assertFalse(solver.isReal());
+			return;
+		}
+		
+		double[] eigenvals = solver.getEigenvalues();
+		
+		
+		for (int k = 0; k < eigenvals.length; k++) {
+			if (Double.isNaN(eigenvals[k])) {
+				continue;
+			}
+			//System.out.println("testing " + eigenvals[k]);
+			double lambda = eigenvals[k];
+			double[] x = solver.getEigenvector(k);
+			// check: M * x_k = λ_k * x_k
+			assertArrayEquals(Matrix.multiply(M, x), Matrix.multiply(lambda, x), 1E-6);
+		}
 	}
 
 }

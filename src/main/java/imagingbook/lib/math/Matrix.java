@@ -16,15 +16,21 @@ import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.Locale;
 
+import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.DecompositionSolver;
+import org.apache.commons.math3.linear.EigenDecomposition;
 import org.apache.commons.math3.linear.LUDecomposition;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.RealVector;
 import org.apache.commons.math3.linear.SingularMatrixException;
+import org.apache.commons.math3.util.Pair;
 
 import imagingbook.lib.math.Arithmetic.DivideByZeroException;
+import imagingbook.lib.math.eigen.EigenSolution;
+import imagingbook.lib.math.eigen.Eigensolver2x2;
+import imagingbook.lib.math.eigen.EigensolverNxN;
 import imagingbook.lib.math.eigen.RealEigensolver;
 import imagingbook.lib.settings.PrintPrecision;
 
@@ -1643,6 +1649,48 @@ public abstract class Matrix {
 		}
 	}
 	
+	// ----------------------------
+	
+	/**
+	 * Convenience method in accordance with the definition used in the book.
+	 * Returns a vector of (real) eigenvalues and a matrix whose columns are the
+	 * associated eigenvectors. Non-real (i.e., complex-valued) eigenvalues are
+	 * replaced by {@code NaN}. See also {@link Matrix#eigen2x2(RealMatrix)} for
+	 * specific 2x2 problems. 
+	 * Usage example:
+	 * <pre>
+	 *  
+	 * RealMatrix A = MatrixUtils.createRealMatrix(5, 5);
+	 * ...
+	 * EigenSolution sol = Matrix.eigen(M);
+	 * RealVector L = sol.getEigenValues();
+	 * RealMatrix E = sol.getEigenVectors();
+	 * RealVector e0 = E.getColumnVector(0);		// first eigenvector
+	 * </pre>
+	 * 
+	 * @param A a NxN matrix
+	 * @return
+	 */
+	public static EigenSolution eigen(RealMatrix A) {
+		EigensolverNxN solver = new EigensolverNxN(A.getData());
+		return solver.getSolution();
+	}
+	
+	/**
+	 * Convenience method in accordance with the definition used in the book.
+	 * Returns a vector of (real) eigenvalues and a matrix whose columns are
+	 * the associated eigenvectors.
+	 * Non-real (i.e., complex-valued) eigenvalues are replaced by {@code NaN}.
+	 * See also {@link Matrix#eigenNxN(RealMatrix)}.
+	 * 
+	 * @param A a 2x2 matrix
+	 * @return
+	 */
+	public static EigenSolution eigen2x2(RealMatrix A) {
+		Eigensolver2x2 solver = new Eigensolver2x2(A.getData());
+		return solver.getSolution();
+	}
+	
 	// ------------------------------------------------------------------------
 	
 	public static void main(String[] args) {
@@ -1661,6 +1709,7 @@ public abstract class Matrix {
 		
 		RealMatrix B = makeRealMatrix(5, 4);
 		System.out.println("B = \n" + toString(B.getData()));
+
 	}
 
 }

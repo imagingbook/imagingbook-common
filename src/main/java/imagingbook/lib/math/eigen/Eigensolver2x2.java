@@ -47,6 +47,7 @@ import imagingbook.lib.math.Matrix;
  * @version 2021-05-19
  */
 public class Eigensolver2x2 implements RealEigensolver { // to check: http://www.akiti.ca/Eig2Solv.html
+	
 	private final boolean isReal;
 	private final double[] eVals = {Double.NaN, Double.NaN};
 	private final double[][] eVecs = new double[2][];
@@ -141,92 +142,25 @@ public class Eigensolver2x2 implements RealEigensolver { // to check: http://www
 		return isReal;
 	}
 	
-	/**
-	 * Returns a vector holding the two real eigenvalues. Both are
-	 * {@code NaN} if the input matrix has any non-real (complex) eigenvalues.
-	 * Otherwise the first eigenvalue has greater magnitude than the second.
-	 * Note that the method returns a reference to an internal
-	 * array and thus results should be used read-only!
-	 * @return a 2-element array of eigenvalues
-	 */
 	@Override
 	public double[] getEigenvalues() {
-		return this.eVals;
+		return eVals;
 	}
 	
-	/**
-	 * Returns the k-th eigenvalue (&lambda;_k, k = 0, 1).
-	 * {@code NaN} is returned if the the eigenvalue is not real.
-	 * 
-	 * @param k index (0 or 1)
-	 * @return the k-th eigenvalue
-	 */
 	@Override
 	public double getEigenvalue(int k) {
 		return eVals[k];
 	}
 	
-	/**
-	 * Obsolete, use {@link #getEigenvalue(int)} instead.
-	 * @return the first eigenvalue (&lambda;_1)
-	 * @deprecated
-	 */
-	public double getEigenvalue1() {
-		return eVals[0];
+
+	@Override
+	public double[][] getEigenvectors() { // TODO: needs to be tested!
+		return Matrix.transpose(eVecs);
 	}
 	
-	/**
-	 * Obsolete, use {@link #getEigenvalue(int)} instead.
-	 * @return the second eigenvalue (&lambda;_2)
-	 * @deprecated
-	 */
-	public double getEigenvalue2() {
-		return eVals[1];
-	}
-	
-	/**
-	 * Returns a 2x2 array holding the two real eigenvectors.
-	 * When used in the form
-	 * <pre>double[][] X = getEigenvalues();</pre>
-	 * then {@code X[0]} and {@code X[1]} contain the 1st and 2nd eigenvector,
-	 * respectively. If the associated matrix has no real eigenvalues,
-	 * then {@code X[0]} and {@code X[1]} are both {@code null}.
-	 * Otherwise {@code X[k][0]} and {@code X[k][1]} are the x/y components
-	 * of the k-th eigenvector.
-	 * The ordering of the returned eigenvectors is the same as for the
-	 * eigenvalues returned by {@link #getEigenvalues()}.
-	 * Note that the method returns a reference to an internal
-	 * array and thus results should be used read-only!
-	 * Obsolete, use {@link #getEigenvector(int)} instead.
-	 * @return a 2-element array of 2D eigenvectors
-	 * @deprecated
-	 */
-	public double[][] getEigenvectors() {
-		return eVecs;
-	}
-	
-	/**
-	 * Returns the k-th eigenvector, with k = 0 or 1.
-	 * The ordering of the returned eigenvectors is the same as for the
-	 * eigenvalues returned by {@link #getEigenvalues()}.
-	 * Note that the method returns a reference to an internal
-	 * array and thus results should be used read-only!
-	 * @param k index (0 or 1)
-	 * @return the k-th eigenvector
-	 */
 	@Override
 	public double[] getEigenvector(int k) {
-		return eVecs[k];
-	}
-	
-	@Deprecated
-	public double[] getEigenvector1() {
-		return eVecs[0];
-	}
-	
-	@Deprecated
-	public double[] getEigenvector2() {
-		return eVecs[1];
+		return eVecs[k].clone();
 	}
 	
 	@Override
