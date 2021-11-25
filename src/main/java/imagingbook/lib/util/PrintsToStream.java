@@ -27,7 +27,7 @@ public interface PrintsToStream {
 	 * To be implemented by concrete implementations.
 	 * This method is supposed to write a description of this object
 	 * to the given {@link PrintStream}.
-	 * @param strm 
+	 * @param strm the output stream to print to
 	 */
 	public void printToStream(PrintStream strm);
 	

@@ -75,18 +75,18 @@
 <span class="sourceLineNo">065</span><a id="line.65"> * DEALINGS IN THE SOFTWARE.</a>
 <span class="sourceLineNo">066</span><a id="line.66"> * &lt;/pre&gt;</a>
 <span class="sourceLineNo">067</span><a id="line.67"> * &lt;p&gt;</a>
-<span class="sourceLineNo">068</span><a id="line.68"> * &lt;strong&gt;Original description:&lt;/strong&gt; The actual data structure here is a Delaunay Triangulation. The Voronoi Diagram is built on-the-fly</a>
-<span class="sourceLineNo">069</span><a id="line.69"> * from the Delaunay Triangulation. The Delaunay Triangulation is built within a large triangle whose vertices</a>
-<span class="sourceLineNo">070</span><a id="line.70"> * are well off-screen. That's why in the Delaunay Triangulation there are lines heading off-screen. </a>
-<span class="sourceLineNo">071</span><a id="line.71"> * This technique makes the code simpler since otherwise additional code would be needed to handle new sites</a>
-<span class="sourceLineNo">072</span><a id="line.72"> * that are outside the convex hull of the previous sites.</a>
-<span class="sourceLineNo">073</span><a id="line.73"> * &lt;/p&gt;</a>
-<span class="sourceLineNo">074</span><a id="line.74"> * &lt;p&gt;</a>
-<span class="sourceLineNo">075</span><a id="line.75"> * The algorithm: To insert a new site, we walk across the triangulation, starting from the most recently created</a>
+<span class="sourceLineNo">068</span><a id="line.68"> * &lt;strong&gt;Original description:&lt;/strong&gt; </a>
+<span class="sourceLineNo">069</span><a id="line.69"> * &lt;em&gt;The actual data structure here is a Delaunay Triangulation. The Voronoi Diagram is built on-the-fly</a>
+<span class="sourceLineNo">070</span><a id="line.70"> * from the Delaunay Triangulation. The Delaunay Triangulation is built within a large triangle whose vertices</a>
+<span class="sourceLineNo">071</span><a id="line.71"> * are well off-screen. That's why in the Delaunay Triangulation there are lines heading off-screen. </a>
+<span class="sourceLineNo">072</span><a id="line.72"> * This technique makes the code simpler since otherwise additional code would be needed to handle new sites</a>
+<span class="sourceLineNo">073</span><a id="line.73"> * that are outside the convex hull of the previous sites.&lt;/em&gt;</a>
+<span class="sourceLineNo">074</span><a id="line.74"> * &lt;br&gt;</a>
+<span class="sourceLineNo">075</span><a id="line.75"> * &lt;em&gt;The algorithm: To insert a new site, we walk across the triangulation, starting from the most recently created</a>
 <span class="sourceLineNo">076</span><a id="line.76"> * triangle, until we find the triangle that contains the new site. This triangle and any adjacent triangles that</a>
 <span class="sourceLineNo">077</span><a id="line.77"> * contain this new site in their circumcircle are eliminated and the resulting empty spot is re-triangulated.</a>
 <span class="sourceLineNo">078</span><a id="line.78"> * The site-insertion part of this technique is commonly called the Bowyer-Watson Algorithm. The expected time to</a>
-<span class="sourceLineNo">079</span><a id="line.79"> * insert a new site is roughly O(n1/2) where n is the current number of sites.</a>
+<span class="sourceLineNo">079</span><a id="line.79"> * insert a new site is roughly O(n1/2) where n is the current number of sites.&lt;/em&gt;</a>
 <span class="sourceLineNo">080</span><a id="line.80"> * &lt;/p&gt;</a>
 <span class="sourceLineNo">081</span><a id="line.81"> * </a>
 <span class="sourceLineNo">082</span><a id="line.82"> * Adapted by W. Burger</a>

@@ -88,8 +88,8 @@ public abstract class HierarchicalScaleSpace implements PrintsToStream {
 	 * local coordinate at the specified octave.
 	 * 
 	 * @param p the octave index
-	 * @param xp the local coordinate
-	 * @return
+	 * @param xp the (scale-level) local coordinate
+	 * @return the original x-position
 	 */
 	public double getRealX(int p, double xp) {
 		return Math.pow(2, p) * xp;	// TODO: optimize (precalculate Math.pow(p, 2))
@@ -99,9 +99,9 @@ public abstract class HierarchicalScaleSpace implements PrintsToStream {
 	 * Calculates and returns the real (unscaled) y-position for a
 	 * local coordinate at the specified octave.
 	 * 
-	 * @param p
-	 * @param yp
-	 * @return
+	 * @param p the octave index
+	 * @param yp the scale-level) local coordinate
+	 * @return the original y-position
 	 */
 	public double getRealY(int p, double yp) {
 		return Math.pow(2, p) * yp;

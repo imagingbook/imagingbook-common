@@ -184,12 +184,12 @@
 <span class="sourceLineNo">174</span><a id="line.174">                return b;</a>
 <span class="sourceLineNo">175</span><a id="line.175">        }</a>
 <span class="sourceLineNo">176</span><a id="line.176"></a>
-<span class="sourceLineNo">177</span><a id="line.177">        public Color getColor() {</a>
+<span class="sourceLineNo">177</span><a id="line.177">        public Color toColor() {</a>
 <span class="sourceLineNo">178</span><a id="line.178">                return new Color(r, g, b);</a>
 <span class="sourceLineNo">179</span><a id="line.179">        }</a>
 <span class="sourceLineNo">180</span><a id="line.180"></a>
 <span class="sourceLineNo">181</span><a id="line.181">        public int getRGB() {</a>
-<span class="sourceLineNo">182</span><a id="line.182">                return getColor().getRGB();</a>
+<span class="sourceLineNo">182</span><a id="line.182">                return toColor().getRGB();</a>
 <span class="sourceLineNo">183</span><a id="line.183">        }</a>
 <span class="sourceLineNo">184</span><a id="line.184"></a>
 <span class="sourceLineNo">185</span><a id="line.185">        public String getRGBString() {</a>
@@ -207,7 +207,7 @@
 <span class="sourceLineNo">197</span><a id="line.197">        public static Color[] getColors(CssColor ... wcols) {</a>
 <span class="sourceLineNo">198</span><a id="line.198">                Color[] rgbColors = new Color[wcols.length];</a>
 <span class="sourceLineNo">199</span><a id="line.199">                for (int i=0; i&lt;wcols.length; i++) {</a>
-<span class="sourceLineNo">200</span><a id="line.200">                        rgbColors[i] = wcols[i].getColor();</a>
+<span class="sourceLineNo">200</span><a id="line.200">                        rgbColors[i] = wcols[i].toColor();</a>
 <span class="sourceLineNo">201</span><a id="line.201">                }</a>
 <span class="sourceLineNo">202</span><a id="line.202">                return rgbColors;</a>
 <span class="sourceLineNo">203</span><a id="line.203">        }</a>

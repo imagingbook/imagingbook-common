@@ -35,7 +35,8 @@ public interface Mapping2D extends Cloneable {
 	 * Returns the Jacobian matrix for this mapping, evaluated at
 	 * the given 2D point.
 	 * This method is only implemented for selected mappings.
-	 * @param xy the 2D position to calculate the Jacobian for
+	 * 
+	 * @param pnt the 2D position to calculate the Jacobian for
 	 * @return the Jacobian matrix
 	 */
 	default double[][] getJacobian(Pnt2d pnt) {

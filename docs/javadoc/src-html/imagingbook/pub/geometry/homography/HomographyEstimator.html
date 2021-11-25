@@ -174,316 +174,321 @@
 <span class="sourceLineNo">164</span><a id="line.164">                                LeastSquaresFactory.model(value, jacobian),</a>
 <span class="sourceLineNo">165</span><a id="line.165">                                MatrixUtils.createRealVector(observed), </a>
 <span class="sourceLineNo">166</span><a id="line.166">                                MathUtil.getRowPackedVector(Hinit), </a>
-<span class="sourceLineNo">167</span><a id="line.167">                                null,  // ConvergenceChecker</a>
-<span class="sourceLineNo">168</span><a id="line.168">                                MaxLmEvaluations, </a>
-<span class="sourceLineNo">169</span><a id="line.169">                                MaxLmIterations);</a>
-<span class="sourceLineNo">170</span><a id="line.170"></a>
-<span class="sourceLineNo">171</span><a id="line.171">                LevenbergMarquardtOptimizer lm = new LevenbergMarquardtOptimizer();</a>
-<span class="sourceLineNo">172</span><a id="line.172">                Optimum result = lm.optimize(problem);</a>
-<span class="sourceLineNo">173</span><a id="line.173"></a>
-<span class="sourceLineNo">174</span><a id="line.174">                RealVector optimum = result.getPoint();</a>
-<span class="sourceLineNo">175</span><a id="line.175">                RealMatrix Hopt = MathUtil.fromRowPackedVector(optimum, 3, 3);</a>
-<span class="sourceLineNo">176</span><a id="line.176">                int iterations = result.getIterations();</a>
-<span class="sourceLineNo">177</span><a id="line.177">                if (iterations &gt;= MaxLmIterations) {</a>
-<span class="sourceLineNo">178</span><a id="line.178">                        throw new RuntimeException("refineHomography(): max. number of iterations exceeded");</a>
-<span class="sourceLineNo">179</span><a id="line.179">                }</a>
-<span class="sourceLineNo">180</span><a id="line.180">                //System.out.println("LM optimizer iterations " + iterations);</a>
-<span class="sourceLineNo">181</span><a id="line.181">                return Hopt.scalarMultiply(1.0 / Hopt.getEntry(2, 2));</a>
-<span class="sourceLineNo">182</span><a id="line.182">        }</a>
-<span class="sourceLineNo">183</span><a id="line.183"></a>
+<span class="sourceLineNo">167</span><a id="line.167">                                // TODO: add weight matrix (diagonal)?</a>
+<span class="sourceLineNo">168</span><a id="line.168">                                null,  // ConvergenceChecker -- do we need one?</a>
+<span class="sourceLineNo">169</span><a id="line.169">                                MaxLmEvaluations, </a>
+<span class="sourceLineNo">170</span><a id="line.170">                                MaxLmIterations);</a>
+<span class="sourceLineNo">171</span><a id="line.171"></a>
+<span class="sourceLineNo">172</span><a id="line.172">                LevenbergMarquardtOptimizer lm = new LevenbergMarquardtOptimizer();</a>
+<span class="sourceLineNo">173</span><a id="line.173">                Optimum result = lm.optimize(problem);</a>
+<span class="sourceLineNo">174</span><a id="line.174"></a>
+<span class="sourceLineNo">175</span><a id="line.175">                RealVector optimum = result.getPoint();</a>
+<span class="sourceLineNo">176</span><a id="line.176">                RealMatrix Hopt = MathUtil.fromRowPackedVector(optimum, 3, 3);</a>
+<span class="sourceLineNo">177</span><a id="line.177">                int iterations = result.getIterations();</a>
+<span class="sourceLineNo">178</span><a id="line.178">                if (iterations &gt;= MaxLmIterations) {</a>
+<span class="sourceLineNo">179</span><a id="line.179">                        throw new RuntimeException("refineHomography(): max. number of iterations exceeded");</a>
+<span class="sourceLineNo">180</span><a id="line.180">                }</a>
+<span class="sourceLineNo">181</span><a id="line.181">                //System.out.println("LM optimizer iterations " + iterations);</a>
+<span class="sourceLineNo">182</span><a id="line.182">                return Hopt.scalarMultiply(1.0 / Hopt.getEntry(2, 2));</a>
+<span class="sourceLineNo">183</span><a id="line.183">        }</a>
 <span class="sourceLineNo">184</span><a id="line.184"></a>
-<span class="sourceLineNo">185</span><a id="line.185">        private static MultivariateVectorFunction getValueFunction(Pnt2d[] X) {</a>
-<span class="sourceLineNo">186</span><a id="line.186">                //System.out.println("MultivariateVectorFunction getValueFunction");</a>
-<span class="sourceLineNo">187</span><a id="line.187">                return new MultivariateVectorFunction() {</a>
-<span class="sourceLineNo">188</span><a id="line.188">                        public double[] value(double[] h) {                     </a>
-<span class="sourceLineNo">189</span><a id="line.189">                                final double[] Y = new double[X.length * 2];</a>
-<span class="sourceLineNo">190</span><a id="line.190">                                for (int j = 0; j &lt; X.length; j++) {</a>
-<span class="sourceLineNo">191</span><a id="line.191">                                        final double x = X[j].getX();</a>
-<span class="sourceLineNo">192</span><a id="line.192">                                        final double y = X[j].getY();</a>
-<span class="sourceLineNo">193</span><a id="line.193">                                        final double w = h[6] * x + h[7] * y + h[8];</a>
-<span class="sourceLineNo">194</span><a id="line.194">                                        Y[j * 2 + 0] = (h[0] * x + h[1] * y + h[2]) / w;</a>
-<span class="sourceLineNo">195</span><a id="line.195">                                        Y[j * 2 + 1] = (h[3] * x + h[4] * y + h[5]) / w;</a>
-<span class="sourceLineNo">196</span><a id="line.196">                                }</a>
-<span class="sourceLineNo">197</span><a id="line.197">                                return Y;</a>
-<span class="sourceLineNo">198</span><a id="line.198">                        }</a>
-<span class="sourceLineNo">199</span><a id="line.199">                };</a>
-<span class="sourceLineNo">200</span><a id="line.200">        }</a>
-<span class="sourceLineNo">201</span><a id="line.201"></a>
-<span class="sourceLineNo">202</span><a id="line.202">        private static MultivariateMatrixFunction getJacobianFunction(Pnt2d[] X) {</a>
-<span class="sourceLineNo">203</span><a id="line.203">                return new MultivariateMatrixFunction() {</a>
-<span class="sourceLineNo">204</span><a id="line.204">                        public double[][] value(double[] h) {</a>
-<span class="sourceLineNo">205</span><a id="line.205">                                final double[][] J = new double[2 * X.length][];</a>
-<span class="sourceLineNo">206</span><a id="line.206">                                for (int i = 0; i &lt; X.length; i++) {</a>
-<span class="sourceLineNo">207</span><a id="line.207">                                        final double x = X[i].getX();</a>
-<span class="sourceLineNo">208</span><a id="line.208">                                        final double y = X[i].getY();</a>
-<span class="sourceLineNo">209</span><a id="line.209"></a>
-<span class="sourceLineNo">210</span><a id="line.210">                                        final double w  = h[6] * x + h[7] * y + h[8];</a>
-<span class="sourceLineNo">211</span><a id="line.211">                                        final double w2 = w * w;</a>
-<span class="sourceLineNo">212</span><a id="line.212"></a>
-<span class="sourceLineNo">213</span><a id="line.213">                                        final double sx = h[0] * x + h[1] * y + h[2];           </a>
-<span class="sourceLineNo">214</span><a id="line.214">                                        J[2 * i + 0] = new double[] {x/w, y/w, 1/w, 0, 0, 0, -sx*x/w2, -sx*y/w2, -sx/w2};</a>
-<span class="sourceLineNo">215</span><a id="line.215"></a>
-<span class="sourceLineNo">216</span><a id="line.216">                                        final double sy = h[3] * x + h[4] * y + h[5];</a>
-<span class="sourceLineNo">217</span><a id="line.217">                                        J[2 * i + 1] = new double[] {0, 0, 0, x/w, y/w, 1/w, -sy*x/w2, -sy*y/w2, -sy/w2};</a>
-<span class="sourceLineNo">218</span><a id="line.218">                                }</a>
-<span class="sourceLineNo">219</span><a id="line.219">                                return J;</a>
-<span class="sourceLineNo">220</span><a id="line.220">                        }</a>
-<span class="sourceLineNo">221</span><a id="line.221">                };</a>
-<span class="sourceLineNo">222</span><a id="line.222">        }</a>
-<span class="sourceLineNo">223</span><a id="line.223"></a>
-<span class="sourceLineNo">224</span><a id="line.224">        /*</a>
-<span class="sourceLineNo">225</span><a id="line.225">        protected MultivariateMatrixFunction getJacobianFunction(final Point[] X) {</a>
-<span class="sourceLineNo">226</span><a id="line.226">                return new MultivariateMatrixFunction() {</a>
-<span class="sourceLineNo">227</span><a id="line.227">                        @Override</a>
-<span class="sourceLineNo">228</span><a id="line.228">                        public double[][] value(double[] h) {</a>
-<span class="sourceLineNo">229</span><a id="line.229">                                final double[][] J = new double[2 * X.length][9];</a>
-<span class="sourceLineNo">230</span><a id="line.230">                                for (int i = 0; i &lt; X.length; i++) {</a>
-<span class="sourceLineNo">231</span><a id="line.231">                                        final double x = X[i].getX();</a>
-<span class="sourceLineNo">232</span><a id="line.232">                                        final double y = X[i].getY();</a>
-<span class="sourceLineNo">233</span><a id="line.233"></a>
-<span class="sourceLineNo">234</span><a id="line.234">                                        final double w  = h[6] * x + h[7] * y + h[8];</a>
-<span class="sourceLineNo">235</span><a id="line.235">                                        final double w2 = w * w;</a>
-<span class="sourceLineNo">236</span><a id="line.236"></a>
-<span class="sourceLineNo">237</span><a id="line.237">                                        final double sx = h[0] * x + h[1] * y + h[2];           </a>
-<span class="sourceLineNo">238</span><a id="line.238">                                        J[2 * i + 0][0] = x / w;</a>
-<span class="sourceLineNo">239</span><a id="line.239">                                        J[2 * i + 0][1] = y / w;</a>
-<span class="sourceLineNo">240</span><a id="line.240">                                        J[2 * i + 0][2] = 1.0 / w;</a>
-<span class="sourceLineNo">241</span><a id="line.241">                                        J[2 * i + 0][3] = 0;</a>
-<span class="sourceLineNo">242</span><a id="line.242">                                        J[2 * i + 0][4] = 0;</a>
-<span class="sourceLineNo">243</span><a id="line.243">                                        J[2 * i + 0][5] = 0;</a>
-<span class="sourceLineNo">244</span><a id="line.244">                                        J[2 * i + 0][6] = -sx * x / w2;</a>
-<span class="sourceLineNo">245</span><a id="line.245">                                        J[2 * i + 0][7] = -sx * y / w2;</a>
-<span class="sourceLineNo">246</span><a id="line.246">                                        J[2 * i + 0][8] = -sx / w2;</a>
-<span class="sourceLineNo">247</span><a id="line.247"></a>
-<span class="sourceLineNo">248</span><a id="line.248">                                        final double sy = h[3] * x + h[4] * y + h[5];</a>
-<span class="sourceLineNo">249</span><a id="line.249">                                        J[2 * i + 1][0] = 0;</a>
-<span class="sourceLineNo">250</span><a id="line.250">                                        J[2 * i + 1][1] = 0;</a>
-<span class="sourceLineNo">251</span><a id="line.251">                                        J[2 * i + 1][2] = 0;</a>
-<span class="sourceLineNo">252</span><a id="line.252">                                        J[2 * i + 1][3] = x / w;</a>
-<span class="sourceLineNo">253</span><a id="line.253">                                        J[2 * i + 1][4] = y / w;</a>
-<span class="sourceLineNo">254</span><a id="line.254">                                        J[2 * i + 1][5] = 1.0 / w;</a>
-<span class="sourceLineNo">255</span><a id="line.255">                                        J[2 * i + 1][6] = -sy * x / w2;</a>
-<span class="sourceLineNo">256</span><a id="line.256">                                        J[2 * i + 1][7] = -sy * y / w2;</a>
-<span class="sourceLineNo">257</span><a id="line.257">                                        J[2 * i + 1][8] = -sy / w2;</a>
-<span class="sourceLineNo">258</span><a id="line.258">                                }</a>
-<span class="sourceLineNo">259</span><a id="line.259">                                return J;</a>
-<span class="sourceLineNo">260</span><a id="line.260">                        }</a>
-<span class="sourceLineNo">261</span><a id="line.261">                };</a>
-<span class="sourceLineNo">262</span><a id="line.262">        }</a>
-<span class="sourceLineNo">263</span><a id="line.263">         */</a>
-<span class="sourceLineNo">264</span><a id="line.264"></a>
-<span class="sourceLineNo">265</span><a id="line.265">        /*</a>
-<span class="sourceLineNo">266</span><a id="line.266">        protected MultivariateMatrixFunction getJacobianFunction(final Point[] X) {</a>
-<span class="sourceLineNo">267</span><a id="line.267">                return new MultivariateMatrixFunction() {</a>
-<span class="sourceLineNo">268</span><a id="line.268">                        // See Multi-View Geometry in Computer Vision, eq 4.21, p129</a>
-<span class="sourceLineNo">269</span><a id="line.269">                        @Override</a>
-<span class="sourceLineNo">270</span><a id="line.270">                        public double[][] value(double[] h) {</a>
-<span class="sourceLineNo">271</span><a id="line.271">                                final double[][] J = new double[2 * X.length][9];</a>
-<span class="sourceLineNo">272</span><a id="line.272">                                for (int i = 0; i &lt; X.length; i++) {</a>
-<span class="sourceLineNo">273</span><a id="line.273">                                        final double x = X[i].getX();</a>
-<span class="sourceLineNo">274</span><a id="line.274">                                        final double y = X[i].getY();</a>
-<span class="sourceLineNo">275</span><a id="line.275"></a>
-<span class="sourceLineNo">276</span><a id="line.276">                                        final double t2 = x * h[6];</a>
-<span class="sourceLineNo">277</span><a id="line.277">                                        final double t3 = y * h[7];</a>
-<span class="sourceLineNo">278</span><a id="line.278">                                        final double t4 = h[8] + t2 + t3;</a>
-<span class="sourceLineNo">279</span><a id="line.279">                                        final double t5 = 1.0 / t4;</a>
-<span class="sourceLineNo">280</span><a id="line.280">                                        final double t6 = x * h[0];</a>
-<span class="sourceLineNo">281</span><a id="line.281">                                        final double t7 = y * h[1];</a>
-<span class="sourceLineNo">282</span><a id="line.282">                                        final double t8 = h[2] + t6 + t7;</a>
-<span class="sourceLineNo">283</span><a id="line.283">                                        final double t9 = 1.0 / (t4 * t4);</a>
-<span class="sourceLineNo">284</span><a id="line.284">                                        final double t10 = x * t5;</a>
-<span class="sourceLineNo">285</span><a id="line.285">                                        final double t11 = y * t5;</a>
-<span class="sourceLineNo">286</span><a id="line.286">                                        final double t12 = x * h[3];</a>
-<span class="sourceLineNo">287</span><a id="line.287">                                        final double t13 = y * h[4];</a>
-<span class="sourceLineNo">288</span><a id="line.288">                                        final double t14 = h[5] + t12 + t13;</a>
-<span class="sourceLineNo">289</span><a id="line.289"></a>
-<span class="sourceLineNo">290</span><a id="line.290">                                        J[2 * i + 0][0] = t10;</a>
-<span class="sourceLineNo">291</span><a id="line.291">                                        J[2 * i + 0][1] = t11;</a>
-<span class="sourceLineNo">292</span><a id="line.292">                                        J[2 * i + 0][2] = t5;</a>
-<span class="sourceLineNo">293</span><a id="line.293">//                                      J[2 * i + 0][3] = 0;</a>
-<span class="sourceLineNo">294</span><a id="line.294">//                                      J[2 * i + 0][4] = 0;</a>
-<span class="sourceLineNo">295</span><a id="line.295">//                                      J[2 * i + 0][5] = 0;</a>
-<span class="sourceLineNo">296</span><a id="line.296">                                        J[2 * i + 0][6] = -x * t8 * t9;</a>
-<span class="sourceLineNo">297</span><a id="line.297">                                        J[2 * i + 0][7] = -y * t8 * t9;</a>
-<span class="sourceLineNo">298</span><a id="line.298">                                        J[2 * i + 0][8] = -t8 * t9;</a>
-<span class="sourceLineNo">299</span><a id="line.299"></a>
-<span class="sourceLineNo">300</span><a id="line.300">//                                      J[2 * i + 1][0] = 0;</a>
-<span class="sourceLineNo">301</span><a id="line.301">//                                      J[2 * i + 1][1] = 0;</a>
-<span class="sourceLineNo">302</span><a id="line.302">//                                      J[2 * i + 1][2] = 0;</a>
-<span class="sourceLineNo">303</span><a id="line.303">                                        J[2 * i + 1][3] = t10;</a>
-<span class="sourceLineNo">304</span><a id="line.304">                                        J[2 * i + 1][4] = t11;</a>
-<span class="sourceLineNo">305</span><a id="line.305">                                        J[2 * i + 1][5] = t5;</a>
-<span class="sourceLineNo">306</span><a id="line.306">                                        J[2 * i + 1][6] = -x * t9 * t14;</a>
-<span class="sourceLineNo">307</span><a id="line.307">                                        J[2 * i + 1][7] = -y * t9 * t14;</a>
-<span class="sourceLineNo">308</span><a id="line.308">                                        J[2 * i + 1][8] = -t9 * t14;</a>
-<span class="sourceLineNo">309</span><a id="line.309">                                }</a>
-<span class="sourceLineNo">310</span><a id="line.310">                                return J;</a>
-<span class="sourceLineNo">311</span><a id="line.311">                        }</a>
-<span class="sourceLineNo">312</span><a id="line.312">                };</a>
-<span class="sourceLineNo">313</span><a id="line.313">        }</a>
-<span class="sourceLineNo">314</span><a id="line.314">         */</a>
-<span class="sourceLineNo">315</span><a id="line.315"></a>
-<span class="sourceLineNo">316</span><a id="line.316"></a>
-<span class="sourceLineNo">317</span><a id="line.317">        // TESTING --------------------------------------------------------</a>
-<span class="sourceLineNo">318</span><a id="line.318"></a>
-<span class="sourceLineNo">319</span><a id="line.319">        static double NOISE = 0.1;</a>
+<span class="sourceLineNo">185</span><a id="line.185"></a>
+<span class="sourceLineNo">186</span><a id="line.186">        private static MultivariateVectorFunction getValueFunction(Pnt2d[] X) {</a>
+<span class="sourceLineNo">187</span><a id="line.187">                //System.out.println("MultivariateVectorFunction getValueFunction");</a>
+<span class="sourceLineNo">188</span><a id="line.188">                return new MultivariateVectorFunction() {</a>
+<span class="sourceLineNo">189</span><a id="line.189">                        </a>
+<span class="sourceLineNo">190</span><a id="line.190">                        @Override</a>
+<span class="sourceLineNo">191</span><a id="line.191">                        public double[] value(double[] h) {                     </a>
+<span class="sourceLineNo">192</span><a id="line.192">                                final double[] Y = new double[X.length * 2];</a>
+<span class="sourceLineNo">193</span><a id="line.193">                                for (int j = 0; j &lt; X.length; j++) {</a>
+<span class="sourceLineNo">194</span><a id="line.194">                                        final double x = X[j].getX();</a>
+<span class="sourceLineNo">195</span><a id="line.195">                                        final double y = X[j].getY();</a>
+<span class="sourceLineNo">196</span><a id="line.196">                                        final double w = h[6] * x + h[7] * y + h[8];</a>
+<span class="sourceLineNo">197</span><a id="line.197">                                        Y[j * 2 + 0] = (h[0] * x + h[1] * y + h[2]) / w;</a>
+<span class="sourceLineNo">198</span><a id="line.198">                                        Y[j * 2 + 1] = (h[3] * x + h[4] * y + h[5]) / w;</a>
+<span class="sourceLineNo">199</span><a id="line.199">                                }</a>
+<span class="sourceLineNo">200</span><a id="line.200">                                return Y;</a>
+<span class="sourceLineNo">201</span><a id="line.201">                        }</a>
+<span class="sourceLineNo">202</span><a id="line.202">                };</a>
+<span class="sourceLineNo">203</span><a id="line.203">        }</a>
+<span class="sourceLineNo">204</span><a id="line.204"></a>
+<span class="sourceLineNo">205</span><a id="line.205">        private static MultivariateMatrixFunction getJacobianFunction(Pnt2d[] X) {</a>
+<span class="sourceLineNo">206</span><a id="line.206">                return new MultivariateMatrixFunction() {</a>
+<span class="sourceLineNo">207</span><a id="line.207">                        </a>
+<span class="sourceLineNo">208</span><a id="line.208">                        @Override</a>
+<span class="sourceLineNo">209</span><a id="line.209">                        public double[][] value(double[] h) {</a>
+<span class="sourceLineNo">210</span><a id="line.210">                                final double[][] J = new double[2 * X.length][];</a>
+<span class="sourceLineNo">211</span><a id="line.211">                                for (int i = 0; i &lt; X.length; i++) {</a>
+<span class="sourceLineNo">212</span><a id="line.212">                                        final double x = X[i].getX();</a>
+<span class="sourceLineNo">213</span><a id="line.213">                                        final double y = X[i].getY();</a>
+<span class="sourceLineNo">214</span><a id="line.214"></a>
+<span class="sourceLineNo">215</span><a id="line.215">                                        final double w  = h[6] * x + h[7] * y + h[8];</a>
+<span class="sourceLineNo">216</span><a id="line.216">                                        final double w2 = w * w;</a>
+<span class="sourceLineNo">217</span><a id="line.217"></a>
+<span class="sourceLineNo">218</span><a id="line.218">                                        final double sx = h[0] * x + h[1] * y + h[2];           </a>
+<span class="sourceLineNo">219</span><a id="line.219">                                        J[2 * i + 0] = new double[] {x/w, y/w, 1/w, 0, 0, 0, -sx*x/w2, -sx*y/w2, -sx/w2};</a>
+<span class="sourceLineNo">220</span><a id="line.220"></a>
+<span class="sourceLineNo">221</span><a id="line.221">                                        final double sy = h[3] * x + h[4] * y + h[5];</a>
+<span class="sourceLineNo">222</span><a id="line.222">                                        J[2 * i + 1] = new double[] {0, 0, 0, x/w, y/w, 1/w, -sy*x/w2, -sy*y/w2, -sy/w2};</a>
+<span class="sourceLineNo">223</span><a id="line.223">                                }</a>
+<span class="sourceLineNo">224</span><a id="line.224">                                return J;</a>
+<span class="sourceLineNo">225</span><a id="line.225">                        }</a>
+<span class="sourceLineNo">226</span><a id="line.226">                };</a>
+<span class="sourceLineNo">227</span><a id="line.227">        }</a>
+<span class="sourceLineNo">228</span><a id="line.228"></a>
+<span class="sourceLineNo">229</span><a id="line.229">        /*</a>
+<span class="sourceLineNo">230</span><a id="line.230">        protected MultivariateMatrixFunction getJacobianFunction(final Point[] X) {</a>
+<span class="sourceLineNo">231</span><a id="line.231">                return new MultivariateMatrixFunction() {</a>
+<span class="sourceLineNo">232</span><a id="line.232">                        @Override</a>
+<span class="sourceLineNo">233</span><a id="line.233">                        public double[][] value(double[] h) {</a>
+<span class="sourceLineNo">234</span><a id="line.234">                                final double[][] J = new double[2 * X.length][9];</a>
+<span class="sourceLineNo">235</span><a id="line.235">                                for (int i = 0; i &lt; X.length; i++) {</a>
+<span class="sourceLineNo">236</span><a id="line.236">                                        final double x = X[i].getX();</a>
+<span class="sourceLineNo">237</span><a id="line.237">                                        final double y = X[i].getY();</a>
+<span class="sourceLineNo">238</span><a id="line.238"></a>
+<span class="sourceLineNo">239</span><a id="line.239">                                        final double w  = h[6] * x + h[7] * y + h[8];</a>
+<span class="sourceLineNo">240</span><a id="line.240">                                        final double w2 = w * w;</a>
+<span class="sourceLineNo">241</span><a id="line.241"></a>
+<span class="sourceLineNo">242</span><a id="line.242">                                        final double sx = h[0] * x + h[1] * y + h[2];           </a>
+<span class="sourceLineNo">243</span><a id="line.243">                                        J[2 * i + 0][0] = x / w;</a>
+<span class="sourceLineNo">244</span><a id="line.244">                                        J[2 * i + 0][1] = y / w;</a>
+<span class="sourceLineNo">245</span><a id="line.245">                                        J[2 * i + 0][2] = 1.0 / w;</a>
+<span class="sourceLineNo">246</span><a id="line.246">                                        J[2 * i + 0][3] = 0;</a>
+<span class="sourceLineNo">247</span><a id="line.247">                                        J[2 * i + 0][4] = 0;</a>
+<span class="sourceLineNo">248</span><a id="line.248">                                        J[2 * i + 0][5] = 0;</a>
+<span class="sourceLineNo">249</span><a id="line.249">                                        J[2 * i + 0][6] = -sx * x / w2;</a>
+<span class="sourceLineNo">250</span><a id="line.250">                                        J[2 * i + 0][7] = -sx * y / w2;</a>
+<span class="sourceLineNo">251</span><a id="line.251">                                        J[2 * i + 0][8] = -sx / w2;</a>
+<span class="sourceLineNo">252</span><a id="line.252"></a>
+<span class="sourceLineNo">253</span><a id="line.253">                                        final double sy = h[3] * x + h[4] * y + h[5];</a>
+<span class="sourceLineNo">254</span><a id="line.254">                                        J[2 * i + 1][0] = 0;</a>
+<span class="sourceLineNo">255</span><a id="line.255">                                        J[2 * i + 1][1] = 0;</a>
+<span class="sourceLineNo">256</span><a id="line.256">                                        J[2 * i + 1][2] = 0;</a>
+<span class="sourceLineNo">257</span><a id="line.257">                                        J[2 * i + 1][3] = x / w;</a>
+<span class="sourceLineNo">258</span><a id="line.258">                                        J[2 * i + 1][4] = y / w;</a>
+<span class="sourceLineNo">259</span><a id="line.259">                                        J[2 * i + 1][5] = 1.0 / w;</a>
+<span class="sourceLineNo">260</span><a id="line.260">                                        J[2 * i + 1][6] = -sy * x / w2;</a>
+<span class="sourceLineNo">261</span><a id="line.261">                                        J[2 * i + 1][7] = -sy * y / w2;</a>
+<span class="sourceLineNo">262</span><a id="line.262">                                        J[2 * i + 1][8] = -sy / w2;</a>
+<span class="sourceLineNo">263</span><a id="line.263">                                }</a>
+<span class="sourceLineNo">264</span><a id="line.264">                                return J;</a>
+<span class="sourceLineNo">265</span><a id="line.265">                        }</a>
+<span class="sourceLineNo">266</span><a id="line.266">                };</a>
+<span class="sourceLineNo">267</span><a id="line.267">        }</a>
+<span class="sourceLineNo">268</span><a id="line.268">         */</a>
+<span class="sourceLineNo">269</span><a id="line.269"></a>
+<span class="sourceLineNo">270</span><a id="line.270">        /*</a>
+<span class="sourceLineNo">271</span><a id="line.271">        protected MultivariateMatrixFunction getJacobianFunction(final Point[] X) {</a>
+<span class="sourceLineNo">272</span><a id="line.272">                return new MultivariateMatrixFunction() {</a>
+<span class="sourceLineNo">273</span><a id="line.273">                        // See Multi-View Geometry in Computer Vision, eq 4.21, p129</a>
+<span class="sourceLineNo">274</span><a id="line.274">                        @Override</a>
+<span class="sourceLineNo">275</span><a id="line.275">                        public double[][] value(double[] h) {</a>
+<span class="sourceLineNo">276</span><a id="line.276">                                final double[][] J = new double[2 * X.length][9];</a>
+<span class="sourceLineNo">277</span><a id="line.277">                                for (int i = 0; i &lt; X.length; i++) {</a>
+<span class="sourceLineNo">278</span><a id="line.278">                                        final double x = X[i].getX();</a>
+<span class="sourceLineNo">279</span><a id="line.279">                                        final double y = X[i].getY();</a>
+<span class="sourceLineNo">280</span><a id="line.280"></a>
+<span class="sourceLineNo">281</span><a id="line.281">                                        final double t2 = x * h[6];</a>
+<span class="sourceLineNo">282</span><a id="line.282">                                        final double t3 = y * h[7];</a>
+<span class="sourceLineNo">283</span><a id="line.283">                                        final double t4 = h[8] + t2 + t3;</a>
+<span class="sourceLineNo">284</span><a id="line.284">                                        final double t5 = 1.0 / t4;</a>
+<span class="sourceLineNo">285</span><a id="line.285">                                        final double t6 = x * h[0];</a>
+<span class="sourceLineNo">286</span><a id="line.286">                                        final double t7 = y * h[1];</a>
+<span class="sourceLineNo">287</span><a id="line.287">                                        final double t8 = h[2] + t6 + t7;</a>
+<span class="sourceLineNo">288</span><a id="line.288">                                        final double t9 = 1.0 / (t4 * t4);</a>
+<span class="sourceLineNo">289</span><a id="line.289">                                        final double t10 = x * t5;</a>
+<span class="sourceLineNo">290</span><a id="line.290">                                        final double t11 = y * t5;</a>
+<span class="sourceLineNo">291</span><a id="line.291">                                        final double t12 = x * h[3];</a>
+<span class="sourceLineNo">292</span><a id="line.292">                                        final double t13 = y * h[4];</a>
+<span class="sourceLineNo">293</span><a id="line.293">                                        final double t14 = h[5] + t12 + t13;</a>
+<span class="sourceLineNo">294</span><a id="line.294"></a>
+<span class="sourceLineNo">295</span><a id="line.295">                                        J[2 * i + 0][0] = t10;</a>
+<span class="sourceLineNo">296</span><a id="line.296">                                        J[2 * i + 0][1] = t11;</a>
+<span class="sourceLineNo">297</span><a id="line.297">                                        J[2 * i + 0][2] = t5;</a>
+<span class="sourceLineNo">298</span><a id="line.298">//                                      J[2 * i + 0][3] = 0;</a>
+<span class="sourceLineNo">299</span><a id="line.299">//                                      J[2 * i + 0][4] = 0;</a>
+<span class="sourceLineNo">300</span><a id="line.300">//                                      J[2 * i + 0][5] = 0;</a>
+<span class="sourceLineNo">301</span><a id="line.301">                                        J[2 * i + 0][6] = -x * t8 * t9;</a>
+<span class="sourceLineNo">302</span><a id="line.302">                                        J[2 * i + 0][7] = -y * t8 * t9;</a>
+<span class="sourceLineNo">303</span><a id="line.303">                                        J[2 * i + 0][8] = -t8 * t9;</a>
+<span class="sourceLineNo">304</span><a id="line.304"></a>
+<span class="sourceLineNo">305</span><a id="line.305">//                                      J[2 * i + 1][0] = 0;</a>
+<span class="sourceLineNo">306</span><a id="line.306">//                                      J[2 * i + 1][1] = 0;</a>
+<span class="sourceLineNo">307</span><a id="line.307">//                                      J[2 * i + 1][2] = 0;</a>
+<span class="sourceLineNo">308</span><a id="line.308">                                        J[2 * i + 1][3] = t10;</a>
+<span class="sourceLineNo">309</span><a id="line.309">                                        J[2 * i + 1][4] = t11;</a>
+<span class="sourceLineNo">310</span><a id="line.310">                                        J[2 * i + 1][5] = t5;</a>
+<span class="sourceLineNo">311</span><a id="line.311">                                        J[2 * i + 1][6] = -x * t9 * t14;</a>
+<span class="sourceLineNo">312</span><a id="line.312">                                        J[2 * i + 1][7] = -y * t9 * t14;</a>
+<span class="sourceLineNo">313</span><a id="line.313">                                        J[2 * i + 1][8] = -t9 * t14;</a>
+<span class="sourceLineNo">314</span><a id="line.314">                                }</a>
+<span class="sourceLineNo">315</span><a id="line.315">                                return J;</a>
+<span class="sourceLineNo">316</span><a id="line.316">                        }</a>
+<span class="sourceLineNo">317</span><a id="line.317">                };</a>
+<span class="sourceLineNo">318</span><a id="line.318">        }</a>
+<span class="sourceLineNo">319</span><a id="line.319">         */</a>
 <span class="sourceLineNo">320</span><a id="line.320"></a>
-<span class="sourceLineNo">321</span><a id="line.321">        private static Pnt2d mapPoint(RealMatrix H, Pnt2d p) {</a>
-<span class="sourceLineNo">322</span><a id="line.322">                double[] xa = p.toDoubleArray(); // {p.getX(), p.getY()};</a>
-<span class="sourceLineNo">323</span><a id="line.323">                double[] xb = MathUtil.transform(xa, H);</a>
-<span class="sourceLineNo">324</span><a id="line.324">                return PntDouble.from(xb);</a>
-<span class="sourceLineNo">325</span><a id="line.325">        }</a>
-<span class="sourceLineNo">326</span><a id="line.326"></a>
-<span class="sourceLineNo">327</span><a id="line.327">        private static Random rand = new Random();</a>
-<span class="sourceLineNo">328</span><a id="line.328"></a>
-<span class="sourceLineNo">329</span><a id="line.329">        private static Pnt2d mapPointWithNoise(RealMatrix H, Pnt2d p, double noise) {</a>
-<span class="sourceLineNo">330</span><a id="line.330">                double[] xa = {p.getX(), p.getY()};</a>
-<span class="sourceLineNo">331</span><a id="line.331">                double[] xb = MathUtil.transform(xa, H);</a>
-<span class="sourceLineNo">332</span><a id="line.332">                double xn = noise * rand.nextGaussian();</a>
-<span class="sourceLineNo">333</span><a id="line.333">                double yn = noise * rand.nextGaussian();</a>
-<span class="sourceLineNo">334</span><a id="line.334">                return PntDouble.from(xb[0] + xn, xb[1] + yn);</a>
-<span class="sourceLineNo">335</span><a id="line.335">        }</a>
-<span class="sourceLineNo">336</span><a id="line.336"></a>
-<span class="sourceLineNo">337</span><a id="line.337">        /**</a>
-<span class="sourceLineNo">338</span><a id="line.338">         * Used for testing only.</a>
-<span class="sourceLineNo">339</span><a id="line.339">         * @param args ignored</a>
-<span class="sourceLineNo">340</span><a id="line.340">         */</a>
-<span class="sourceLineNo">341</span><a id="line.341">        public static void main(String[] args) {</a>
-<span class="sourceLineNo">342</span><a id="line.342">                RealMatrix Hreal = MatrixUtils.createRealMatrix(new double[][]</a>
-<span class="sourceLineNo">343</span><a id="line.343">                                {{3, 2, -1},</a>
-<span class="sourceLineNo">344</span><a id="line.344">                        {5, 0, 2},</a>
-<span class="sourceLineNo">345</span><a id="line.345">                        {4, 4, 9}});</a>
-<span class="sourceLineNo">346</span><a id="line.346"></a>
-<span class="sourceLineNo">347</span><a id="line.347">                System.out.println("H (real) = ");</a>
-<span class="sourceLineNo">348</span><a id="line.348">                System.out.println(Matrix.toString(Hreal.scalarMultiply(1/Hreal.getEntry(2, 2)).getData()));</a>
-<span class="sourceLineNo">349</span><a id="line.349">                //              System.out.println(Matrix.toString(Hreal.getData()));</a>
-<span class="sourceLineNo">350</span><a id="line.350"></a>
-<span class="sourceLineNo">351</span><a id="line.351">                List&lt;Pnt2d&gt; pntlistA = new ArrayList&lt;Pnt2d&gt;();</a>
-<span class="sourceLineNo">352</span><a id="line.352">                pntlistA.add(PntInt.from(10, 7));</a>
-<span class="sourceLineNo">353</span><a id="line.353">                pntlistA.add(PntInt.from(3, -1));</a>
-<span class="sourceLineNo">354</span><a id="line.354">                pntlistA.add(PntInt.from(5, 5));</a>
-<span class="sourceLineNo">355</span><a id="line.355">                pntlistA.add(PntInt.from(-6, 13));</a>
-<span class="sourceLineNo">356</span><a id="line.356">                pntlistA.add(PntInt.from(0, 1));</a>
-<span class="sourceLineNo">357</span><a id="line.357">                pntlistA.add(PntInt.from(2, 3));</a>
-<span class="sourceLineNo">358</span><a id="line.358"></a>
-<span class="sourceLineNo">359</span><a id="line.359">                List&lt;Pnt2d&gt; pntlistB = new ArrayList&lt;Pnt2d&gt;();</a>
-<span class="sourceLineNo">360</span><a id="line.360">                for (Pnt2d a : pntlistA) {</a>
-<span class="sourceLineNo">361</span><a id="line.361">                        pntlistB.add(mapPointWithNoise(Hreal, a, NOISE));</a>
-<span class="sourceLineNo">362</span><a id="line.362">                }</a>
+<span class="sourceLineNo">321</span><a id="line.321"></a>
+<span class="sourceLineNo">322</span><a id="line.322">        // TESTING --------------------------------------------------------</a>
+<span class="sourceLineNo">323</span><a id="line.323"></a>
+<span class="sourceLineNo">324</span><a id="line.324">        static double NOISE = 0.1;</a>
+<span class="sourceLineNo">325</span><a id="line.325"></a>
+<span class="sourceLineNo">326</span><a id="line.326">        private static Pnt2d mapPoint(RealMatrix H, Pnt2d p) {</a>
+<span class="sourceLineNo">327</span><a id="line.327">                double[] xa = p.toDoubleArray(); // {p.getX(), p.getY()};</a>
+<span class="sourceLineNo">328</span><a id="line.328">                double[] xb = MathUtil.transform(xa, H);</a>
+<span class="sourceLineNo">329</span><a id="line.329">                return PntDouble.from(xb);</a>
+<span class="sourceLineNo">330</span><a id="line.330">        }</a>
+<span class="sourceLineNo">331</span><a id="line.331"></a>
+<span class="sourceLineNo">332</span><a id="line.332">        private static Random rand = new Random();</a>
+<span class="sourceLineNo">333</span><a id="line.333"></a>
+<span class="sourceLineNo">334</span><a id="line.334">        private static Pnt2d mapPointWithNoise(RealMatrix H, Pnt2d p, double noise) {</a>
+<span class="sourceLineNo">335</span><a id="line.335">                double[] xa = {p.getX(), p.getY()};</a>
+<span class="sourceLineNo">336</span><a id="line.336">                double[] xb = MathUtil.transform(xa, H);</a>
+<span class="sourceLineNo">337</span><a id="line.337">                double xn = noise * rand.nextGaussian();</a>
+<span class="sourceLineNo">338</span><a id="line.338">                double yn = noise * rand.nextGaussian();</a>
+<span class="sourceLineNo">339</span><a id="line.339">                return PntDouble.from(xb[0] + xn, xb[1] + yn);</a>
+<span class="sourceLineNo">340</span><a id="line.340">        }</a>
+<span class="sourceLineNo">341</span><a id="line.341"></a>
+<span class="sourceLineNo">342</span><a id="line.342">        /**</a>
+<span class="sourceLineNo">343</span><a id="line.343">         * Used for testing only.</a>
+<span class="sourceLineNo">344</span><a id="line.344">         * @param args ignored</a>
+<span class="sourceLineNo">345</span><a id="line.345">         */</a>
+<span class="sourceLineNo">346</span><a id="line.346">        public static void main(String[] args) {</a>
+<span class="sourceLineNo">347</span><a id="line.347">                RealMatrix Hreal = MatrixUtils.createRealMatrix(new double[][]</a>
+<span class="sourceLineNo">348</span><a id="line.348">                                {{3, 2, -1},</a>
+<span class="sourceLineNo">349</span><a id="line.349">                        {5, 0, 2},</a>
+<span class="sourceLineNo">350</span><a id="line.350">                        {4, 4, 9}});</a>
+<span class="sourceLineNo">351</span><a id="line.351"></a>
+<span class="sourceLineNo">352</span><a id="line.352">                System.out.println("H (real) = ");</a>
+<span class="sourceLineNo">353</span><a id="line.353">                System.out.println(Matrix.toString(Hreal.scalarMultiply(1/Hreal.getEntry(2, 2)).getData()));</a>
+<span class="sourceLineNo">354</span><a id="line.354">                //              System.out.println(Matrix.toString(Hreal.getData()));</a>
+<span class="sourceLineNo">355</span><a id="line.355"></a>
+<span class="sourceLineNo">356</span><a id="line.356">                List&lt;Pnt2d&gt; pntlistA = new ArrayList&lt;Pnt2d&gt;();</a>
+<span class="sourceLineNo">357</span><a id="line.357">                pntlistA.add(PntInt.from(10, 7));</a>
+<span class="sourceLineNo">358</span><a id="line.358">                pntlistA.add(PntInt.from(3, -1));</a>
+<span class="sourceLineNo">359</span><a id="line.359">                pntlistA.add(PntInt.from(5, 5));</a>
+<span class="sourceLineNo">360</span><a id="line.360">                pntlistA.add(PntInt.from(-6, 13));</a>
+<span class="sourceLineNo">361</span><a id="line.361">                pntlistA.add(PntInt.from(0, 1));</a>
+<span class="sourceLineNo">362</span><a id="line.362">                pntlistA.add(PntInt.from(2, 3));</a>
 <span class="sourceLineNo">363</span><a id="line.363"></a>
-<span class="sourceLineNo">364</span><a id="line.364">                Pnt2d[] pntsA = pntlistA.toArray(new Pnt2d[0]);</a>
-<span class="sourceLineNo">365</span><a id="line.365">                Pnt2d[] pntsB = pntlistB.toArray(new Pnt2d[0]);</a>
-<span class="sourceLineNo">366</span><a id="line.366"></a>
-<span class="sourceLineNo">367</span><a id="line.367"></a>
-<span class="sourceLineNo">368</span><a id="line.368">                System.out.println("\nPoint correspondences:");</a>
-<span class="sourceLineNo">369</span><a id="line.369">                for (int i = 0; i &lt; pntsA.length; i++) {</a>
-<span class="sourceLineNo">370</span><a id="line.370">                        Pnt2d a = pntsA[i];</a>
-<span class="sourceLineNo">371</span><a id="line.371">                        Pnt2d b = pntsB[i];</a>
-<span class="sourceLineNo">372</span><a id="line.372">                        System.out.format("(%.3f, %.3f) -&gt; (%.3f, %.3f)\n", a.getX(), a.getY(), b.getX(), b.getY());</a>
-<span class="sourceLineNo">373</span><a id="line.373">                }</a>
-<span class="sourceLineNo">374</span><a id="line.374">                System.out.println();</a>
-<span class="sourceLineNo">375</span><a id="line.375"></a>
-<span class="sourceLineNo">376</span><a id="line.376">                System.out.println("\n*************** WITHOUT NONLINEAR REFINEMENT *****************");</a>
-<span class="sourceLineNo">377</span><a id="line.377">                runTestDLT(new HomographyEstimator(true, false), pntsA, pntsB);</a>
-<span class="sourceLineNo">378</span><a id="line.378"></a>
-<span class="sourceLineNo">379</span><a id="line.379">                System.out.println("\n*************** WITH NONLINEAR REFINEMENT *****************");</a>
-<span class="sourceLineNo">380</span><a id="line.380">                runTestDLT(new HomographyEstimator(true, true), pntsA, pntsB);</a>
-<span class="sourceLineNo">381</span><a id="line.381"></a>
-<span class="sourceLineNo">382</span><a id="line.382">                System.out.println("\n*************** USING LEAST-SQUARES MAPPING *****************");</a>
-<span class="sourceLineNo">383</span><a id="line.383">                runTestLeastSquares(pntsA, pntsB);</a>
-<span class="sourceLineNo">384</span><a id="line.384"></a>
-<span class="sourceLineNo">385</span><a id="line.385">                System.out.println("\n*************** GENERATE A MAPPING *****************");</a>
-<span class="sourceLineNo">386</span><a id="line.386">                ProjectiveMapping2D pm = new HomographyEstimator().getHomographyMapping(pntsA, pntsB);</a>
-<span class="sourceLineNo">387</span><a id="line.387">                System.out.println("projective mapping = \n" + pm.toString());</a>
-<span class="sourceLineNo">388</span><a id="line.388"></a>
-<span class="sourceLineNo">389</span><a id="line.389">        }</a>
-<span class="sourceLineNo">390</span><a id="line.390"></a>
-<span class="sourceLineNo">391</span><a id="line.391">        private static void runTestDLT(HomographyEstimator he, Pnt2d[] pntsA, Pnt2d[] pntsB) {</a>
-<span class="sourceLineNo">392</span><a id="line.392">                RealMatrix Hest = he.getHomography(pntsA, pntsB);</a>
+<span class="sourceLineNo">364</span><a id="line.364">                List&lt;Pnt2d&gt; pntlistB = new ArrayList&lt;Pnt2d&gt;();</a>
+<span class="sourceLineNo">365</span><a id="line.365">                for (Pnt2d a : pntlistA) {</a>
+<span class="sourceLineNo">366</span><a id="line.366">                        pntlistB.add(mapPointWithNoise(Hreal, a, NOISE));</a>
+<span class="sourceLineNo">367</span><a id="line.367">                }</a>
+<span class="sourceLineNo">368</span><a id="line.368"></a>
+<span class="sourceLineNo">369</span><a id="line.369">                Pnt2d[] pntsA = pntlistA.toArray(new Pnt2d[0]);</a>
+<span class="sourceLineNo">370</span><a id="line.370">                Pnt2d[] pntsB = pntlistB.toArray(new Pnt2d[0]);</a>
+<span class="sourceLineNo">371</span><a id="line.371"></a>
+<span class="sourceLineNo">372</span><a id="line.372"></a>
+<span class="sourceLineNo">373</span><a id="line.373">                System.out.println("\nPoint correspondences:");</a>
+<span class="sourceLineNo">374</span><a id="line.374">                for (int i = 0; i &lt; pntsA.length; i++) {</a>
+<span class="sourceLineNo">375</span><a id="line.375">                        Pnt2d a = pntsA[i];</a>
+<span class="sourceLineNo">376</span><a id="line.376">                        Pnt2d b = pntsB[i];</a>
+<span class="sourceLineNo">377</span><a id="line.377">                        System.out.format("(%.3f, %.3f) -&gt; (%.3f, %.3f)\n", a.getX(), a.getY(), b.getX(), b.getY());</a>
+<span class="sourceLineNo">378</span><a id="line.378">                }</a>
+<span class="sourceLineNo">379</span><a id="line.379">                System.out.println();</a>
+<span class="sourceLineNo">380</span><a id="line.380"></a>
+<span class="sourceLineNo">381</span><a id="line.381">                System.out.println("\n*************** WITHOUT NONLINEAR REFINEMENT *****************");</a>
+<span class="sourceLineNo">382</span><a id="line.382">                runTestDLT(new HomographyEstimator(true, false), pntsA, pntsB);</a>
+<span class="sourceLineNo">383</span><a id="line.383"></a>
+<span class="sourceLineNo">384</span><a id="line.384">                System.out.println("\n*************** WITH NONLINEAR REFINEMENT *****************");</a>
+<span class="sourceLineNo">385</span><a id="line.385">                runTestDLT(new HomographyEstimator(true, true), pntsA, pntsB);</a>
+<span class="sourceLineNo">386</span><a id="line.386"></a>
+<span class="sourceLineNo">387</span><a id="line.387">                System.out.println("\n*************** USING LEAST-SQUARES MAPPING *****************");</a>
+<span class="sourceLineNo">388</span><a id="line.388">                runTestLeastSquares(pntsA, pntsB);</a>
+<span class="sourceLineNo">389</span><a id="line.389"></a>
+<span class="sourceLineNo">390</span><a id="line.390">                System.out.println("\n*************** GENERATE A MAPPING *****************");</a>
+<span class="sourceLineNo">391</span><a id="line.391">                ProjectiveMapping2D pm = new HomographyEstimator().getHomographyMapping(pntsA, pntsB);</a>
+<span class="sourceLineNo">392</span><a id="line.392">                System.out.println("projective mapping = \n" + pm.toString());</a>
 <span class="sourceLineNo">393</span><a id="line.393"></a>
-<span class="sourceLineNo">394</span><a id="line.394">                System.out.println("H (estim.) = "); </a>
-<span class="sourceLineNo">395</span><a id="line.395">                System.out.println(Matrix.toString(Hest.getData()));</a>
-<span class="sourceLineNo">396</span><a id="line.396"></a>
-<span class="sourceLineNo">397</span><a id="line.397">                Pnt2d[] pntsC = new Pnt2d[pntsA.length];</a>
-<span class="sourceLineNo">398</span><a id="line.398">                for (int i = 0; i &lt; pntsA.length; i++) {        </a>
-<span class="sourceLineNo">399</span><a id="line.399">                        pntsC[i] = mapPoint(Hest, pntsA[i]);</a>
-<span class="sourceLineNo">400</span><a id="line.400">                }</a>
+<span class="sourceLineNo">394</span><a id="line.394">        }</a>
+<span class="sourceLineNo">395</span><a id="line.395"></a>
+<span class="sourceLineNo">396</span><a id="line.396">        private static void runTestDLT(HomographyEstimator he, Pnt2d[] pntsA, Pnt2d[] pntsB) {</a>
+<span class="sourceLineNo">397</span><a id="line.397">                RealMatrix Hest = he.getHomography(pntsA, pntsB);</a>
+<span class="sourceLineNo">398</span><a id="line.398"></a>
+<span class="sourceLineNo">399</span><a id="line.399">                System.out.println("H (estim.) = "); </a>
+<span class="sourceLineNo">400</span><a id="line.400">                System.out.println(Matrix.toString(Hest.getData()));</a>
 <span class="sourceLineNo">401</span><a id="line.401"></a>
-<span class="sourceLineNo">402</span><a id="line.402">                System.out.println("\nPoints mapped:");</a>
-<span class="sourceLineNo">403</span><a id="line.403">                double sumDist2 = 0;</a>
-<span class="sourceLineNo">404</span><a id="line.404">                double maxDist2 = Double.NEGATIVE_INFINITY;</a>
-<span class="sourceLineNo">405</span><a id="line.405">                for (int i = 0; i &lt; pntsA.length; i++) {</a>
-<span class="sourceLineNo">406</span><a id="line.406">                        Pnt2d a = pntsA[i];</a>
-<span class="sourceLineNo">407</span><a id="line.407">                        Pnt2d b = pntsB[i];</a>
-<span class="sourceLineNo">408</span><a id="line.408">                        Pnt2d c = pntsC[i];</a>
-<span class="sourceLineNo">409</span><a id="line.409">                        double dist2 = b.distanceSq(c);</a>
-<span class="sourceLineNo">410</span><a id="line.410">                        sumDist2 += dist2;</a>
-<span class="sourceLineNo">411</span><a id="line.411">                        maxDist2 = Math.max(maxDist2, dist2);</a>
-<span class="sourceLineNo">412</span><a id="line.412">                        System.out.format("(%.3f, %.3f) -&gt; (%.3f, %.3f) d=%.4f\n", a.getX(), a.getY(), c.getX(), c.getY(), dist2);</a>
-<span class="sourceLineNo">413</span><a id="line.413">                }</a>
-<span class="sourceLineNo">414</span><a id="line.414">                System.out.format("\nTotal error = %.2f\n", Math.sqrt(sumDist2));</a>
-<span class="sourceLineNo">415</span><a id="line.415">                System.out.format("Max. dist = %.2f\n", Math.sqrt(maxDist2));   </a>
-<span class="sourceLineNo">416</span><a id="line.416">        }</a>
-<span class="sourceLineNo">417</span><a id="line.417"></a>
-<span class="sourceLineNo">418</span><a id="line.418">        private static void runTestLeastSquares(Pnt2d[] pntsA, Pnt2d[] pntsB) {</a>
-<span class="sourceLineNo">419</span><a id="line.419">                ProjectiveMapping2D mapping = ProjectiveMapping2D.fromPoints(pntsA, pntsB);</a>
-<span class="sourceLineNo">420</span><a id="line.420">                double[][] Hmap = mapping.getTransformationMatrix();</a>
-<span class="sourceLineNo">421</span><a id="line.421">                System.out.println("H (mapping) = "); </a>
-<span class="sourceLineNo">422</span><a id="line.422">                System.out.println(Matrix.toString(Hmap));</a>
-<span class="sourceLineNo">423</span><a id="line.423">                {</a>
-<span class="sourceLineNo">424</span><a id="line.424">                        Pnt2d[] pntsC = new Pnt2d[pntsA.length];</a>
-<span class="sourceLineNo">425</span><a id="line.425">                        for (int i = 0; i &lt; pntsA.length; i++) {        </a>
-<span class="sourceLineNo">426</span><a id="line.426">                                pntsC[i] = //(Pnt2d) </a>
-<span class="sourceLineNo">427</span><a id="line.427">                                        mapping.applyTo(PntDouble.from(pntsA[i]));</a>
-<span class="sourceLineNo">428</span><a id="line.428">//                                      mapping.applyTo(Pnt2d.PntDouble.from(pntsA[i].getX(), pntsA[i].getY()));</a>
-<span class="sourceLineNo">429</span><a id="line.429">                        }</a>
-<span class="sourceLineNo">430</span><a id="line.430"></a>
-<span class="sourceLineNo">431</span><a id="line.431">                        System.out.println("\nPoints mapped:");</a>
-<span class="sourceLineNo">432</span><a id="line.432">                        double sumDist2 = 0;</a>
-<span class="sourceLineNo">433</span><a id="line.433">                        double maxDist2 = Double.NEGATIVE_INFINITY;</a>
-<span class="sourceLineNo">434</span><a id="line.434">                        for (int i = 0; i &lt; pntsA.length; i++) {</a>
-<span class="sourceLineNo">435</span><a id="line.435">                                Pnt2d a = pntsA[i];</a>
-<span class="sourceLineNo">436</span><a id="line.436">                                Pnt2d b = pntsB[i];</a>
-<span class="sourceLineNo">437</span><a id="line.437">                                Pnt2d c = pntsC[i];</a>
-<span class="sourceLineNo">438</span><a id="line.438">                                double dist2 = b.distanceSq(c);</a>
-<span class="sourceLineNo">439</span><a id="line.439">                                sumDist2 += dist2;</a>
-<span class="sourceLineNo">440</span><a id="line.440">                                maxDist2 = Math.max(maxDist2, dist2);</a>
-<span class="sourceLineNo">441</span><a id="line.441">                                System.out.format("(%.3f, %.3f) -&gt; (%.3f, %.3f) d=%.4f\n", a.getX(), a.getY(), c.getX(), c.getY(), dist2);</a>
-<span class="sourceLineNo">442</span><a id="line.442">                        }</a>
-<span class="sourceLineNo">443</span><a id="line.443">                        System.out.format("\nTotal error = %.2f\n", Math.sqrt(sumDist2));</a>
-<span class="sourceLineNo">444</span><a id="line.444">                        System.out.format("Max. dist = %.2f\n", Math.sqrt(maxDist2));</a>
-<span class="sourceLineNo">445</span><a id="line.445">                }</a>
-<span class="sourceLineNo">446</span><a id="line.446">                {</a>
-<span class="sourceLineNo">447</span><a id="line.447">                        System.out.println("   +++ running refinement ++++");</a>
-<span class="sourceLineNo">448</span><a id="line.448">                        RealMatrix Hinit = MatrixUtils.createRealMatrix(Hmap);</a>
-<span class="sourceLineNo">449</span><a id="line.449">                        RealMatrix Hest = refineHomography(Hinit, pntsA, pntsB);</a>
-<span class="sourceLineNo">450</span><a id="line.450">                        System.out.println("H (estim.) = "); </a>
-<span class="sourceLineNo">451</span><a id="line.451">                        System.out.println(Matrix.toString(Hest.getData()));</a>
-<span class="sourceLineNo">452</span><a id="line.452"></a>
-<span class="sourceLineNo">453</span><a id="line.453">                        Pnt2d[] pntsC = new Pnt2d[pntsA.length];</a>
-<span class="sourceLineNo">454</span><a id="line.454">                        for (int i = 0; i &lt; pntsA.length; i++) {        </a>
-<span class="sourceLineNo">455</span><a id="line.455">                                pntsC[i] = mapPoint(Hest, pntsA[i]);</a>
-<span class="sourceLineNo">456</span><a id="line.456">                        }</a>
+<span class="sourceLineNo">402</span><a id="line.402">                Pnt2d[] pntsC = new Pnt2d[pntsA.length];</a>
+<span class="sourceLineNo">403</span><a id="line.403">                for (int i = 0; i &lt; pntsA.length; i++) {        </a>
+<span class="sourceLineNo">404</span><a id="line.404">                        pntsC[i] = mapPoint(Hest, pntsA[i]);</a>
+<span class="sourceLineNo">405</span><a id="line.405">                }</a>
+<span class="sourceLineNo">406</span><a id="line.406"></a>
+<span class="sourceLineNo">407</span><a id="line.407">                System.out.println("\nPoints mapped:");</a>
+<span class="sourceLineNo">408</span><a id="line.408">                double sumDist2 = 0;</a>
+<span class="sourceLineNo">409</span><a id="line.409">                double maxDist2 = Double.NEGATIVE_INFINITY;</a>
+<span class="sourceLineNo">410</span><a id="line.410">                for (int i = 0; i &lt; pntsA.length; i++) {</a>
+<span class="sourceLineNo">411</span><a id="line.411">                        Pnt2d a = pntsA[i];</a>
+<span class="sourceLineNo">412</span><a id="line.412">                        Pnt2d b = pntsB[i];</a>
+<span class="sourceLineNo">413</span><a id="line.413">                        Pnt2d c = pntsC[i];</a>
+<span class="sourceLineNo">414</span><a id="line.414">                        double dist2 = b.distanceSq(c);</a>
+<span class="sourceLineNo">415</span><a id="line.415">                        sumDist2 += dist2;</a>
+<span class="sourceLineNo">416</span><a id="line.416">                        maxDist2 = Math.max(maxDist2, dist2);</a>
+<span class="sourceLineNo">417</span><a id="line.417">                        System.out.format("(%.3f, %.3f) -&gt; (%.3f, %.3f) d=%.4f\n", a.getX(), a.getY(), c.getX(), c.getY(), dist2);</a>
+<span class="sourceLineNo">418</span><a id="line.418">                }</a>
+<span class="sourceLineNo">419</span><a id="line.419">                System.out.format("\nTotal error = %.2f\n", Math.sqrt(sumDist2));</a>
+<span class="sourceLineNo">420</span><a id="line.420">                System.out.format("Max. dist = %.2f\n", Math.sqrt(maxDist2));   </a>
+<span class="sourceLineNo">421</span><a id="line.421">        }</a>
+<span class="sourceLineNo">422</span><a id="line.422"></a>
+<span class="sourceLineNo">423</span><a id="line.423">        private static void runTestLeastSquares(Pnt2d[] pntsA, Pnt2d[] pntsB) {</a>
+<span class="sourceLineNo">424</span><a id="line.424">                ProjectiveMapping2D mapping = ProjectiveMapping2D.fromPoints(pntsA, pntsB);</a>
+<span class="sourceLineNo">425</span><a id="line.425">                double[][] Hmap = mapping.getTransformationMatrix();</a>
+<span class="sourceLineNo">426</span><a id="line.426">                System.out.println("H (mapping) = "); </a>
+<span class="sourceLineNo">427</span><a id="line.427">                System.out.println(Matrix.toString(Hmap));</a>
+<span class="sourceLineNo">428</span><a id="line.428">                {</a>
+<span class="sourceLineNo">429</span><a id="line.429">                        Pnt2d[] pntsC = new Pnt2d[pntsA.length];</a>
+<span class="sourceLineNo">430</span><a id="line.430">                        for (int i = 0; i &lt; pntsA.length; i++) {        </a>
+<span class="sourceLineNo">431</span><a id="line.431">                                pntsC[i] = //(Pnt2d) </a>
+<span class="sourceLineNo">432</span><a id="line.432">                                        mapping.applyTo(PntDouble.from(pntsA[i]));</a>
+<span class="sourceLineNo">433</span><a id="line.433">//                                      mapping.applyTo(Pnt2d.PntDouble.from(pntsA[i].getX(), pntsA[i].getY()));</a>
+<span class="sourceLineNo">434</span><a id="line.434">                        }</a>
+<span class="sourceLineNo">435</span><a id="line.435"></a>
+<span class="sourceLineNo">436</span><a id="line.436">                        System.out.println("\nPoints mapped:");</a>
+<span class="sourceLineNo">437</span><a id="line.437">                        double sumDist2 = 0;</a>
+<span class="sourceLineNo">438</span><a id="line.438">                        double maxDist2 = Double.NEGATIVE_INFINITY;</a>
+<span class="sourceLineNo">439</span><a id="line.439">                        for (int i = 0; i &lt; pntsA.length; i++) {</a>
+<span class="sourceLineNo">440</span><a id="line.440">                                Pnt2d a = pntsA[i];</a>
+<span class="sourceLineNo">441</span><a id="line.441">                                Pnt2d b = pntsB[i];</a>
+<span class="sourceLineNo">442</span><a id="line.442">                                Pnt2d c = pntsC[i];</a>
+<span class="sourceLineNo">443</span><a id="line.443">                                double dist2 = b.distanceSq(c);</a>
+<span class="sourceLineNo">444</span><a id="line.444">                                sumDist2 += dist2;</a>
+<span class="sourceLineNo">445</span><a id="line.445">                                maxDist2 = Math.max(maxDist2, dist2);</a>
+<span class="sourceLineNo">446</span><a id="line.446">                                System.out.format("(%.3f, %.3f) -&gt; (%.3f, %.3f) d=%.4f\n", a.getX(), a.getY(), c.getX(), c.getY(), dist2);</a>
+<span class="sourceLineNo">447</span><a id="line.447">                        }</a>
+<span class="sourceLineNo">448</span><a id="line.448">                        System.out.format("\nTotal error = %.2f\n", Math.sqrt(sumDist2));</a>
+<span class="sourceLineNo">449</span><a id="line.449">                        System.out.format("Max. dist = %.2f\n", Math.sqrt(maxDist2));</a>
+<span class="sourceLineNo">450</span><a id="line.450">                }</a>
+<span class="sourceLineNo">451</span><a id="line.451">                {</a>
+<span class="sourceLineNo">452</span><a id="line.452">                        System.out.println("   +++ running refinement ++++");</a>
+<span class="sourceLineNo">453</span><a id="line.453">                        RealMatrix Hinit = MatrixUtils.createRealMatrix(Hmap);</a>
+<span class="sourceLineNo">454</span><a id="line.454">                        RealMatrix Hest = refineHomography(Hinit, pntsA, pntsB);</a>
+<span class="sourceLineNo">455</span><a id="line.455">                        System.out.println("H (estim.) = "); </a>
+<span class="sourceLineNo">456</span><a id="line.456">                        System.out.println(Matrix.toString(Hest.getData()));</a>
 <span class="sourceLineNo">457</span><a id="line.457"></a>
-<span class="sourceLineNo">458</span><a id="line.458">                        //                      System.out.println("\nPoints mapped:");</a>
-<span class="sourceLineNo">459</span><a id="line.459">                        double sumDist2 = 0;</a>
-<span class="sourceLineNo">460</span><a id="line.460">                        double maxDist2 = Double.NEGATIVE_INFINITY;</a>
-<span class="sourceLineNo">461</span><a id="line.461">                        for (int i = 0; i &lt; pntsA.length; i++) {</a>
-<span class="sourceLineNo">462</span><a id="line.462">                                @SuppressWarnings("unused")</a>
-<span class="sourceLineNo">463</span><a id="line.463">                                Pnt2d a = pntsA[i];</a>
-<span class="sourceLineNo">464</span><a id="line.464">                                Pnt2d b = pntsB[i];</a>
-<span class="sourceLineNo">465</span><a id="line.465">                                Pnt2d c = pntsC[i];</a>
-<span class="sourceLineNo">466</span><a id="line.466">                                double dist2 = b.distanceSq(c);</a>
-<span class="sourceLineNo">467</span><a id="line.467">                                sumDist2 += dist2;</a>
-<span class="sourceLineNo">468</span><a id="line.468">                                maxDist2 = Math.max(maxDist2, dist2);</a>
-<span class="sourceLineNo">469</span><a id="line.469">                                //                              System.out.format("(%.3f, %.3f) -&gt; (%.3f, %.3f) d=%.4f\n", a.getX(), a.getY(), c.getX(), c.getY(), dist2);</a>
-<span class="sourceLineNo">470</span><a id="line.470">                        }</a>
-<span class="sourceLineNo">471</span><a id="line.471">                        System.out.format("\nTotal error = %.2f\n", Math.sqrt(sumDist2));</a>
-<span class="sourceLineNo">472</span><a id="line.472">                        System.out.format("Max. dist = %.2f\n", Math.sqrt(maxDist2));   </a>
-<span class="sourceLineNo">473</span><a id="line.473">                }</a>
-<span class="sourceLineNo">474</span><a id="line.474">        }</a>
-<span class="sourceLineNo">475</span><a id="line.475"></a>
-<span class="sourceLineNo">476</span><a id="line.476">}</a>
+<span class="sourceLineNo">458</span><a id="line.458">                        Pnt2d[] pntsC = new Pnt2d[pntsA.length];</a>
+<span class="sourceLineNo">459</span><a id="line.459">                        for (int i = 0; i &lt; pntsA.length; i++) {        </a>
+<span class="sourceLineNo">460</span><a id="line.460">                                pntsC[i] = mapPoint(Hest, pntsA[i]);</a>
+<span class="sourceLineNo">461</span><a id="line.461">                        }</a>
+<span class="sourceLineNo">462</span><a id="line.462"></a>
+<span class="sourceLineNo">463</span><a id="line.463">                        //                      System.out.println("\nPoints mapped:");</a>
+<span class="sourceLineNo">464</span><a id="line.464">                        double sumDist2 = 0;</a>
+<span class="sourceLineNo">465</span><a id="line.465">                        double maxDist2 = Double.NEGATIVE_INFINITY;</a>
+<span class="sourceLineNo">466</span><a id="line.466">                        for (int i = 0; i &lt; pntsA.length; i++) {</a>
+<span class="sourceLineNo">467</span><a id="line.467">                                @SuppressWarnings("unused")</a>
+<span class="sourceLineNo">468</span><a id="line.468">                                Pnt2d a = pntsA[i];</a>
+<span class="sourceLineNo">469</span><a id="line.469">                                Pnt2d b = pntsB[i];</a>
+<span class="sourceLineNo">470</span><a id="line.470">                                Pnt2d c = pntsC[i];</a>
+<span class="sourceLineNo">471</span><a id="line.471">                                double dist2 = b.distanceSq(c);</a>
+<span class="sourceLineNo">472</span><a id="line.472">                                sumDist2 += dist2;</a>
+<span class="sourceLineNo">473</span><a id="line.473">                                maxDist2 = Math.max(maxDist2, dist2);</a>
+<span class="sourceLineNo">474</span><a id="line.474">                                //                              System.out.format("(%.3f, %.3f) -&gt; (%.3f, %.3f) d=%.4f\n", a.getX(), a.getY(), c.getX(), c.getY(), dist2);</a>
+<span class="sourceLineNo">475</span><a id="line.475">                        }</a>
+<span class="sourceLineNo">476</span><a id="line.476">                        System.out.format("\nTotal error = %.2f\n", Math.sqrt(sumDist2));</a>
+<span class="sourceLineNo">477</span><a id="line.477">                        System.out.format("Max. dist = %.2f\n", Math.sqrt(maxDist2));   </a>
+<span class="sourceLineNo">478</span><a id="line.478">                }</a>
+<span class="sourceLineNo">479</span><a id="line.479">        }</a>
+<span class="sourceLineNo">480</span><a id="line.480"></a>
+<span class="sourceLineNo">481</span><a id="line.481">}</a>
 
 
 

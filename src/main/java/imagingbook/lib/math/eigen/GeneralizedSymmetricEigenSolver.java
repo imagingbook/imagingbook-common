@@ -38,8 +38,8 @@ public class GeneralizedSymmetricEigenSolver {
 	 * 
 	 * @param A real symmetric matrix
 	 * @param B real symmetric and positive definite matrix
-	 * @param rsth	relative symmetry threshold (defaults to {@link DEFAULT_RELATIVE_SYMMETRY_THRESHOLD})
-	 * @param apth absolute positivity threshold (defaults to {@link DEFAULT_ABSOLUTE_POSITIVITY_THRESHOLD})
+	 * @param rsth	relative symmetry threshold
+	 * @param apth absolute positivity threshold
 	 */
 	public GeneralizedSymmetricEigenSolver(RealMatrix A, RealMatrix B, double rsth, double apth) {
 		if (!MatrixUtils.isSymmetric(A, rsth)) {

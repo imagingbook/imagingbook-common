@@ -31,7 +31,7 @@ public class GaussianFilterSeparable extends LinearFilterSeparable {
 	/**
 	 * Constructor.
 	 * Passes {@code null} as kernel to super constructor ({@link LinearFilterSeparable}) if any
-	 * sigma &leq; 0 or NaN, i.e., the corresponding x- or y-pass is not performed
+	 * sigma &le; 0 or NaN, i.e., the corresponding x- or y-pass is not performed
 	 * 
 	 * @param sigmaX the width of the 2D Gaussian in x-direction
 	 * @param sigmaY the width of the 2D Gaussian in y-direction

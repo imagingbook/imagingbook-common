@@ -22,109 +22,110 @@
 <span class="sourceLineNo">012</span><a id="line.12"> * on images. The geometric transformation (mapping) must be specified at</a>
 <span class="sourceLineNo">013</span><a id="line.13"> * construction, optionally a pixel interpolation method can be specified.</a>
 <span class="sourceLineNo">014</span><a id="line.14"> * </a>
-<span class="sourceLineNo">015</span><a id="line.15"> * @version 2019/01/04</a>
-<span class="sourceLineNo">016</span><a id="line.16"> *</a>
-<span class="sourceLineNo">017</span><a id="line.17"> */</a>
-<span class="sourceLineNo">018</span><a id="line.18">public class ImageMapper {</a>
-<span class="sourceLineNo">019</span><a id="line.19">        </a>
-<span class="sourceLineNo">020</span><a id="line.20">        /** Default pixel interpolation method (see {@link InterpolationMethod}). */</a>
-<span class="sourceLineNo">021</span><a id="line.21">        public static InterpolationMethod DefaultInterpolationMethod = InterpolationMethod.Bicubic;     </a>
+<span class="sourceLineNo">015</span><a id="line.15"> * The specified geometric mapping is supposed to be INVERTED, i.e. transforming</a>
+<span class="sourceLineNo">016</span><a id="line.16"> * &lt;strong&gt;target to source&lt;/strong&gt; coordinates!</a>
+<span class="sourceLineNo">017</span><a id="line.17"> * </a>
+<span class="sourceLineNo">018</span><a id="line.18"> * @version 2021/08/27</a>
+<span class="sourceLineNo">019</span><a id="line.19"> *</a>
+<span class="sourceLineNo">020</span><a id="line.20"> */</a>
+<span class="sourceLineNo">021</span><a id="line.21">public class ImageMapper {</a>
 <span class="sourceLineNo">022</span><a id="line.22">        </a>
-<span class="sourceLineNo">023</span><a id="line.23">        private final InterpolationMethod im;</a>
-<span class="sourceLineNo">024</span><a id="line.24">        private final Mapping2D mp;</a>
+<span class="sourceLineNo">023</span><a id="line.23">        /** Default pixel interpolation method (see {@link InterpolationMethod}). */</a>
+<span class="sourceLineNo">024</span><a id="line.24">        public static InterpolationMethod DefaultInterpolationMethod = InterpolationMethod.Bicubic;     </a>
 <span class="sourceLineNo">025</span><a id="line.25">        </a>
-<span class="sourceLineNo">026</span><a id="line.26">        /**</a>
-<span class="sourceLineNo">027</span><a id="line.27">         * Creates a new instance with the specified geometric mapping.</a>
-<span class="sourceLineNo">028</span><a id="line.28">         * The default pixel interpolation method is used</a>
-<span class="sourceLineNo">029</span><a id="line.29">         * (see {@link DefaultInterpolationMethod}).</a>
-<span class="sourceLineNo">030</span><a id="line.30">         * @param mp the geometric mapping</a>
-<span class="sourceLineNo">031</span><a id="line.31">         */</a>
-<span class="sourceLineNo">032</span><a id="line.32">        public ImageMapper(Mapping2D mp) {</a>
-<span class="sourceLineNo">033</span><a id="line.33">                this(mp, DefaultInterpolationMethod);</a>
-<span class="sourceLineNo">034</span><a id="line.34">        }</a>
-<span class="sourceLineNo">035</span><a id="line.35"></a>
-<span class="sourceLineNo">036</span><a id="line.36">        /**</a>
-<span class="sourceLineNo">037</span><a id="line.37">         * Creates a new instance with the specified geometric mapping</a>
-<span class="sourceLineNo">038</span><a id="line.38">         * and pixel interpolation method.</a>
-<span class="sourceLineNo">039</span><a id="line.39">         * @param mp the geometric mapping</a>
-<span class="sourceLineNo">040</span><a id="line.40">         * @param im the pixel interpolation method</a>
-<span class="sourceLineNo">041</span><a id="line.41">         */</a>
-<span class="sourceLineNo">042</span><a id="line.42">        public ImageMapper(Mapping2D mp, InterpolationMethod im) {</a>
-<span class="sourceLineNo">043</span><a id="line.43">                this.mp = mp;</a>
-<span class="sourceLineNo">044</span><a id="line.44">                this.im = im;</a>
-<span class="sourceLineNo">045</span><a id="line.45">        }</a>
-<span class="sourceLineNo">046</span><a id="line.46">        </a>
-<span class="sourceLineNo">047</span><a id="line.47">        // ---------------------------------------------------------------------</a>
-<span class="sourceLineNo">048</span><a id="line.48">        </a>
-<span class="sourceLineNo">049</span><a id="line.49">        /**</a>
-<span class="sourceLineNo">050</span><a id="line.50">         * Destructively transforms the passed image using this geometric</a>
-<span class="sourceLineNo">051</span><a id="line.51">         * mapping and the specified pixel interpolation method.</a>
-<span class="sourceLineNo">052</span><a id="line.52">         * The geometric mapping is supposed to be INVERTED, i.e. transforming</a>
-<span class="sourceLineNo">053</span><a id="line.53">         * target to source image coordinates!</a>
-<span class="sourceLineNo">054</span><a id="line.54">         * </a>
-<span class="sourceLineNo">055</span><a id="line.55">         * @param ip target image to which this mapping is applied</a>
-<span class="sourceLineNo">056</span><a id="line.56">         */</a>
-<span class="sourceLineNo">057</span><a id="line.57">        public void map(ImageProcessor ip) {</a>
-<span class="sourceLineNo">058</span><a id="line.58">                // make a temporary copy of the image:</a>
-<span class="sourceLineNo">059</span><a id="line.59">                ImageProcessor source = ip.duplicate();</a>
-<span class="sourceLineNo">060</span><a id="line.60">                ImageProcessor target = ip;</a>
-<span class="sourceLineNo">061</span><a id="line.61">                map(source, target);</a>
-<span class="sourceLineNo">062</span><a id="line.62">                source = null;</a>
-<span class="sourceLineNo">063</span><a id="line.63">        }</a>
-<span class="sourceLineNo">064</span><a id="line.64">        </a>
-<span class="sourceLineNo">065</span><a id="line.65">        // ---------------------------------------------------------------------</a>
-<span class="sourceLineNo">066</span><a id="line.66">        </a>
-<span class="sourceLineNo">067</span><a id="line.67">        /**</a>
-<span class="sourceLineNo">068</span><a id="line.68">         * Transforms the source image to the target image using this geometric</a>
-<span class="sourceLineNo">069</span><a id="line.69">         * mapping and the specified pixel interpolation method. Note that source</a>
-<span class="sourceLineNo">070</span><a id="line.70">         * and target must be different images!</a>
-<span class="sourceLineNo">071</span><a id="line.71">         * The geometric mapping is supposed to be INVERTED, i.e. transforming</a>
-<span class="sourceLineNo">072</span><a id="line.72">         * target to source image coordinates!</a>
-<span class="sourceLineNo">073</span><a id="line.73">         * </a>
-<span class="sourceLineNo">074</span><a id="line.74">         * @param source input image (not modified)</a>
-<span class="sourceLineNo">075</span><a id="line.75">         * @param target output image (modified)</a>
-<span class="sourceLineNo">076</span><a id="line.76">         */</a>
-<span class="sourceLineNo">077</span><a id="line.77">        public void map(ImageProcessor source, ImageProcessor target) {</a>
-<span class="sourceLineNo">078</span><a id="line.78">                if (target == source) {</a>
-<span class="sourceLineNo">079</span><a id="line.79">                        throw new IllegalArgumentException("Source and target image must not be the same!");</a>
-<span class="sourceLineNo">080</span><a id="line.80">                }</a>
-<span class="sourceLineNo">081</span><a id="line.81">                ImageAccessor sourceAcc = ImageAccessor.create(source, null, im);</a>
-<span class="sourceLineNo">082</span><a id="line.82">                ImageAccessor targetAcc = ImageAccessor.create(target);</a>
-<span class="sourceLineNo">083</span><a id="line.83">                map(sourceAcc, targetAcc);</a>
-<span class="sourceLineNo">084</span><a id="line.84">        }</a>
-<span class="sourceLineNo">085</span><a id="line.85"></a>
-<span class="sourceLineNo">086</span><a id="line.86">        </a>
-<span class="sourceLineNo">087</span><a id="line.87">        // ---------------------------------------------------------------------</a>
-<span class="sourceLineNo">088</span><a id="line.88"></a>
-<span class="sourceLineNo">089</span><a id="line.89">        /**</a>
-<span class="sourceLineNo">090</span><a id="line.90">         * Transforms the source image to the target image using this geometric</a>
-<span class="sourceLineNo">091</span><a id="line.91">         * mapping and the specified pixel interpolation method.</a>
-<span class="sourceLineNo">092</span><a id="line.92">         * The two images are passed as instances of {@link ImageAccessor}.</a>
-<span class="sourceLineNo">093</span><a id="line.93">         * Note that source and target reference different images!</a>
-<span class="sourceLineNo">094</span><a id="line.94">         * The geometric mapping is supposed to be INVERTED, i.e. transforming</a>
-<span class="sourceLineNo">095</span><a id="line.95">         * target to source image coordinates!</a>
-<span class="sourceLineNo">096</span><a id="line.96">         * </a>
-<span class="sourceLineNo">097</span><a id="line.97">         * @param sourceAcc accessor to the source image</a>
-<span class="sourceLineNo">098</span><a id="line.98">         * @param targetAcc accessor to the target image</a>
-<span class="sourceLineNo">099</span><a id="line.99">         */</a>
-<span class="sourceLineNo">100</span><a id="line.100">        public void map(ImageAccessor sourceAcc, ImageAccessor targetAcc) {</a>
-<span class="sourceLineNo">101</span><a id="line.101">                if (targetAcc.getProcessor() == sourceAcc.getProcessor()) {</a>
-<span class="sourceLineNo">102</span><a id="line.102">                        throw new IllegalArgumentException("Source and target image must not be the same!");</a>
-<span class="sourceLineNo">103</span><a id="line.103">                }</a>
-<span class="sourceLineNo">104</span><a id="line.104">                Mapping2D invMap = mp;          // this always IS an inverse mapping!!</a>
-<span class="sourceLineNo">105</span><a id="line.105">                ImageProcessor target = targetAcc.getProcessor();</a>
-<span class="sourceLineNo">106</span><a id="line.106">                final int w = target.getWidth();</a>
-<span class="sourceLineNo">107</span><a id="line.107">                final int h = target.getHeight();</a>
-<span class="sourceLineNo">108</span><a id="line.108">                for (int v = 0; v &lt; h; v++) {</a>
-<span class="sourceLineNo">109</span><a id="line.109">                        for (int u = 0; u &lt; w; u++) {</a>
-<span class="sourceLineNo">110</span><a id="line.110">                                Pnt2d sourcePt = invMap.applyTo(PntInt.from(u, v));</a>
-<span class="sourceLineNo">111</span><a id="line.111">                                float[] val = sourceAcc.getPix(sourcePt.getX(), sourcePt.getY());</a>
-<span class="sourceLineNo">112</span><a id="line.112">                                targetAcc.setPix(u, v, val);</a>
-<span class="sourceLineNo">113</span><a id="line.113">                        }</a>
-<span class="sourceLineNo">114</span><a id="line.114">                }</a>
-<span class="sourceLineNo">115</span><a id="line.115">        }</a>
-<span class="sourceLineNo">116</span><a id="line.116"></a>
-<span class="sourceLineNo">117</span><a id="line.117">}</a>
+<span class="sourceLineNo">026</span><a id="line.26">        private final InterpolationMethod im;</a>
+<span class="sourceLineNo">027</span><a id="line.27">        private final Mapping2D mapping;</a>
+<span class="sourceLineNo">028</span><a id="line.28">        </a>
+<span class="sourceLineNo">029</span><a id="line.29">        /**</a>
+<span class="sourceLineNo">030</span><a id="line.30">         * Creates a new instance with the specified geometric mapping.</a>
+<span class="sourceLineNo">031</span><a id="line.31">         * The default pixel interpolation method is used</a>
+<span class="sourceLineNo">032</span><a id="line.32">         * (see {@link DefaultInterpolationMethod}).</a>
+<span class="sourceLineNo">033</span><a id="line.33">         * @param targetToSourceMapping the geometric mapping</a>
+<span class="sourceLineNo">034</span><a id="line.34">         */</a>
+<span class="sourceLineNo">035</span><a id="line.35">        public ImageMapper(Mapping2D targetToSourceMapping) {</a>
+<span class="sourceLineNo">036</span><a id="line.36">                this(targetToSourceMapping, DefaultInterpolationMethod);</a>
+<span class="sourceLineNo">037</span><a id="line.37">        }</a>
+<span class="sourceLineNo">038</span><a id="line.38"></a>
+<span class="sourceLineNo">039</span><a id="line.39">        /**</a>
+<span class="sourceLineNo">040</span><a id="line.40">         * Creates a new instance with the specified geometric mapping</a>
+<span class="sourceLineNo">041</span><a id="line.41">         * and pixel interpolation method.</a>
+<span class="sourceLineNo">042</span><a id="line.42">         * @param targetToSourceMapping the geometric mapping</a>
+<span class="sourceLineNo">043</span><a id="line.43">         * @param im the pixel interpolation method</a>
+<span class="sourceLineNo">044</span><a id="line.44">         */</a>
+<span class="sourceLineNo">045</span><a id="line.45">        public ImageMapper(Mapping2D targetToSourceMapping, InterpolationMethod im) {</a>
+<span class="sourceLineNo">046</span><a id="line.46">                this.mapping = targetToSourceMapping;</a>
+<span class="sourceLineNo">047</span><a id="line.47">                this.im = im;</a>
+<span class="sourceLineNo">048</span><a id="line.48">        }</a>
+<span class="sourceLineNo">049</span><a id="line.49">        </a>
+<span class="sourceLineNo">050</span><a id="line.50">        // ---------------------------------------------------------------------</a>
+<span class="sourceLineNo">051</span><a id="line.51">        </a>
+<span class="sourceLineNo">052</span><a id="line.52">        /**</a>
+<span class="sourceLineNo">053</span><a id="line.53">         * Destructively transforms the passed image using this geometric</a>
+<span class="sourceLineNo">054</span><a id="line.54">         * mapping and the specified pixel interpolation method.</a>
+<span class="sourceLineNo">055</span><a id="line.55">         * </a>
+<span class="sourceLineNo">056</span><a id="line.56">         * @param ip target image to which this mapping is applied</a>
+<span class="sourceLineNo">057</span><a id="line.57">         */</a>
+<span class="sourceLineNo">058</span><a id="line.58">        public void map(ImageProcessor ip) {</a>
+<span class="sourceLineNo">059</span><a id="line.59">                // make a temporary copy of the image:</a>
+<span class="sourceLineNo">060</span><a id="line.60">                ImageProcessor source = ip.duplicate();</a>
+<span class="sourceLineNo">061</span><a id="line.61">                ImageProcessor target = ip;</a>
+<span class="sourceLineNo">062</span><a id="line.62">                map(source, target);</a>
+<span class="sourceLineNo">063</span><a id="line.63">                source = null;</a>
+<span class="sourceLineNo">064</span><a id="line.64">        }</a>
+<span class="sourceLineNo">065</span><a id="line.65">        </a>
+<span class="sourceLineNo">066</span><a id="line.66">        // ---------------------------------------------------------------------</a>
+<span class="sourceLineNo">067</span><a id="line.67">        </a>
+<span class="sourceLineNo">068</span><a id="line.68">        /**</a>
+<span class="sourceLineNo">069</span><a id="line.69">         * Transforms the source image to the target image using this geometric</a>
+<span class="sourceLineNo">070</span><a id="line.70">         * mapping and the specified pixel interpolation method. Note that source</a>
+<span class="sourceLineNo">071</span><a id="line.71">         * and target must be different images!</a>
+<span class="sourceLineNo">072</span><a id="line.72">         * The geometric mapping is supposed to be INVERTED, i.e. transforming</a>
+<span class="sourceLineNo">073</span><a id="line.73">         * target to source image coordinates!</a>
+<span class="sourceLineNo">074</span><a id="line.74">         * </a>
+<span class="sourceLineNo">075</span><a id="line.75">         * @param source input image (not modified)</a>
+<span class="sourceLineNo">076</span><a id="line.76">         * @param target output image (modified)</a>
+<span class="sourceLineNo">077</span><a id="line.77">         */</a>
+<span class="sourceLineNo">078</span><a id="line.78">        public void map(ImageProcessor source, ImageProcessor target) {</a>
+<span class="sourceLineNo">079</span><a id="line.79">                if (target == source) {</a>
+<span class="sourceLineNo">080</span><a id="line.80">                        throw new IllegalArgumentException("Source and target image must not be the same!");</a>
+<span class="sourceLineNo">081</span><a id="line.81">                }</a>
+<span class="sourceLineNo">082</span><a id="line.82">                ImageAccessor sourceAcc = ImageAccessor.create(source, null, im);</a>
+<span class="sourceLineNo">083</span><a id="line.83">                ImageAccessor targetAcc = ImageAccessor.create(target);</a>
+<span class="sourceLineNo">084</span><a id="line.84">                map(sourceAcc, targetAcc);</a>
+<span class="sourceLineNo">085</span><a id="line.85">        }</a>
+<span class="sourceLineNo">086</span><a id="line.86"></a>
+<span class="sourceLineNo">087</span><a id="line.87">        </a>
+<span class="sourceLineNo">088</span><a id="line.88">        // ---------------------------------------------------------------------</a>
+<span class="sourceLineNo">089</span><a id="line.89"></a>
+<span class="sourceLineNo">090</span><a id="line.90">        /**</a>
+<span class="sourceLineNo">091</span><a id="line.91">         * Transforms the source image to the target image using this geometric</a>
+<span class="sourceLineNo">092</span><a id="line.92">         * mapping and the specified pixel interpolation method.</a>
+<span class="sourceLineNo">093</span><a id="line.93">         * The two images are passed as instances of {@link ImageAccessor}.</a>
+<span class="sourceLineNo">094</span><a id="line.94">         * Note that source and target reference different images!</a>
+<span class="sourceLineNo">095</span><a id="line.95">         * The geometric mapping is supposed to be INVERTED, i.e. transforming</a>
+<span class="sourceLineNo">096</span><a id="line.96">         * target to source image coordinates!</a>
+<span class="sourceLineNo">097</span><a id="line.97">         * </a>
+<span class="sourceLineNo">098</span><a id="line.98">         * @param sourceAcc accessor to the source image</a>
+<span class="sourceLineNo">099</span><a id="line.99">         * @param targetAcc accessor to the target image</a>
+<span class="sourceLineNo">100</span><a id="line.100">         */</a>
+<span class="sourceLineNo">101</span><a id="line.101">        public void map(ImageAccessor sourceAcc, ImageAccessor targetAcc) {</a>
+<span class="sourceLineNo">102</span><a id="line.102">                if (targetAcc.getProcessor() == sourceAcc.getProcessor()) {</a>
+<span class="sourceLineNo">103</span><a id="line.103">                        throw new IllegalArgumentException("Source and target image must not be the same!");</a>
+<span class="sourceLineNo">104</span><a id="line.104">                }</a>
+<span class="sourceLineNo">105</span><a id="line.105">                Mapping2D invMap = mapping;             // this always IS an inverse mapping!!</a>
+<span class="sourceLineNo">106</span><a id="line.106">                ImageProcessor target = targetAcc.getProcessor();</a>
+<span class="sourceLineNo">107</span><a id="line.107">                final int w = target.getWidth();</a>
+<span class="sourceLineNo">108</span><a id="line.108">                final int h = target.getHeight();</a>
+<span class="sourceLineNo">109</span><a id="line.109">                for (int v = 0; v &lt; h; v++) {</a>
+<span class="sourceLineNo">110</span><a id="line.110">                        for (int u = 0; u &lt; w; u++) {</a>
+<span class="sourceLineNo">111</span><a id="line.111">                                Pnt2d sourcePt = invMap.applyTo(PntInt.from(u, v));</a>
+<span class="sourceLineNo">112</span><a id="line.112">                                float[] val = sourceAcc.getPix(sourcePt.getX(), sourcePt.getY());</a>
+<span class="sourceLineNo">113</span><a id="line.113">                                targetAcc.setPix(u, v, val);</a>
+<span class="sourceLineNo">114</span><a id="line.114">                        }</a>
+<span class="sourceLineNo">115</span><a id="line.115">                }</a>
+<span class="sourceLineNo">116</span><a id="line.116">        }</a>
+<span class="sourceLineNo">117</span><a id="line.117"></a>
+<span class="sourceLineNo">118</span><a id="line.118">}</a>
 
 
 

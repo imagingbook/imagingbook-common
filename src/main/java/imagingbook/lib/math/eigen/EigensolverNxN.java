@@ -2,8 +2,6 @@ package imagingbook.lib.math.eigen;
 
 import org.apache.commons.math3.linear.EigenDecomposition;
 import org.apache.commons.math3.linear.MatrixUtils;
-import org.apache.commons.math3.linear.RealMatrix;
-import org.apache.commons.math3.linear.RealVector;
 
 import imagingbook.lib.math.Arithmetic;
 import imagingbook.lib.math.Matrix;
@@ -38,7 +36,7 @@ import imagingbook.lib.math.Matrix;
  * }</pre>
  * 
  * @author WB
- * @version 2021/04/20
+ * @version 2021/11/25
  */
 public class EigensolverNxN implements RealEigensolver {
 
@@ -60,14 +58,21 @@ public class EigensolverNxN implements RealEigensolver {
 	}
 
 
+	/**
+	 * Creates the vector of real eigenvalues,
+	 * marking all non-real eigenvalues by {@code NaN}.
+	 * @param ed
+	 * @return
+	 */
 	private double[] makeEigenvalues(EigenDecomposition ed) {
-		double[] evals = new double[n];
 		double[] re = ed.getRealEigenvalues();
 		double[] im = ed.getImagEigenvalues();
 		for (int i = 0; i < n; i++) {
-			evals[i] = (Arithmetic.isZero(im[i])) ? re[i] : Double.NaN;
+			if (!Arithmetic.isZero(im[i])) {
+				re[i] = Double.NaN;
+			}
 		}
-		return evals;
+		return re;
 	}
 
 	@Override
@@ -107,22 +112,6 @@ public class EigensolverNxN implements RealEigensolver {
 	// -------------------------------------------------------------------------
 	
 	/**
-	 * Not for any real use - this version is listed in the book.
-	 * The real implementation is in {@link Matrix#eigen(RealMatrix)}.
-	 * @param A a matrix
-	 * @return the solution
-	 */
-	@SuppressWarnings("unused")
-	private static EigenSolution eigen(RealMatrix A) {
-		EigenDecomposition ed = new EigenDecomposition(A);
-		RealVector eVals = MatrixUtils.createRealVector(ed.getRealEigenvalues());
-		RealMatrix eVecs = ed.getV();
-		return new EigenSolution(eVals, eVecs);
-	}
-	
-	// -------------------------------------------------------------------------
-	
-	/**
 	 * @param args args
 	 * @hidden
 	 */
@@ -148,7 +137,10 @@ public class EigensolverNxN implements RealEigensolver {
 		
 		
 		System.out.println("A = \n" + Matrix.toString(A));
-		RealEigensolver solver = new EigensolverNxN(A);	
+		EigensolverNxN solver = new EigensolverNxN(A);	
+		
+		System.out.println("re = " + Matrix.toString(solver.getDecomposition().getRealEigenvalues()));
+		System.out.println("im = " + Matrix.toString(solver.getDecomposition().getImagEigenvalues()));
 
 		System.out.println("isReal = " + solver.isReal());
 		double[] eigenvals = solver.getEigenvalues();
@@ -166,17 +158,6 @@ public class EigensolverNxN implements RealEigensolver {
 			}
 		}
 		
-		RealMatrix A2 = MatrixUtils.createRealMatrix(new double[][]
-				{{2, 0, 1},
-				 {0, 2, 0},
-				 {1, 0, 2}});
-		EigenSolution solution = eigen(A2);
-		RealVector L = solution.getEigenValues();
-		RealMatrix E = solution.getEigenVectors();
-		for (int i = 0; i < L.getDimension(); i++) {
-			System.out.println(L.getEntry(i));
-			System.out.println(Matrix.toString(E.getColumn(i)));
-		}
 	}
 
 

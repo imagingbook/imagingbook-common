@@ -4,6 +4,7 @@ imagingbook.lib.filter
 imagingbook.lib.filter.examples
 imagingbook.lib.filter.linear
 imagingbook.lib.ij
+imagingbook.lib.ij.overlay
 imagingbook.lib.image
 imagingbook.lib.image.access
 imagingbook.lib.image.data

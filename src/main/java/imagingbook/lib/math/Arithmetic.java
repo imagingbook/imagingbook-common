@@ -121,10 +121,10 @@ public abstract class Arithmetic {
 	 * An exception is thrown if  {@code b} is zero.
 	 * Examples:
 	 * <pre>
-	 * mod( 3.5, 2.1) ->  1.4
-	 * mod(-3.5, 2.1) ->  0.7
-	 * mod( 3.5,-2.1) -> -0.7
-	 * mod(-3.5,-2.1) -> -1.4</pre>
+	 * mod( 3.5, 2.1) =  1.4
+	 * mod(-3.5, 2.1) =  0.7
+	 * mod( 3.5,-2.1) = -0.7
+	 * mod(-3.5,-2.1) = -1.4</pre>
 	 * @param a dividend
 	 * @param b divisor (modulus), must be nonzero
 	 * @return {@code a mod b}

@@ -86,7 +86,7 @@ public class Eigensolver2x2Test {
 	
 	@Test
 	public void testRandomMatrix2x2() {
-		Random RG = new Random();
+		Random RG = new Random(17);
 		final int N = 1000;
 		//int cnt = 0;
 		for (int i = 0; i < N; i++) {

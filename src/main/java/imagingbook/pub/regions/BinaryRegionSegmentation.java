@@ -378,8 +378,8 @@ public abstract class BinaryRegionSegmentation {
 		 * Returns the 2x2 covariance matrix for the pixel coordinates
 		 * contained in this region:
 		 * <pre>
-		 * | &sigma;<sub>20</sub> &sigma;<sub>11</sub> | 
-		 * | &sigma;<sub>11</sub> &sigma;<sub>02</sub> | 
+		 * | &sigma;_20 &sigma;_11 | 
+		 * | &sigma;_11 &sigma;_02 | 
 		 * </pre>
 		 * @return the covariance matrix
 		 */
