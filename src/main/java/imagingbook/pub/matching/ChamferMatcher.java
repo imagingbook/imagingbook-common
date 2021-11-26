@@ -9,14 +9,13 @@
 
 package imagingbook.pub.matching;
 import ij.process.ByteProcessor;
+import imagingbook.pub.geometry.basic.Pnt2d.PntInt;
 import imagingbook.pub.matching.DistanceTransform.Norm;
-
-import java.awt.Point;
 
 /**
  * This class performs chamfer matching on binary images.
  * @author W. Burger
- * @version 2014-04-20
+ * @version 2021/11/26
  */
 public class ChamferMatcher {
 	
@@ -61,7 +60,7 @@ public class ChamferMatcher {
 		return q;
 	}  	
 	
-	public float[][] getMatch(Point[] points, int width, int height) {
+	public float[][] getMatch(PntInt[] points, int width, int height) {
 		float[][] Q = new float[width][height];
 		for (int r = 0; r <= width; r++) {
 			for (int s = 0; s <= height; s++) {
@@ -72,9 +71,9 @@ public class ChamferMatcher {
 		return Q;
 	}
 	
-	private float getMatchValue(Point[] points, int r, int s) {
+	private float getMatchValue(PntInt[] points, int r, int s) {
 		float q = 0.0f;
-		for (Point p : points) {
+		for (PntInt p : points) {
 			final int u = r + p.x;
 			final int v = s + p.y;
 			if (0 <= u && u < MI && 0 <= v && v < NI) {

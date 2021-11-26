@@ -10,7 +10,7 @@
 package imagingbook.pub.color.edge;
 
 import java.awt.Point;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
@@ -21,17 +21,20 @@ import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
 import imagingbook.lib.filter.linear.GaussianKernel1D;
 import imagingbook.lib.math.eigen.Eigensolver2x2;
+import imagingbook.pub.geometry.basic.Pnt2d.PntInt;
 
 /**
  * This class implements a Canny edge detector for grayscale and RGB images.
  * The edge detector is "lazy" in the sense that it performs local non-
  * maximum suppression and edge tracing only when the results are explicitly 
- * queried (by the methods {@link #getEdgeBinary()} and {@link #getEdgeTraces()}).
+ * queried (by the methods {@link #getEdgeBinary()} and {@link #getTraces()}).
  * 
  * @author W. Burger
- * @version 2020/02/08
+ * @version 2021/11/26
  */
 public class CannyEdgeDetector extends ColorEdgeDetector {
+	
+	// TODO: Document methods, use arrays instead of image processors.
 	
 	public static class Parameters {
 		/** Gaussian sigma (scale) */
@@ -56,13 +59,14 @@ public class CannyEdgeDetector extends ColorEdgeDetector {
 	}
 	
 	private final Parameters params;
-	private final int M, N;						// width and height of I
+	private final int M, N;							// width and height of I
 	
 	private FloatProcessor Emag = null;				// gradient magnitude
 	private FloatProcessor Enms = null;				// non-max suppressed gradient magnitude
 	private FloatProcessor Ex = null, Ey = null;	// edge normal vectors
-	private ByteProcessor Ebin = null;				// final (binary) edge map
-	private List<List<Point>> traceList = null;		// list of edge traces
+	private ByteProcessor  Ebin = null;				// final (binary) edge map
+	private List<EdgeTrace> edgeTraces = null;		// list of edge traces
+	
 	
 	// Constructor with default parameters:
 	public CannyEdgeDetector(ImageProcessor ip) {
@@ -206,12 +210,12 @@ public class CannyEdgeDetector extends ColorEdgeDetector {
 		}
 		Ebin = new ByteProcessor(M, N);
 		int color = 255;
-		traceList = new LinkedList<List<Point>>();
+		edgeTraces = new ArrayList<>();
 		for (int v = 0; v < N; v++) {
 			for (int u = 0; u < M; u++) {
 				if (Enms.getf(u, v) >= params.hiThr && Ebin.get(u, v) == 0) { // unmarked edge point
-					List<Point> trace = traceAndThreshold(u, v, (float) params.loThr, color);
-					traceList.add(trace);
+					EdgeTrace trace = traceAndThreshold(u, v, (float) params.loThr, color);
+					edgeTraces.add(trace);
 				}
 			}
 		}
@@ -248,28 +252,26 @@ public class CannyEdgeDetector extends ColorEdgeDetector {
 		}
 	}
 	
-	///Recursively collect and mark all pixels of an edge that are 8-connected to 
-	// (u0,v0) and have a gradient magnitude above loThr.
 	/**
 	 * Recursively collect and mark all pixels of an edge that are 8-connected to 
 	 * (u0,v0) and have a gradient magnitude above loThr.
 	 * @param u0 start coordinate (x)
 	 * @param v0 start coordinate (y)
 	 * @param loThr low threshold (min. edge magnitude to continue tracing)
-	 * @param markColor color used for marking pixels on edge trace
+	 * @param markVal value used for marking pixels on an edge trace
 	 * @return a list of Point objects.
 	 */
-	private List<Point> traceAndThreshold(int u0, int v0, float loThr, int markColor) {
+	private EdgeTrace traceAndThreshold(int u0, int v0, float loThr, int markVal) {
 		//IJ.log("  working point " + u + " " + v);
-		Stack<Point> pointStack = new Stack<Point>();
-		List<Point> pointList = new LinkedList<Point>();
-		pointStack.push(new Point(u0, v0));
+		Stack<PntInt> pointStack = new Stack<>();
+		EdgeTrace trace = new EdgeTrace();
+		pointStack.push(PntInt.from(u0, v0));
 		while (!pointStack.isEmpty()) {
-			Point p = pointStack.pop();
+			PntInt p = pointStack.pop();
 			int up = p.x;
 			int vp = p.y;
-			Ebin.putPixel(up, vp, markColor);	// mark this edge point
-			pointList.add(p);
+			Ebin.putPixel(up, vp, markVal);	// mark this edge point
+			trace.addPoint(p);
 				
 			int uL = Math.max(up - 1, 0); 		// (up > 0) ? up-1 : 0;
 			int uR = Math.min(up + 1, M - 1); 	// (up < M-1) ? up+1 : M-1;
@@ -278,13 +280,13 @@ public class CannyEdgeDetector extends ColorEdgeDetector {
 			
 			for (int u = uL; u <= uR; u++) {
 				for (int v = vT; v <= vB; v++) {
-					if (Ebin.get(u, v) == 0 && Enms.getf(u, v) >= loThr) {
-						pointStack.push(new Point(u,v));
+					if (Ebin.get(u, v) == 0 && Enms.getf(u, v) >= loThr) { 
+						pointStack.push(PntInt.from(u,v));
 					}
 				}
 			}
 		}
-		return pointList;
+		return trace;
 	}
 	
 	private final float cosPi8 = (float) Math.cos(Math.PI/8);
@@ -341,11 +343,23 @@ public class CannyEdgeDetector extends ColorEdgeDetector {
 		return Ebin;
 	}
 	
-	public List<List<Point>> getEdgeTraces() {
-		if (traceList == null) {
+	public List<EdgeTrace> getTraces() {
+		if (edgeTraces == null) {
 			detectAndTraceEdges();
 		}
-		return traceList;
+		return edgeTraces;
+	}
+	
+	@Deprecated		// will disappear in the future, use #getTraces() instead
+	public List<List<Point>> getEdgeTraces() {
+		if (edgeTraces == null) {
+			detectAndTraceEdges();
+		}
+		List<List<Point>> traceListAwt = new ArrayList<>();
+		for (EdgeTrace trace : edgeTraces) {
+			traceListAwt.add(trace.getAwtPoints());
+		}
+		return traceListAwt;
 	}
 	
 	//---------------------------------------------------------------------------
