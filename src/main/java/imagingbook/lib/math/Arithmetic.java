@@ -9,6 +9,8 @@
 
 package imagingbook.lib.math;
 
+import org.apache.commons.math3.util.FastMath;
+
 public abstract class Arithmetic {
 	
 	// machine accuracy for IEEE 754 float/double;
@@ -60,7 +62,7 @@ public abstract class Arithmetic {
 	 * @return the radius
 	 */
 	public static double radius(double x, double y) {
-		return Math.hypot(x, y);
+		return FastMath.hypot(x, y);
 	}
 	
 	/**
@@ -70,11 +72,11 @@ public abstract class Arithmetic {
 	 * @return the angle
 	 */
 	public static double angle(double x, double y) {
-		return Math.atan2(y, x);
+		return FastMath.atan2(y, x);
 	}
 	
 	public static double[] toPolar(double x, double y) {
-		return new double[] {Math.hypot(x, y), Math.atan2(y, x)};
+		return new double[] {FastMath.hypot(x, y), FastMath.atan2(y, x)};
 	}
 	
 	public static double[] toPolar(double[] cart) {
@@ -82,7 +84,7 @@ public abstract class Arithmetic {
 	}
 	
 	public static double[] toCartesian(double radius, double angle) {
-		return new double[] {radius * Math.cos(angle), radius * Math.sin(angle)};
+		return new double[] {radius * FastMath.cos(angle), radius * FastMath.sin(angle)};
 	}
 	
 	public static double[] toCartesian(double[] polar) {
@@ -98,7 +100,7 @@ public abstract class Arithmetic {
 	 * @return {@code a mod b}
 	 */
 	public static int mod(int a, int b) {
-		return Math.floorMod(a, b);
+		return FastMath.floorMod(a, b);
 	}
 	
 	// original implementation (obsolete)
@@ -132,7 +134,7 @@ public abstract class Arithmetic {
 	public static double mod(double a, double b) {
 		if (isZero(b))
 				throw new IllegalArgumentException("zero modulus in mod");
-		return a - b * Math.floor(a / b);
+		return a - b * FastMath.floor(a / b);
 	}
 	
 	/**
@@ -143,7 +145,7 @@ public abstract class Arithmetic {
 	 * @return true if argument is close to zero
 	 */
 	public static boolean isZero(float x) {
-		return Math.abs(x) < EPSILON_FLOAT;
+		return FastMath.abs(x) < EPSILON_FLOAT;
 	}
 	
 	/**
@@ -155,7 +157,7 @@ public abstract class Arithmetic {
 	 * @return true if argument is close to zero
 	 */
 	public static boolean isZero(float x, float tolerance) {
-		return Math.abs(x) < tolerance;
+		return FastMath.abs(x) < tolerance;
 	}
 	
 	/**
@@ -166,7 +168,7 @@ public abstract class Arithmetic {
 	 * @return true if argument is close to zero
 	 */
 	public static boolean isZero(double x) {
-		return Math.abs(x) < EPSILON_DOUBLE;
+		return FastMath.abs(x) < EPSILON_DOUBLE;
 	}
 	
 	/**
@@ -178,7 +180,7 @@ public abstract class Arithmetic {
 	 * @return true if argument is close to zero
 	 */
 	public static boolean isZero(double x, double tolerance) {
-		return Math.abs(x) < tolerance;
+		return FastMath.abs(x) < tolerance;
 	}
 	
 	/**
