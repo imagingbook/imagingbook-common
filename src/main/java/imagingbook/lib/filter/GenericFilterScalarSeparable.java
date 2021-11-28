@@ -1,6 +1,5 @@
 package imagingbook.lib.filter;
 
-import ij.IJ;
 import imagingbook.lib.image.data.PixelPack;
 import imagingbook.lib.image.data.PixelPack.PixelSlice;
 
