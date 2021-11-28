@@ -83,9 +83,9 @@ public class AffineFit2D implements LinearFit2D {
 	// --------------------------------------------------------
 
 	@Override
-	public RealMatrix getTransformationMatrix() {
-//		return A.getData();
-		return A;
+	public double[][] getTransformationMatrix() {
+		return A.getData();
+//		return A;
 	}
 
 	@Override

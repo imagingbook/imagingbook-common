@@ -31,7 +31,7 @@ public class AffineMapping2D extends ProjectiveMapping2D {
 	 */
 	public static AffineMapping2D fromPoints(Pnt2d[] P, Pnt2d[] Q) {
 		AffineFit2D fit = new AffineFit2D(P, Q);
-		return new AffineMapping2D(fit.getTransformationMatrix().getData());
+		return new AffineMapping2D(fit.getTransformationMatrix());
 	}
 	
 //	/**

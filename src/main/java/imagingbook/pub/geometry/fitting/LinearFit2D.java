@@ -17,7 +17,7 @@ public interface LinearFit2D {
 	 * 
 	 * @return the transformation matrix for this fit
 	 */
-	RealMatrix getTransformationMatrix();
+	double[][] getTransformationMatrix();
 	
 	/**
 	 * Retrieves the total (squared) error for the estimated fit.

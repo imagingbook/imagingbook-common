@@ -35,7 +35,7 @@ import imagingbook.pub.geometry.basic.Pnt2d.PntInt;
  * </pre>
  * 
  * @author W. Burger
- * @version 2020-01-05
+ * @version 2021/11/27
  */
 public class ProcrustesFit implements LinearFit2D {
 	
@@ -139,24 +139,24 @@ public class ProcrustesFit implements LinearFit2D {
 	 * Retrieves the estimated orthogonal (rotation) matrix.
 	 * @return The estimated rotation matrix.
 	 */
-	public RealMatrix getR() {
-		return R;
+	public double[][] getR() {
+		return R.getData();
 	}
 	
 	/**
 	 * Retrieves the estimated translation vector.
 	 * @return The estimated translation vector.
 	 */
-	public RealVector getT() {
-		return t;
+	public double[] getT() {
+		return t.toArray();
 	}
 	
 	// --------------------------------------------------------
 	
 	@Override
-	public RealMatrix getTransformationMatrix() {
-//		return A.getData();
-		return A;
+	public double[][] getTransformationMatrix() {
+		return A.getData();
+//		return A;
 	}
 	
 	@Override
@@ -290,16 +290,18 @@ public class ProcrustesFit implements LinearFit2D {
 		
 		ProcrustesFit pf = new ProcrustesFit(P, Q, allowTranslation, allowScaling, forceRotation);
 
-		System.out.format("estimated alpha: a = %.6f\n", Math.acos(pf.getR().getEntry(0, 0)));
-		System.out.println("estimated rotation: R = \n" + Matrix.toString(pf.getR().getData()));
-		System.out.println("estimated translation: t = " + Matrix.toString(pf.getT().toArray()));
+		double[][] R = pf.getR();
+		System.out.format("estimated alpha: a = %.6f\n", Math.acos(R[0][0]));
+		System.out.println("estimated rotation: R = \n" + Matrix.toString(R));
+		double[] T = pf.getT();
+		System.out.println("estimated translation: t = " + Matrix.toString(T));
 		System.out.format("estimated scale: s = %.6f\n", pf.getScale());
 		
 		System.out.println();
 		System.out.format("RMS fitting error = %.6f\n", pf.getError());
 		System.out.format("euclidean error (test) = %.6f\n", pf.getEuclideanError(P, Q));
 		
-		double[][] A = pf.getTransformationMatrix().getData();
+		double[][] A = pf.getTransformationMatrix();
 		System.out.println("transformation matrix: A = \n" + Matrix.toString(A));
 	}
 

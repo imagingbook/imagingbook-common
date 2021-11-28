@@ -57,8 +57,8 @@ public class ProjectiveFit2D implements LinearFit2D {
 	}
 
 	@Override
-	public RealMatrix getTransformationMatrix() {
-		return A;
+	public double[][] getTransformationMatrix() {
+		return A.getData();
 	}
 
 	@Override
