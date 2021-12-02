@@ -13,4 +13,14 @@ public abstract class PntUtils {
 		return Pnt2d.from(sx/n, sy/n);
 	}
 	
+	public static double[][] toDoubleArray(Pnt2d[] pts) {
+		final int n = pts.length;
+		double[][] pa = new double[n][2];
+		for (int i = 0; i < n; i++) {
+			pa[i][0] = pts[i].getX();
+			pa[i][1] = pts[i].getY();
+		}
+		return pa;
+	}
+	
 }
