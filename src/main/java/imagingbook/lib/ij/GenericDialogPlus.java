@@ -33,6 +33,7 @@ import imagingbook.lib.util.Enums;
  * @author WB
  * @version 2020/10/11
  */
+@Deprecated    // enum-choice is now built into ImageJ
 public class GenericDialogPlus extends GenericDialog {
 	private static final long serialVersionUID = 1L;
 	
