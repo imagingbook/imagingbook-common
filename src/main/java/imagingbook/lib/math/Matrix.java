@@ -16,6 +16,7 @@ import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.Locale;
 
+import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.DecompositionSolver;
 import org.apache.commons.math3.linear.LUDecomposition;
@@ -25,6 +26,7 @@ import org.apache.commons.math3.linear.RealVector;
 import org.apache.commons.math3.linear.SingularMatrixException;
 
 import imagingbook.lib.math.Arithmetic.DivideByZeroException;
+import imagingbook.lib.math.Matrix.NonsquareMatrixException;
 import imagingbook.lib.math.eigen.RealEigensolver;
 import imagingbook.lib.settings.PrintPrecision;
 
@@ -229,6 +231,19 @@ public abstract class Matrix {
 	 */
 	public static boolean isSquare(float[][] A) {
 		return A.length > 0 && A.length == A[0].length;
+	}
+	
+	/**
+	 * Checks is the given square matrix is non-singular.
+	 * @param A a square matrix
+	 * @return true if the matrix is non-singular
+	 */
+	public static boolean isNonSingular(double[][] A) throws NonsquareMatrixException {
+		if (!Matrix.isSquare(A)) {
+			throw new NonsquareMatrixException();
+		}		
+		DecompositionSolver solver = new LUDecomposition(new Array2DRowRealMatrix(A)).getSolver();		
+		return solver.isNonSingular();
 	}
 	
 	/**

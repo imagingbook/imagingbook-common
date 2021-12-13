@@ -48,6 +48,10 @@ public class AlgebraicLine {
 		this.c = c / norm;
 	}
 	
+	public AlgebraicLine(double[] p) {
+		this(p[0], p[1], p[2]);
+	}
+	
 	public AlgebraicLine(AlgebraicLine L) {
 		this(L.a, L.b, L.c);
 	}

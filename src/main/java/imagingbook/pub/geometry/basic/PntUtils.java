@@ -23,4 +23,13 @@ public abstract class PntUtils {
 		return pa;
 	}
 	
+	public static Pnt2d[] fromDoubleArray(double[][] pa) {
+		final int n = pa.length;
+		Pnt2d[] pts = new Pnt2d[n];
+		for (int i = 0; i < n; i++) {
+			pts[i] = Pnt2d.from(pa[i]);
+		}
+		return pts;
+	}
+	
 }

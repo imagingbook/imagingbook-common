@@ -45,6 +45,8 @@ import imagingbook.lib.math.Matrix;
  * 
  * @author W. Burger
  * @version 2021-05-19
+ * 
+ * TODO: Identity matrix returns NaN eigenvalues - CHECK!
  */
 public class Eigensolver2x2 implements RealEigensolver { // to check: http://www.akiti.ca/Eig2Solv.html
 	
