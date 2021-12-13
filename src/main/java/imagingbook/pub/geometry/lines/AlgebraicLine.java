@@ -8,12 +8,13 @@
  *******************************************************************************/
 package imagingbook.pub.geometry.lines;
 
-import static imagingbook.lib.math.Arithmetic.sqr;
 import static imagingbook.lib.math.Arithmetic.isZero;
+import static imagingbook.lib.math.Arithmetic.sqr;
 
+import java.awt.Shape;
+import java.awt.geom.Rectangle2D;
 import java.util.Locale;
 
-//import imagingbook.lib.math.Arithmetic;
 import imagingbook.pub.geometry.basic.Pnt2d;
 import imagingbook.pub.geometry.basic.Pnt2d.PntDouble;
 
@@ -143,6 +144,21 @@ public class AlgebraicLine {
 //	public Point getClosestLinePoint() {
 //		return getClosestLinePoint(Point.ZERO);
 //	}
+	
+
+	public double getError(Pnt2d[] points) {
+		double sum2 = 0;
+		for (Pnt2d p : points) {
+			sum2 = sum2 + sqr(getDistance(p));
+		}
+		return sum2 / points.length;
+	}
+	
+	// -------------------------------------------------------------------
+	
+	public Shape getShape(Rectangle2D rect) {
+		return null;
+	}
 	
 	// -------------------------------------------------------------------
 	
