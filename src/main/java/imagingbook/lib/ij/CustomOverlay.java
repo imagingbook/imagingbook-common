@@ -38,6 +38,7 @@ import imagingbook.lib.ij.overlay.ShapeOverlayAdapter;
  *
  * @param <T> type of elements allowed to be added to this overlay
  */
+@Deprecated // replaced by imagingbook.lib.ij.overlay.ShapeOverlayAdapter
 public abstract class CustomOverlay<T> extends Overlay {
 	
 	public static Color DefaultStrokeColor = Color.gray;

@@ -26,7 +26,6 @@ import org.apache.commons.math3.linear.RealVector;
 import org.apache.commons.math3.linear.SingularMatrixException;
 
 import imagingbook.lib.math.Arithmetic.DivideByZeroException;
-import imagingbook.lib.math.Matrix.NonsquareMatrixException;
 import imagingbook.lib.math.eigen.RealEigensolver;
 import imagingbook.lib.settings.PrintPrecision;
 
@@ -1555,6 +1554,24 @@ public abstract class Matrix {
 		PrintStream strm = new PrintStream(bas);
 		printToStream(A, strm);
 		return bas.toString();
+	}
+	
+	public static String toString(RealVector x) {
+		if (x == null) {
+			return String.valueOf(x);
+		}
+		else {
+			return toString(x.toArray());
+		}
+	}
+	
+	public static String toString(RealMatrix A) {
+		if (A == null) {
+			return String.valueOf(A);
+		}
+		else {
+			return toString(A.getData());
+		}
 	}
 	
 	// --------------------
