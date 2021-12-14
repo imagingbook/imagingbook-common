@@ -333,6 +333,34 @@ public abstract class IjUtils {
 		return binary;
 	}
 	
+	/**
+	 * Checks if the given image is "flat", i.e., all pixels have
+	 * the same value.
+	 * This should work for all image types.
+	 * 
+	 * @param ip the image ({@link ImageProcessor}) to be checked
+	 * @return true if the image is flat
+	 */
+	public static boolean isFlat(ImageProcessor ip) {
+		final int width = ip.getWidth();
+		final int height = ip.getHeight();
+		boolean flat = true;
+		int fgVal = ip.get(0, 0);
+		
+		outer:
+		for (int v = 0; v < height; v++) {
+			for (int u = 0; u < width; u++) {
+				int val = ip.get(u, v);
+				if (val != fgVal) {
+					flat = false;
+					break outer;
+				}
+			}
+		}
+		
+		return flat;
+	}
+	
 	public static final double DefaultMatchTolerance = 1E-6;
 	
 	/**
