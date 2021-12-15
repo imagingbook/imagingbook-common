@@ -14,8 +14,8 @@ public class AlgebraicLineTest {
 
 	@Test
 	public void test1() {
-		AlgebraicLine l12 = AlgebraicLine.fromPoints(p1, p2);		
-		AlgebraicLine l21 = AlgebraicLine.fromPoints(p2, p1);
+		AlgebraicLine l12 = AlgebraicLine.from(p1, p2);		
+		AlgebraicLine l21 = AlgebraicLine.from(p2, p1);
 		
 		Assert.assertEquals(0.0, l12.getDistance(p1), 1E-6);
 		Assert.assertEquals(0.0, l12.getDistance(p2), 1E-6);
@@ -26,7 +26,7 @@ public class AlgebraicLineTest {
 	
 	@Test
 	public void test2() {
-		AlgebraicLine l12 = AlgebraicLine.fromPoints(p1, p2);
+		AlgebraicLine l12 = AlgebraicLine.from(p1, p2);
 		Pnt2d x0 = l12.getClosestLinePoint(p3);
 		Assert.assertEquals(0.0, l12.getDistance(x0), 1E-6);						// x0 is actually ON the line
 		Assert.assertEquals(p3.distance(x0), Math.abs(l12.getDistance(p3)), 1E-6);	// distance (p3,x0) is shortest 

@@ -20,7 +20,7 @@ public class HoughLineTest {
 	public void test0() {
 		// example from CV lecture notes
 		Pnt2d xRef = PntInt.from(90, 60);
-		AlgebraicLine h12 = AlgebraicLine.fromPoints(p1, p2);
+		AlgebraicLine h12 = AlgebraicLine.from(p1, p2);
 	
 		HoughLine L12 = new HoughLine(h12, xRef.getX(), xRef.getY(), 0);
 		Assert.assertEquals(0.0, L12.getDistance(p1), 1E-6);
@@ -50,7 +50,7 @@ public class HoughLineTest {
 	@Test
 	public void test3() {
 		// lA, lH1 lH2 must be the same lines:
-		AlgebraicLine LA = AlgebraicLine.fromPoints(p1, p2);
+		AlgebraicLine LA = AlgebraicLine.from(p1, p2);
 		HoughLine L1 = HoughLine.fromPoints(p1, p2, pRef, 2);
 		HoughLine L2 = new HoughLine(LA, pRef.getX(), pRef.getY(), 2);
 		

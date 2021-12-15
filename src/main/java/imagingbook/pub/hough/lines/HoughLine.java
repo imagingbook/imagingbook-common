@@ -36,7 +36,7 @@ public class HoughLine extends HessianLine implements Comparable<HoughLine> {
 	// static factory methods -------------------------------
 	
 	public static HoughLine fromPoints(Pnt2d p1, Pnt2d p2, Pnt2d pRef, int count) {
-		return new HoughLine(AlgebraicLine.fromPoints(p1, p2), pRef.getX(), pRef.getY(), count);
+		return new HoughLine(AlgebraicLine.from(p1, p2), pRef.getX(), pRef.getY(), count);
 	}
 	
 	// constructors -----------------------------------------

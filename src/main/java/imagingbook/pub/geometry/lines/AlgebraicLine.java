@@ -19,23 +19,14 @@ import imagingbook.pub.geometry.basic.Pnt2d;
 import imagingbook.pub.geometry.basic.Pnt2d.PntDouble;
 
 /**
- * This class represents an algebraic line of the form a * x + b * y + c = 0.
- * Instances are immutable and normalized such that ||(a,b)|| = 1.
+ * This class represents an algebraic line of the form A x + B  y + C = 0.
+ * Instances are immutable and normalized such that ||(A,B)|| = 1.
  * @author WB
  *
  */
 public class AlgebraicLine {
 	
-	private final double a, b, c;
-
-	// static factory methods ----------------------------------------
-	
-	public static AlgebraicLine fromPoints(Pnt2d p1, Pnt2d p2) {
-		double a = p1.getY() - p2.getY();
-		double b = p2.getX() - p1.getX();
-		double c = -a * p1.getX() - b * p1.getY();
-		return new AlgebraicLine(a, b, c);
-	}
+	private final double A, B, C;
 	
 	// constructors --------------------------------------------------
 
@@ -44,9 +35,9 @@ public class AlgebraicLine {
 		if (isZero(norm)) {
 			throw new IllegalArgumentException("a and b may not both be zero");
 		}
-		this.a = a / norm;
-		this.b = b / norm;
-		this.c = c / norm;
+		this.A = a / norm;
+		this.B = b / norm;
+		this.C = c / norm;
 	}
 	
 	public AlgebraicLine(double[] p) {
@@ -54,21 +45,44 @@ public class AlgebraicLine {
 	}
 	
 	public AlgebraicLine(AlgebraicLine L) {
-		this(L.a, L.b, L.c);
+		this(L.A, L.B, L.C);
+	}
+	
+	// static factory methods ----------------------------------------
+	
+	public static AlgebraicLine from(Pnt2d p0, Pnt2d p1) {
+		double A = p0.getY() - p1.getY();
+		double B = p1.getX() - p0.getX();
+		double C = -A * p0.getX() - B * p0.getY();
+		return new AlgebraicLine(A, B, C);
+	}
+	
+	// TODO: replace by direct calculation
+	public static AlgebraicLine from(SlopeInterceptLine sil) {
+		double A = sil.getA();
+		double B = sil.getC();
+//		Pnt2d p0 = Pnt2d.from(0, B);
+//		Pnt2d p1 = Pnt2d.from(1, A + B);
+//		return AlgebraicLine.from(p0, p1);
+		return new AlgebraicLine(A, -1, B);
 	}
 	
 	// getter/setter methods ------------------------------------------
 	
+	public double[] getParameters() {
+		return new double[] {A, B, C};
+	}
+	
 	public final double getA() {
-		return a;
+		return A;
 	}
 
 	public final double getB() {
-		return b;
+		return B;
 	}
 
 	public final double getC() {
-		return c;
+		return C;
 	}
 	
 	public double getXref() {
@@ -92,7 +106,7 @@ public class AlgebraicLine {
 	 * @return The perpendicular distance between this line and the point (x, y).
 	 */
 	public double getDistance(double x, double y) {
-		return (a * (x - this.getXref()) + b * (y - this.getYref()) + c);
+		return (A * (x - this.getXref()) + B * (y - this.getYref()) + C);
 	}
 	
 	/**
@@ -120,8 +134,8 @@ public class AlgebraicLine {
 		final double yr = this.getYref();
 		double xx = p.getX() - xr;
 		double yy = p.getY() - yr;
-		double x0 = xr + s * (sqr(b) * xx - a * b * yy - a * c);
-		double y0 = yr + s * (sqr(a) * yy - a * b * xx - b * c);
+		double x0 = xr + s * (sqr(B) * xx - A * B * yy - A * C);
+		double y0 = yr + s * (sqr(A) * yy - A * B * xx - B * C);
 		return PntDouble.from(x0, y0);
 	}
 	
@@ -170,7 +184,7 @@ public class AlgebraicLine {
 			double delta = 1E-6;
 			// get two different points on L1:
 			Pnt2d xA = L1.getClosestLinePoint(PntDouble.ZERO);
-			Pnt2d xB = PntDouble.from(xA.getX() - L1.b, xA.getY() + L1.a);
+			Pnt2d xB = PntDouble.from(xA.getX() - L1.B, xA.getY() + L1.A);
 			// check if both points are L2 too:
 			return (isZero(L2.getDistance(xA), delta) && isZero(L2.getDistance(xB), delta));
 		}
@@ -182,7 +196,7 @@ public class AlgebraicLine {
 	@Override
 	public String toString() {
 		return String.format(Locale.US, "%s <a = %.3f, b = %.3f, c = %.3f>",
-				this.getClass().getSimpleName(), a, b, c);
+				this.getClass().getSimpleName(), A, B, C);
 	}
 	
 }
