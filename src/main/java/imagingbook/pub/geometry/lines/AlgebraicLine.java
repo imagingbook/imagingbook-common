@@ -50,17 +50,31 @@ public class AlgebraicLine {
 	
 	// static factory methods ----------------------------------------
 	
-	public static AlgebraicLine from(Pnt2d p0, Pnt2d p1) {
-		double A = p0.getY() - p1.getY();
-		double B = p1.getX() - p0.getX();
-		double C = -A * p0.getX() - B * p0.getY();
+	public static AlgebraicLine from(double[] s, double[] v) {
+		double A = -v[1];
+		double B = v[0];
+		double C = v[1] * s[0] - v[0] * s[1];
 		return new AlgebraicLine(A, B, C);
+	}
+	
+	public static AlgebraicLine from(ParametricLine pl) {
+		return AlgebraicLine.from(pl.getS(), pl.getV());
+	}
+	
+	public static AlgebraicLine from(Pnt2d p0, Pnt2d p1) {
+//		double A = p0.getY() - p1.getY();
+//		double B = p1.getX() - p0.getX();
+//		double C = -A * p0.getX() - B * p0.getY();
+//		return new AlgebraicLine(A, B, C);
+		double[] s = p0.toDoubleArray();
+		double[] v = p1.minus(p0).toDoubleArray();
+		return AlgebraicLine.from(s, v);
 	}
 	
 	// TODO: replace by direct calculation
 	public static AlgebraicLine from(SlopeInterceptLine sil) {
-		double A = sil.getA();
-		double B = sil.getC();
+		double A = sil.getK();
+		double B = sil.getD();
 //		Pnt2d p0 = Pnt2d.from(0, B);
 //		Pnt2d p1 = Pnt2d.from(1, A + B);
 //		return AlgebraicLine.from(p0, p1);
@@ -185,7 +199,7 @@ public class AlgebraicLine {
 			// get two different points on L1:
 			Pnt2d xA = L1.getClosestLinePoint(PntDouble.ZERO);
 			Pnt2d xB = PntDouble.from(xA.getX() - L1.B, xA.getY() + L1.A);
-			// check if both points are L2 too:
+			// check if both points are on L2 too:
 			return (isZero(L2.getDistance(xA), delta) && isZero(L2.getDistance(xB), delta));
 		}
 		else {
@@ -195,7 +209,7 @@ public class AlgebraicLine {
 	
 	@Override
 	public String toString() {
-		return String.format(Locale.US, "%s <a = %.3f, b = %.3f, c = %.3f>",
+		return String.format(Locale.US, "%s <a=%.3f, b=%.3f, c=%.3f>",
 				this.getClass().getSimpleName(), A, B, C);
 	}
 	
