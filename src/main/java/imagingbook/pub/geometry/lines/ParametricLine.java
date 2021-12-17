@@ -43,10 +43,10 @@ public class ParametricLine {
 	public static ParametricLine from(AlgebraicLine al) {
 		double[] p = al.getParameters();
 		// not needed, since algebraic lines are always normalized (i.e. A^2 + B^2 = 1)
-		double norm2 = sqr(p[0]) + sqr(p[1]);	// = A^2 + B^2
-		double scale = -p[2] / norm2;	// = -C / ||(A,B)||^2
-		double[] s = {scale * p[0], scale * p[1]}; // = (-CA, -CB)
-		double[] v = {-p[1], p[0]};		// = (-B, A)
+		double norm2 = sqr(p[0]) + sqr(p[1]);		// = A^2 + B^2
+		double scale = -p[2] / norm2;				// = -C / ||(A,B)||^2
+		double[] s = {scale * p[0], scale * p[1]};	// = (-CA, -CB)
+		double[] v = {-p[1], p[0]};					// = (-B, A)
 		return new ParametricLine(s, v);
 	}
 	

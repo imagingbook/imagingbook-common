@@ -201,20 +201,6 @@ public interface Pnt2d {
 	
 	// ----------------------------------------------------------
 
-//	/**
-//	 * Tests if this point matches the given point, i.e., if
-//	 * both coordinate differences are zero (&lt; {@link #TOLERANCE}).
-//	 * 
-//	 * @param p the point to be matched to
-//	 * @return true if both points match
-//	 */
-//	public default boolean equals(Pnt2d p) {
-//		if (this == p) {
-//			return true;
-//		}
-//		return this.equals(p, TOLERANCE);
-//	}
-	
 	/**
 	 * Tests if this point matches the given point, i.e., if
 	 * both coordinate differences are zero (&lt; than 

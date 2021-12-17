@@ -174,12 +174,25 @@ public class AlgebraicLine {
 //	}
 	
 
-	public double getError(Pnt2d[] points) {
+	public double getSquareError(Pnt2d[] points) {
 		double sum2 = 0;
 		for (Pnt2d p : points) {
 			sum2 = sum2 + sqr(getDistance(p));
 		}
-		return sum2 / points.length;
+		return sum2;
+	}
+	
+	public Pnt2d intersect(AlgebraicLine L2) {
+		AlgebraicLine L1 = this;	
+		double det = L1.A * L2.B - L2.A * L1.B;
+		if (isZero(det)) {
+			return null;
+		}
+		else {
+			double x = (L1.B * L2.C - L2.B * L1.C) / det;
+			double y = (L2.A * L1.C - L1.A * L2.C) / det;
+			return Pnt2d.from(x, y);
+		}
 	}
 	
 	// -------------------------------------------------------------------
@@ -192,6 +205,9 @@ public class AlgebraicLine {
 	
 	@Override
 	public boolean equals(Object other) {
+		if (this == other) {
+			return true;
+		}
 		if (other instanceof AlgebraicLine) {
 			AlgebraicLine L1 = this;
 			AlgebraicLine L2 = (AlgebraicLine) other;
@@ -213,4 +229,27 @@ public class AlgebraicLine {
 				this.getClass().getSimpleName(), A, B, C);
 	}
 	
+	// -------------------------------------------------------------------
+	
+	public static void main (String[] args) {
+		Pnt2d p1 = Pnt2d.from(1, 2);
+		Pnt2d p2 = Pnt2d.from(4, 3);
+		Pnt2d p3 = Pnt2d.from(9, -7);
+		AlgebraicLine L1 = AlgebraicLine.from(p1, p2);
+		AlgebraicLine L2 = AlgebraicLine.from(p3, p2);
+		{
+			Pnt2d x = L1.intersect(L2);
+			System.out.println("x = " + x);
+			System.out.println("x = p2 ? " + x.equals(p2));
+		}
+		{
+			Pnt2d x = L2.intersect(L1);
+			System.out.println("x = " + x);
+			System.out.println("x = p2 ? " + x.equals(p2));
+		}
+		
+		
+		Pnt2d y = L1.intersect(L1);	// --> null
+		System.out.println("y = " + y);
+	}
 }
