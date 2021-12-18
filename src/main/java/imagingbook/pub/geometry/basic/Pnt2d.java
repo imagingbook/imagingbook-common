@@ -4,6 +4,8 @@ import static imagingbook.lib.math.Arithmetic.isZero;
 import static imagingbook.lib.math.Arithmetic.sqr;
 
 import java.awt.Point;
+import java.awt.Shape;
+import java.awt.geom.Arc2D;
 import java.awt.geom.Point2D;
 import java.util.Locale;
 
@@ -259,6 +261,27 @@ public interface Pnt2d {
 	 */
 	public default double distL1(Pnt2d other) {
 		return Math.abs(this.getX() - other.getX()) + Math.abs(this.getY() - other.getY());
+	}
+	
+	public static final double DefaultDotRadius = 1.0;
+	
+	/**
+	 * Returns a round dot ({@link Shape} instance) for drawing this point.
+	 * 
+	 * @param rad the dot radius
+	 * @return the shape
+	 */
+	public default Shape getShape(double rad) {
+		Shape circ= new Arc2D.Double(
+			this.getX() - rad, 
+			this.getY() - rad, 
+			2 * rad, 2 * rad,
+			0, 360, Arc2D.CHORD);
+		return circ;
+	}
+	
+	public default Shape getShape() {
+		return getShape(DefaultDotRadius);
 	}
 	
 	// ----------------------------------------------------------
@@ -607,20 +630,17 @@ public interface Pnt2d {
 		
 		// misc -----------------------------------
 		
-		
 		@Override
 		public String toString() {
 			return String.format(Locale.US, "%s[%d, %d]", 
 					getClass().getSimpleName(), x, y);
 		}
 		
-		
 		@Override
 		public int hashCode() {
 			return (17 + this.x) * 37 + this.y;	
 		}
 		
-		// static conversion methods
 		
 		/**
 		 * Returns this point's coordinates as a new 2-element {@code int} array.
@@ -637,6 +657,7 @@ public interface Pnt2d {
 		public Point toAwtPoint() {
 			return new Point(this.x, this.y);
 		}
+		
 	}
 	
 	// -------------------------------------------------------------------------

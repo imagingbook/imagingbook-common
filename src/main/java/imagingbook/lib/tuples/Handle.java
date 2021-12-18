@@ -1,6 +1,4 @@
-package imagingbook.lib.util;
-
-import imagingbook.lib.tuples.Tuple2;
+package imagingbook.lib.tuples;
 
 /**
  * An elementary "handle" mechanism to facilitate indirect (two-stage)

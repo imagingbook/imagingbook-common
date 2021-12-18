@@ -31,8 +31,16 @@ public interface Tuple {
 		System.out.println("tA = " + tA.toString());
 		System.out.println("tB = " + tB.toString());
 		System.out.println("tC = " + tC.toString());
-		System.out.println("tA.f0 = " + tA.f0.toString());
-		System.out.println("tA.f1 = " + tA.f1.toString());
+		
+		int k = tA.item0;
+		String s = tA.item1;
+		
+		System.out.println("tA.f0 = " + tA.item0.toString());
+		System.out.println("tA.f1 = " + tA.item1.toString());
+		
+		System.out.println("tA class = " + tA.getClass());
+		System.out.println("tB class = " + tB.getClass());
+		System.out.println("tC class = " + tC.getClass());
 	}
 }
 

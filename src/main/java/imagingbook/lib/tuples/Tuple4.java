@@ -10,21 +10,21 @@ package imagingbook.lib.tuples;
  */
 public final class Tuple4<T0, T1, T2, T3> implements Tuple {
 	
-	public final T0 f0;
-	public final T1 f1;
-	public final T2 f2;
-	public final T3 f3;
+	public final T0 item0;
+	public final T1 item1;
+	public final T2 item2;
+	public final T3 item3;
 	
-	public Tuple4(T0 val0, T1 val1, T2 val2, T3 val3) {
-		this.f0 = val0;
-		this.f1 = val1;
-		this.f2 = val2;
-		this.f3 = val3;
+	public Tuple4(T0 item0, T1 item1, T2 item2, T3 item3) {
+		this.item0 = item0;
+		this.item1 = item1;
+		this.item2 = item2;
+		this.item3 = item3;
 	}
 	
 	@Override
 	public String toString() {
-		return String.format("<%s,%s,%s,%s>", f0.toString(), f1.toString(), f2.toString(), f3.toString());
+		return String.format("<%s,%s,%s,%s>", item0.toString(), item1.toString(), item2.toString(), item3.toString());
 	}
 
 	public static <T0, T1, T2, T3> Tuple4<T0, T1, T2, T3> of(T0 val0, T1 val1, T2 val2, T3 val3) {

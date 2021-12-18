@@ -137,8 +137,8 @@ public class SegmentationRegionContour extends BinaryRegionSegmentation implemen
 		final int label = contour.getLabel();	// C is the (empty) contour		
 		
 		Tuple2<PntInt, Integer> next = findNextContourPoint(Xs, ds);
-		PntInt X = next.f0;
-		int d = next.f1;
+		PntInt X = next.item0;
+		int d = next.item1;
 		
 		contour.addPoint(X);
 		final PntInt Xt = X;
@@ -149,8 +149,8 @@ public class SegmentationRegionContour extends BinaryRegionSegmentation implemen
 			PntInt Xp = X;
 			int dn = (d + 6) % 8;
 			next = findNextContourPoint(X, dn);
-			X = next.f0;
-			d = next.f1;
+			X = next.item0;
+			d = next.item1;
 			// are we back at the starting position?
 			home = (Xp.equals(Xs) && X.equals(Xt)); // back at start pos.
 			if (!home) {
