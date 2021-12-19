@@ -151,28 +151,7 @@ public class AlgebraicLine {
 		double x0 = xr + s * (sqr(B) * xx - A * B * yy - A * C);
 		double y0 = yr + s * (sqr(A) * yy - A * B * xx - B * C);
 		return PntDouble.from(x0, y0);
-	}
-	
-//	@Override
-//	public Point getClosestLinePoint(Point p) {
-//		double s = 1.0; // 1.0 / (sqr(a) + sqr(b)); // assumed to be normalized
-//		double xx = p.getX() - xRef;
-//		double yy = p.getY() - yRef;
-//		double x0 = xRef + s * (sqr(b) * xx - a * b * yy - a * c);
-//		double y0 = yRef + s * (sqr(a) * yy - a * b * xx - b * c);
-//		return Point.create(x0, y0);
-//	}
-	
-//	/**
-//	 * Returns the point on the line that is closest to the orgin.
-//	 * This is equivalent to {@code getClosestLinePoint(Point.create(0, 0))}.
-//	 * See also {@link #getClosestLinePoint(Point)}.
-//	 * @return the closest line point
-//	 */
-//	public Point getClosestLinePoint() {
-//		return getClosestLinePoint(Point.ZERO);
-//	}
-	
+	}	
 
 	public double getSquareError(Pnt2d[] points) {
 		double sum2 = 0;
@@ -253,3 +232,9 @@ public class AlgebraicLine {
 		System.out.println("y = " + y);
 	}
 }
+
+//	x = PntDouble[4.000, 3.000]
+//	x = p2 ? true
+//	x = PntDouble[4.000, 3.000]
+//	x = p2 ? true
+//	y = null
