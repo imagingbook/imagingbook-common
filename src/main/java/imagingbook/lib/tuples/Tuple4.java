@@ -27,7 +27,7 @@ public final class Tuple4<T0, T1, T2, T3> implements Tuple {
 		return String.format("<%s,%s,%s,%s>", item0.toString(), item1.toString(), item2.toString(), item3.toString());
 	}
 
-	public static <T0, T1, T2, T3> Tuple4<T0, T1, T2, T3> of(T0 val0, T1 val1, T2 val2, T3 val3) {
+	public static <T0, T1, T2, T3> Tuple4<T0, T1, T2, T3> from(T0 val0, T1 val1, T2 val2, T3 val3) {
 		return new Tuple4<>(val0, val1, val2, val3);
 	}
 	

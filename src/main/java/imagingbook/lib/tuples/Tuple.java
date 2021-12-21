@@ -27,16 +27,16 @@ public interface Tuple {
 	public static void main(String[] args) {
 		Tuple2<Integer, String> tA = new Tuple2<>(10, "Foo");
 		Tuple tB = new Tuple2<Integer, String>(-3, "Bar");
-		Tuple tC = Tuple2.of(17, "Kaputnik");
+		Tuple tC = Tuple2.from(17, "Kaputnik");
 		System.out.println("tA = " + tA.toString());
 		System.out.println("tB = " + tB.toString());
 		System.out.println("tC = " + tC.toString());
 		
-		int k = tA.item0;
-		String s = tA.item1;
+		int k = tA.get0();
+		String s = tA.get1();
 		
-		System.out.println("tA.f0 = " + tA.item0.toString());
-		System.out.println("tA.f1 = " + tA.item1.toString());
+		System.out.println("tA.f0 = " + tA.get0().toString());
+		System.out.println("tA.f1 = " + tA.get1().toString());
 		
 		System.out.println("tA class = " + tA.getClass());
 		System.out.println("tB class = " + tB.getClass());

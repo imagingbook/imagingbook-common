@@ -37,28 +37,21 @@ public class Handle<T> {
 	private static void foo(Handle<Integer> h) {
 		h.set(33);
 	}
-	
-	// returns multiple values as a tuple
-	private static Tuple2<Integer, String> bar() {
-		return Tuple2.of(99, "bar");
-	}
 
-	
 	public static void main(String[] args) {
-		Handle<Integer> a = Handle.of(10);
-		Handle<String>  s = Handle.of("prima!");
+		Handle<Integer> a1 = Handle.of(10);
+		Handle<Integer> a2 = Handle.<Integer>of(10);
 		
-		System.out.println("a = " + a.get());
+		Handle<Double> b = new Handle<>(10.0);
+		Handle<String> s = Handle.of("prima!");
+		
+		System.out.println("orig a = " + a1.get());
 		
 		// Example 1: call by reference (foo modifies the contents of a)
-		foo(a);
-		System.out.println("a = " + a.get());
+		foo(a1);
+		System.out.println("modified a = " + a1.get());
 		
-		// Example 2: de-referencing the elements of a tuple
-		bar().assignto(a, s);
-		System.out.println("a = " + a.get());
-		System.out.println("s = " + s.get());
-		
+
 	}
 
 
