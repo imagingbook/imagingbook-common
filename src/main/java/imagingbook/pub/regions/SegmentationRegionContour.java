@@ -19,6 +19,7 @@ import ij.IJ;
 import ij.process.ByteProcessor;
 import imagingbook.lib.tuples.Tuple2;
 import imagingbook.pub.geometry.basic.Pnt2d.PntInt;
+import imagingbook.pub.regions.segment.BinaryRegion;
 import imagingbook.pub.regions.segment.BinaryRegionSegmentation;
 import imagingbook.pub.regions.segment.RegionContourSegmentation;
 

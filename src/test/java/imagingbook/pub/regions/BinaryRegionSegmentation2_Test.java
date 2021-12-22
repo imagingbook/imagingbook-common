@@ -11,13 +11,13 @@ import org.junit.Test;
 import ij.process.ByteProcessor;
 import imagingbook.DATA.images.RLOC;
 import imagingbook.lib.util.resource.ResourceLocation.Resource;
+import imagingbook.pub.regions.segment.BinaryRegion;
 import imagingbook.pub.regions.segment.BinaryRegionSegmentation;
 import imagingbook.pub.regions.segment.BreadthFirstSegmentation;
 import imagingbook.pub.regions.segment.DepthFirstSegmentation;
 import imagingbook.pub.regions.segment.RecursiveSegmentation;
 import imagingbook.pub.regions.segment.RegionContourSegmentation;
 import imagingbook.pub.regions.segment.SequentialSegmentation;
-import imagingbook.pub.regions.segment.BinaryRegionSegmentation.BinaryRegion;
 
 /**
  * Segmentation test on a small image  which can also be handled by the

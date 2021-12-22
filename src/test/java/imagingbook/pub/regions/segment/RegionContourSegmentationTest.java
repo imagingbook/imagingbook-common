@@ -16,7 +16,6 @@ import imagingbook.pub.regions.NeighborhoodType;
 import imagingbook.pub.regions.Contour.Inner;
 import imagingbook.pub.regions.Contour.Outer;
 import imagingbook.pub.regions.segment.RegionContourSegmentation;
-import imagingbook.pub.regions.segment.BinaryRegionSegmentation.BinaryRegion;
 
 public class RegionContourSegmentationTest {
 	
