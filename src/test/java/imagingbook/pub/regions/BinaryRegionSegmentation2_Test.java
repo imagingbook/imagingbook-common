@@ -11,7 +11,6 @@ import org.junit.Test;
 import ij.process.ByteProcessor;
 import imagingbook.DATA.images.RLOC;
 import imagingbook.lib.util.resource.ResourceLocation.Resource;
-import imagingbook.pub.regions.segment.BinaryRegion;
 import imagingbook.pub.regions.segment.BinaryRegionSegmentation;
 import imagingbook.pub.regions.segment.BreadthFirstSegmentation;
 import imagingbook.pub.regions.segment.DepthFirstSegmentation;

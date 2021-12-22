@@ -18,6 +18,7 @@ import java.util.Map;
 
 import ij.process.ByteProcessor;
 import ij.process.ImageProcessor;
+import imagingbook.pub.regions.BinaryRegion;
 import imagingbook.pub.regions.NeighborhoodType;
 
 /**
@@ -35,7 +36,7 @@ import imagingbook.pub.regions.NeighborhoodType;
  * If the segmentation has failed for some reason
  * {@link #getRegions()} returns {@code null}.
  * 
- * @version 2020/12/22
+ * @version 2021/12/22
  */
 public abstract class BinaryRegionSegmentation {
 	
@@ -55,7 +56,7 @@ public abstract class BinaryRegionSegmentation {
 	// -1 ... previously visited background pixel
 	// >0 ... valid label
 	
-	private final Map<Integer, BinaryRegion> regions;
+	private final Map<Integer, SegmentationBackedRegion> regions;
 	private final boolean isSegmented;
 	
 	private final int minLabel = 2;
@@ -149,7 +150,7 @@ public abstract class BinaryRegionSegmentation {
 	 * Region label numbers serve as map keys.
 	 * @return a map of {@link BinaryRegion} instances.
 	 */
-	protected Map<Integer, BinaryRegion> collectRegions() {
+	protected Map<Integer, SegmentationBackedRegion> collectRegions() {
 		SegmentationBackedRegion[] regionArray = new SegmentationBackedRegion[maxLabel + 1];
 		for (int label = minLabel; label <= maxLabel; label++) {
 			regionArray[label] = new SegmentationBackedRegion(label, this);
@@ -163,7 +164,7 @@ public abstract class BinaryRegionSegmentation {
 			}
 		}
 		// create a list of regions to return, collect nonempty regions
-		Map<Integer, BinaryRegion> regionMap = new LinkedHashMap<>();
+		Map<Integer, SegmentationBackedRegion> regionMap = new LinkedHashMap<>();
 		for (SegmentationBackedRegion r: regionArray) {
 			if (r != null && r.getSize() > 0) {
 				r.update();	// compute the statistics for this region
@@ -206,7 +207,7 @@ public abstract class BinaryRegionSegmentation {
 	 * @return the region object associated with the given label
 	 * 		or {@code null} if it does not exist.
 	 */
-	public BinaryRegion getRegion(int label) {
+	public SegmentationBackedRegion getRegion(int label) {
 		return (label < minLabel || label > maxLabel) ? null : regions.get(label);
 	}
 	
@@ -218,14 +219,8 @@ public abstract class BinaryRegionSegmentation {
 	 * @return The associated {@link BinaryRegion} object or null if
 	 * 		this {@link BinaryRegionSegmentation} has no region at the given position.
 	 */
-	public BinaryRegion getRegion(int u, int v) {
+	public SegmentationBackedRegion getRegion(int u, int v) {
 		return getRegion(getLabel(u, v));
 	}
-		
-	// --------------------------------------------------------------------------
-
-	
-	// --------- Iteration over region pixels -----------------------------------
-
 
 }

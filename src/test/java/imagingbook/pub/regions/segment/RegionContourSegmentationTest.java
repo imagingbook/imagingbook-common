@@ -11,6 +11,7 @@ import org.junit.Test;
 import ij.process.ByteProcessor;
 import imagingbook.DATA.images.RLOC;
 import imagingbook.lib.util.resource.ResourceLocation.Resource;
+import imagingbook.pub.regions.BinaryRegion;
 import imagingbook.pub.regions.Contour;
 import imagingbook.pub.regions.NeighborhoodType;
 import imagingbook.pub.regions.Contour.Inner;
@@ -173,7 +174,7 @@ public class RegionContourSegmentationTest {
 			Assert.assertEquals(LargestRegionSize, r0.getSize());
 			
 			// check largest regions outer contour length:
-			Contour.Outer outerContour = r0.getOuterContour();
+			Contour outerContour = r0.getOuterContour();
 			Assert.assertNotNull(outerContour);
 			Assert.assertEquals(OuterContourLength, outerContour.getLength());
 			Assert.assertEquals(0, outerContour.countDuplicatePoints());
@@ -183,7 +184,7 @@ public class RegionContourSegmentationTest {
 			int k = findFirstRegionWithHole(regions);
 			Assert.assertEquals(FirstRegionWithHole, k);
 			if (k >= 0) {
-				List<Contour.Inner> ics = regions.get(k).getInnerContours();
+				List<Contour> ics = regions.get(k).getInnerContours();
 				Assert.assertFalse(ics.isEmpty());
 				Assert.assertEquals(FirstInnerContourLength, ics.get(0).getLength());
 				Assert.assertEquals(0, ics.get(0).countDuplicatePoints());
@@ -204,7 +205,7 @@ public class RegionContourSegmentationTest {
 	private static int findFirstRegionWithHole(List<BinaryRegion> regions) {
 		int i = 0;
 		for (BinaryRegion r : regions) {
-			List<Contour.Inner> ics = r.getInnerContours();
+			List<Contour> ics = r.getInnerContours();
 			if (ics != null && !ics.isEmpty()) {
 				return i;
 			}

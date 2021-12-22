@@ -1,10 +1,13 @@
-package imagingbook.pub.regions.segment;
+package imagingbook.pub.regions;
 
 import java.awt.Rectangle;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import imagingbook.pub.geometry.basic.Pnt2d;
-import imagingbook.pub.regions.Contour;
+import imagingbook.pub.geometry.basic.Pnt2d.PntDouble;
+import imagingbook.pub.regions.segment.BinaryRegionSegmentation;
 
 /**
  * This class represents a connected component or binary region. 
@@ -25,49 +28,58 @@ import imagingbook.pub.regions.Contour;
  * The advantage of providing iteration only is that it avoids the
  * creation of (possibly large) arrays of pixel coordinates.
  */
-public interface BinaryRegion extends Comparable<BinaryRegion>, Iterable<Pnt2d> {
+public abstract class BinaryRegion implements Comparable<BinaryRegion>, Iterable<Pnt2d> {
 
 	/**
 	 * Returns the sum of the x-coordinates of the points
 	 * contained in this region.
 	 * @return the sum of x-values.
 	 */
-	public long getX1Sum();
+	public abstract long getX1Sum();
 
 	/**
 	 * Returns the sum of the y-coordinates of the points
 	 * contained in this region.
 	 * @return the sum of y-values.
 	 */
-	public long getY1Sum();
+	public abstract long getY1Sum();
 
 	/**
 	 * Returns the sum of the squared x-coordinates of the points
 	 * contained in this region.
 	 * @return the sum of squared x-values.
 	 */
-	public long getX2Sum();
+	public abstract long getX2Sum();
 
 	/**
 	 * Returns the sum of the squared y-coordinates of the points
 	 * contained in this region.
 	 * @return the sum of squared y-values.
 	 */
-	public long getY2Sum();
+	public abstract long getY2Sum();
 
 	/**
 	 * Returns the sum of the mixed x*y-coordinates of the points
 	 * contained in this region.
 	 * @return the sum of xy-values.
 	 */
-	public long getXYSum();
+	public abstract long getXYSum();
 
 	/**
 	 * Calculates and returns a vector of (unnormalized) central moments:
 	 * (mu10, mu01, mu20, mu02, mu11).
 	 * @return vector of central moments
 	 */
-	public double[] getCentralMoments();
+	public double[] getCentralMoments() {
+		final int n = this.getSize();
+		if (n == 0) {
+			throw new IllegalStateException("empty region, moments are undefined");
+		}
+		double mu20 = getX2Sum() - getX1Sum() * getX1Sum() / (double) n;
+		double mu02 = getY2Sum() - getY1Sum() * getY1Sum() / (double) n;
+		double mu11 = getXYSum() - getX1Sum() * getY1Sum() / (double) n;
+		return new double[] {mu20, mu02, mu11};
+	}
 
 	/**
 	 * Returns the 2x2 covariance matrix for the pixel coordinates
@@ -78,58 +90,64 @@ public interface BinaryRegion extends Comparable<BinaryRegion>, Iterable<Pnt2d> 
 	 * </pre>
 	 * @return the covariance matrix
 	 */
-	public double[][] getCovarianceMatrix();
+	public double[][] getCovarianceMatrix() {
+		final int n = this.getSize();
+		double[] mu = getCentralMoments(); // = [mu20, mu02, mu11]
+		double[][] S = {
+				{mu[0]/n, mu[2]/n},
+				{mu[2]/n, mu[1]/n}};
+		return S;
+	}
 
-	/**
-	 * Get the label associated with this region.
-	 * @return the region label.
-	 */
-	public int getLabel();		// remove!
 
 	/**
 	 * Get the size of this region.
 	 * @return the number of region points.
 	 */
-	public int getSize();
+	public abstract int getSize();
 
 	/**
 	 * Get the x/y axes-parallel bounding box as a rectangle
 	 * (including the extremal coordinates).
 	 * @return the bounding box rectangle.
 	 */
-	public Rectangle getBoundingBox();
+	public abstract Rectangle getBoundingBox();
 
 
 	/**
 	 * Returns the center of this region as a 2D point.
 	 * @return the center point of this region.
 	 */
-	public Pnt2d getCenter();
+	public Pnt2d getCenter() {
+		final int n = this.getSize();
+		if (n == 0) {
+			throw new IllegalStateException("empty region, center is undefined");
+		}
+		return PntDouble.from(((double)this.getX1Sum())/n, ((double)this.getY1Sum())/n);
+	}
 
-	public void setOuterContour(Contour.Outer contr);
-	
+	public abstract void setOuterContour(Contour.Outer contr);
+
 	/**
 	 * Get the (single) outer contour of this region.
 	 * Points on an outer contour are arranged in clockwise
 	 * order.
 	 * @return the outer contour.
 	 */
-	public Contour.Outer getOuterContour();
-	
-	
-	public void addInnerContour(Contour.Inner contr);
+	public abstract Contour getOuterContour();
 
 	/**
 	 * Get all inner contours of this region.
 	 * Points on inner contours are arranged in counter-clockwise order.
 	 * @return the list of inner contours.
 	 */
-	public List<Contour.Inner> getInnerContours();	// sort!!!
+	public abstract List<Contour> getInnerContours();	// sort!!!
 
 	// Compare method for sorting by region size (larger regions at front)
 	@Override
-	public default int compareTo(BinaryRegion r2) {
-		return r2.getSize() - this.getSize();
+	public int compareTo(BinaryRegion other) {
+//		return other.getSize() - this.getSize();
+		return Integer.compare(other.getSize(), this.getSize());
 	}
 
 	/**
@@ -139,16 +157,40 @@ public interface BinaryRegion extends Comparable<BinaryRegion>, Iterable<Pnt2d> 
 	 * @param v y-coordinate
 	 * @return true if (u,v) is contained in this region
 	 */
-	public boolean contains(int u, int v);
-	
+	public abstract boolean contains(int u, int v);
+
+	// ------------------------------------------------------------
+	// ------------------------------------------------------------
+
+
+	/* Methods for attaching region properties dynamically.
+	 * Properties can be used to hash results of region calculations
+	 * to avoid multiple calculations.
+	 * Currently, only 'double' values are supported.
+	 * 
+	 * E.g. calculate major axis angle theta for region r, then do
+	 *    r.setProperty("angle", theta);
+	 * and subsequently
+	 *    double theta = r.getProperty("angle");
+	 */
+
+	private Map<Object, Double> properties = null;
+
 	/**
 	 * Sets the specified property of this region to the given value.
 	 * @param key The key of the property.
 	 * @param val The value associated with this property.
 	 */
-	public void setProperty(Object key, double val);
-	
-	
+	public void setProperty(Object key, double val) {
+		if (key == null) {
+			throw new IllegalArgumentException("property key must not be null");
+		}
+		if (properties == null) {
+			properties = new HashMap<>();
+		}
+		properties.put(key, val);
+	}
+
 	/**
 	 * Retrieves the specified region property. 
 	 * {@link IllegalArgumentException} is thrown if the property 
@@ -157,6 +199,23 @@ public interface BinaryRegion extends Comparable<BinaryRegion>, Iterable<Pnt2d> 
 	 * @param key The key of the property.
 	 * @return The value associated with the specified property.
 	 */
-	public double getProperty(Object key);
+	public double getProperty(Object key) {
+		if (key == null) {
+			throw new IllegalArgumentException("property key must not be null");
+		}
+		Double value;
+		if (properties == null || (value = properties.get(key)) == null) {
+			throw new IllegalArgumentException("Region property " + key + " is undefined.");
+		}
+		return value.doubleValue();
+	}
+
+	/**
+	 * Removes all properties attached to this region.
+	 */
+	public void clearProperties() {
+		properties.clear();
+	}
+	
 
 }

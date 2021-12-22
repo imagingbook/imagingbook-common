@@ -19,9 +19,9 @@ import ij.IJ;
 import ij.process.ByteProcessor;
 import imagingbook.lib.tuples.Tuple2;
 import imagingbook.pub.geometry.basic.Pnt2d.PntInt;
-import imagingbook.pub.regions.segment.BinaryRegion;
 import imagingbook.pub.regions.segment.BinaryRegionSegmentation;
 import imagingbook.pub.regions.segment.RegionContourSegmentation;
+import imagingbook.pub.regions.segment.SegmentationBackedRegion;
 
 /**
  * Binary region segmenter based on a combined region labeling
@@ -216,7 +216,7 @@ public class SegmentationRegionContour extends BinaryRegionSegmentation implemen
 //		}
 		for (Contour.Inner c : innerContours) {
 			int label = c.getLabel();
-			BinaryRegion reg = getRegion(label);
+			SegmentationBackedRegion reg = getRegion(label);
 			if (reg == null) {
 				IJ.log("Error: Could not associate inner contour with label " + label);
 			}
