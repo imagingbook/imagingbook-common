@@ -163,7 +163,7 @@ public abstract class BinaryRegionSegmentation {
 	protected Map<Integer, BinaryRegion> collectRegions() {
 		BinaryRegion[] regionArray = new BinaryRegion[maxLabel + 1];
 		for (int label = minLabel; label <= maxLabel; label++) {
-			regionArray[label] = new BinaryRegion(label);
+			regionArray[label] = new BinaryRegion(label, this);
 		}
 		for (int v = 0; v < height; v++) {
 			for (int u = 0; u < width; u++) {
@@ -254,7 +254,7 @@ public abstract class BinaryRegionSegmentation {
 	 * The advantage of providing iteration only is that it avoids the
 	 * creation of (possibly large) arrays of pixel coordinates.
 	 */
-	public class BinaryRegion implements Comparable<BinaryRegion>, Iterable<Pnt2d> {
+	public static class BinaryRegion implements Comparable<BinaryRegion>, Iterable<Pnt2d> {
 		
 		private final int label;				// the label of THIS region
 		private int size = 0;
@@ -275,10 +275,13 @@ public abstract class BinaryRegionSegmentation {
 		private long y2Sum = 0;
 		private long xySum = 0;
 		
+		private final BinaryRegionSegmentation segmentation;
+		
 		// ------- constructor --------------------------
 		
-		private BinaryRegion(int label) {
+		private BinaryRegion(int label, BinaryRegionSegmentation seg) {
 			this.label = label;
+			this.segmentation = seg;
 		}
 		
 		// ------- public methods --------------------------
@@ -445,7 +448,7 @@ public abstract class BinaryRegionSegmentation {
 		
 		@Override
 		public Iterator<Pnt2d> iterator() {
-			return new RegionPixelIterator(this);
+			return new RegionPixelIterator(this, segmentation);
 		}
 		
 		/**
@@ -532,7 +535,8 @@ public abstract class BinaryRegionSegmentation {
 		 * @return true if (u,v) is contained in this region
 		 */
 		public boolean contains(int u, int v) {
-			return BinaryRegionSegmentation.this.getLabel(u, v) == this.label;
+//			return BinaryRegionSegmentation.this.getLabel(u, v) == this.label;
+			return segmentation.getLabel(u, v) == this.label;
 		}
 		
 		// ------------------------------------------------------------
@@ -595,14 +599,16 @@ public abstract class BinaryRegionSegmentation {
 	 * Instances of this class are returned by {@link BinaryRegion#iterator()},
 	 * which implements  {@link Iterable} for instances of class {@link Pnt2d}.
 	 */
-	private class RegionPixelIterator implements Iterator<Pnt2d> {
+	private static class RegionPixelIterator implements Iterator<Pnt2d> {
 		private final int label;					// the corresponding region's label
 		private final int uMin, uMax, vMin, vMax;	// coordinates of region's bounding box
-		int uCur, vCur;								// current pixel position
+		private int uCur, vCur;						// current pixel position
 		private Pnt2d pNext;						// coordinates of the next region pixel
 		private boolean first;						// control flag
+		
+		private final BinaryRegionSegmentation segmentation;
 
-		RegionPixelIterator(BinaryRegion R) {
+		RegionPixelIterator(BinaryRegion R, BinaryRegionSegmentation seg) {
 			label = R.getLabel();
 			first = true;
 			Rectangle bb = R.getBoundingBox();
@@ -613,6 +619,7 @@ public abstract class BinaryRegionSegmentation {
 			uCur = uMin;
 			vCur = vMin;
 			pNext = null;
+			this.segmentation = seg;
 		}
 
 		/** 
@@ -629,7 +636,7 @@ public abstract class BinaryRegionSegmentation {
 			first = false;
 			while (v <= vMax) {
 				while (u <= uMax) {
-					if (getLabel(u, v) == label) { // next pixel found (uses surrounding labeling)
+					if (segmentation.getLabel(u, v) == label) { // next pixel found (uses surrounding labeling)
 						uCur = u;
 						vCur = v;
 						return PntInt.from(uCur, vCur);
