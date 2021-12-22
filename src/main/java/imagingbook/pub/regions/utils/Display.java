@@ -4,7 +4,7 @@ import ij.process.ColorProcessor;
 import ij.process.ImageProcessor;
 import ij.process.ShortProcessor;
 import imagingbook.lib.color.RandomColorGenerator;
-import imagingbook.pub.regions.BinaryRegionSegmentation;
+import imagingbook.pub.regions.segment.BinaryRegionSegmentation;
 
 public abstract class Display {
 	

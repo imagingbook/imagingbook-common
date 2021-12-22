@@ -1,4 +1,4 @@
-package imagingbook.pub.regions;
+package imagingbook.pub.regions.segment;
 
 import static imagingbook.pub.regions.NeighborhoodType.N4;
 import static imagingbook.pub.regions.NeighborhoodType.N8;
@@ -11,9 +11,14 @@ import org.junit.Test;
 import ij.process.ByteProcessor;
 import imagingbook.DATA.images.RLOC;
 import imagingbook.lib.util.resource.ResourceLocation.Resource;
-import imagingbook.pub.regions.BinaryRegionSegmentation.BinaryRegion;
+import imagingbook.pub.regions.Contour;
+import imagingbook.pub.regions.NeighborhoodType;
+import imagingbook.pub.regions.Contour.Inner;
+import imagingbook.pub.regions.Contour.Outer;
+import imagingbook.pub.regions.segment.RegionContourSegmentation;
+import imagingbook.pub.regions.segment.BinaryRegionSegmentation.BinaryRegion;
 
-public class SegmentationRegionContourTest {
+public class RegionContourSegmentationTest {
 	
 	@Test
 	public void testSimpleN4() {
@@ -155,8 +160,8 @@ public class SegmentationRegionContourTest {
 		int FirstInnerContourLength;
 		
 		void run() {
-			SegmentationRegionContour segmentation = 
-					new SegmentationRegionContour(openImage(ImgName), NHT);
+			RegionContourSegmentation segmentation = 
+					new RegionContourSegmentation(openImage(ImgName), NHT);
 			
 			// check region count:
 			List<BinaryRegion> regions = segmentation.getRegions(true);

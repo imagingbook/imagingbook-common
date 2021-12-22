@@ -48,7 +48,7 @@ public class Contour implements Comparable<Contour>, Iterable<Pnt2d> {
 		points = new ArrayList<Pnt2d>(INITIAL_SIZE);
 	}
 	
-	protected void addPoint (Pnt2d p) {
+	public void addPoint (Pnt2d p) {
 		points.add(p);
 	}
 	

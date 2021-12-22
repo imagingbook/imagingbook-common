@@ -7,15 +7,13 @@
  * Visit http://imagingbook.com for additional details.
  *******************************************************************************/
 
-package imagingbook.pub.regions;
+package imagingbook.pub.regions.segment;
 
 import static imagingbook.pub.regions.NeighborhoodType.N4;
-
 import java.util.HashSet;
 
 import ij.process.ByteProcessor;
-import imagingbook.pub.regions.segment.BinaryRegionSegmentation;
-import imagingbook.pub.regions.segment.RecursiveSegmentation;
+import imagingbook.pub.regions.NeighborhoodType;
 
 /**
  * Binary region labeler based on a sequential labeling
@@ -23,9 +21,8 @@ import imagingbook.pub.regions.segment.RecursiveSegmentation;
  * 
  * @author WB
  * @version 2020/12/20
- * @deprecated Replaced by {@link RecursiveSegmentation}.
  */
-public class SegmentationSequential extends BinaryRegionSegmentation {
+public class SequentialSegmentation extends BinaryRegionSegmentation {
 
 	private HashSet<LabelCollision> collisions;
 
@@ -34,11 +31,11 @@ public class SegmentationSequential extends BinaryRegionSegmentation {
 	 * @param ip a binary image with 0 values for background pixels and values &gt; 0
 	 * for foreground pixels.
 	 */
-	public SegmentationSequential(ByteProcessor ip) {
+	public SequentialSegmentation(ByteProcessor ip) {
 		this(ip, DEFAULT_NEIGHBORHOOD);
 	}
 	
-	public SegmentationSequential(ByteProcessor ip, NeighborhoodType nh) {
+	public SequentialSegmentation(ByteProcessor ip, NeighborhoodType nh) {
 		super(ip, nh);
 	}
 

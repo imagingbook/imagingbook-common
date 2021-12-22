@@ -7,11 +7,10 @@
  * Visit http://imagingbook.com for additional details.
  *******************************************************************************/
 
-package imagingbook.pub.regions;
+package imagingbook.pub.regions.segment;
 
 import ij.process.ByteProcessor;
-import imagingbook.pub.regions.segment.BinaryRegionSegmentation;
-import imagingbook.pub.regions.segment.RecursiveSegmentation;
+import imagingbook.pub.regions.NeighborhoodType;
 
 /**
  * Binary region labeler based on a recursive flood filling
@@ -19,9 +18,8 @@ import imagingbook.pub.regions.segment.RecursiveSegmentation;
  * 
  * @author WB
  * @version 2020/12/21
- * @deprecated Replaced by {@link RecursiveSegmentation}.
  */
-public class SegmentationRecursive extends BinaryRegionSegmentation {
+public class RecursiveSegmentation extends BinaryRegionSegmentation {
 
 	/**
 	 * Constructor. Creates a new recursive binary region segmenter.
@@ -29,11 +27,11 @@ public class SegmentationRecursive extends BinaryRegionSegmentation {
 	 * @param ip A binary input image with 0 values for background pixels and values &gt; 0
 	 * for foreground pixels.
 	 */
-	public SegmentationRecursive(ByteProcessor ip) {
+	public RecursiveSegmentation(ByteProcessor ip) {
 		this(ip, DEFAULT_NEIGHBORHOOD);
 	}
 	
-	public SegmentationRecursive(ByteProcessor ip, NeighborhoodType nh) {
+	public RecursiveSegmentation(ByteProcessor ip, NeighborhoodType nh) {
 		super(ip, nh);
 	}
 	

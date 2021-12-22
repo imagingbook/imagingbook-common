@@ -7,15 +7,14 @@
  * Visit http://imagingbook.com for additional details.
  *******************************************************************************/
 
-package imagingbook.pub.regions;
+package imagingbook.pub.regions.segment;
 
 import java.util.Deque;
 import java.util.LinkedList;
 
 import ij.process.ByteProcessor;
 import imagingbook.pub.geometry.basic.Pnt2d.PntInt;
-import imagingbook.pub.regions.segment.BinaryRegionSegmentation;
-import imagingbook.pub.regions.segment.BreadthFirstSegmentation;
+import imagingbook.pub.regions.NeighborhoodType;
 
 /**
  * Binary region labeler based on a breadth-first flood filling
@@ -24,9 +23,8 @@ import imagingbook.pub.regions.segment.BreadthFirstSegmentation;
  * 
  * @author WB
  * @version 2020/04/01
- * @deprecated Replaced by {@link BreadthFirstSegmentation}.
  */
-public class SegmentationBreadthFirst extends BinaryRegionSegmentation {
+public class BreadthFirstSegmentation extends BinaryRegionSegmentation {
 	
 	/**
 	 * Constructor. Creates a new breadth-first (flood-fill) binary region segmenter.
@@ -34,11 +32,11 @@ public class SegmentationBreadthFirst extends BinaryRegionSegmentation {
 	 * @param ip A binary input image with 0 values for background pixels and values &gt; 0
 	 * for foreground pixels.
 	 */
-	public SegmentationBreadthFirst(ByteProcessor ip) {
+	public BreadthFirstSegmentation(ByteProcessor ip) {
 		this(ip, DEFAULT_NEIGHBORHOOD);
 	}
 	
-	public SegmentationBreadthFirst(ByteProcessor ip, NeighborhoodType nh) {
+	public BreadthFirstSegmentation(ByteProcessor ip, NeighborhoodType nh) {
 		super(ip, nh);
 	}
 	

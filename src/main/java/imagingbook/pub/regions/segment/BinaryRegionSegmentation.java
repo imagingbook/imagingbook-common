@@ -7,7 +7,7 @@
  * Visit http://imagingbook.com for additional details.
  *******************************************************************************/
 
-package imagingbook.pub.regions;
+package imagingbook.pub.regions.segment;
 
 import static imagingbook.pub.regions.NeighborhoodType.N4;
 
@@ -28,17 +28,19 @@ import ij.process.ImageProcessor;
 import imagingbook.pub.geometry.basic.Pnt2d;
 import imagingbook.pub.geometry.basic.Pnt2d.PntDouble;
 import imagingbook.pub.geometry.basic.Pnt2d.PntInt;
+import imagingbook.pub.regions.Contour;
+import imagingbook.pub.regions.NeighborhoodType;
 
 /**
  * Performs region segmentation on a given binary image.
  * This class is abstract, since the implementation depends
  * on the concrete region segmentation algorithm being used.
  * Concrete implementations (subclasses of this class) are 
- * {@link SegmentationBreadthFirst},
- * {@link SegmentationDepthFirst},
- * {@link SegmentationRecursive},
- * {@link SegmentationSequential},
- * {@link SegmentationRegionContour}.
+ * {@link BreadthFirstSegmentation},
+ * {@link DepthFirstSegmentation},
+ * {@link RecursiveSegmentation},
+ * {@link SequentialSegmentation},
+ * {@link RegionContourSegmentation}.
  * 
  * Practically all work is done by the constructor(s).
  * If the segmentation has failed for some reason
@@ -56,7 +58,7 @@ public abstract class BinaryRegionSegmentation {
 	protected ImageProcessor ip = null;
 	protected final int width;
 	protected final int height;	
-	protected final NeighborhoodType neighborType;
+	protected final NeighborhoodType NT;
 	
 	protected final int[][] labelArray;
 	// label values in labelArray can be:
@@ -75,7 +77,7 @@ public abstract class BinaryRegionSegmentation {
 	
 	protected BinaryRegionSegmentation(ByteProcessor ip, NeighborhoodType nh) {
 		this.ip = ip;
-		this.neighborType = nh;
+		this.NT = nh;
 		this.width  = ip.getWidth();
 		this.height = ip.getHeight();
 		this.labelArray = makeLabelArray();
@@ -235,8 +237,8 @@ public abstract class BinaryRegionSegmentation {
 	
 	/**
 	 * This class represents a connected component or binary region. 
-	 * It is implemented as an inner class to {@link BinaryRegionSegmentation} because
-	 * it references common region labeling data.
+	 * It is implemented as a non-static inner class to {@link BinaryRegionSegmentation}
+	 * because it references common region labeling data.
 	 * A {@link BinaryRegion} instance does not have its own list or array of 
 	 * contained pixel coordinates but refers to the label array of the
 	 * enclosing {@link BinaryRegionSegmentation} instance.
@@ -281,29 +283,29 @@ public abstract class BinaryRegionSegmentation {
 		
 		// ------- public methods --------------------------
 		
-		/**
-		 * Obsolete - use {@link #getCenter()} instead!
-		 * Get the x-value of the region's centroid.
-		 * Obsolete, use {@link #getCenter()} instead.
-		 * 
-		 * @return the x-value of the region's centroid.
-		 * @deprecated
-		 */
-		public double getXc() {
-			return xc;
-		}
+//		/**
+//		 * Obsolete - use {@link #getCenter()} instead!
+//		 * Get the x-value of the region's centroid.
+//		 * Obsolete, use {@link #getCenter()} instead.
+//		 * 
+//		 * @return the x-value of the region's centroid.
+//		 * @deprecated
+//		 */
+//		public double getXc() {
+//			return xc;
+//		}
 
-		/**
-		 * Obsolete - use {@link #getCenter()} instead!
-		 * Get the y-value of the region's centroid.
-		 * Obsolete, use {@link #getCenter()} instead.
-		 * 
-		 * @return the y-value of the region's centroid.
-		 * @deprecated
-		 */
-		public double getYc() {
-			return yc;
-		}
+//		/**
+//		 * Obsolete - use {@link #getCenter()} instead!
+//		 * Get the y-value of the region's centroid.
+//		 * Obsolete, use {@link #getCenter()} instead.
+//		 * 
+//		 * @return the y-value of the region's centroid.
+//		 * @deprecated
+//		 */
+//		public double getYc() {
+//			return yc;
+//		}
 		
 		/**
 		 * Returns the sum of the x-coordinates of the points
@@ -422,7 +424,6 @@ public abstract class BinaryRegionSegmentation {
 		
 		/**
 		 * Returns the center of this region as a 2D point.
-		 * 
 		 * @return the center point of this region.
 		 */
 		public Pnt2d getCenter() {
@@ -432,16 +433,15 @@ public abstract class BinaryRegionSegmentation {
 			return PntDouble.from((double) x1Sum / size, (double) y1Sum / size);
 		}
 		
-		/**
-		 * Returns the centroid of this region as a 2D point.
-		 * Obsolete, use {@link #getCenter()} instead.
-		 * 
-		 * @return the centroid of this region.
-		 * @deprecated
-		 */
-		public Pnt2d getCentroid() {
-			return this.getCenter();
-		}
+//		/**
+//		 * Returns the centroid of this region as a 2D point.
+//		 * Obsolete, use {@link #getCenter()} instead.
+//		 * @return the centroid of this region.
+//		 * @deprecated
+//		 */
+//		public Pnt2d getCentroid() {
+//			return this.getCenter();
+//		}
 		
 		@Override
 		public Iterator<Pnt2d> iterator() {
@@ -485,7 +485,7 @@ public abstract class BinaryRegionSegmentation {
 			return outerContour;
 		}
 		
-		protected void setOuterContour(Contour.Outer contr) {
+		public void setOuterContour(Contour.Outer contr) {
 			outerContour = contr;
 		}
 		
@@ -498,7 +498,7 @@ public abstract class BinaryRegionSegmentation {
 			return innerContours;
 		}
 		
-		protected void addInnerContour(Contour.Inner contr) {
+		public void addInnerContour(Contour.Inner contr) {
 			if (innerContours == null) {
 				innerContours = new LinkedList<>();
 			}

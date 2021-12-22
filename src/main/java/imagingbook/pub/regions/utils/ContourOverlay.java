@@ -12,7 +12,6 @@ package imagingbook.pub.regions.utils;
 import ij.gui.Overlay;
 import ij.gui.Roi;
 import ij.gui.ShapeRoi;
-import imagingbook.lib.ij.CustomOverlay;
 import imagingbook.pub.regions.Contour;
 import imagingbook.pub.regions.ContourTracer;
 

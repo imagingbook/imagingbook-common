@@ -7,7 +7,7 @@
  * Visit http://imagingbook.com for additional details.
  *******************************************************************************/
 
-package imagingbook.pub.regions;
+package imagingbook.pub.regions.segment;
 
 import static imagingbook.pub.regions.NeighborhoodType.N4;
 
@@ -19,8 +19,9 @@ import ij.IJ;
 import ij.process.ByteProcessor;
 import imagingbook.lib.tuples.Tuple2;
 import imagingbook.pub.geometry.basic.Pnt2d.PntInt;
-import imagingbook.pub.regions.segment.BinaryRegionSegmentation;
-import imagingbook.pub.regions.segment.RegionContourSegmentation;
+import imagingbook.pub.regions.Contour;
+import imagingbook.pub.regions.ContourTracer;
+import imagingbook.pub.regions.NeighborhoodType;
 
 /**
  * Binary region segmenter based on a combined region labeling
@@ -32,9 +33,8 @@ import imagingbook.pub.regions.segment.RegionContourSegmentation;
  * 
  * @author WB
  * @version 2020/04/01
- * @deprecated Replaced by {@link RegionContourSegmentation}.
  */
-public class SegmentationRegionContour extends BinaryRegionSegmentation implements ContourTracer { 
+public class RegionContourSegmentation extends BinaryRegionSegmentation implements ContourTracer { 
 	
 	static private final int VISITED = -1;
 	
@@ -46,11 +46,11 @@ public class SegmentationRegionContour extends BinaryRegionSegmentation implemen
 	 * @param ip A binary image with 0 values for background pixels and values &gt; 0
 	 * for foreground pixels.
 	 */
-	public SegmentationRegionContour(ByteProcessor ip) {
+	public RegionContourSegmentation(ByteProcessor ip) {
 		this(ip, DEFAULT_NEIGHBORHOOD);
 	}
 	
-	public SegmentationRegionContour(ByteProcessor ip, NeighborhoodType nh) {
+	public RegionContourSegmentation(ByteProcessor ip, NeighborhoodType nh) {
 		super(ip, nh);
 		attachOuterContours();	// attach the outer contour to the corresponding region
 		attachInnerContours();	// attach all inner contours to the corresponding region

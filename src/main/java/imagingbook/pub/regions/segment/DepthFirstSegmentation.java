@@ -7,38 +7,35 @@
  * Visit http://imagingbook.com for additional details.
  *******************************************************************************/
 
-package imagingbook.pub.regions;
+package imagingbook.pub.regions.segment;
 
 import java.util.Deque;
 import java.util.LinkedList;
 
 import ij.process.ByteProcessor;
 import imagingbook.pub.geometry.basic.Pnt2d.PntInt;
-import imagingbook.pub.regions.segment.BinaryRegionSegmentation;
-import imagingbook.pub.regions.segment.BreadthFirstSegmentation;
+import imagingbook.pub.regions.NeighborhoodType;
 
 /**
- * Binary region labeler based on a breadth-first flood filling
- * algorithm using a stack.
- * Detected regions are 8-connected.
+ * Binary region labeler based on a depth-first flood filling
+ * algorithm (using a queue).
  * 
  * @author WB
  * @version 2020/04/01
- * @deprecated Replaced by {@link BreadthFirstSegmentation}.
  */
-public class SegmentationBreadthFirst extends BinaryRegionSegmentation {
+public class DepthFirstSegmentation extends BinaryRegionSegmentation {
 	
 	/**
-	 * Constructor. Creates a new breadth-first (flood-fill) binary region segmenter.
+	 * Constructor. Creates a new depth-first binary region segmenter.
 	 * 
 	 * @param ip A binary input image with 0 values for background pixels and values &gt; 0
 	 * for foreground pixels.
 	 */
-	public SegmentationBreadthFirst(ByteProcessor ip) {
+	public DepthFirstSegmentation(ByteProcessor ip) {
 		this(ip, DEFAULT_NEIGHBORHOOD);
 	}
 	
-	public SegmentationBreadthFirst(ByteProcessor ip, NeighborhoodType nh) {
+	public DepthFirstSegmentation(ByteProcessor ip, NeighborhoodType nh) {
 		super(ip, nh);
 	}
 	
@@ -58,23 +55,23 @@ public class SegmentationBreadthFirst extends BinaryRegionSegmentation {
 	}
 
 	private void floodFill(int u, int v, int label) {
-		Deque<PntInt> Q = new LinkedList<>();	//queue contains pixel coordinates
-		Q.addLast(PntInt.from(u, v));
-		while (!Q.isEmpty()) {
-			PntInt p = Q.removeFirst();	// get the next point to process
+		Deque<PntInt> S = new LinkedList<>();	//stack contains pixel coordinates
+		S.push(PntInt.from(u, v));
+		while (!S.isEmpty()){
+			PntInt p = S.pop();
 			int x = p.x;
 			int y = p.y;
-			if ((x >= 0) && (x < width) && (y >= 0) && (y < height) && getLabel(x, y) == FOREGROUND) {
+			if ((x >= 0) && (x < width) && (y >= 0) && (y < height)	&& getLabel(x, y) == FOREGROUND) {
 				setLabel(x, y, label);
-				Q.addLast(PntInt.from(x + 1, y));
-				Q.addLast(PntInt.from(x, y + 1));
-				Q.addLast(PntInt.from(x, y - 1));
-				Q.addLast(PntInt.from(x - 1, y));
+				S.push(PntInt.from(x + 1, y));
+				S.push(PntInt.from(x, y + 1));
+				S.push(PntInt.from(x, y - 1));
+				S.push(PntInt.from(x - 1, y));
 				if (NT == NeighborhoodType.N8) {
-					Q.addLast(PntInt.from(x + 1, y + 1));
-					Q.addLast(PntInt.from(x - 1, y + 1));
-					Q.addLast(PntInt.from(x + 1, y - 1));
-					Q.addLast(PntInt.from(x - 1, y - 1));
+					S.push(PntInt.from(x + 1, y + 1));
+					S.push(PntInt.from(x - 1, y + 1));
+					S.push(PntInt.from(x + 1, y - 1));
+					S.push(PntInt.from(x - 1, y - 1));
 				}
 			}
 		}

@@ -11,7 +11,13 @@ import org.junit.Test;
 import ij.process.ByteProcessor;
 import imagingbook.DATA.images.RLOC;
 import imagingbook.lib.util.resource.ResourceLocation.Resource;
-import imagingbook.pub.regions.BinaryRegionSegmentation.BinaryRegion;
+import imagingbook.pub.regions.segment.BinaryRegionSegmentation;
+import imagingbook.pub.regions.segment.BreadthFirstSegmentation;
+import imagingbook.pub.regions.segment.DepthFirstSegmentation;
+import imagingbook.pub.regions.segment.RecursiveSegmentation;
+import imagingbook.pub.regions.segment.RegionContourSegmentation;
+import imagingbook.pub.regions.segment.SequentialSegmentation;
+import imagingbook.pub.regions.segment.BinaryRegionSegmentation.BinaryRegion;
 
 /**
  * Segmentation test on a small image  which can also be handled by the
@@ -36,32 +42,32 @@ public class BinaryRegionSegmentation1_Test {
 
 	@Test
 	public void testSegmentationBreadthFirst() {
-		run(new SegmentationBreadthFirst(bp, N4), RegionCount_N4);
-		run(new SegmentationBreadthFirst(bp, N8), RegionCount_N8);
+		run(new BreadthFirstSegmentation(bp, N4), RegionCount_N4);
+		run(new BreadthFirstSegmentation(bp, N8), RegionCount_N8);
 	}
 	
 	@Test
 	public void testSegmentationDepthFirst() {
-		run(new SegmentationDepthFirst(bp, N4), RegionCount_N4);
-		run(new SegmentationDepthFirst(bp, N8), RegionCount_N8);
+		run(new DepthFirstSegmentation(bp, N4), RegionCount_N4);
+		run(new DepthFirstSegmentation(bp, N8), RegionCount_N8);
 	}
 	
 	@Test
 	public void testSegmentationSequential() {
-		run(new SegmentationSequential(bp, N4), RegionCount_N4);
-		run(new SegmentationSequential(bp, N8), RegionCount_N8);
+		run(new SequentialSegmentation(bp, N4), RegionCount_N4);
+		run(new SequentialSegmentation(bp, N8), RegionCount_N8);
 	}
 	
 	@Test
 	public void testSegmentationRegionContour() {
-		run(new SegmentationRegionContour(bp, N4), RegionCount_N4);
-		run(new SegmentationRegionContour(bp, N8), RegionCount_N8);
+		run(new RegionContourSegmentation(bp, N4), RegionCount_N4);
+		run(new RegionContourSegmentation(bp, N8), RegionCount_N8);
 	}
 	
 	@Test
 	public void testSegmentationRecursive() {
-		run(new SegmentationRecursive(bp, N4), RegionCount_N4);
-		run(new SegmentationRecursive(bp, N8), RegionCount_N8);
+		run(new RecursiveSegmentation(bp, N4), RegionCount_N4);
+		run(new RecursiveSegmentation(bp, N8), RegionCount_N8);
 	}
 	
 	// ---------------------------------------------------------------
