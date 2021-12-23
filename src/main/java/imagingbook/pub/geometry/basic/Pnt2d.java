@@ -50,6 +50,24 @@ public interface Pnt2d {
 	 */
 	double getY();
 	
+	/**
+	 * Returns the x-coordinate of this point as a 
+	 * (truncated) integer value.
+	 * @return the integer x-coordinate of this point.
+	 */
+	public default int getXint() {
+		return (int) this.getX();
+	}
+	
+	/**
+	 * Returns the y-coordinate of this point as a 
+	 * (truncated) integer value.
+	 * @return the integer y-coordinate of this point.
+	 */
+	public default int getYint() {
+		return (int) this.getY();
+	}
+	
 	// ----------------------------------------------------------
 	
 	/**
@@ -382,12 +400,22 @@ public interface Pnt2d {
 		
 		@Override
 		public double getX() {
-			return x;
+			return this.x;
 		}
 
 		@Override
 		public double getY() {
-			return y;
+			return this.y;
+		}
+		
+		@Override
+		public int getXint() {
+			return (int) this.x;
+		}
+
+		@Override
+		public int getYint() {
+			return (int) this.y;
 		}
 		
 		
@@ -546,12 +574,22 @@ public interface Pnt2d {
 
 		@Override
 		public double getX() {
-			return x;
+			return this.x;
 		}
 
 		@Override
 		public double getY() {
-			return y;
+			return this.y;
+		}
+		
+		@Override
+		public int getXint() {
+			return this.x;
+		}
+
+		@Override
+		public int getYint() {
+			return this.y;
 		}
 		
 		// addition -----------------------------------
@@ -657,6 +695,8 @@ public interface Pnt2d {
 		public Point toAwtPoint() {
 			return new Point(this.x, this.y);
 		}
+
+
 		
 	}
 	

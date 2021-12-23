@@ -200,7 +200,7 @@ public class SegmentationBackedRegion extends BinaryRegion {
 		private final int label;					// the corresponding region's label
 		private final int uMin, uMax, vMin, vMax;	// coordinates of region's bounding box
 		private int uCur, vCur;						// current pixel position
-		private Pnt2d pNext;						// coordinates of the next region pixel
+		private PntInt pNext;						// coordinates of the next region pixel
 		private boolean first;						// control flag
 
 		RegionPixelIterator() {
@@ -259,9 +259,9 @@ public class SegmentationBackedRegion extends BinaryRegion {
 		// Returns: the next element in the iteration
 		// Throws: NoSuchElementException - if the iteration has no more elements.
 		@Override
-		public Pnt2d next() {
+		public PntInt next() {
 			if (pNext != null || hasNext()) {
-				Pnt2d pn = pNext;
+				PntInt pn = pNext;
 				pNext = null;		// "consume" pNext
 				return pn;
 			}

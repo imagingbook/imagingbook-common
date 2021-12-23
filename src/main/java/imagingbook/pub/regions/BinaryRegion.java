@@ -7,6 +7,7 @@ import java.util.Map;
 
 import imagingbook.pub.geometry.basic.Pnt2d;
 import imagingbook.pub.geometry.basic.Pnt2d.PntDouble;
+import imagingbook.pub.geometry.basic.Pnt2d.PntInt;
 import imagingbook.pub.regions.segment.BinaryRegionSegmentation;
 
 /**
