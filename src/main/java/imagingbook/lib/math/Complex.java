@@ -11,6 +11,8 @@ package imagingbook.lib.math;
 
 import java.util.Locale;
 
+import imagingbook.pub.geometry.basic.Pnt2d;
+
 /**
  * This class represents complex numbers. Instances are immutable.
  * Methods are mostly defined to be compatible with 
@@ -64,6 +66,14 @@ public class Complex {
 		this.re = Math.cos(phi);
 		this.im = Math.sin(phi);
 	}
+	
+	
+	public Complex(Pnt2d pnt) {
+		this.re = pnt.getX();
+		this.im = pnt.getY();
+	}
+	
+	// -------------------------------------------------------------------
 
 	/**
 	 * Returns the absolute value of this complex number, i.e.,
