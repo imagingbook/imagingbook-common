@@ -50,6 +50,7 @@ public class AlgebraicLine {
 	
 	// static factory methods ----------------------------------------
 	
+	// Line from start point s and direction vector v
 	public static AlgebraicLine from(double[] s, double[] v) {
 		double A = -v[1];
 		double B = v[0];
