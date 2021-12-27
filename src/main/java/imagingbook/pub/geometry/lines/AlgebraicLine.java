@@ -17,6 +17,7 @@ import java.util.Locale;
 
 import imagingbook.pub.geometry.basic.Pnt2d;
 import imagingbook.pub.geometry.basic.Pnt2d.PntDouble;
+import imagingbook.pub.hough.lines.HoughLine;
 
 /**
  * This class represents an algebraic line of the form A x + B  y + C = 0.
@@ -177,8 +178,10 @@ public class AlgebraicLine {
 	
 	// -------------------------------------------------------------------
 	
-	public Shape getShape(Rectangle2D rect) {
-		return null;
+	// TODO: this is temporary, write a general method (without HoughLine)!
+	public Shape getShape(int width, int height) {
+		HoughLine hl = new HoughLine(this, 0.5 * width, 0.5 * height, 0);
+		return hl.getShape(width, height);
 	}
 	
 	// -------------------------------------------------------------------
