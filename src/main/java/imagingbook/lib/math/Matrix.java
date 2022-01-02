@@ -1493,7 +1493,8 @@ public abstract class Matrix {
 	 * A * x = b. Returns the solution vector x or {@code null}
 	 * if the supplied matrix is ill-conditioned (i.e., singular).
 	 * Exceptions are thrown if A is not square or dimensions are incompatible.
-	 * Uses {@link LUDecomposition} from the Apache Commons Math library.
+	 * Uses {@link LUDecomposition} from the Apache Commons Math library
+	 * (with singularity threshold set to zero).
 	 * 
 	 * @param A a square matrix of size n x n
 	 * @param b a vector of length n
@@ -1506,7 +1507,7 @@ public abstract class Matrix {
 		if (A.getRowDimension() != b.getDimension()) {
 			throw new IncompatibleDimensionsException();
 		}
-		DecompositionSolver solver = new LUDecomposition(A).getSolver();
+		DecompositionSolver solver = new LUDecomposition(A, 0.0).getSolver();
 		RealVector x = null;
 		try {
 			x = solver.solve(b);
