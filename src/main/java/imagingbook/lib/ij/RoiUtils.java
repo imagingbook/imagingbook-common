@@ -3,6 +3,7 @@ package imagingbook.lib.ij;
 import java.awt.Polygon;
 
 import ij.gui.Roi;
+import ij.gui.Overlay;
 import ij.gui.PointRoi;
 import ij.gui.PolygonRoi;
 import ij.process.FloatPolygon;
@@ -55,6 +56,22 @@ public class RoiUtils {
 			pts[i] = Pnt2d.PntDouble.from(pgn.xpoints[i], pgn.ypoints[i]);
 		}
 		return pts;
+	}
+	
+	/**
+	 * Returns a new overlay produced by joining two existing
+	 * overlays, which remain unchanged. All involved ROIs are cloned.
+	 * 
+	 * @param olyA the first overlay
+	 * @param olyB the second overlay
+	 * @return the new overlay
+	 */
+	public static Overlay join(Overlay olyA, Overlay olyB) {
+		Overlay oly = olyA.duplicate();
+		for (Roi roi : olyB) {
+			oly.add((Roi)roi.clone());
+		}
+		return oly;
 	}
 	
 }
