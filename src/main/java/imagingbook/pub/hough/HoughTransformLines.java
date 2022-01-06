@@ -8,6 +8,8 @@
  *******************************************************************************/
 package imagingbook.pub.hough;
 
+import static imagingbook.lib.math.Arithmetic.sqr;
+
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -16,6 +18,7 @@ import java.util.List;
 import ij.IJ;
 import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
+import imagingbook.lib.math.Arithmetic;
 import imagingbook.pub.hough.lines.HoughLine;
 
 
@@ -106,7 +109,7 @@ public class HoughTransformLines {
 		this.nAng = params.nAng;
 		this.nRad = params.nRad;
 		this.dAng = Math.PI / nAng;
-		this.dRad = 0.5 * Math.sqrt(width * width + height * height) / nRad; // nRad radial steps over half the diagonal length
+		this.dRad = 0.5 * Math.hypot(width, height) / nRad; // nRad radial steps over half the diagonal length
 		this.cRad = nRad;
 		this.accWidth = nAng;
 		this.accHeight = nRad + 1 + nRad;
