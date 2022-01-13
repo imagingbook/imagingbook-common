@@ -9,6 +9,8 @@
 
 package imagingbook.lib.math;
 
+import java.util.Arrays;
+
 import org.apache.commons.math3.util.FastMath;
 
 public abstract class Arithmetic {
@@ -313,6 +315,21 @@ public abstract class Arithmetic {
 		return minVal;
 	}
 	
+	/**
+	 * Returns the two real roots of the quadratic function
+	 * f(x) = ax^2 + bx + c.
+	 * @param a coefficient
+	 * @param b coefficient
+	 * @param c coefficient
+	 * @return
+	 */
+	public static double[] getRoots(double a, double b, double c) {
+		double d = Math.sqrt(sqr(b) - 4 * a * c);
+		double x1 = (-b - d) / (2 * a);
+		double x2 = (-b + d) / (2 * a);
+		return new double[] {x1, x2};
+	}
+	
 	//--------------------------------------------------------------------------
 	
 	public static class DivideByZeroException extends ArithmeticException {
@@ -339,13 +356,18 @@ public abstract class Arithmetic {
 //		}
 //	}
 	
-//	public static void main(String[] args) {	// TODO: add to tests
+	public static void main(String[] args) {	// TODO: add to tests
 //		System.out.println(Arithmetic.max(13));
 //		System.out.println(Arithmetic.max(13, 7, 22));
 //		System.out.println(Math.max(13,Math.max(7,22)));
 //		
 //		System.out.println(Arithmetic.min(13));
 //		System.out.println(Arithmetic.min(13, 7, 22));
-//	}
+		double[] x12 = getRoots(1, -7, 10);
+		System.out.println("x12 = " + Arrays.toString(x12));		// x12 = [2.0, 5.0]
+		
+		x12 = getRoots(-2, 2, 1);
+		System.out.println("x12 = " + Arrays.toString(x12));		// x12 = [1.3660254037844386, -0.3660254037844386]
+	}
 
 }
