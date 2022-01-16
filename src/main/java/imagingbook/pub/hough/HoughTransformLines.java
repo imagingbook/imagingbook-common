@@ -81,6 +81,10 @@ public class HoughTransformLines {
 		this(I.getWidth(), I.getHeight(), params);
 		this.process(I, accumulator);
 	}
+	
+	public HoughTransformLines(ImageProcessor I) {
+		this(I, new Parameters());
+	}
 
 	/**
 	 * Creates a new Hough transform from a sequence of 2D points. Parameters M, N
