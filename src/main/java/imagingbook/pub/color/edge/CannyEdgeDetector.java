@@ -58,6 +58,9 @@ public class CannyEdgeDetector extends ColorEdgeDetector {
 		}
 	}
 	
+	private static final float CosPi8 = (float) Math.cos(Math.PI/8);
+	private static final float SinPi8 = (float) Math.sin(Math.PI/8);
+	
 	private final Parameters params;
 	private final int M, N;							// width and height of I
 	
@@ -289,14 +292,13 @@ public class CannyEdgeDetector extends ColorEdgeDetector {
 		return trace;
 	}
 	
-	private final float cosPi8 = (float) Math.cos(Math.PI/8);
-	private final float sinPi8 = (float) Math.sin(Math.PI/8);
+
 	
 	// returns the quantized orientation sector for vector (dx, dy)
 	private int getOrientationSector(float dx, float dy) {
 		// rotate the gradient vector by PI/8
-		float dxR = cosPi8 * dx - sinPi8 * dy;
-		float dyR = sinPi8 * dx + cosPi8 * dy;	
+		float dxR = CosPi8 * dx - SinPi8 * dy;
+		float dyR = SinPi8 * dx + CosPi8 * dy;	
 		// mirror vector (dxR,dyR) to [0,PI]
 		if (dyR < 0) {
 			dxR = -dxR;
