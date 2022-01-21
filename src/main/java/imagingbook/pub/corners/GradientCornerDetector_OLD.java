@@ -15,11 +15,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import ij.plugin.filter.Convolver;
 import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
-import imagingbook.lib.filter.linear.GaussianFilterSeparable;
-import imagingbook.lib.filter.linear.LinearFilterSeparable;
+import imagingbook.lib.filter.linear.GaussianKernel1D;
+import imagingbook.lib.ij.Filter;
 import imagingbook.lib.image.ImageMath;
 import imagingbook.pub.corners.subpixel.SubpixelMaxInterpolator;
 import imagingbook.pub.corners.subpixel.SubpixelMaxInterpolator.Method;
@@ -37,7 +36,7 @@ import imagingbook.pub.corners.subpixel.SubpixelMaxInterpolator.Method;
  * @author W. Burger
  * @version 2020/10/04
  */
-public abstract class GradientCornerDetector {
+public abstract class GradientCornerDetector_OLD {
 	
 	/** For testing/example calculations only! */
 	public static boolean RETAIN_TEMPORARY_DATA = false;
@@ -80,7 +79,7 @@ public abstract class GradientCornerDetector {
 	
 	// ---------------------------------------------------------------------------
 	
-	protected GradientCornerDetector(ImageProcessor ip, Parameters params) {
+	protected GradientCornerDetector_OLD(ImageProcessor ip, Parameters params) {
 		this.M = ip.getWidth();
 		this.N = ip.getHeight();
 		this.params = params;
@@ -109,22 +108,18 @@ public abstract class GradientCornerDetector {
 		FloatProcessor Ix = I.convertToFloatProcessor(); 
 		FloatProcessor Iy = I.convertToFloatProcessor();
 		
-		Convolver conv = new Convolver();
-		conv.setNormalize(false);
-		
 		// nothing really but a Sobel-like gradient:
 		if (params.doPreFilter) {
-//			Filter.convolveY(Ix, hp);			// pre-filter Ix vertically
-//			Filter.convolveX(Iy, hp);			// pre-filter Iy horizontally
-			conv.convolve(Ix, hp, 1, hp.length);	// pre-filter Ix vertically
-			conv.convolve(Iy, hp, hp.length, 1);	// pre-filter Iy horizontally
-
+			Filter.convolveY(Ix, hp);			// pre-filter Ix vertically
+			Filter.convolveX(Iy, hp);			// Pare-filter Iy horizontally
+//			Ix.convolve(hp, hp.length, 1);			// pre-filter Ix vertically
+//			Iy.convolve(hp, 1, hp.length);			// Pare-filter Iy horizontally
 		}
 		
-//		Filter.convolveX(Ix, hd);				// get first derivative in x
-//		Filter.convolveY(Iy, hd);				// get first derivative in y
-		conv.convolve(Ix, hd, hd.length, 1);	// get first derivative in x
-		conv.convolve(Iy, hd, 1, hd.length);	// get first derivative in y
+		Filter.convolveX(Ix, hd);				// get first derivative in x
+		Filter.convolveY(Iy, hd);				// get first derivative in y
+//		Ix.convolve(hd, hd.length, 1);
+//		Ix.convolve(hd, 1, hd.length);
 		
 		// gradient products:
 		A = ImageMath.sqr(Ix);				// A(u,v) = Ixx(u,v) = (Ix(u,v))^2
@@ -132,10 +127,11 @@ public abstract class GradientCornerDetector {
 		C = ImageMath.mult(Ix, Iy);			// C(u,v) = Ixy(u,v) = Ix(u,v)*Iy(u,v)
 		
 		// blur the gradient components with a small Gaussian:
-		LinearFilterSeparable gf = new GaussianFilterSeparable(params.sigma);
-		gf.applyTo(A);
-		gf.applyTo(B);
-		gf.applyTo(C);
+		
+		float[] hb = GaussianKernel1D.makeGaussKernel1D(params.sigma);
+		Filter.convolveXY(A, hb);	// TODO: change to use 'GaussianFilterSeparable'
+		Filter.convolveXY(B, hb);
+		Filter.convolveXY(C, hb);
 		
 		FloatProcessor Q = new FloatProcessor(M, N);
 		
@@ -147,6 +143,11 @@ public abstract class GradientCornerDetector {
 		for (int i = 0; i < M * N; i++) {
 			pQ[i] = getCornerScore(pA[i], pB[i], pC[i]);
 		}
+		
+//		(new ImagePlus("Ixx", Ixx)).show();
+//		(new ImagePlus("Iyy", Iyy)).show();
+//		(new ImagePlus("Ixy", Ixy)).show();
+//		(new ImagePlus("Q", Q)).show();
 		
 		return Q;
 	}
@@ -287,6 +288,5 @@ public abstract class GradientCornerDetector {
 			return (xyz == null) ? null : new Corner(u + xyz[0], v + xyz[1], xyz[2]);
 		}
 	}
-	
 	
 }
