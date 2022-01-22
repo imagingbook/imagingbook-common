@@ -155,22 +155,22 @@ public class BinaryMorphologyFilter {
 		int n;
 		int iter = 0;
 		do {
-			n = thinOnce(ip, D);
+			n = thinOnceFast(ip, D);
 			iter++;
 		} while (n > 0 && iter <  iMax);
 		return iter;
 	}
 	
 	// Single thinning interation. Returns the number of deletions performed.
-	public int thinOnce(ByteProcessor ip) {
+	public int thinOnceFast(ByteProcessor ip) {
 		int M = ip.getWidth();
 		int N = ip.getHeight();
 		byte[][]  D = new byte[M][N];
-		return thinOnce(ip, D);
+		return thinOnceFast(ip, D);
 	}
 	
 	// Single thinning interation. Returns the number of deletions performed.
-	private int thinOnce(ByteProcessor ip, byte[][] D) {
+	private int thinOnceFast(ByteProcessor ip, byte[][] D) {
 		int M = ip.getWidth();
 		int N = ip.getHeight();
 		int nd = 0;
@@ -271,7 +271,7 @@ public class BinaryMorphologyFilter {
 		int N = ip.getHeight();
 
 		// PASS 1 --------------------------------------
-		int n1 = 0;
+		int k1 = 0;
 		for (int u = 0; u < M; u++) {
 			for (int v = 0; v < N; v++) {
 				D[u][v] = 0;
@@ -279,16 +279,16 @@ public class BinaryMorphologyFilter {
 					byte[] NH = getNeighborhood(ip, u, v);
 					if (R1(NH)) {
 						D[u][v] = 1;
-						n1 = n1 + 1;
+						k1 = k1 + 1;
 					}
 				}
 			}
 		}
-		if (n1 > 0)
+		if (k1 > 0)
 			deleteMarked(ip, D);
 
 		// PASS 2 --------------------------------------
-		int n2 = 0;
+		int k2 = 0;
 		for (int u = 0; u < M; u++) {
 			for (int v = 0; v < N; v++) {
 				D[u][v] = 0;
@@ -296,14 +296,14 @@ public class BinaryMorphologyFilter {
 					byte[] NH = getNeighborhood(ip, u, v);
 					if (R2(NH)) {
 						D[u][v] = 1;
-						n2 = n2 + 1;
+						k2 = k2 + 1;
 					}
 				}
 			}
 		}
-		if (n2 > 0)
+		if (k2 > 0)
 			deleteMarked(ip, D);
-		return n1 + n2;
+		return k1 + k2;
 	}
 	
 	private byte[] getNeighborhood(ImageProcessor ip, int u, int v) {
@@ -319,31 +319,32 @@ public class BinaryMorphologyFilter {
 		return NH;
 	}
 	
+	private static final byte B0 = (byte) 0;
+	private static final byte B1 = (byte) 1;
+	
 	private byte binarize(int i) {
-		final byte b0 = (byte) 0;
-		final byte b1 = (byte) 1;
-		return (i == 0) ? b0 : b1;
+		return (i == 0) ? B0 : B1;
 	}
 
 	private boolean R1(byte[] NH) {
 		final int b = B(NH);
 		final int c = C(NH);
 		return 
-				//NH[0] == 1 &&
-				2 <= b && b <= 6 &&
-				c == 1 &&
-				NH[6] * NH[0] * NH[2] == 0 &&
-				NH[4] * NH[6] * NH[0] == 0;
+			//NH[0] == 1 &&
+			2 <= b && b <= 6 &&
+			c == 1 &&
+			NH[6] * NH[0] * NH[2] == 0 &&
+			NH[4] * NH[6] * NH[0] == 0;
 	}
 	
 	private boolean R2(byte[] NH) {
 		final int b = B(NH);
 		final int c = C(NH);
 		return 
-				//NH[0] == 1 &&
-				2 <= b && b <= 6 &&
-				c == 1 &&
-				NH[0] * NH[2] * NH[4] == 0 &&
+			//NH[0] == 1 &&
+			2 <= b && b <= 6 &&
+			c == 1 &&
+			NH[0] * NH[2] * NH[4] == 0 &&
 				NH[2] * NH[4] * NH[6] == 0;
 	}
 	
