@@ -13,8 +13,8 @@ import java.util.Deque;
 import java.util.LinkedList;
 
 import ij.process.ByteProcessor;
+import imagingbook.pub.geometry.basic.NeighborhoodType2D;
 import imagingbook.pub.geometry.basic.Pnt2d.PntInt;
-import imagingbook.pub.regions.NeighborhoodType;
 
 /**
  * Binary region labeler based on a breadth-first flood filling
@@ -36,7 +36,7 @@ public class BreadthFirstSegmentation extends BinaryRegionSegmentation {
 		this(ip, DEFAULT_NEIGHBORHOOD);
 	}
 	
-	public BreadthFirstSegmentation(ByteProcessor ip, NeighborhoodType nh) {
+	public BreadthFirstSegmentation(ByteProcessor ip, NeighborhoodType2D nh) {
 		super(ip, nh);
 	}
 	
@@ -68,7 +68,7 @@ public class BreadthFirstSegmentation extends BinaryRegionSegmentation {
 				Q.addLast(PntInt.from(x, y + 1));
 				Q.addLast(PntInt.from(x, y - 1));
 				Q.addLast(PntInt.from(x - 1, y));
-				if (NT == NeighborhoodType.N8) {
+				if (NT == NeighborhoodType2D.N8) {
 					Q.addLast(PntInt.from(x + 1, y + 1));
 					Q.addLast(PntInt.from(x - 1, y + 1));
 					Q.addLast(PntInt.from(x + 1, y - 1));

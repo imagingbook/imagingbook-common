@@ -215,7 +215,6 @@ public abstract class IjUtils {
 		}
 	}
 	
-	
 	// -------------------------------------------------------------------
 	
 	/** 
@@ -243,21 +242,33 @@ public abstract class IjUtils {
 	 * Creates a new {@link FloatProcessor} instance of size width x height
 	 * from the given 2D array with dimensions [x = 0..width-1][y = 0..height-1].
 	 * 
-	 * @param dPixels a 2D {@code double} array
+	 * @param A a 2D {@code double} array
 	 * @return a new {@link FloatProcessor} instance
 	 */
-	public static FloatProcessor toFloatProcessor(double[][] dPixels) {
-		final int width = dPixels.length;
-		final int height = dPixels[0].length;
+	public static FloatProcessor toFloatProcessor(double[][] A) {
+		final int width = A.length;
+		final int height = A[0].length;
 		float[] fPixels = new float[width * height];
 		int i = 0;
 		for (int v = 0; v < height; v++) {
 			for (int u = 0; u < width; u++) {
-				fPixels[i] = (float) dPixels[u][v];
+				fPixels[i] = (float) A[u][v];
 				i++;
 			}
 		}
 		return new FloatProcessor(width, height, fPixels);
+	}
+	
+	public static ByteProcessor toByteProcessor(byte[][] A) {
+		final int w = A[0].length;
+		final int h = A.length;
+		ByteProcessor bp = new ByteProcessor(w, h);
+		for (int v = 0; v < h; v++) {
+			for (int u = 0; u < w; u++) {
+				bp.putPixel(u, v, 0xFF & A[v][u]);
+			}
+		}
+		return bp;
 	}
 	
 	

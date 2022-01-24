@@ -32,8 +32,10 @@ public class SkeletonTest {
 		assertNotNull(origIm);		
 		ImageProcessor origIp = origIm.getProcessor();
 		
-		BinaryMorphologyFilter morph = new BinaryMorphologyFilter();
-		int k = morph.thin((ByteProcessor)origIp);
+		//BinaryMorphologyFilter morph = new BinaryMorphologyFilter();
+		BinaryThinning thinning = new BinaryThinning();
+		thinning.applyTo((ByteProcessor)origIp);
+		int k = thinning.getIterations();
 		assertEquals("thinning iterations expected", 12, k);
 		
 		ImagePlus resultIm = resultPath.openAsImage();

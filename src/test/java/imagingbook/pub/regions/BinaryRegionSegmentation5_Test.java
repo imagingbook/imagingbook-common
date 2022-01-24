@@ -1,7 +1,7 @@
 package imagingbook.pub.regions;
 
-import static imagingbook.pub.regions.NeighborhoodType.N4;
-import static imagingbook.pub.regions.NeighborhoodType.N8;
+import static imagingbook.pub.geometry.basic.NeighborhoodType2D.N4;
+import static imagingbook.pub.geometry.basic.NeighborhoodType2D.N8;
 
 import java.util.List;
 

@@ -13,6 +13,7 @@ import java.util.Deque;
 import java.util.LinkedList;
 
 import ij.process.ByteProcessor;
+import imagingbook.pub.geometry.basic.NeighborhoodType2D;
 import imagingbook.pub.geometry.basic.Pnt2d.PntInt;
 import imagingbook.pub.regions.segment.BinaryRegionSegmentation;
 import imagingbook.pub.regions.segment.BreadthFirstSegmentation;
@@ -38,7 +39,7 @@ public class SegmentationBreadthFirst extends BinaryRegionSegmentation {
 		this(ip, DEFAULT_NEIGHBORHOOD);
 	}
 	
-	public SegmentationBreadthFirst(ByteProcessor ip, NeighborhoodType nh) {
+	public SegmentationBreadthFirst(ByteProcessor ip, NeighborhoodType2D nh) {
 		super(ip, nh);
 	}
 	
@@ -70,7 +71,7 @@ public class SegmentationBreadthFirst extends BinaryRegionSegmentation {
 				Q.addLast(PntInt.from(x, y + 1));
 				Q.addLast(PntInt.from(x, y - 1));
 				Q.addLast(PntInt.from(x - 1, y));
-				if (NT == NeighborhoodType.N8) {
+				if (NT == NeighborhoodType2D.N8) {
 					Q.addLast(PntInt.from(x + 1, y + 1));
 					Q.addLast(PntInt.from(x - 1, y + 1));
 					Q.addLast(PntInt.from(x + 1, y - 1));

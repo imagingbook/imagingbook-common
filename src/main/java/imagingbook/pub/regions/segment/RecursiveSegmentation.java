@@ -10,7 +10,7 @@
 package imagingbook.pub.regions.segment;
 
 import ij.process.ByteProcessor;
-import imagingbook.pub.regions.NeighborhoodType;
+import imagingbook.pub.geometry.basic.NeighborhoodType2D;
 
 /**
  * Binary region labeler based on a recursive flood filling
@@ -31,7 +31,7 @@ public class RecursiveSegmentation extends BinaryRegionSegmentation {
 		this(ip, DEFAULT_NEIGHBORHOOD);
 	}
 	
-	public RecursiveSegmentation(ByteProcessor ip, NeighborhoodType nh) {
+	public RecursiveSegmentation(ByteProcessor ip, NeighborhoodType2D nh) {
 		super(ip, nh);
 	}
 	
@@ -60,7 +60,7 @@ public class RecursiveSegmentation extends BinaryRegionSegmentation {
 			floodFill(x, y + 1, label);
 			floodFill(x, y - 1, label);
 			floodFill(x - 1, y, label);
-			if (NT == NeighborhoodType.N8) {
+			if (NT == NeighborhoodType2D.N8) {
 				floodFill(x + 1, y + 1, label);
 				floodFill(x - 1, y + 1, label);
 				floodFill(x + 1, y - 1, label);

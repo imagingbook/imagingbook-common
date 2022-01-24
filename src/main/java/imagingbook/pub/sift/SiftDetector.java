@@ -33,7 +33,7 @@ public class SiftDetector {
 		/** Set true to output debug information */
 		public boolean DEBUG = false;
 		/** Type of neigborhood used for peak detection in 3D scale space */
-		public NeighborhoodType nhType = NeighborhoodType.NH18;
+		public NeighborhoodType3D nhType = NeighborhoodType3D.NH18;
 		/** Sampling scale (nominal smoothing level of the input image) */
 		public double sigma_s = 0.5;
 		/** Base scale of level 0 (base smoothing) */
@@ -77,10 +77,10 @@ public class SiftDetector {
 	/**
 	 * Types of 3D neighborhoods used in min/max detection 
 	 */
-	public enum NeighborhoodType {
+	public enum NeighborhoodType3D {
 		NH8(8),	NH10(10), NH18(18), NH26(26);
 		private final int size;
-		private NeighborhoodType(int size) {
+		private NeighborhoodType3D(int size) {
 			this.size = size;
 		}
 	}

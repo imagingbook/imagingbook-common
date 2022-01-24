@@ -1,7 +1,7 @@
 package imagingbook.pub.regions.segment;
 
-import static imagingbook.pub.regions.NeighborhoodType.N4;
-import static imagingbook.pub.regions.NeighborhoodType.N8;
+import static imagingbook.pub.geometry.basic.NeighborhoodType2D.N4;
+import static imagingbook.pub.geometry.basic.NeighborhoodType2D.N8;
 
 import java.util.List;
 
@@ -11,9 +11,9 @@ import org.junit.Test;
 import ij.process.ByteProcessor;
 import imagingbook.DATA.images.RLOC;
 import imagingbook.lib.util.resource.ResourceLocation.Resource;
+import imagingbook.pub.geometry.basic.NeighborhoodType2D;
 import imagingbook.pub.regions.BinaryRegion;
 import imagingbook.pub.regions.Contour;
-import imagingbook.pub.regions.NeighborhoodType;
 import imagingbook.pub.regions.Contour.Inner;
 import imagingbook.pub.regions.Contour.Outer;
 import imagingbook.pub.regions.segment.RegionContourSegmentation;
@@ -152,7 +152,7 @@ public class RegionContourSegmentationTest {
 	
 	private static class TestCase {
 		String ImgName;;
-		NeighborhoodType NHT;
+		NeighborhoodType2D NHT;
 		int RegionCount;
 		int LargestRegionSize;
 		int OuterContourLength;

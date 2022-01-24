@@ -9,11 +9,12 @@
 
 package imagingbook.pub.regions.segment;
 
-import static imagingbook.pub.regions.NeighborhoodType.N4;
+import static imagingbook.pub.geometry.basic.NeighborhoodType2D.N4;
+
 import java.util.HashSet;
 
 import ij.process.ByteProcessor;
-import imagingbook.pub.regions.NeighborhoodType;
+import imagingbook.pub.geometry.basic.NeighborhoodType2D;
 
 /**
  * Binary region labeler based on a sequential labeling
@@ -35,7 +36,7 @@ public class SequentialSegmentation extends BinaryRegionSegmentation {
 		this(ip, DEFAULT_NEIGHBORHOOD);
 	}
 	
-	public SequentialSegmentation(ByteProcessor ip, NeighborhoodType nh) {
+	public SequentialSegmentation(ByteProcessor ip, NeighborhoodType2D nh) {
 		super(ip, nh);
 	}
 

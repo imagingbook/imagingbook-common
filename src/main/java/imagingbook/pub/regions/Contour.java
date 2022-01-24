@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import imagingbook.pub.geometry.basic.NeighborhoodType2D;
 import imagingbook.pub.geometry.basic.Pnt2d;
 
 
@@ -156,13 +157,13 @@ public class Contour implements Comparable<Contour>, Iterable<Pnt2d> {
 	
 	/**
 	 * Checks if this contour is closed w.r.t. the specified
-	 * {@link NeighborhoodType}, i.e., if the last and the first
+	 * {@link NeighborhoodType2D}, i.e., if the last and the first
 	 * contour point are "connected".
 	 * 
 	 * @param nht the (@link NeighborhoodType}.
 	 * @return true if the contour is closed.
 	 */
-	public boolean isClosed(NeighborhoodType nht) {
+	public boolean isClosed(NeighborhoodType2D nht) {
 		Pnt2d[] pnts = this.getPointArray();
 		if (pnts.length < 2) 
 			return true;
@@ -171,9 +172,9 @@ public class Contour implements Comparable<Contour>, Iterable<Pnt2d> {
 		double d2 = p1.distanceSq(p2);	// N4: max 1, N8: max 2
 		//System.out.println(nht + " dist=" + d2);
 		
-		if (nht == NeighborhoodType.N4 && d2 <= 1)
+		if (nht == NeighborhoodType2D.N4 && d2 <= 1)
 			return true;
-		if (nht == NeighborhoodType.N8 && d2 <= 2)
+		if (nht == NeighborhoodType2D.N8 && d2 <= 2)
 			return true;
 		return false;
 	}

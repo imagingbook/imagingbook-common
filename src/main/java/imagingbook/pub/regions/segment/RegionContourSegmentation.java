@@ -9,7 +9,7 @@
 
 package imagingbook.pub.regions.segment;
 
-import static imagingbook.pub.regions.NeighborhoodType.N4;
+import static imagingbook.pub.geometry.basic.NeighborhoodType2D.N4;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -18,11 +18,11 @@ import java.util.List;
 import ij.IJ;
 import ij.process.ByteProcessor;
 import imagingbook.lib.tuples.Tuple2;
+import imagingbook.pub.geometry.basic.NeighborhoodType2D;
 import imagingbook.pub.geometry.basic.Pnt2d.PntInt;
 import imagingbook.pub.regions.BinaryRegion;
 import imagingbook.pub.regions.Contour;
 import imagingbook.pub.regions.ContourTracer;
-import imagingbook.pub.regions.NeighborhoodType;
 
 /**
  * Binary region segmenter based on a combined region labeling
@@ -51,7 +51,7 @@ public class RegionContourSegmentation extends BinaryRegionSegmentation implemen
 		this(ip, DEFAULT_NEIGHBORHOOD);
 	}
 	
-	public RegionContourSegmentation(ByteProcessor ip, NeighborhoodType nh) {
+	public RegionContourSegmentation(ByteProcessor ip, NeighborhoodType2D nh) {
 		super(ip, nh);
 		attachOuterContours();	// attach the outer contour to the corresponding region
 		attachInnerContours();	// attach all inner contours to the corresponding region

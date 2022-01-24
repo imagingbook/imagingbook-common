@@ -9,7 +9,7 @@
 
 package imagingbook.pub.regions.segment;
 
-import static imagingbook.pub.regions.NeighborhoodType.N4;
+import static imagingbook.pub.geometry.basic.NeighborhoodType2D.N4;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -19,8 +19,8 @@ import java.util.Map;
 
 import ij.process.ByteProcessor;
 import ij.process.ImageProcessor;
+import imagingbook.pub.geometry.basic.NeighborhoodType2D;
 import imagingbook.pub.regions.BinaryRegion;
-import imagingbook.pub.regions.NeighborhoodType;
 
 /**
  * Performs region segmentation on a given binary image.
@@ -41,7 +41,7 @@ import imagingbook.pub.regions.NeighborhoodType;
  */
 public abstract class BinaryRegionSegmentation {
 	
-	public static final NeighborhoodType DEFAULT_NEIGHBORHOOD = N4;
+	public static final NeighborhoodType2D DEFAULT_NEIGHBORHOOD = N4;
 	
 	public static final int BACKGROUND = 0;
 	public static final int FOREGROUND = 1;
@@ -49,7 +49,7 @@ public abstract class BinaryRegionSegmentation {
 	protected ImageProcessor ip = null;
 	protected final int width;
 	protected final int height;	
-	protected final NeighborhoodType NT;
+	protected final NeighborhoodType2D NT;
 	
 	protected final int[][] labelArray;
 	// label values in labelArray can be:
@@ -66,7 +66,7 @@ public abstract class BinaryRegionSegmentation {
 	
 	// -------------------------------------------------------------------------
 	
-	protected BinaryRegionSegmentation(ByteProcessor ip, NeighborhoodType nh) {
+	protected BinaryRegionSegmentation(ByteProcessor ip, NeighborhoodType2D nh) {
 		this.ip = ip;
 		this.NT = nh;
 		this.width  = ip.getWidth();
