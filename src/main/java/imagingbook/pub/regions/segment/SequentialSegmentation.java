@@ -141,15 +141,15 @@ public class SequentialSegmentation extends BinaryRegionSegmentation {
 		}
 
 		// Inspect all collisions <a,b> one by one (note that a < b):
-		for (LabelCollision coll : collisions) {
-			int Ra = R[coll.a];		// set Ra contains label a
-			int Rb = R[coll.b]; 	// set Rb contains label b
+		for (LabelCollision c : collisions) {
+			int A = R[c.a];	// set Ra contains label a
+			int B = R[c.b]; 	// set Rb contains label b
 			// Merge sets Ra and Rb (unless they are the same) by
 			// moving all elements of set Rb into set Ra:
-			if (Ra != Rb) {
+			if (A != B) {	// a,b are in different sets
 				for (int i = 0; i < N; i++) {
-					if (R[i] == Rb) {
-						R[i] = Ra;
+					if (R[i] == B) {
+						R[i] = A;
 					}
 				}
 			}
