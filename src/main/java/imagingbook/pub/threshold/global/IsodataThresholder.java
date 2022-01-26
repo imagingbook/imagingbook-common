@@ -46,7 +46,7 @@ public class IsodataThresholder extends GlobalThresholder {
 		return q;
 	}
 	
-	private int makeMeanTables(int[] h) {
+	private void makeMeanTables(int[] h) {
 		int K = h.length;
 		M0 = new double[K];
 		M1 = new double[K];
@@ -57,7 +57,7 @@ public class IsodataThresholder extends GlobalThresholder {
 			s0 = s0 + q * h[q];
 			M0[q] = (n0 > 0) ? ((double) s0)/n0 : -1;
 		}
-		int N = n0;
+//		int N = n0;
 		
 		int n1 = 0;
 		long s1 = 0;
@@ -68,7 +68,7 @@ public class IsodataThresholder extends GlobalThresholder {
 			M1[q] = (n1 > 0) ? ((double) s1)/n1 : -1;
 		}
 		
-		return N;
+//		return N;
 	}
 	
 }

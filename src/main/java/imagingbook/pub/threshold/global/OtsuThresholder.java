@@ -27,7 +27,7 @@ public class OtsuThresholder extends GlobalThresholder {
 	public int getThreshold(int[] hist) {
 		h = hist;
 		int K = h.length;
-		N = makeMeanTables(h);
+		makeMeanTables(h);
 
 		double sigma2Bmax = 0;
 		int qMax = -1;
@@ -50,10 +50,10 @@ public class OtsuThresholder extends GlobalThresholder {
 		return qMax;
 	}
 	
-	private int makeMeanTables(int[] h) {
+	private void makeMeanTables(int[] h) {
 		int K = h.length;
-		M0 = new double[K];
-		M1 = new double[K];
+		this.M0 = new double[K];
+		this.M1 = new double[K];
 		int n0 = 0;
 		long s0 = 0;
 		for (int q = 0; q < K; q++) {
@@ -62,7 +62,7 @@ public class OtsuThresholder extends GlobalThresholder {
 			M0[q] = (n0 > 0) ? ((double) s0)/n0 : -1;
 		}
 		
-		int N = n0;
+		this.N = n0;
 		
 		int n1 = 0;
 		long s1 = 0;
@@ -73,6 +73,6 @@ public class OtsuThresholder extends GlobalThresholder {
 			M1[q] = (n1 > 0) ? ((double) s1)/n1 : -1;
 		}
 		
-		return N;
+//		return N;
 	}
 }

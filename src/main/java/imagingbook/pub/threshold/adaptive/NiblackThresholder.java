@@ -9,10 +9,11 @@
 
 package imagingbook.pub.threshold.adaptive;
 
-import ij.plugin.filter.GaussianBlur;
 import ij.plugin.filter.RankFilters;
 import ij.process.ByteProcessor;
 import ij.process.FloatProcessor;
+import imagingbook.lib.filter.GenericFilter;
+import imagingbook.lib.filter.linear.GaussianFilterSeparable;
 import imagingbook.pub.threshold.BackgroundMode;
 
 /**
@@ -29,6 +30,7 @@ public abstract class NiblackThresholder extends AdaptiveThresholder {
 	}
 	
 	private final Parameters params;
+	
 	protected FloatProcessor Imean;
 	protected FloatProcessor Isigma;
 
@@ -42,20 +44,20 @@ public abstract class NiblackThresholder extends AdaptiveThresholder {
 		this.params = params;
 	}
 	
-	protected abstract void makeMeanAndVariance(ByteProcessor I, Parameters params);
+	protected abstract void makeMeanAndVariance(ByteProcessor I, int radius);
 	
 	@Override
 	public ByteProcessor getThreshold(ByteProcessor I) {
-		int w = I.getWidth();
-		int h = I.getHeight();
-		makeMeanAndVariance(I, params);
-		ByteProcessor Q = new ByteProcessor(w, h);
+		final int M = I.getWidth();
+		final int N = I.getHeight();
+		makeMeanAndVariance(I, params.radius);
+		ByteProcessor Q = new ByteProcessor(M, N);
 		final double kappa = params.kappa;
 		final int dMin = params.dMin;
 		final boolean darkBg = (params.bgMode == BackgroundMode.DARK);
 		
-		for (int v = 0; v < h; v++) {
-			for (int u = 0; u < w; u++) {
+		for (int v = 0; v < N; v++) {
+			for (int u = 0; u < M; u++) {
 				double sigma = Isigma.getf(u, v);
 				double mu = Imean.getf(u, v);
 				double diff = kappa * sigma + dMin;
@@ -81,16 +83,15 @@ public abstract class NiblackThresholder extends AdaptiveThresholder {
 		}
 
 		@Override
-		protected void makeMeanAndVariance(ByteProcessor I, Parameters params) {
-			int width = I.getWidth();
-			int height = I.getHeight();
-			Imean =  new FloatProcessor(width, height);
-			Isigma =  new FloatProcessor(width, height);
-			final int radius = params.radius;
+		protected void makeMeanAndVariance(ByteProcessor I, int radius) {
+			int M = I.getWidth();
+			int N = I.getHeight();
+			Imean =  new FloatProcessor(M, N);
+			Isigma =  new FloatProcessor(M, N);
 			final int n = (radius + 1 + radius) * (radius + 1 + radius);
 
-			for (int v = 0; v < height; v++) {
-				for (int u = 0; u < width; u++) {
+			for (int v = 0; v < N; v++) {
+				for (int u = 0; u < M; u++) {
 					long A = 0;	// sum of image values in support region
 					long B = 0;	// sum of squared image values in support region
 					for (int j = -radius; j <= radius; j++) {
@@ -121,15 +122,15 @@ public abstract class NiblackThresholder extends AdaptiveThresholder {
 		}
 
 		@Override
-		protected void makeMeanAndVariance(ByteProcessor I, Parameters params) {
+		protected void makeMeanAndVariance(ByteProcessor I, int radius) {
 			FloatProcessor mean = (FloatProcessor) I.convertToFloat();
 			FloatProcessor var =  (FloatProcessor) mean.duplicate();
 			
 			RankFilters rf = new RankFilters();
-			rf.rank(mean, params.radius, RankFilters.MEAN);
+			rf.rank(mean, radius, RankFilters.MEAN);
 			Imean = mean;
 			
-			rf.rank(var, params.radius, RankFilters.VARIANCE);
+			rf.rank(var, radius, RankFilters.VARIANCE);
 			var.sqrt();
 			Isigma = var;
 		}
@@ -148,29 +149,34 @@ public abstract class NiblackThresholder extends AdaptiveThresholder {
 		}
 		
 		@Override
-		protected void makeMeanAndVariance(ByteProcessor I, Parameters params) {
+		protected void makeMeanAndVariance(ByteProcessor I, int r) {
 			// //uses ImageJ's GaussianBlur
 			// local variance over square of size (size + 1 + size)^2
-			int width = I.getWidth();
-			int height = I.getHeight();
+			int M = I.getWidth();
+			int N = I.getHeight();
 			
-			Imean = new FloatProcessor(width,height);
-			Isigma = new FloatProcessor(width,height);
+			Imean = new FloatProcessor(M,N);
+			Isigma = new FloatProcessor(M,N);
 
-			FloatProcessor A = (FloatProcessor) I.convertToFloatProcessor();
-			FloatProcessor B = (FloatProcessor) I.convertToFloatProcessor();
+			FloatProcessor A = I.convertToFloatProcessor();
+			FloatProcessor B = I.convertToFloatProcessor();
 			B.sqr();
 			
-			GaussianBlur gb = new GaussianBlur();
-			double sigma = params.radius * 0.6;	// sigma of Gaussian filter should be approx. 0.6 of the disk's radius
-			gb.blurFloat(A, sigma, sigma, 0.002);
-			gb.blurFloat(B, sigma, sigma, 0.002);
+			double sigma = r * 0.6;	// sigma of Gaussian filter should be approx. 0.6 of the disk's radius
+			
+//			GaussianBlur gb = new GaussianBlur();
+//			gb.blurFloat(A, sigma, sigma, 0.002);
+//			gb.blurFloat(B, sigma, sigma, 0.002);
+			
+			GenericFilter gaussian = new GaussianFilterSeparable(sigma);
+			gaussian.applyTo(A);
+			gaussian.applyTo(B);
 
-			for (int v = 0; v < height; v++) {
-				for (int u = 0; u < width; u++) {
+			for (int v = 0; v < N; v++) {
+				for (int u = 0; u < M; u++) {
 					float a = A.getf(u, v);
 					float b = B.getf(u, v);
-					float sigmaG = (float) Math.sqrt(b - a*a);
+					float sigmaG = (float) Math.sqrt(b - a * a);
 					Imean.setf(u, v, a);
 					Isigma.setf(u, v, sigmaG);
 				}

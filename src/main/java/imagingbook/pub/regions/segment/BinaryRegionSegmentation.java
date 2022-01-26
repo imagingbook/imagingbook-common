@@ -11,6 +11,7 @@ package imagingbook.pub.regions.segment;
 
 import static imagingbook.pub.geometry.basic.NeighborhoodType2D.N4;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -120,6 +121,7 @@ public abstract class BinaryRegionSegmentation {
 	 */
 	public List<BinaryRegion> getRegions() {
 		return getRegions(false);	// unsorted
+//		return new ArrayList<>(regions.values());
 	}
 	
 	/**
@@ -130,15 +132,14 @@ public abstract class BinaryRegionSegmentation {
 	 */
 	public List<BinaryRegion> getRegions(boolean sort) {
 		if (regions == null) {
-			return null;
+			throw new RuntimeException("regions is null, this should not happen");
 		}
-		else {
-			BinaryRegion[] ra = regions.values().toArray(new BinaryRegion[0]);
-			if (sort) {
-				Arrays.sort(ra);
-			}
-			return Arrays.asList(ra);
+
+		BinaryRegion[] ra = regions.values().toArray(new BinaryRegion[0]);
+		if (sort) {
+			Arrays.sort(ra);
 		}
+		return Arrays.asList(ra);
 	}
 	
 	// -------------------------------------------------------------------------
