@@ -11,24 +11,44 @@ package imagingbook.pub.color.image;
 
 public abstract class ChromaticAdaptation {
 	
-	protected final float[] white1, white2;
+	protected final double[] W1, W2;
 
 	// actual transformation of color coordinates.
 	// XYZ1 are interpreted relative to white point W1.
 	// Returns a new color adapted to white point W2.
 	public abstract float[] apply(float[] XYZ);
 	
-	protected ChromaticAdaptation (float[] white1, float[] white2) {
-		this.white1 = white1.clone();
-		this.white2 = white2.clone();
+	/**
+	 * Creates a color adaptation which transforms colors 
+	 * relative to white point W1 to corresponding colors relative 
+	 * to white point W2.
+	 * White points are in XYZ color coordinates.
+	 * 
+	 * @param W1 white point 1
+	 * @param W2 white point 2
+	 */
+	protected ChromaticAdaptation (double[] W1, double[] W2) {
+		if (W1.length != 3 || W2.length != 3) {
+			throw new IllegalArgumentException("white point coords must be of length 3");
+		}
+		this.W1 = W1.clone();
+		this.W2 = W2.clone();
 	}
 	
-	public float[] getSourceWhite() {
-		return white1;
+	/**
+	 * Returns the source white point (W1).
+	 * @return the source white point
+	 */
+	public double[] getW1() {
+		return W1;
 	}
 	
-	public float[] getTargetWhite() {
-		return white2;
+	/**
+	 * Returns the target white point (W2).
+	 * @return the target white point
+	 */
+	public double[] getW2() {
+		return W2;
 	}
 
 }

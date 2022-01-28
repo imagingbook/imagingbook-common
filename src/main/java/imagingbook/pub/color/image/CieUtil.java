@@ -51,6 +51,14 @@ public abstract class CieUtil {
 		double mag = X + Y + Z; 
 		return new double[] {X/mag, Y/mag};
 	}
+	
+	public static float[] xyzToxy(float[] XYZ) {
+		double X = XYZ[0];
+		double Y = XYZ[1];
+		double Z = XYZ[2];
+		double mag = X + Y + Z; 
+		return new float[] {(float) (X/mag), (float) (Y/mag)};
+	}
 
 //	public static void main(String[] args) {
 //		double[] XYZ = {8,7,9};

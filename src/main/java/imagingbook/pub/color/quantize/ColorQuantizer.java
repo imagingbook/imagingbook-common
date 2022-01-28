@@ -46,7 +46,7 @@ public abstract class ColorQuantizer {
 		return new ByteProcessor(w, h, idxPixels, idxCm);
 	}
 	
-	private IndexColorModel makeIndexColorModel(int[][] colormap) {
+	private static IndexColorModel makeIndexColorModel(int[][] colormap) {
 		final int nColors = colormap.length;
 		byte[] rMap = new byte[nColors];
 		byte[] gMap = new byte[nColors];

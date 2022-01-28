@@ -12,25 +12,25 @@ package imagingbook.pub.color.image;
 
 public class XYZscalingAdaptation extends ChromaticAdaptation {
 	
-	private final float[] W21;
+	private final double[] W21;
 
-	public XYZscalingAdaptation(float[] white1, float[] white2) {
-		super(white1, white2);
-		W21 = new float[3];
+	public XYZscalingAdaptation(double[] W1, double[] W2) {
+		super(W1, W2);
+		W21 = new double[3];
 		for (int i = 0; i < 3; i++) {
-			W21[i] = white2[i] / white1[i];
+			W21[i] = W2[i] / W1[i];
 		}
 	}
 	
 	public XYZscalingAdaptation(Illuminant illum1, Illuminant illum2) {
-		this(illum1.getXyzFloat(), illum2.getXyzFloat());
+		this(illum1.getXYZ(), illum2.getXYZ());
 	}
 
 	@Override
 	public float[] apply(float[] XYZ1) {
 		final float[] XYZ2 = new float[3];
 		for (int i = 0; i < 3; i++) {
-			XYZ2[i] = XYZ1[i] * W21[i];
+			XYZ2[i] = (float) (XYZ1[i] * W21[i]);
 		}
 		return XYZ2;
 	}

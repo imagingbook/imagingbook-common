@@ -34,7 +34,12 @@ public enum Illuminant {
 		Z = (1.0 - x - y) * Y / y;
 	}
 	
-	public float[] getXyzFloat() {
+	public double[] getXYZ
+	() {
+		return new double[] {X, Y, Z};
+	}
+	
+	public float[] getXYZfloat() {
 		return new float[] {(float)X, (float)Y, (float)Z};
 	}
 	

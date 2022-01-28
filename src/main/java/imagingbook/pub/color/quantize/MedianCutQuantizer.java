@@ -36,6 +36,8 @@ import imagingbook.pub.color.statistics.ColorHistogram;
  * 
  * @author WB
  * @version 2017/01/03
+ * 
+ * TODO: needs revision!
  */
 public class MedianCutQuantizer extends ColorQuantizer {
 	
@@ -77,11 +79,11 @@ public class MedianCutQuantizer extends ColorQuantizer {
 	 
 	public MedianCutQuantizer(int[] pixels, Parameters params) {
 		this.params = params;
-		System.out.println("Kmax = " + this.params.maxColors);
+//		System.out.println("Kmax = " + this.params.maxColors);
 		imageColors = makeImageColors(pixels);
-		//listColors(imageColors);
+//		listColors(imageColors);
 		quantColors = findRepresentativeColors(this.params.maxColors);
-		listColors(quantColors);
+//		listColors(quantColors);
 		colormap = makeColorMap();
 	}
 	
