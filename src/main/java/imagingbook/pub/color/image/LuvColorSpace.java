@@ -9,24 +9,28 @@
 
 package imagingbook.pub.color.image;
 
+import static imagingbook.pub.color.image.Illuminant.D65;
+
 import java.awt.color.ColorSpace;
 
 
-/*
+/**
  * This class implements the CIELuv color space.
  * Conversion from/to sRGB is implemented directly through D65-based XYZ
  * coordinates, i.e., without chromatic adaptation to Java's D50-based profile 
  * connection space. The methods fromCIEXYZ/toCIEXYZ still return D50-based XYZ 
  * coordinates in Java's profile connection space.
+ * 
+ * @author W. Burger
+ * @version 2022/01/28
  */
-
 @SuppressWarnings("serial")
 public class LuvColorSpace extends ColorSpace {
 		
 	// D65 reference white point:
-	private static final double Xref = Illuminant.D65.X; 	// 0.950456
-	private static final double Yref = Illuminant.D65.Y; 	// 1.000000
-	private static final double Zref = Illuminant.D65.Z;	// 1.088754
+	private static final double Xref = D65.getX(); 	// 0.950456
+	private static final double Yref = D65.getY(); 	// 1.000000
+	private static final double Zref = D65.getZ();	// 1.088754
 	
 	private static final double uuref = fu(Xref, Yref, Zref); // u'_n
 	private static final double vvref = fv(Xref, Yref, Zref); // v'_n
@@ -42,7 +46,7 @@ public class LuvColorSpace extends ColorSpace {
 	// XYZ50->CIELuv: returns Luv values from XYZ (relative to D50)
 	@Override
 	public float[] fromCIEXYZ(float[] XYZ50) {	
-		float[] XYZ65 = catD50toD65.apply(XYZ50);
+		float[] XYZ65 = catD50toD65.applyTo(XYZ50);
 		return fromCIEXYZ65(XYZ65);
 	}
 	
@@ -64,7 +68,7 @@ public class LuvColorSpace extends ColorSpace {
 	@Override
 	public float[] toCIEXYZ(float[] Luv) {
 		float[] XYZ65 = toCIEXYZ65(Luv);
-		return catD65toD50.apply(XYZ65);
+		return catD65toD50.applyTo(XYZ65);
 	}
 	
 	private float[] toCIEXYZ65(float[] Luv) {
@@ -160,23 +164,25 @@ public class LuvColorSpace extends ColorSpace {
 	
 	//---------------------------------------------------------------------
 	
-    public static void main(String[] args) {
-    	int sr = 128;
-    	int sg = 1;
-    	int sb = 128;
-    	System.out.format("Input (sRGB) = %d, %d, %d\n", sr, sg, sb);
-    	System.out.format("XYZref = %f, %f, %f\n", Xref, Yref, Zref);
-    	
-    	LuvColorSpace cs = new LuvColorSpace();
-    	//float[] luv = cs.fromCIEXYZ(new float[] {.1f,.5f,.9f});
-    	float[] luv = cs.fromRGB(new float[] {sr/255f, sg/255f, sb/255f});
-
-    	System.out.format("Luv = %.2f, %.2f, %.2f\n", luv[0],luv[2],luv[2]);
-    	//float[] xyz = cs.toCIEXYZ(luv);
-    	float[] srgb = cs.toRGB(luv);
-    	System.out.format("sRGB = %.2f, %.2f, %.2f\n", 
-    			Math.rint(255*srgb[0]), Math.rint(255*srgb[1]), Math.rint(255*srgb[2]));
-    	
-    }
+	// moved to tests:
+	 
+//    public static void main(String[] args) {
+//    	int sr = 128;
+//    	int sg = 1;
+//    	int sb = 128;
+//    	System.out.format("Input (sRGB) = %d, %d, %d\n", sr, sg, sb);
+//    	System.out.format("XYZref = %f, %f, %f\n", Xref, Yref, Zref);
+//    	
+//    	LuvColorSpace cs = new LuvColorSpace();
+//    	//float[] luv = cs.fromCIEXYZ(new float[] {.1f,.5f,.9f});
+//    	float[] luv = cs.fromRGB(new float[] {sr/255f, sg/255f, sb/255f});
+//
+//    	System.out.format("Luv = %.2f, %.2f, %.2f\n", luv[0],luv[2],luv[2]);
+//    	//float[] xyz = cs.toCIEXYZ(luv);
+//    	float[] srgb = cs.toRGB(luv);
+//    	System.out.format("sRGB = %.2f, %.2f, %.2f\n", 
+//    			Math.rint(255*srgb[0]), Math.rint(255*srgb[1]), Math.rint(255*srgb[2]));
+//    	
+//    }
 
 }

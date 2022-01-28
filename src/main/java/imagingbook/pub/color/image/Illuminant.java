@@ -19,11 +19,11 @@ public enum Illuminant {
 	B	(0.3498, 0.3527),					// 4874K, Obsolete, direct sunlight at noon 
 	C	(0.31039, 0.31905),					// 6774K, Obsolete, north sky daylight 
 	F2	(0.37928, 0.36723),					// 4200K, Cool White Fluorescent (CWF)
-	F7	(0.31565, 0.32951),					// 6500K,  Broad-Band Daylight Fluorescent 
-	F11	(0.38543, 0.37110);					// 4000K,  Narrow Band White Fluorescent 
+	F7	(0.31565, 0.32951),					// 6500K, Broad-Band Daylight Fluorescent 
+	F11	(0.38543, 0.37110);					// 4000K, Narrow Band White Fluorescent 
 	
-	public final double X, Y, Z;
-
+	private final double X, Y, Z;
+	
 	private Illuminant(double X, double Y, double Z) {
 		this.X = X; this.Y = Y; this.Z = Z;
 	}
@@ -34,11 +34,26 @@ public enum Illuminant {
 		Z = (1.0 - x - y) * Y / y;
 	}
 	
-	public double[] getXYZ
-	() {
+	// ----------------------------------------------
+
+	public double getX() {
+		return X;
+	}
+
+	public double getY() {
+		return Y;
+	}
+
+	public double getZ() {
+		return Z;
+	}
+
+
+	public double[] getXYZ() {
 		return new double[] {X, Y, Z};
 	}
 	
+	@Deprecated
 	public float[] getXYZfloat() {
 		return new float[] {(float)X, (float)Y, (float)Z};
 	}

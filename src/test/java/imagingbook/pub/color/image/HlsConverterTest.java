@@ -1,31 +1,24 @@
 package imagingbook.pub.color.image;
 
-import org.junit.Assert;
+import static org.junit.Assert.assertArrayEquals;
+
+import java.util.Random;
+
 import org.junit.Test;
 
 public class HlsConverterTest {
 
 	@Test
-	public void testFromRGB() {
-		//
-	}
-
-	@Test
-	public void testToRGB() {
-		//
-	}
-
-	@Test
 	public void testFromRGBtoRGB() {  // tests all 16 mio RGB colors
+		Random rg = new Random(17);
 		HlsConverter hlsC = new HlsConverter();
 		int[] rgb = new int[3];
-		for (rgb[0] = 0; rgb[0] < 256; rgb[0]++) {
-			for (rgb[1] = 0; rgb[1] < 256; rgb[1]++) {
-				for (rgb[2] = 0; rgb[2] < 256; rgb[2]++) {
-					float[] hls = hlsC.fromRGB(rgb);
-					Assert.assertArrayEquals(rgb, hlsC.toRGB(hls));
-				}
-			}
+		for (int i = 0; i < 1000; i++) {
+			rgb[0] = rg.nextInt(256);
+			rgb[1] = rg.nextInt(256);
+			rgb[2] = rg.nextInt(256);
+			float[] hls = hlsC.fromRGB(rgb);
+			assertArrayEquals(rgb, hlsC.toRGB(hls));
 		}
 	}
 }
