@@ -9,17 +9,22 @@
 
 package imagingbook.pub.color.edge;
 
+import static imagingbook.lib.math.Arithmetic.sqr;
+
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Stack;
 
+import ij.IJ;
 import ij.plugin.filter.Convolver;
 import ij.process.ByteProcessor;
 import ij.process.ColorProcessor;
 import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
 import imagingbook.lib.filter.linear.GaussianKernel1D;
+import imagingbook.lib.math.Arithmetic;
 import imagingbook.lib.math.eigen.Eigensolver2x2;
 import imagingbook.pub.geometry.basic.Pnt2d.PntInt;
 
@@ -164,27 +169,33 @@ public class CannyEdgeDetector extends ColorEdgeDetector {
 		Ex = new FloatProcessor(M, N);
 		Ey = new FloatProcessor(M, N);
 		Emag = new FloatProcessor(M, N);
+		
 		float emax = 0;
 		for (int v = 0; v < N; v++) {
 			for (int u = 0; u < M; u++) {
 				float rx = Ixrgb[0].getf(u,v), ry = Iyrgb[0].getf(u,v);
 				float gx = Ixrgb[1].getf(u,v), gy = Iyrgb[1].getf(u,v);
 				float bx = Ixrgb[2].getf(u,v), by = Iyrgb[2].getf(u,v);
-				float Ixx = rx*rx + gx*gx + bx*bx;
-				float Iyy = ry*ry + gy*gy + by*by;
-				float Ixy = rx*ry + gx*gy + bx*by;
+				float A = rx*rx + gx*gx + bx*bx;
+				float B = ry*ry + gy*gy + by*by;
+				float C = rx*ry + gx*gy + bx*by;
 				
-				Eigensolver2x2 es = new Eigensolver2x2(Ixx, Ixy, Ixy, Iyy);
-				if (!es.isReal()) {
-					throw new ArithmeticException(
-							String.format("No real eigenvalues for structure matrix at position (%d, %d)", u, v));
-				}
-				float mag = (float) Math.sqrt(es.getEigenvalues()[0]);
-				Emag.setf(u, v, mag);
+//				Eigensolver2x2 es = new Eigensolver2x2(A, C, C, B);
+//				if (!es.isReal()) {
+//					throw new ArithmeticException(
+//							String.format("No real eigenvalues for structure matrix at position (%d, %d)", u, v));
+//				}
+//				float mag = (float) Math.sqrt(es.getEigenvalue(0));
+//				double[] eVec0 = es.getEigenvector(0);
+//				Emag.setf(u, v, mag);
+//				Ex.setf(u, v, (float) eVec0[0]);
+//				Ey.setf(u, v, (float) eVec0[1]);
 				
-				double[] eVec1 = es.getEigenvector(0);
-				Ex.setf(u, v, (float) eVec1[0]);
-				Ey.setf(u, v, (float) eVec1[1]);
+				float D = (float) Math.sqrt(sqr(A - B) + 4 * sqr(C));	
+				float lambda0 = (A + B + D) / 2;						// eigenvalue \lambda_0
+				Emag.setf(u, v, (float) Math.sqrt(lambda0));
+				Ex.setf(u, v, A - B + D);								// eigenvector x_0
+				Ey.setf(u, v, 2 * C);									// eigenvector y_0
 			}
 		}
 		// normalize gradient magnitude 

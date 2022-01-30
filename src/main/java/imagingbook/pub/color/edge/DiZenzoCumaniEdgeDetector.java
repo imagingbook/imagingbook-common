@@ -84,19 +84,19 @@ public class DiZenzoCumaniEdgeDetector extends ColorEdgeDetector {
 		
 		for (int v = 0; v < N; v++) {
 			for (int u = 0; u < M; u++) {
-				float Rx = Ix[R].getf(u, v);	float Ry = Iy[R].getf(u, v);
-				float Gx = Ix[G].getf(u, v);	float Gy = Iy[G].getf(u, v);
-				float Bx = Ix[B].getf(u, v);	float By = Iy[B].getf(u, v);
+				float rx = Ix[R].getf(u, v), ry = Iy[R].getf(u, v);
+				float gx = Ix[G].getf(u, v), gy = Iy[G].getf(u, v);
+				float bx = Ix[B].getf(u, v), by = Iy[B].getf(u, v);
 				
-				float AA = sqr(Rx) + sqr(Gx) + sqr(Bx);
-				float BB = sqr(Ry) + sqr(Gy) + sqr(By);
-				float CC = Rx * Ry + Gx * Gy + Bx * By;
+				float A = rx*rx + gx*gx + bx*bx;
+				float B = ry*ry + gy*gy + by*by;
+				float C = rx*ry + gx*gy + bx*by;
 				
-				float lambda1 = 0.5f * (AA + BB + (float) Math.sqrt(sqr(AA-BB) + 4 * sqr(CC)));
-				float theta1 = 0.5f * (float) Math.atan2(2 * CC, AA - BB);
+				float lambda0 = 0.5f * (A + B + (float) Math.sqrt(sqr(A-B) + 4 * sqr(C)));
+				float theta0 =  0.5f * (float) Math.atan2(2 * C, A - B);
 
-				E_mag.setf(u, v, (float) Math.sqrt(lambda1));
-				E_ort.setf(u, v, theta1);
+				E_mag.setf(u, v, (float) Math.sqrt(lambda0));
+				E_ort.setf(u, v, theta0);
 //				edgeOrientation.setf(u, v, 2 * CC);
 //				edgeOrientation.setf(u, v, AA - BB);
 				
