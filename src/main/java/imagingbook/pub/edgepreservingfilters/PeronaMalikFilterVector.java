@@ -62,29 +62,30 @@ public class PeronaMalikFilterVector extends GenericFilterVector {
 		 *   p3 p0 p1         2 x 0
 		 *      p2              1
 		 */
-		float[][] p = new float[5][];	// p[i][k]: 5 pixels from the 3x3 neigborhood
-		p[0] = pack.getVec(u, v);
-		p[1] = pack.getVec(u + 1, v);
-		p[2] = pack.getVec(u, v + 1);
-		p[3] = pack.getVec(u - 1, v);
-		p[4] = pack.getVec(u, v - 1);
+		float[][] A = new float[4][];	// p[i][k]: 4 pixel colors from the 3x3 neigborhood
+		float[] Ac =  pack.getVec(u, v);
+//		A[0] = pack.getVec(u, v);
+		A[0] = pack.getVec(u + 1, v);
+		A[1] = pack.getVec(u, v - 1);
+		A[2] = pack.getVec(u - 1, v);
+		A[3] = pack.getVec(u, v + 1);
 		
-		float[] result = p[0].clone();
+		float[] result = Ac.clone(); //A[0].clone();
 		
 		switch (colorMode) {
 		case BrightnessGradient:
-			float b0 = getBrightness(p[0]);
-			for (int i = 1; i <= 4; i++) {
-				float bi = getBrightness(p[i]);
+			float bc = getBrightness(Ac);
+			for (int i = 0; i < 4; i++) {
+				float bi = getBrightness(A[i]);
 				for (int k = 0; k < 3; k++) {
-					float gi = g.eval(Math.abs(bi - b0));
-					result[k] = result[k] + alpha * gi * (p[i][k] - p[0][k]);
+					float gi = g.eval(Math.abs(bi - bc));
+					result[k] = result[k] + alpha * gi * (A[i][k] - Ac[k]);
 				}
 			}
 			break;
 		case ColorGradient:
-			for (int i = 1; i <= 4; i++) {
-				float[] D = subtract(p[i], p[0]);
+			for (int i = 0; i < 4; i++) {
+				float[] D = subtract(A[i], Ac);
 				float gi = g.eval(Matrix.normL2(D));	// g applied to color gradient magnitude
 				for (int k = 0; k < 3; k++) {
 					result[k] = result[k] + alpha * gi * D[k];

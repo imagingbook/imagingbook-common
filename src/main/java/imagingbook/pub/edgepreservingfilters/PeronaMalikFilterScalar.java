@@ -35,6 +35,7 @@ public class PeronaMalikFilterScalar extends GenericFilterScalar {
 	private final int T; 		// number of iterations
 	private final float alpha;
 	private final ConductanceFunction g;
+	private final float[] A = new float[4];			// tmp array for neighbor values
 	
 	// constructor - using default parameters
 	public PeronaMalikFilterScalar () {
@@ -54,25 +55,49 @@ public class PeronaMalikFilterScalar extends GenericFilterScalar {
 	protected float doPixel(PixelSlice plane, int u, int v) {
 		/*   
 		 *  NH pixels:      directions:
-		 *      p4              3
-		 *   p3 p0 p1        2  x  0
-		 *      p2              1
+		 *      a1              1
+		 *   a2 ac a0        2  x  0
+		 *      a3              3
 		 */
-		float[] p = new float[5];
-		p[0] = plane.getVal(u, v);
-		p[1] = plane.getVal(u + 1, v);
-		p[2] = plane.getVal(u, v + 1);
-		p[3] = plane.getVal(u - 1, v);
-		p[4] = plane.getVal(u, v - 1);
+		
+		float ac = plane.getVal(u, v);
+		A[0] = plane.getVal(u + 1, v);
+		A[1] = plane.getVal(u, v - 1);
+		A[2] = plane.getVal(u - 1, v);
+		A[3] = plane.getVal(u, v + 1);
 			
-		float result = p[0];
-		for (int i = 1; i <= 4; i++) {
-			float d = p[i] - p[0];
-			result = result + alpha * (g.eval(Math.abs(d))) * (d);
+		float delta = 0;
+		for (int i = 0; i < 4; i++) {
+			float d = A[i] - ac;
+			delta = delta + (g.eval(Math.abs(d))) * d;
 		}
 		
-		return result;
+		return ac + alpha * delta;
 	}
+	
+//	@Override
+//	protected float doPixel(PixelSlice plane, int u, int v) {
+//		/*   
+//		 *  NH pixels:      directions:
+//		 *      p4              3
+//		 *   p3 p0 p1        2  x  0
+//		 *      p2              1
+//		 */
+//		float[] p = new float[5];
+//		p[0] = plane.getVal(u, v);
+//		p[1] = plane.getVal(u + 1, v);
+//		p[2] = plane.getVal(u, v + 1);
+//		p[3] = plane.getVal(u - 1, v);
+//		p[4] = plane.getVal(u, v - 1);
+//			
+//		float result = p[0];
+//		for (int i = 1; i <= 4; i++) {
+//			float d = p[i] - p[0];
+//			result = result + alpha * (g.eval(Math.abs(d))) * (d);
+//		}
+//		
+//		return result;
+//	}
 
 	@Override
 	protected final int passesRequired() {
