@@ -11,7 +11,6 @@ package imagingbook.pub.edgepreservingfilters;
 
 import imagingbook.lib.filter.GenericFilterScalar;
 import imagingbook.lib.image.data.PixelPack.PixelSlice;
-import imagingbook.pub.edgepreservingfilters.KuwaharaF.Parameters;
 
 /**
  * Scalar version.
@@ -23,7 +22,7 @@ import imagingbook.pub.edgepreservingfilters.KuwaharaF.Parameters;
  * @author W. Burger
  * @version 2021/01/02
  */
-public class KuwaharaFilterScalar extends GenericFilterScalar {
+public class KuwaharaFilterScalar extends GenericFilterScalar implements KuwaharaF {
 	
 	private final int n;			// fixed subregion size 
 	private final int dm;			// = d-

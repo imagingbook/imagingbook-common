@@ -13,7 +13,6 @@ import static imagingbook.lib.math.Arithmetic.sqr;
 
 import imagingbook.lib.filter.GenericFilterVector;
 import imagingbook.lib.image.data.PixelPack;
-import imagingbook.pub.edgepreservingfilters.KuwaharaF.Parameters;
 
 /**
  * Vector version (applicable to ColorProcessor only).
@@ -25,7 +24,7 @@ import imagingbook.pub.edgepreservingfilters.KuwaharaF.Parameters;
  * @author W. Burger
  * @version 2021/01/02
  */
-public class KuwaharaFilterVector extends GenericFilterVector {
+public class KuwaharaFilterVector extends GenericFilterVector implements KuwaharaF {
 	
 	private final int n;			// fixed subregion size 
 	private final int dm;			// = d-

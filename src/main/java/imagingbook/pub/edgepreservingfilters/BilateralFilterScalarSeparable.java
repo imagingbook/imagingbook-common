@@ -15,7 +15,6 @@ import static imagingbook.pub.edgepreservingfilters.BilateralF.gauss;
 import imagingbook.lib.filter.GenericFilterScalarSeparable;
 import imagingbook.lib.filter.linear.GaussianKernel1D;
 import imagingbook.lib.image.data.PixelPack.PixelSlice;
-import imagingbook.pub.edgepreservingfilters.BilateralF.Parameters;
 
 /**
  * Scalar version, applicable to all image types.
@@ -31,7 +30,7 @@ import imagingbook.pub.edgepreservingfilters.BilateralF.Parameters;
  * @author W. Burger
  * @version 2021/01/01
  */
-public class BilateralFilterScalarSeparable extends GenericFilterScalarSeparable {
+public class BilateralFilterScalarSeparable extends GenericFilterScalarSeparable implements BilateralF {
 	
 	private final float[] Hd;	// the 1D domain kernel
 	private final int K;		// the domain kernel size [-K,...,K]

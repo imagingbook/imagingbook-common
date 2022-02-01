@@ -16,7 +16,6 @@ import imagingbook.lib.filter.GenericFilterVectorSeparable;
 import imagingbook.lib.filter.linear.GaussianKernel1D;
 import imagingbook.lib.image.data.PixelPack;
 import imagingbook.lib.math.VectorNorm;
-import imagingbook.pub.edgepreservingfilters.BilateralF.Parameters;
 
 /**
  * Separable vector version, for RGB images only (accepts {@link ColorProcessor} only).
@@ -30,7 +29,7 @@ import imagingbook.pub.edgepreservingfilters.BilateralF.Parameters;
  * @author W. Burger
  * @version 2021/01/01
  */
-public class BilateralFilterVectorSeparable extends GenericFilterVectorSeparable {
+public class BilateralFilterVectorSeparable extends GenericFilterVectorSeparable implements BilateralF {
 	
 	private final float[] Hd;	// the 1D domain kernel
 	private final int K;		// the domain kernel size [-K,...,K]

@@ -3,10 +3,7 @@ package imagingbook.pub.edgepreservingfilters;
 import imagingbook.lib.image.access.OutOfBoundsStrategy;
 import imagingbook.lib.math.VectorNorm.NormType;
 
-public abstract class BilateralF {
-	
-	private BilateralF() {
-	}
+public interface BilateralF {
 	
 	public static class Parameters {
 		/** Sigma (width) of domain filter */
@@ -21,7 +18,7 @@ public abstract class BilateralF {
 	
 	// ------------------------------------------------------
 	
-	protected static float gauss(double d, double sigmaR2) {
+	public static float gauss(double d, double sigmaR2) {
 		return (float) Math.exp(-(d * d) / (2 * sigmaR2));
 	}
 	

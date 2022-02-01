@@ -14,9 +14,6 @@ import static imagingbook.lib.math.Matrix.subtract;
 import imagingbook.lib.filter.GenericFilterVector;
 import imagingbook.lib.image.data.PixelPack;
 import imagingbook.lib.math.Matrix;
-import imagingbook.pub.edgepreservingfilters.PeronaMalikF.ColorMode;
-import imagingbook.pub.edgepreservingfilters.PeronaMalikF.ConductanceFunction;
-import imagingbook.pub.edgepreservingfilters.PeronaMalikF.Parameters;
 
 /**
  * Vector simplified version with greatly reduced memory requirements.
@@ -32,7 +29,7 @@ import imagingbook.pub.edgepreservingfilters.PeronaMalikF.Parameters;
  * @author W. Burger
  * @version 2021/01/04
  */	
-public class PeronaMalikFilterVector extends GenericFilterVector {
+public class PeronaMalikFilterVector extends GenericFilterVector implements PeronaMalikF {
 	
 	private final float alpha;
 	private final int T; 		// number of iterations

@@ -9,9 +9,6 @@
 
 package imagingbook.pub.edgepreservingfilters;
 
-import static imagingbook.pub.edgepreservingfilters.TschumperleDericheF.kernelDx;
-import static imagingbook.pub.edgepreservingfilters.TschumperleDericheF.kernelDy;
-
 import imagingbook.lib.filter.GenericFilter;
 import imagingbook.lib.filter.linear.GaussianFilterSeparable;
 import imagingbook.lib.filter.linear.LinearFilter;
@@ -19,7 +16,6 @@ import imagingbook.lib.image.data.PixelPack;
 import imagingbook.lib.image.data.PixelPack.PixelSlice;
 import imagingbook.lib.math.Matrix;
 import imagingbook.lib.math.eigen.Eigensolver2x2;
-import imagingbook.pub.edgepreservingfilters.TschumperleDericheF.Parameters;
 
 /**
  * This class implements the Anisotropic Diffusion filter proposed by David Tschumperle 
@@ -35,7 +31,7 @@ import imagingbook.pub.edgepreservingfilters.TschumperleDericheF.Parameters;
  * @version 2021/01/06 (complete rewrite from scratch)
  */
 
-public class TschumperleDericheFilter extends GenericFilter {
+public class TschumperleDericheFilter extends GenericFilter implements TschumperleDericheF {
 
 	// ----------------------------------------------------------------------------------
 	
@@ -54,7 +50,7 @@ public class TschumperleDericheFilter extends GenericFilter {
 	
 	private int T;		// number of iterations
 	private float alpha;
-	private double a1, a2;
+	private double a0, a1;
 	private PixelPack source, target;
 	
 	
@@ -76,9 +72,9 @@ public class TschumperleDericheFilter extends GenericFilter {
 		this.K = source.getDepth();
 		
 		this.T = params.iterations;
-		this.alpha = params.initialAlpha;
+		this.alpha = params.alpha0;
+		this.a0 = params.a0;
 		this.a1 = params.a1;
-		this.a2 = params.a2;
 		
 		this.Dx = new PixelPack(source, false);	// container for X/Y-derivatives
 		this.Dy = new PixelPack(source, false);
@@ -86,8 +82,8 @@ public class TschumperleDericheFilter extends GenericFilter {
 		this.filterDx = new LinearFilter(kernelDx);
 		this.filterDy = new LinearFilter(kernelDy);
 		
-		this.gradientBlurFilter = new GaussianFilterSeparable(params.sigmaG);	
-		this.structureBlurFilter = new GaussianFilterSeparable(params.sigmaS);
+		this.gradientBlurFilter = new GaussianFilterSeparable(params.sigmaD);	
+		this.structureBlurFilter = new GaussianFilterSeparable(params.sigmaM);
 		
 		this.G = new PixelPack(M, N, 3, null);	// structure matrix as (u,v) with 3 elements	
 	}
@@ -98,7 +94,7 @@ public class TschumperleDericheFilter extends GenericFilter {
 	protected void runPass(PixelPack source, PixelPack target) {
 		makeGradients();							// Step 1
 		makeStructureMatrix();						// Step 2
-		float maxVelocity = updateImage(); 	// Step 3
+		float maxVelocity = updateImage(); 			// Step 3
 		alpha = (float) params.dt / maxVelocity;	// Step 4: re-adjust alpha
 	}
 	
@@ -115,20 +111,20 @@ public class TschumperleDericheFilter extends GenericFilter {
 		gradientBlurFilter.applyTo(Dy);
 	}
 	
-	private void makeStructureMatrix() {	// make G
+	private void makeStructureMatrix() {	// make M
 		for (int u = 0; u < M; u++) {
 			for (int v = 0; v < N; v++) {
 				final float[] dx = Dx.getVec(u, v);
 				final float[] dy = Dy.getVec(u, v);
-				float g0 = 0; float g1 = 0; float g2 = 0;
+				float g0 = 0; float g2 = 0; float g1 = 0;
 				for (int k = 0; k < K; k++) {
 					final float fx = dx[k];
 					final float fy = dy[k];
 					g0 += fx * fx;
-					g1 += fx * fy;
-					g2 += fy * fy;
+					g1 += fy * fy;
+					g2 += fx * fy;
 				}
-				G.setVec(u, v, g0, g1, g2);
+				G.setVec(u, v, g0, g2, g1);
 			}
 		}
 		structureBlurFilter.applyTo(G);
@@ -163,25 +159,25 @@ public class TschumperleDericheFilter extends GenericFilter {
 			throw new RuntimeException("undefined eigenvalues in " + 
 					this.getClass().getSimpleName());
 		}
-		double lambda1 = solver.getEigenvalue(0);
-		double lambda2 = solver.getEigenvalue(1);
-		double[] evec1 = solver.getEigenvector(0);
-		Matrix.normalizeD(evec1);//  normalize(evec1);	
-		double arg = 1.0 + lambda1 + lambda2;	// 1 + lambda_1 + lambda_2
+		double lambda0 = solver.getEigenvalue(0);
+		double lambda1 = solver.getEigenvalue(1);
+		double[] evec0 = solver.getEigenvector(0);
+		Matrix.normalizeD(evec0);//  normalize(evec1);	
+		double arg = 1.0 + lambda0 + lambda1;	// 1 + lambda_1 + lambda_2
+		float c0 = (float) Math.pow(arg, -a0);
 		float c1 = (float) Math.pow(arg, -a1);
-		float c2 = (float) Math.pow(arg, -a2);
 		
 		// mount geometry matrix A:
-		float x1 = (float) evec1[0];
-		float y1 = (float) evec1[1];
-		float xx1 = x1 * x1;
-		float xy1 = x1 * y1;
-		float yy1 = y1 * y1;
+		float x0 = (float) evec0[0];
+		float y0 = (float) evec0[1];
+		float xx0 = x0 * x0;
+		float xy0 = x0 * y0;
+		float yy0 = y0 * y0;
 		
-		float A0 = c1 * yy1 + c2 * xx1;
-		float A1 = (c2 - c1)* xy1;
-		float A2 = c1 * xx1 + c2 * yy1;
-		return new float[] {A0, A1, A2};
+		float A0 = c0 * yy0 + c1 * xx0;
+		float A1 = c0 * xx0 + c1 * yy0;
+		float A2 = (c1 - c0)* xy0;
+		return new float[] {A0, A2, A1};
 	}
 
 	

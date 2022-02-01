@@ -11,8 +11,6 @@ package imagingbook.pub.edgepreservingfilters;
 
 import imagingbook.lib.filter.GenericFilterScalar;
 import imagingbook.lib.image.data.PixelPack.PixelSlice;
-import imagingbook.pub.edgepreservingfilters.PeronaMalikF.ConductanceFunction;
-import imagingbook.pub.edgepreservingfilters.PeronaMalikF.Parameters;
 
 
 /**
@@ -30,7 +28,7 @@ import imagingbook.pub.edgepreservingfilters.PeronaMalikF.Parameters;
  * @author W. Burger
  * @version 2021/01/02
  */
-public class PeronaMalikFilterScalar extends GenericFilterScalar {
+public class PeronaMalikFilterScalar extends GenericFilterScalar implements PeronaMalikF {
 	
 	private final int T; 		// number of iterations
 	private final float alpha;

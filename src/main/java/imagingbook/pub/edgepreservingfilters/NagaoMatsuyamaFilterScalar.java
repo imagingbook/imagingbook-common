@@ -9,12 +9,8 @@
 
 package imagingbook.pub.edgepreservingfilters;
 
-import static imagingbook.pub.edgepreservingfilters.NagaoMatsuyamaF.R0;
-import static imagingbook.pub.edgepreservingfilters.NagaoMatsuyamaF.SubRegions;
-
 import imagingbook.lib.filter.GenericFilterScalar;
 import imagingbook.lib.image.data.PixelPack.PixelSlice;
-import imagingbook.pub.edgepreservingfilters.NagaoMatsuyamaF.Parameters;
 
 /**
  * Scalar version.
@@ -25,7 +21,7 @@ import imagingbook.pub.edgepreservingfilters.NagaoMatsuyamaF.Parameters;
  * @version 2021/01/02
  */
 
-public class NagaoMatsuyamaFilterScalar extends GenericFilterScalar {
+public class NagaoMatsuyamaFilterScalar extends GenericFilterScalar implements NagaoMatsuyamaF {
 
 	private final float varThreshold;
 	private float minVariance;

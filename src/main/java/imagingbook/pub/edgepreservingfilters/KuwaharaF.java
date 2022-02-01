@@ -2,7 +2,7 @@ package imagingbook.pub.edgepreservingfilters;
 
 import imagingbook.lib.image.access.OutOfBoundsStrategy;
 
-public abstract class KuwaharaF {
+public interface KuwaharaF {
 
 	public static class Parameters {
 		/** Radius of the filter (should be even) */

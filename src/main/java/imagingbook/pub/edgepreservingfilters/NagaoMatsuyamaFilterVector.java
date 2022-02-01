@@ -10,12 +10,9 @@
 package imagingbook.pub.edgepreservingfilters;
 
 import static imagingbook.lib.math.Arithmetic.sqr;
-import static imagingbook.pub.edgepreservingfilters.NagaoMatsuyamaF.R0;
-import static imagingbook.pub.edgepreservingfilters.NagaoMatsuyamaF.SubRegions;
 
 import imagingbook.lib.filter.GenericFilterVector;
 import imagingbook.lib.image.data.PixelPack;
-import imagingbook.pub.edgepreservingfilters.NagaoMatsuyamaF.Parameters;
 
 /**
  * Vector version.
@@ -26,7 +23,7 @@ import imagingbook.pub.edgepreservingfilters.NagaoMatsuyamaF.Parameters;
  * @version 2021/01/02
  */
 
-public class NagaoMatsuyamaFilterVector extends GenericFilterVector {
+public class NagaoMatsuyamaFilterVector extends GenericFilterVector implements NagaoMatsuyamaF {
 
 	// uses the same subregions as defined in {@link NagaoMatsuyamaFilterScalar}
 	
