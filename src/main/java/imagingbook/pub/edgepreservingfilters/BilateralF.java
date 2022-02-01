@@ -2,10 +2,11 @@ package imagingbook.pub.edgepreservingfilters;
 
 import imagingbook.lib.image.access.OutOfBoundsStrategy;
 import imagingbook.lib.math.VectorNorm.NormType;
+import imagingbook.lib.util.SimpleParameters;
 
 public interface BilateralF {
 	
-	public static class Parameters {
+	public static class Parameters implements SimpleParameters {
 		/** Sigma (width) of domain filter */
 		public double sigmaD = 2; 		
 		/** Sigma (width) of range filter */

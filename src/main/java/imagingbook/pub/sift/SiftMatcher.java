@@ -11,6 +11,7 @@ package imagingbook.pub.sift;
 
 import imagingbook.lib.math.VectorNorm;
 import imagingbook.lib.math.VectorNorm.NormType;
+import imagingbook.lib.util.SimpleParameters;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -18,7 +19,7 @@ import java.util.List;
 
 public class SiftMatcher {
 	
-	public static class Parameters {
+	public static class Parameters implements SimpleParameters {
 		/** Specify type of distance norm */
 		public NormType norm = NormType.L2;
 		/** Max. ratio between best and second-best match */

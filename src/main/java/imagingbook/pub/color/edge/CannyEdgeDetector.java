@@ -26,6 +26,7 @@ import ij.process.ImageProcessor;
 import imagingbook.lib.filter.linear.GaussianKernel1D;
 import imagingbook.lib.math.Arithmetic;
 import imagingbook.lib.math.eigen.Eigensolver2x2;
+import imagingbook.lib.util.SimpleParameters;
 import imagingbook.pub.geometry.basic.Pnt2d.PntInt;
 
 /**
@@ -41,7 +42,7 @@ public class CannyEdgeDetector extends ColorEdgeDetector {
 	
 	// TODO: Document methods, use arrays instead of image processors.
 	
-	public static class Parameters {
+	public static class Parameters implements SimpleParameters {
 		/** Gaussian sigma (scale) */
 		public double gSigma = 2.0f;
 		

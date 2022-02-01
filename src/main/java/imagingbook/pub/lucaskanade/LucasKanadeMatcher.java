@@ -11,6 +11,7 @@ package imagingbook.pub.lucaskanade;
 import ij.ImagePlus;
 import ij.process.FloatProcessor;
 import imagingbook.lib.math.Matrix;
+import imagingbook.lib.util.SimpleParameters;
 import imagingbook.pub.geometry.basic.Pnt2d;
 import imagingbook.pub.geometry.basic.Pnt2d.PntDouble;
 import imagingbook.pub.geometry.mappings.linear.AffineMapping2D;
@@ -31,7 +32,7 @@ public abstract class LucasKanadeMatcher {
 	 * a (usually modified) instance of this class is passed to the constructor 
 	 * of a non-abstract sub-class.
 	 */
-	public static class Parameters {
+	public static class Parameters implements SimpleParameters {
 		/** Convergence limit */
 		public double tolerance = 0.00001;
 		/** Maximum number of iterations */

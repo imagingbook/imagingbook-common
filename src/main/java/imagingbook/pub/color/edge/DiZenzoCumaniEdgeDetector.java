@@ -12,6 +12,7 @@ package imagingbook.pub.color.edge;
 import ij.process.ColorProcessor;
 import ij.process.FloatProcessor;
 import imagingbook.lib.math.Matrix;
+import imagingbook.lib.util.SimpleParameters;
 
 /**
  * Multi-Gradient ("DiZenzo/Cumani-style") color edge detector, as described in UTICS Vol. 3, Alg. 4.2.
@@ -23,7 +24,7 @@ public class DiZenzoCumaniEdgeDetector extends ColorEdgeDetector {
 	/**
 	 * Currently unused, no parameters to set
 	 */
-	public static class Parameters {
+	public static class Parameters implements SimpleParameters {
 	}
 	
 	final Parameters params;

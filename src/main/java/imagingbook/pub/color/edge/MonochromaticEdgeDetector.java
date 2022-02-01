@@ -14,6 +14,7 @@ import ij.process.FloatProcessor;
 import imagingbook.lib.math.Matrix;
 import imagingbook.lib.math.VectorNorm;
 import imagingbook.lib.math.VectorNorm.NormType;
+import imagingbook.lib.util.SimpleParameters;
 
 /**
  * Monochromatic color edge detector, as described in UTICS Vol. 3, Alg. 4.1.
@@ -31,7 +32,7 @@ public class MonochromaticEdgeDetector extends ColorEdgeDetector {
 	private FloatProcessor Emag;	// edge magnitude map
 	private FloatProcessor Eort;	// edge orientation map
 
-	public static class Parameters {
+	public static class Parameters implements SimpleParameters {
 		/** Specify which color distance to use */
 		public NormType norm = NormType.L2;
 	}

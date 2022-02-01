@@ -14,6 +14,7 @@ import ij.process.ByteProcessor;
 import ij.process.FloatProcessor;
 import imagingbook.lib.filter.GenericFilter;
 import imagingbook.lib.filter.linear.GaussianFilterSeparable;
+import imagingbook.lib.util.SimpleParameters;
 import imagingbook.pub.threshold.BackgroundMode;
 
 /**
@@ -22,7 +23,7 @@ import imagingbook.pub.threshold.BackgroundMode;
  */
 public abstract class NiblackThresholder extends AdaptiveThresholder {
 	
-	public static class Parameters {
+	public static class Parameters implements SimpleParameters {
 		public int radius = 15;
 		public double kappa =  0.30;
 		public int dMin = 5;

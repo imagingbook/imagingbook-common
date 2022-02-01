@@ -1,10 +1,11 @@
 package imagingbook.pub.edgepreservingfilters;
 
 import imagingbook.lib.filter.linear.Kernel2D;
+import imagingbook.lib.util.SimpleParameters;
 
 public interface TschumperleDericheF {
 
-	public static class Parameters {
+	public static class Parameters implements SimpleParameters {
 		/** Number of smoothing iterations */
 		public int iterations = 20;	
 		/** Adapting time step */
