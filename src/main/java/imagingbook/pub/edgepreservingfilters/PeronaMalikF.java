@@ -1,13 +1,13 @@
 package imagingbook.pub.edgepreservingfilters;
 
 import imagingbook.lib.image.access.OutOfBoundsStrategy;
-import imagingbook.lib.util.SimpleParameters;
+import imagingbook.lib.util.ParameterBundle;
 
 import static imagingbook.lib.math.Arithmetic.sqr;
 
 public interface PeronaMalikF {
 	
-	public static class Parameters implements SimpleParameters {
+	public static class Parameters implements ParameterBundle {
 		/** Number of iterations to perform */
 		public int iterations = 10;
 		/** Update rate (alpha) */

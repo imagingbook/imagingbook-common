@@ -12,7 +12,7 @@ package imagingbook.pub.threshold.adaptive;
 import ij.plugin.filter.RankFilters;
 import ij.process.ByteProcessor;
 import ij.process.FloatProcessor;
-import imagingbook.lib.util.SimpleParameters;
+import imagingbook.lib.util.ParameterBundle;
 import imagingbook.pub.threshold.BackgroundMode;
 
 /**
@@ -22,7 +22,7 @@ import imagingbook.pub.threshold.BackgroundMode;
  */
 public class SauvolaThresholder extends AdaptiveThresholder {
 	
-	public static class Parameters implements SimpleParameters {
+	public static class Parameters implements ParameterBundle {
 		public int radius = 15;
 		public double kappa =  0.5;
 		public double sigmaMax =  128;

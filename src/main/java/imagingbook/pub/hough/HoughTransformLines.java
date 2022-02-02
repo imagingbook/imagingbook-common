@@ -19,7 +19,7 @@ import ij.IJ;
 import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
 import imagingbook.lib.math.Arithmetic;
-import imagingbook.lib.util.SimpleParameters;
+import imagingbook.lib.util.ParameterBundle;
 import imagingbook.pub.hough.lines.HoughLine;
 
 
@@ -39,7 +39,7 @@ import imagingbook.pub.hough.lines.HoughLine;
  */
 public class HoughTransformLines {
 
-	public static class Parameters implements SimpleParameters {
+	public static class Parameters implements ParameterBundle {
 		/** Number of angular steps over [0, pi] */
 		public int nAng = 256;
 		/** Number of radial steps in each pos/neg direction (accum. size = 2 * nRad + 1) */

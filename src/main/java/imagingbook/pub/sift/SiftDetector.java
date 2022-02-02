@@ -19,7 +19,7 @@ import java.util.List;
 import ij.process.FloatProcessor;
 import imagingbook.lib.math.Arithmetic;
 import imagingbook.lib.math.Matrix;
-import imagingbook.lib.util.SimpleParameters;
+import imagingbook.lib.util.ParameterBundle;
 import imagingbook.pub.sift.scalespace.DogScaleSpace;
 import imagingbook.pub.sift.scalespace.GaussianScaleSpace;
 import imagingbook.pub.sift.scalespace.ScaleLevel;
@@ -30,7 +30,7 @@ public class SiftDetector {
 	/* Default parameters; a (usually modified) instance of this class
 	 * may be passed to constructor of the main class.
 	 */
-	public static class Parameters implements SimpleParameters {
+	public static class Parameters implements ParameterBundle {
 		/** Set true to output debug information */
 		public boolean DEBUG = false;
 		/** Type of neigborhood used for peak detection in 3D scale space */

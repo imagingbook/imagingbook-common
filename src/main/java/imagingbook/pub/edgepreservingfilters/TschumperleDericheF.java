@@ -1,25 +1,34 @@
 package imagingbook.pub.edgepreservingfilters;
 
 import imagingbook.lib.filter.linear.Kernel2D;
-import imagingbook.lib.util.SimpleParameters;
+import imagingbook.lib.util.ParameterBundle;
 
 public interface TschumperleDericheF {
 
-	public static class Parameters implements SimpleParameters {
-		/** Number of smoothing iterations */
+	public static class Parameters implements ParameterBundle {
+		
+		@DialogLabel("Number of iterations")
 		public int iterations = 20;	
-		/** Adapting time step */
+		
+		@DialogLabel("dt (Time step)")
 		public double dt = 20.0;  		
-		/** Gradient smoothing (sigma of Gaussian) */
+		
+		@DialogLabel("Gradient smoothing (sigmaD)")
 		public double sigmaD  = 0.5;
-		/** Structure tensor smoothing (sigma of Gaussian) */
-		public double sigmaM  = 0.5;	
-		/** Diff. limiter along minimal var. (small value = strong smoothing) */
-		public float a0 = 0.25f;  		
-		/** Diff. limiter along maximal var. (small value = strong smoothing) */
+		
+		@DialogLabel("Structure tensor smoothing (sigmaM)")
+		public double sigmaM  = 0.5;
+		
+		@DialogLabel("Diffusion limiter along minimal variations (a0)")	//small value = strong smoothing
+		public float a0 = 0.25f;  	
+		
+		@DialogLabel("Diffusion limiter along maximal variations (a1)")	//small value = strong smoothing
 		public float a1 = 0.90f;
+		
 		/** The alpha value applied in the first pass. */
+		@DialogHide
 		public float alpha0 = 0.5f;
+		
 //		/** Set true to apply the filter in linear RGB (assumes sRGB input) */
 //		public boolean useLinearRgb = false;
 	}

@@ -21,7 +21,7 @@ import ij.process.ImageProcessor;
 import imagingbook.lib.filter.linear.GaussianFilterSeparable;
 import imagingbook.lib.filter.linear.LinearFilterSeparable;
 import imagingbook.lib.image.ImageMath;
-import imagingbook.lib.util.SimpleParameters;
+import imagingbook.lib.util.ParameterBundle;
 import imagingbook.pub.corners.subpixel.SubpixelMaxInterpolator;
 import imagingbook.pub.corners.subpixel.SubpixelMaxInterpolator.Method;
 
@@ -43,7 +43,7 @@ public abstract class GradientCornerDetector {
 	/** For testing/example calculations only! */
 	public static boolean RETAIN_TEMPORARY_DATA = false;
 	
-	public static class Parameters implements SimpleParameters {
+	public static class Parameters implements ParameterBundle {
 		/** Set true to perform pre-filtering on the input image (before gradient calc.) */
 		public boolean doPreFilter = true;
 		/** Sigma of Gaussian filter used for smoothing gradient maps */

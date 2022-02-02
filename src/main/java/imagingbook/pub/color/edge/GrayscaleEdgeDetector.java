@@ -13,7 +13,7 @@ import ij.process.ColorProcessor;
 import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
 import imagingbook.lib.math.Matrix;
-import imagingbook.lib.util.SimpleParameters;
+import imagingbook.lib.util.ParameterBundle;
 
 /**
  * Simple grayscale edge detector for color images. The color image
@@ -37,7 +37,7 @@ public class GrayscaleEdgeDetector extends ColorEdgeDetector {
 	/**
 	 * Currently unused, no parameters to set
 	 */
-	public static class Parameters implements SimpleParameters {
+	public static class Parameters implements ParameterBundle {
 	}
 	
 	// Sobel-kernels for x/y-derivatives:

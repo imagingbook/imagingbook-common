@@ -10,7 +10,7 @@
 package imagingbook.pub.threshold.adaptive;
 
 import ij.process.ByteProcessor;
-import imagingbook.lib.util.SimpleParameters;
+import imagingbook.lib.util.ParameterBundle;
 import imagingbook.pub.threshold.BackgroundMode;
 import imagingbook.pub.threshold.global.OtsuThresholder;
 
@@ -22,7 +22,7 @@ import imagingbook.pub.threshold.global.OtsuThresholder;
  */
 public class InterpolatingThresholder extends AdaptiveThresholder {
 	
-	public static class Parameters implements SimpleParameters {
+	public static class Parameters implements ParameterBundle {
 		public int tileSize = 32;
 		public BackgroundMode bgMode = BackgroundMode.DARK;
 	}
