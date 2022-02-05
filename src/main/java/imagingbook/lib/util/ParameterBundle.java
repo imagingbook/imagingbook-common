@@ -181,10 +181,10 @@ public interface ParameterBundle {
 			dialog.addNumericField(name, field.getInt(this), 0);
 		}
 		else if (clazz.equals(float.class)) {
-			dialog.addNumericField(name, field.getFloat(this), digits);	// use annotation for digit number?
+			dialog.addNumericField(name, field.getFloat(this), digits);
 		}
 		else if (clazz.equals(double.class)) {
-			dialog.addNumericField(name, field.getDouble(this), digits);	// use annotation for digit number?
+			dialog.addNumericField(name, field.getDouble(this), digits);
 		}
 		else if (clazz.equals(String.class)) {
 			String str = (String) field.get(this);
