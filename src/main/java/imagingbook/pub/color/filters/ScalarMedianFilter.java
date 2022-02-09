@@ -54,7 +54,7 @@ public class ScalarMedianFilter extends GenericFilterScalar {
 		/** Filter radius */
 		public double radius = 3.0;
 		/** Out-of-bounds strategy */
-		public OutOfBoundsStrategy obs = OutOfBoundsStrategy.NEAREST_BORDER;
+		public OutOfBoundsStrategy obs = OutOfBoundsStrategy.NearestBorder;
 	}
 
 	//-------------------------------------------------------------------------------------

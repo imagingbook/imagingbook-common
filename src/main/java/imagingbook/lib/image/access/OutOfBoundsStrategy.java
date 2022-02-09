@@ -17,11 +17,11 @@ package imagingbook.lib.image.access;
  */
 public enum OutOfBoundsStrategy {
 	/** Insert zero values. */
-	ZERO_VALUE,
+	ZeroValues,
 	/** Insert the value of the nearest border pixel. */
-	NEAREST_BORDER,
+	NearestBorder,
 	/** Replicate the image by mirroring at its borders. */
-	MIRROR_IMAGE,
+	MirrorImage,
 	/** Throws an exception when out-of-boundary coordinates are accessed. */
-	THROW_EXCEPTION;
+	ThrowException;
 }

@@ -30,15 +30,15 @@ import imagingbook.lib.image.data.PixelPack;
  */
 public abstract class GridIndexer2D implements Cloneable {
 	
-	public static final OutOfBoundsStrategy DefaultOutOfBoundsStrategy = OutOfBoundsStrategy.NEAREST_BORDER;
+	public static final OutOfBoundsStrategy DefaultOutOfBoundsStrategy = OutOfBoundsStrategy.NearestBorder;
 	
 	public static GridIndexer2D create(int width, int height, OutOfBoundsStrategy obs) {
 		obs = (obs != null) ? obs : DefaultOutOfBoundsStrategy;
 		switch (obs) {
-		case ZERO_VALUE 		: return new ZeroValueIndexer(width, height);
-		case NEAREST_BORDER		: return new NearestBorderIndexer(width, height);
-		case MIRROR_IMAGE		: return new MirrorImageIndexer(width, height);
-		case THROW_EXCEPTION	: return new ExceptionIndexer(width, height);
+		case ZeroValues 		: return new ZeroValueIndexer(width, height);
+		case NearestBorder		: return new NearestBorderIndexer(width, height);
+		case MirrorImage		: return new MirrorImageIndexer(width, height);
+		case ThrowException	: return new ExceptionIndexer(width, height);
 		}
 		return null;
 	}
@@ -100,7 +100,7 @@ public abstract class GridIndexer2D implements Cloneable {
 	public static class NearestBorderIndexer extends GridIndexer2D {
 		
 		NearestBorderIndexer(int width, int height) {
-			super(width, height, OutOfBoundsStrategy.NEAREST_BORDER);
+			super(width, height, OutOfBoundsStrategy.NearestBorder);
 		}
 
 		@Override
@@ -128,7 +128,7 @@ public abstract class GridIndexer2D implements Cloneable {
 	public static class MirrorImageIndexer extends GridIndexer2D {
 		
 		MirrorImageIndexer(int width, int height) {
-			super(width, height, OutOfBoundsStrategy.MIRROR_IMAGE);
+			super(width, height, OutOfBoundsStrategy.MirrorImage);
 		}
 
 		@Override
@@ -153,7 +153,7 @@ public abstract class GridIndexer2D implements Cloneable {
 	public static class ZeroValueIndexer extends GridIndexer2D {
 		
 		ZeroValueIndexer(int width, int height) {
-			super(width, height, OutOfBoundsStrategy.ZERO_VALUE);
+			super(width, height, OutOfBoundsStrategy.ZeroValues);
 		}
 
 		@Override
@@ -174,7 +174,7 @@ public abstract class GridIndexer2D implements Cloneable {
 	public static class ExceptionIndexer extends GridIndexer2D {
 		
 		ExceptionIndexer(int width, int height) {
-			super(width, height, OutOfBoundsStrategy.THROW_EXCEPTION);
+			super(width, height, OutOfBoundsStrategy.ThrowException);
 		}
 
 		@Override

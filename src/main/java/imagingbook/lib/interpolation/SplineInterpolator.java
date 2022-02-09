@@ -28,26 +28,24 @@ public class SplineInterpolator extends PixelInterpolator {
 	
 	
 	@Override
-	public float getInterpolatedValue(ScalarAccessor ia, double x0, double y0) {
-		final int u0 = (int) Math.floor(x0);	//use floor to handle negative coordinates too
-		final int v0 = (int) Math.floor(y0);
+	public float getInterpolatedValue(ScalarAccessor ia, double x, double y) {
+		final int u0 = (int) Math.floor(x);	//use floor to handle negative coordinates too
+		final int v0 = (int) Math.floor(y);
 		double q = 0;
-		for (int j = 0; j <= 3; j++) {
-			int v = v0 + j - 1;
+		for (int j = 0, v = v0 - 1; j <= 3; j++, v++) {
+//			int v = v0 + j - 1;
 			double p = 0;
-			for (int i = 0; i <= 3; i++) {
-				int u = u0 + i - 1;
-				float pixval = ia.getVal(u, v);
-				p = p + pixval * w_cs(x0 - u);
+			for (int i = 0, u = u0 - 1; i <= 3; i++, u++) {
+//				int u = u0 + i - 1;
+				p = p + w_cs(x - u) * ia.getVal(u, v);
 			}
-			q = q + p * w_cs(y0 - v);
+			q = q + w_cs(y - v) * p;
 		}
 		return (float) q;
 	}	
 	
 	private double w_cs(double x) {
-		if (x < 0) 
-			x = -x;
+		x = Math.abs(x);
 		double w = 0;
 		if (x < 1) 
 			w = (-6*a - 9*b + 12) * x*x*x + (6*a + 12*b - 18) * x*x - 2*b + 6;

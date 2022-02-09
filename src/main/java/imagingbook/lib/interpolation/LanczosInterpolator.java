@@ -9,48 +9,49 @@
 
 package imagingbook.lib.interpolation;
 
+import static imagingbook.lib.math.Arithmetic.sqr;
+
 import imagingbook.lib.image.access.ScalarAccessor;
+import imagingbook.lib.math.Arithmetic;
 
 public class LanczosInterpolator extends PixelInterpolator {
 	
-	private final int order;	// order (tap count) of this interpolator
+	private final int n;	// order (tap count) of this interpolator
 	
 	public LanczosInterpolator(ScalarAccessor ia) {
 		this(2);
 	}
 	
-	public LanczosInterpolator(int N) {
-		super();
-		this.order = N; // order >= 2
+	public LanczosInterpolator(int n) {
+		this.n = n; // order >= 2
 	}
 	
 	@Override
 	public float getInterpolatedValue(ScalarAccessor ia, double x, double y) {
-		final int u0 = (int) Math.floor(x);	//use floor to handle negative coordinates too
+		final int u0 = (int) Math.floor(x); // use floor to handle negative coordinates too
 		final int v0 = (int) Math.floor(y);
 		double q = 0;
-		for (int j = 0; j <= 2*order-1; j++) {
-			int v = v0 + j - order + 1;
+		for (int j = 0; j <= 2 * n - 1; j++) {
+			int v = v0 + j - n + 1;
 			double p = 0;
-			for (int i = 0; i <= 2*order-1; i++) {
-				int u = u0 + i - order + 1;
-				float pixval = ia.getVal(u, v);
-				p = p + pixval * w_Ln(x - u);
+			for (int i = 0; i <= 2 * n - 1; i++) {
+				int u = u0 + i - n + 1;
+				p = p + wLn(x - u) * ia.getVal(u, v);
 			}
-			q = q + p * w_Ln(y - v);
+			q = q + wLn(y - v) * p;
 		}
 		return (float) q;
-	}	
+	}
 	
 	
 	static final double pi = Math.PI;
-	static final double pi2 = pi*pi;
+	static final double pi2 = sqr(pi);
 	
-	private double w_Ln(double x) { // 1D Lanczos interpolator of order n
-		x = Math.abs(x);
-		if (x < 0.001) return 1.0;
-		if (x < order) {
-			return order * (Math.sin(pi*x / order) * Math.sin(pi * x)) / (pi2 * x * x);
+	private double wLn(double x) { // 1D Lanczos interpolator of order n
+		double r = Math.abs(x);
+		if (r < 0.001) return 1.0;
+		if (r < n) {
+			return n * (Math.sin(pi * r / n) * Math.sin(pi * r)) / (pi2 * sqr(r));
 		}
 		else return 0.0;
 	}

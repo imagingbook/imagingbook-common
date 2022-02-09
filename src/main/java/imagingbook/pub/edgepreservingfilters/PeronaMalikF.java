@@ -19,7 +19,7 @@ public interface PeronaMalikF {
 		/** Specify the color mode */
 		public ColorMode colorMode = ColorMode.SeparateChannels;
 		/** Out-of-bounds strategy */
-		public OutOfBoundsStrategy obs = OutOfBoundsStrategy.NEAREST_BORDER;
+		public OutOfBoundsStrategy obs = OutOfBoundsStrategy.NearestBorder;
 	}
 	
 	public enum ColorMode  {

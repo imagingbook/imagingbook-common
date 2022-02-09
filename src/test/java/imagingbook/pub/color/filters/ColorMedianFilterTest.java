@@ -25,7 +25,7 @@ public class ColorMedianFilterTest {
 		
 		ScalarMedianFilter.Parameters params = new ScalarMedianFilter.Parameters();
 		params.radius = 3.0;
-		params.obs = OutOfBoundsStrategy.NEAREST_BORDER;
+		params.obs = OutOfBoundsStrategy.NearestBorder;
 		
 		ScalarMedianFilter filter = new ScalarMedianFilter(params);
 		filter.applyTo(ipA);
@@ -41,7 +41,7 @@ public class ColorMedianFilterTest {
 		
 		VectorMedianFilter.Parameters params = new VectorMedianFilter.Parameters();
 		params.radius = 3.0;
-		params.obs = OutOfBoundsStrategy.NEAREST_BORDER;
+		params.obs = OutOfBoundsStrategy.NearestBorder;
 		params.distanceNorm = NormType.L1;
 		
 		VectorMedianFilter filter = new VectorMedianFilter(params);
@@ -58,7 +58,7 @@ public class ColorMedianFilterTest {
 		
 		VectorMedianFilterSharpen.Parameters params = new VectorMedianFilterSharpen.Parameters();
 		params.radius = 3.0;
-		params.obs = OutOfBoundsStrategy.NEAREST_BORDER;
+		params.obs = OutOfBoundsStrategy.NearestBorder;
 		params.distanceNorm = NormType.L1;
 		params.sharpen = 0.5;
 		params.threshold = 0.0;	

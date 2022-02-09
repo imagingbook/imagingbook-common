@@ -10,7 +10,7 @@ public class PixelIndexerTest {
 
 	@Test
 	public void testDefaultValue() {
-		OutOfBoundsStrategy strategy = OutOfBoundsStrategy.ZERO_VALUE;
+		OutOfBoundsStrategy strategy = OutOfBoundsStrategy.ZeroValues;
 		GridIndexer2D pi = GridIndexer2D.create(W, H, strategy);
 		Assert.assertEquals(15070, pi.getIndex(70, 50));
 		Assert.assertEquals(-1, pi.getIndex(W + 10, 50));
@@ -21,7 +21,7 @@ public class PixelIndexerTest {
 		
 	@Test
 	public void testNearestBorder() {
-		OutOfBoundsStrategy strategy = OutOfBoundsStrategy.NEAREST_BORDER;
+		OutOfBoundsStrategy strategy = OutOfBoundsStrategy.NearestBorder;
 		GridIndexer2D pi = GridIndexer2D.create(W, H, strategy);
 		Assert.assertEquals(15070, pi.getIndex(70, 50));
 		Assert.assertEquals(15299, pi.getIndex(W + 10, 50));
@@ -32,7 +32,7 @@ public class PixelIndexerTest {
 
 	@Test
 	public void testMirrorImage() {
-		OutOfBoundsStrategy strategy = OutOfBoundsStrategy.MIRROR_IMAGE;
+		OutOfBoundsStrategy strategy = OutOfBoundsStrategy.MirrorImage;
 		GridIndexer2D pi = GridIndexer2D.create(W, H, strategy);
 		Assert.assertEquals(15070, pi.getIndex(70, 50));
 		Assert.assertEquals(15010, pi.getIndex(W + 10, 50));
@@ -43,35 +43,35 @@ public class PixelIndexerTest {
 	
 	@Test
 	public void testException1() {
-		OutOfBoundsStrategy strategy = OutOfBoundsStrategy.THROW_EXCEPTION;
+		OutOfBoundsStrategy strategy = OutOfBoundsStrategy.ThrowException;
 		GridIndexer2D pi = GridIndexer2D.create(W, H, strategy);
 		Assert.assertEquals(15070, pi.getIndex(70, 50));
 	}
 	
 	@Test (expected = GridIndexer2D.OutOfImageException.class)
 	public void testException2() {
-		OutOfBoundsStrategy strategy = OutOfBoundsStrategy.THROW_EXCEPTION;
+		OutOfBoundsStrategy strategy = OutOfBoundsStrategy.ThrowException;
 		GridIndexer2D pi = GridIndexer2D.create(W, H, strategy);
 		pi.getIndex(W + 10, 50);
 	}
 	
 	@Test (expected = GridIndexer2D.OutOfImageException.class)
 	public void testException3() {
-		OutOfBoundsStrategy strategy = OutOfBoundsStrategy.THROW_EXCEPTION;
+		OutOfBoundsStrategy strategy = OutOfBoundsStrategy.ThrowException;
 		GridIndexer2D pi = GridIndexer2D.create(W, H, strategy);
 		pi.getIndex(-4, 50);
 	}
 	
 	@Test (expected = GridIndexer2D.OutOfImageException.class)
 	public void testException4() {
-		OutOfBoundsStrategy strategy = OutOfBoundsStrategy.THROW_EXCEPTION;
+		OutOfBoundsStrategy strategy = OutOfBoundsStrategy.ThrowException;
 		GridIndexer2D pi = GridIndexer2D.create(W, H, strategy);
 		pi.getIndex(70, H);
 	}
 	
 	@Test (expected = GridIndexer2D.OutOfImageException.class)
 	public void testException5() {
-		OutOfBoundsStrategy strategy = OutOfBoundsStrategy.THROW_EXCEPTION;
+		OutOfBoundsStrategy strategy = OutOfBoundsStrategy.ThrowException;
 		GridIndexer2D pi = GridIndexer2D.create(W, H, strategy);
 		pi.getIndex(70, -1000);
 	}

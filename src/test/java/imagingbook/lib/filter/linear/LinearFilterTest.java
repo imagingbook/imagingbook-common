@@ -12,7 +12,7 @@ import imagingbook.testutils.ImageTests;
 
 public class LinearFilterTest {
 	
-	static OutOfBoundsStrategy OBS = OutOfBoundsStrategy.NEAREST_BORDER;
+	static OutOfBoundsStrategy OBS = OutOfBoundsStrategy.NearestBorder;
 	
 	static float[][] H1 = {
 			{0, 0, 0},

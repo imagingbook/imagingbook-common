@@ -43,7 +43,7 @@ import imagingbook.lib.interpolation.InterpolationMethod;
  */
 public abstract class ImageAccessor {
 	
-	static final OutOfBoundsStrategy DefaultOutOfBoundsStrategy = OutOfBoundsStrategy.ZERO_VALUE;
+	static final OutOfBoundsStrategy DefaultOutOfBoundsStrategy = OutOfBoundsStrategy.ZeroValues;
 	static final InterpolationMethod DefaultInterpolationMethod = InterpolationMethod.Bilinear;
 	
 	protected final ImageProcessor ip;

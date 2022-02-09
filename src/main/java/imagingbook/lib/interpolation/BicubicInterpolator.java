@@ -13,7 +13,7 @@ import imagingbook.lib.image.access.ScalarAccessor;
 
 public class BicubicInterpolator extends PixelInterpolator {
 	
-	private final double a;		// sharpness value
+	private final double a;		// sharpness factor
 	
 	public BicubicInterpolator() {
 		this(0.5);
@@ -28,22 +28,20 @@ public class BicubicInterpolator extends PixelInterpolator {
 		final int u0 = (int) Math.floor(x);
 		final int v0 = (int) Math.floor(y);
 		double q = 0;
-		for (int j = 0; j <= 3; j++) {
-			int v = v0 - 1 + j;
+		for (int j = 0, v = v0 - 1; j <= 3; j++, v++) {
+//			int v = v0 - 1 + j;
 			double p = 0;
-			for (int i = 0; i <= 3; i++) {
-				int u = u0 - 1 + i;
-				float pixval = ia.getVal(u, v);	
-				p = p + pixval * w_cub(x - u, a);
+			for (int i = 0, u = u0 - 1; i <= 3; i++, u++) {
+//				int u = u0 - 1 + i;
+				p = p + w_cub(x - u, a) * ia.getVal(u, v);
 			}
-			q = q + p * w_cub(y - v, a);
+			q = q + w_cub(y - v, a) * p;
 		}
 		return (float) q;
 	}
 	
 	private final double w_cub(double x, double a) {
-		if (x < 0)
-			x = -x;
+		x = Math.abs(x);
 		double z = 0;
 		if (x < 1)
 			z = (-a + 2) * x * x * x + (a - 3) * x * x + 1;

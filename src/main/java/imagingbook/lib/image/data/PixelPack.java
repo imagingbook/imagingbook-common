@@ -23,7 +23,7 @@ import imagingbook.lib.image.access.OutOfBoundsStrategy;
 public class PixelPack {
 	
 	/** The default out-of-bounds strategy (see {@link OutOfBoundsStrategy}). */
-	public static final OutOfBoundsStrategy DefaultOutOfBoundsStrategy = OutOfBoundsStrategy.NEAREST_BORDER;
+	public static final OutOfBoundsStrategy DefaultOutOfBoundsStrategy = OutOfBoundsStrategy.NearestBorder;
 
 	private final int depth;
 	private final float[][] data;

@@ -2,6 +2,7 @@ package imagingbook.lib.image;
 
 import ij.process.ImageProcessor;
 import imagingbook.lib.image.access.ImageAccessor;
+import imagingbook.lib.image.access.OutOfBoundsStrategy;
 import imagingbook.lib.interpolation.InterpolationMethod;
 import imagingbook.pub.geometry.basic.Pnt2d;
 import imagingbook.pub.geometry.basic.Pnt2d.PntInt;
@@ -20,10 +21,14 @@ import imagingbook.pub.geometry.mappings.Mapping2D;
  */
 public class ImageMapper {
 	
+	/** Default out-of-bounds strategy (see {@link OutOfBoundsStrategy}). */
+	public static OutOfBoundsStrategy DefaultOutOfBoundsStrategy = OutOfBoundsStrategy.NearestBorder;	
+	
 	/** Default pixel interpolation method (see {@link InterpolationMethod}). */
 	public static InterpolationMethod DefaultInterpolationMethod = InterpolationMethod.Bicubic;	
 	
-	private final InterpolationMethod im;
+	private final OutOfBoundsStrategy obs;
+	private final InterpolationMethod ipm;
 	private final Mapping2D mapping;
 	
 	/**
@@ -33,18 +38,20 @@ public class ImageMapper {
 	 * @param targetToSourceMapping the geometric mapping
 	 */
 	public ImageMapper(Mapping2D targetToSourceMapping) {
-		this(targetToSourceMapping, DefaultInterpolationMethod);
+		this(targetToSourceMapping, DefaultOutOfBoundsStrategy, DefaultInterpolationMethod);
 	}
 
 	/**
 	 * Creates a new instance with the specified geometric mapping
 	 * and pixel interpolation method.
 	 * @param targetToSourceMapping the geometric mapping
-	 * @param im the pixel interpolation method
+	 * @param obs the out-of-bounds strategy (affects source image only)
+	 * @param ipm the pixel interpolation method
 	 */
-	public ImageMapper(Mapping2D targetToSourceMapping, InterpolationMethod im) {
+	public ImageMapper(Mapping2D targetToSourceMapping, OutOfBoundsStrategy obs, InterpolationMethod ipm) {
 		this.mapping = targetToSourceMapping;
-		this.im = im;
+		this.obs = obs;
+		this.ipm = ipm;
 	}
 	
 	// ---------------------------------------------------------------------
@@ -79,7 +86,7 @@ public class ImageMapper {
 		if (target == source) {
 			throw new IllegalArgumentException("Source and target image must not be the same!");
 		}
-		ImageAccessor sourceAcc = ImageAccessor.create(source, null, im);
+		ImageAccessor sourceAcc = ImageAccessor.create(source, obs, ipm);
 		ImageAccessor targetAcc = ImageAccessor.create(target);
 		map(sourceAcc, targetAcc);
 	}

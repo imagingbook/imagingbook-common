@@ -8,7 +8,7 @@ public interface NagaoMatsuyamaF {
 		/** Variance threshold */
 		public double varThreshold = 0.0;	// 0,...,10
 		/** Out-of-bounds strategy */
-		public OutOfBoundsStrategy obs = OutOfBoundsStrategy.NEAREST_BORDER;
+		public OutOfBoundsStrategy obs = OutOfBoundsStrategy.NearestBorder;
 	}
 	
 	static final int[][] R0 =

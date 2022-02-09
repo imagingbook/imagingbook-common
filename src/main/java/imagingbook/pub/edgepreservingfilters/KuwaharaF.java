@@ -11,7 +11,7 @@ public interface KuwaharaF {
 		/** Threshold on sigma to avoid banding in flat regions */
 		public double tsigma = 5.0;
 		/** Out-of-bounds strategy */
-		public OutOfBoundsStrategy obs = OutOfBoundsStrategy.NEAREST_BORDER;
+		public OutOfBoundsStrategy obs = OutOfBoundsStrategy.NearestBorder;
 	}
 
 }

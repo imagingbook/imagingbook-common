@@ -14,7 +14,7 @@ public interface BilateralF {
 		/** Distance norm to use between color vectors */
 		public NormType colorNormType = NormType.L2;
 		/** Out-of-bounds strategy */
-		public OutOfBoundsStrategy obs = OutOfBoundsStrategy.NEAREST_BORDER;
+		public OutOfBoundsStrategy obs = OutOfBoundsStrategy.NearestBorder;
 	}
 	
 	// ------------------------------------------------------

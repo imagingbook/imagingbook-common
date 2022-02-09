@@ -9,6 +9,7 @@
 
 package imagingbook.pub.geometry.mappings.linear;
 
+import imagingbook.lib.math.Arithmetic;
 import imagingbook.lib.math.Matrix;
 import imagingbook.lib.settings.PrintPrecision;
 import imagingbook.pub.geometry.basic.Pnt2d;
@@ -34,37 +35,37 @@ public class AffineMapping2D extends ProjectiveMapping2D {
 		return new AffineMapping2D(fit.getTransformationMatrix());
 	}
 	
-//	/**
-//	 * Creates an affine mapping from an arbitrary 2D triangle A to another triangle B.
-//	 * In this case the solution is found in closed form 
-//	 * (see Burger/Burge 2016, Sec. 21.1.3, eq. 21.26).
-//	 * @param A1 point 1 of source triangle A
-//	 * @param A2 point 2 of source triangle A
-//	 * @param A3 point 3 of source triangle A
-//	 * @param B1 point 1 of source triangle B
-//	 * @param B2 point 2 of source triangle B
-//	 * @param B3 point 3 of source triangle B
-//	 * @return a new affine mapping
-//	 * @deprecated
-//	 */
-//	public static AffineMapping2D from3Points(Point A1, Point A2, Point A3, Point B1, Point B2, Point B3) {
-//		double ax1 = A1.getX(), ax2 = A2.getX(), ax3 = A3.getX();
-//		double ay1 = A1.getY(), ay2 = A2.getY(), ay3 = A3.getY();
-//		double bx1 = B1.getX(), bx2 = B2.getX(), bx3 = B3.getX();
-//		double by1 = B1.getY(), by2 = B2.getY(), by3 = B3.getY();
-//
-//		double S = ax1 * (ay3 - ay2) + ax2 * (ay1 - ay3) + ax3 * (ay2 - ay1); //
-//		if (Arithmetic.isZero(S)) {
-//			throw new ArithmeticException("from3Points(): division by zero!");
-//		}
-//		double a00 = (ay1 * (bx2 - bx3) + ay2 * (bx3 - bx1) + ay3 * (bx1 - bx2)) / S;
-//		double a01 = (ax1 * (bx3 - bx2) + ax2 * (bx1 - bx3) + ax3 * (bx2 - bx1)) / S;
-//		double a10 = (ay1 * (by2 - by3) + ay2 * (by3 - by1) + ay3 * (by1 - by2)) / S;
-//		double a11 = (ax1 * (by3 - by2) + ax2 * (by1 - by3) + ax3 * (by2 - by1)) / S;
-//		double a02 = (ax1*(ay3*bx2-ay2*bx3) + ax2*(ay1*bx3-ay3*bx1) + ax3*(ay2*bx1-ay1*bx2)) / S;
-//		double a12 = (ax1*(ay3*by2-ay2*by3) + ax2*(ay1*by3-ay3*by1) + ax3*(ay2*by1-ay1*by2)) / S;
-//		return new AffineMapping2D(a00, a01, a02, a10, a11, a12);
-//	}
+	/**
+	 * Creates an affine mapping from an arbitrary 2D triangle A to another triangle B.
+	 * In this case the solution is found in closed form 
+	 * (see Burger/Burge 2016, Sec. 21.1.3, eq. 21.26).
+	 * @param A1 point 1 of source triangle A
+	 * @param A2 point 2 of source triangle A
+	 * @param A3 point 3 of source triangle A
+	 * @param B1 point 1 of source triangle B
+	 * @param B2 point 2 of source triangle B
+	 * @param B3 point 3 of source triangle B
+	 * @return a new affine mapping
+	 * @deprecated
+	 */
+	public static AffineMapping2D from3Points(Pnt2d A1, Pnt2d A2, Pnt2d A3, Pnt2d B1, Pnt2d B2, Pnt2d B3) {
+		double ax1 = A1.getX(), ax2 = A2.getX(), ax3 = A3.getX();
+		double ay1 = A1.getY(), ay2 = A2.getY(), ay3 = A3.getY();
+		double bx1 = B1.getX(), bx2 = B2.getX(), bx3 = B3.getX();
+		double by1 = B1.getY(), by2 = B2.getY(), by3 = B3.getY();
+
+		double S = ax1 * (ay3 - ay2) + ax2 * (ay1 - ay3) + ax3 * (ay2 - ay1); //
+		if (Arithmetic.isZero(S)) {
+			throw new ArithmeticException("from3Points(): division by zero!");
+		}
+		double a00 = (ay1 * (bx2 - bx3) + ay2 * (bx3 - bx1) + ay3 * (bx1 - bx2)) / S;
+		double a01 = (ax1 * (bx3 - bx2) + ax2 * (bx1 - bx3) + ax3 * (bx2 - bx1)) / S;
+		double a10 = (ay1 * (by2 - by3) + ay2 * (by3 - by1) + ay3 * (by1 - by2)) / S;
+		double a11 = (ax1 * (by3 - by2) + ax2 * (by1 - by3) + ax3 * (by2 - by1)) / S;
+		double a02 = (ax1*(ay3*bx2-ay2*bx3) + ax2*(ay1*bx3-ay3*bx1) + ax3*(ay2*bx1-ay1*bx2)) / S;
+		double a12 = (ax1*(ay3*by2-ay2*by3) + ax2*(ay1*by3-ay3*by1) + ax3*(ay2*by1-ay1*by2)) / S;
+		return new AffineMapping2D(a00, a01, a02, a10, a11, a12);
+	}
 	
 //	/**
 //	 * Creates an affine mapping from an arbitrary 2D triangle A to another triangle B.

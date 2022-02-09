@@ -11,7 +11,7 @@ import imagingbook.lib.image.access.OutOfBoundsStrategy;
  */
 public class GaussianFilter extends LinearFilter {
 	
-	public static final OutOfBoundsStrategy OBS = OutOfBoundsStrategy.NEAREST_BORDER;
+	public static final OutOfBoundsStrategy OBS = OutOfBoundsStrategy.NearestBorder;
 	
 	/**
 	 * Constructor.
