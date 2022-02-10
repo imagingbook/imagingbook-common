@@ -51,8 +51,10 @@ public class DistanceTransform {
 		// L->R pass:
 		for (int v = 0; v < N; v++) {
 			for (int u = 0; u < M; u++) {
-				D[u][v] = (I.get(u, v) > 0) ? 0 : Float.POSITIVE_INFINITY; // initialize
-				if (D[u][v] > 0) { 	// a background pixel
+				if (I.get(u, v) > 0) {		// a foreground pixel
+					D[u][v] = 0;
+				}
+				else {						// a background pixel
 					d0 = d1 = d2 = d3 = Float.POSITIVE_INFINITY;
 					if (u > 0) {
 						d0 = m1 + D[u - 1][v];

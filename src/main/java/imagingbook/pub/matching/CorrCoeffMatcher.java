@@ -13,7 +13,7 @@ import ij.process.FloatProcessor;
 
 /**
  * @author W. Burger
- * @version 2014-04-20
+ * @version 2022/02/10
  */
 public class CorrCoeffMatcher {
 	private final FloatProcessor I; // search image
@@ -42,9 +42,9 @@ public class CorrCoeffMatcher {
 		double sumR2 = 0;
 		for (int j = 0; j < NR; j++) {
 			for (int i = 0; i < MR; i++) {
-				float aR = R.getf(i,j);
-				sumR  += aR;
-				sumR2 += aR * aR;
+				float b = R.getf(i,j);
+				sumR  += b;
+				sumR2 += b * b;
 			}
 		}
 		
@@ -66,11 +66,11 @@ public class CorrCoeffMatcher {
 		double sumI = 0, sumI2 = 0, sumIR = 0;
 		for (int j = 0; j < NR; j++) {
 			for (int i = 0; i < MR; i++) {
-				float aI = I.getf(r + i, s + j);
-				float aR = R.getf(i, j);
-				sumI  += aI;
-				sumI2 += aI * aI;
-				sumIR += aI * aR;
+				float a = I.getf(r + i, s + j);
+				float b = R.getf(i, j);
+				sumI  += a;
+				sumI2 += a * a;
+				sumIR += a * b;
 			}
 		}
 		double meanI = sumI / K;
