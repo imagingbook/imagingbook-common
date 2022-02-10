@@ -11,7 +11,7 @@ package imagingbook.lib.interpolation;
 
 import imagingbook.lib.image.access.ScalarAccessor;
 
-public class BicubicInterpolator extends PixelInterpolator {
+public class BicubicInterpolator implements PixelInterpolator {
 	
 	private final double a;		// sharpness factor
 	

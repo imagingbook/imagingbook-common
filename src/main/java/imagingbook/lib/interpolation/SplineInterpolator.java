@@ -11,7 +11,7 @@ package imagingbook.lib.interpolation;
 
 import imagingbook.lib.image.access.ScalarAccessor;
 
-public class SplineInterpolator extends PixelInterpolator {
+public class SplineInterpolator implements PixelInterpolator {
 	private final double a;	
 	private final double b;
 

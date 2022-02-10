@@ -10,7 +10,7 @@
 package imagingbook.lib.interpolation;
 import imagingbook.lib.image.access.ScalarAccessor;
 
-public class BilinearInterpolator extends PixelInterpolator {
+public class BilinearInterpolator implements PixelInterpolator {
 	
 	public BilinearInterpolator() {
 	}

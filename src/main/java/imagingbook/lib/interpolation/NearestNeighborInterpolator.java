@@ -11,7 +11,7 @@ package imagingbook.lib.interpolation;
 import imagingbook.lib.image.access.ScalarAccessor;
 
 
-public class NearestNeighborInterpolator extends PixelInterpolator {
+public class NearestNeighborInterpolator implements PixelInterpolator {
 	
 	public NearestNeighborInterpolator() {
 	}

@@ -18,7 +18,7 @@ import imagingbook.lib.image.access.ScalarAccessor;
  * @author WB
  *
  */
-public abstract class PixelInterpolator {
+public interface PixelInterpolator {
 	
 	public static PixelInterpolator create(ScalarAccessor ia) {
 		return create(ia.getInterpolationMethod());

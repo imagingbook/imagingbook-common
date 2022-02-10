@@ -12,9 +12,9 @@ package imagingbook.lib.interpolation;
 import static imagingbook.lib.math.Arithmetic.sqr;
 
 import imagingbook.lib.image.access.ScalarAccessor;
-import imagingbook.lib.math.Arithmetic;
 
-public class LanczosInterpolator extends PixelInterpolator {
+
+public class LanczosInterpolator implements PixelInterpolator {
 	
 	private final int n;	// order (tap count) of this interpolator
 	
