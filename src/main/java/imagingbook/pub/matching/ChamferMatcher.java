@@ -19,36 +19,46 @@ import imagingbook.pub.matching.DistanceTransform.Norm;
  */
 public class ChamferMatcher {
 	
-	private final ByteProcessor I;
 	private final int MI, NI;
 	private final float[][] D;				// distance transform of I
+	private int MR, NR;
 	
 	public ChamferMatcher(ByteProcessor I) {
 		this(I, Norm.L2);
 	}
 	
 	public ChamferMatcher(ByteProcessor I, Norm norm) {
-		this.I = I;
-		this.MI = this.I.getWidth();
-		this.NI = this.I.getHeight();
+		this.MI = I.getWidth();
+		this.NI = I.getHeight();
 		this.D = (new DistanceTransform(I, norm)).getDistanceMap();
 	}
 	
 	public float[][] getMatch(ByteProcessor R) {
-		final int MR = R.getWidth();
-		final int NR = R.getHeight();
-		final int[][] Ra = R.getIntArray();
+		this.MR = R.getWidth();
+		this.NR = R.getHeight();
+//		final int[][] Ra = R.getIntArray();
 		float[][] Q = new float[MI - MR + 1][NI - NR + 1];
 		for (int r = 0; r <= MI - MR; r++) {
 			for (int s = 0; s <= NI - NR; s++) {
-				float q = getMatchValue(Ra, r, s);
-				Q[r][s] = q;
+				Q[r][s] = getMatchScore(R, r, s);
 			}	
 		}	
 		return Q;
 	}
+	
+	private float getMatchScore(ByteProcessor R, int r, int s) {
+		float q = 0.0f;
+		for (int i = 0; i < MR; i++) {
+			for (int j = 0; j < NR; j++) {
+				if (R.get(i, j) != 0) {	// foreground pixel in reference image
+					q = q + D[r + i][s + j];
+				}
+			}
+		}
+		return q;
+	}  	
 
-	private float getMatchValue(int[][] R, int r, int s) {
+	private float getMatchScore(int[][] R, int r, int s) {
 		float q = 0.0f;
 		for (int i = 0; i < R.length; i++) {
 			for (int j = 0; j < R[i].length; j++) {
@@ -59,6 +69,8 @@ public class ChamferMatcher {
 		}
 		return q;
 	}  	
+	
+	// unused?:
 	
 	public float[][] getMatch(PntInt[] points, int width, int height) {
 		float[][] Q = new float[width][height];
