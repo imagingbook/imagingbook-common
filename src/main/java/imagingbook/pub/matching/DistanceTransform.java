@@ -32,6 +32,8 @@ public class DistanceTransform {
 		D = makeDistanceMap(I, norm);
 	}
 	
+	// -----------------------------------------------------------------
+	
 	private float[][] makeDistanceMap(ImageProcessor I, Norm norm) {
 		float m1, m2;
 		switch (norm) {
