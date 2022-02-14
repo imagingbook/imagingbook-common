@@ -1,21 +1,18 @@
 package imagingbook.pub.matching;
 
-import java.util.Arrays;
-
 import org.junit.Test;
 
-import ij.ImagePlus;
 import ij.process.ByteProcessor;
-import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
+import imagingbook.pub.matching.DistanceTransform.Norm;
+import imagingbook.testutils.ArrayTests;
 
-// TODO: UNFINISHED!
 public class DistanceTransformTest {
 	
-	static int W = 12;
-	static int H = 10;
+	private static int W = 12;
+	private static int H = 10;
 
-	static byte[] pixels = {
+	private static byte[] pixels = {
 			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
 			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
 			0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 
@@ -28,50 +25,48 @@ public class DistanceTransformTest {
 			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 	};
 	
-	static byte[] distManhattan = { 
-			4, 3, 3, 2, 2, 2, 3, 4, 5, 6, 7, 7, 
-			3, 2, 2, 1, 1, 1, 2, 3, 4, 5, 6, 6, 
-			2, 1, 1, 1, 0, 1, 2, 3, 4, 4, 5, 5, 
-			2, 1, 0, 1, 1, 1, 2, 3, 3, 3, 4, 4, 
-			2, 1, 1, 1, 2, 2, 2, 2, 2, 2, 3, 4, 
-			3, 2, 2, 2, 3, 2, 1, 1, 1, 1, 2, 3, 
-			4, 3, 3, 3, 3, 2, 1, 0, 0, 1, 2, 3, 
-			5, 4, 4, 4, 3, 2, 1, 0, 1, 1, 2, 3, 
-			6, 5, 5, 4, 3, 2, 1, 1, 1, 2, 3, 4, 
-			7, 6, 6, 5, 4, 3, 2, 2, 2, 3, 4, 4
-	};
+	private static float[][] distL1 = {
+			{5, 4, 3, 2, 3, 4, 5, 6, 7, 8}, 
+			{4, 3, 2, 1, 2, 3, 4, 5, 6, 7}, 
+			{3, 2, 1, 0, 1, 2, 3, 4, 5, 6}, 
+			{3, 2, 1, 1, 2, 3, 4, 4, 5, 6}, 
+			{2, 1, 0, 1, 2, 3, 3, 3, 4, 5}, 
+			{3, 2, 1, 2, 3, 3, 2, 2, 3, 4}, 
+			{4, 3, 2, 3, 3, 2, 1, 1, 2, 3}, 
+			{5, 4, 3, 3, 2, 1, 0, 0, 1, 2}, 
+			{6, 5, 4, 3, 2, 1, 0, 1, 2, 3}, 
+			{7, 6, 5, 4, 3, 2, 1, 2, 3, 4}, 
+			{8, 7, 6, 5, 4, 3, 2, 3, 4, 5}, 
+			{9, 8, 7, 6, 5, 4, 3, 4, 5, 6}};
 
+	private static float[][] distL2 = {
+		{3.8284f, 2.8284f, 2.4142f, 2.0000f, 2.4142f, 2.8284f, 3.8284f, 4.8284f, 5.8284f, 6.8284f}, 
+		{3.4142f, 2.4142f, 1.4142f, 1.0000f, 1.4142f, 2.4142f, 3.4142f, 4.4142f, 5.4142f, 6.4142f}, 
+		{2.8284f, 2.0000f, 1.0000f, 0.0000f, 1.0000f, 2.0000f, 3.0000f, 4.0000f, 5.0000f, 5.8284f}, 
+		{2.4142f, 1.4142f, 1.0000f, 1.0000f, 1.4142f, 2.4142f, 3.4142f, 4.0000f, 4.4142f, 4.8284f}, 
+		{2.0000f, 1.0000f, 0.0000f, 1.0000f, 2.0000f, 2.8284f, 3.0000f, 3.0000f, 3.4142f, 3.8284f}, 
+		{2.4142f, 1.4142f, 1.0000f, 1.4142f, 2.4142f, 2.4142f, 2.0000f, 2.0000f, 2.4142f, 2.8284f}, 
+		{2.8284f, 2.4142f, 2.0000f, 2.4142f, 2.4142f, 1.4142f, 1.0000f, 1.0000f, 1.4142f, 2.4142f}, 
+		{3.8284f, 3.4142f, 3.0000f, 3.0000f, 2.0000f, 1.0000f, 0.0000f, 0.0000f, 1.0000f, 2.0000f}, 
+		{4.8284f, 4.4142f, 4.0000f, 3.0000f, 2.0000f, 1.0000f, 0.0000f, 1.0000f, 1.4142f, 2.4142f}, 
+		{5.8284f, 5.4142f, 4.4142f, 3.4142f, 2.4142f, 1.4142f, 1.0000f, 1.4142f, 2.4142f, 2.8284f}, 
+		{6.8284f, 5.8284f, 4.8284f, 3.8284f, 2.8284f, 2.4142f, 2.0000f, 2.4142f, 2.8284f, 3.8284f}, 
+		{7.2426f, 6.2426f, 5.2426f, 4.2426f, 3.8284f, 3.4142f, 3.0000f, 3.4142f, 3.8284f, 4.2426f}};
 
 	@Test
-	public void test() {
+	public void testL1() {
 		ImageProcessor ip = new ByteProcessor(W, H, pixels);
-		DistanceTransform dt = new DistanceTransform(ip);
+		DistanceTransform dt = new DistanceTransform(ip, Norm.L1);
 		float[][] dmap = dt.getDistanceMap();
-		FloatProcessor fp = new FloatProcessor(dmap);
-		ByteProcessor bp = fp.convertToByteProcessor(false);
-		new ImagePlus("Test", fp).show();
-	}
-
-	public static void main(String[] args) {
-		ImageProcessor ip = new ByteProcessor(W, H, pixels);
-		DistanceTransform dt = new DistanceTransform(ip);
-		float[][] dmap = dt.getDistanceMap();
-		FloatProcessor fp = new FloatProcessor(dmap);
-		new ImagePlus("Test", fp).show();
-		
-		ByteProcessor bp = fp.convertToByteProcessor(false);
-		byte[] pixels = (byte[]) bp.getPixels();
-		int[] ints = toIntArray(pixels);
-		System.out.println("pixels = \n" + Arrays.toString(ints));
+		ArrayTests.assertArrayEquals(distL1, dmap, 1e-6);
 	}
 	
-	private static int[] toIntArray(byte[] bytes) {
-		int n = bytes.length;
-		int[]  ints = new int[n];
-		for (int i=0; i < n; i++) {
-			ints[i] = 0xFF & bytes[i];
-		}
-		return ints;
+	@Test
+	public void testL2() {
+		ImageProcessor ip = new ByteProcessor(W, H, pixels);
+		DistanceTransform dt = new DistanceTransform(ip, Norm.L2);
+		float[][] dmap = dt.getDistanceMap();
+		ArrayTests.assertArrayEquals(distL2, dmap, 1e-3);
 	}
 	
 }

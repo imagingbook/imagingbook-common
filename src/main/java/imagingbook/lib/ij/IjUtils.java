@@ -259,18 +259,83 @@ public abstract class IjUtils {
 		return new FloatProcessor(width, height, fPixels);
 	}
 	
+	public static FloatProcessor toFloatProcessor(float[][] A) {
+		final int width = A.length;
+		final int height = A[0].length;
+		float[] fPixels = new float[width * height];
+		int i = 0;
+		for (int v = 0; v < height; v++) {
+			for (int u = 0; u < width; u++) {
+				fPixels[i] = A[u][v];
+				i++;
+			}
+		}
+		return new FloatProcessor(width, height, fPixels);
+	}
+	
+	public static float[][] toFloatArray(FloatProcessor fp) {
+		final int w = fp.getWidth();
+		final int h = fp.getHeight();
+		float[][] A = new float[w][h];
+		for (int v = 0; v < h; v++) {
+			for (int u = 0; u < w; u++) {
+				A[u][v] =  fp.getf(u, v);
+			}
+		}
+		return A;
+	}
+	
+	/**
+	 * Creates and returns a new {@code ByteProcessor} from
+	 * the specified 2D {@code byte} array, assumed to be
+	 * arranged in the form {@code A[x][y]}, i.e.,
+	 * the first coordinate is horizontal, the second vertical.
+	 * Thus {@code A.length} is the width and {@code A[0].length}
+	 * the height of the resulting image.
+	 * 
+	 * @param A a 2D {@code byte} array
+	 * @return a new {@code ByteProcessor} of size {@code A.length} x {@code A[0].length}
+	 */
 	public static ByteProcessor toByteProcessor(byte[][] A) {
-		final int w = A[0].length;
-		final int h = A.length;
+		final int w = A.length;
+		final int h = A[0].length;
 		ByteProcessor bp = new ByteProcessor(w, h);
 		for (int v = 0; v < h; v++) {
 			for (int u = 0; u < w; u++) {
-				bp.putPixel(u, v, 0xFF & A[v][u]);
+				bp.putPixel(u, v, 0xFF & A[u][v]);
 			}
 		}
 		return bp;
 	}
 	
+	public static byte[][] toByteArray(ByteProcessor bp) {
+		final int w = bp.getWidth();
+		final int h = bp.getHeight();
+		byte[][] A = new byte[w][h];
+		for (int v = 0; v < h; v++) {
+			for (int u = 0; u < w; u++) {
+				A[u][v] =  (byte) (0xFF & bp.get(u, v));
+			}
+		}
+		return A;
+	}
+	
+	public static ByteProcessor toByteProcessor(int[][] A) {
+		final int w = A.length;
+		final int h = A[0].length;
+		ByteProcessor bp = new ByteProcessor(w, h);
+		for (int v = 0; v < h; v++) {
+			for (int u = 0; u < w; u++) {
+				int val = A[u][v];
+				if (val < 0)
+					val = 0;
+				else if (val > 255) 
+					val = 255;
+				bp.putPixel(u, v, val);
+			}
+		}
+		return bp;
+	}
 	
 	/**
 	 * Opens the image from the specified path and returns it
