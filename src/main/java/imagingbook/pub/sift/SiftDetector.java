@@ -36,39 +36,39 @@ public class SiftDetector {
 		/** Type of neigborhood used for peak detection in 3D scale space */
 		public NeighborhoodType3D nhType = NeighborhoodType3D.NH18;
 		/** Sampling scale (nominal smoothing level of the input image) */
-		public double sigma_s = 0.5;
+		public double sigmaS = 0.5;
 		/** Base scale of level 0 (base smoothing) */
-		public double sigma_0 = 1.6;
+		public double sigma0 = 1.6;
 		/** Number of octaves in Gaussian/DoG scale space */
 		public int P = 4;
 		/** Scale steps (levels) per octave */
 		public int Q = 3;
 		/** Min. magnitude required in DoG peak detection (abs. value) */
-		public double t_Mag = 0.01;
+		public double tMag = 0.01;
 		/** Min. DoG magnitude required for extrapolated peaks (abs. value) */
-		public double t_Peak = t_Mag;
+		public double tPeak = tMag;
 		/** Min. difference to all neighbors in DoG peak detection (max. 0.0005) */
-		public double t_Extrm = 0.0;
+		public double tExtrm = 0.0;
 		/** Max. number of iterations for refining the position of a key point */
-		public int n_Refine = 5;
+		public int nRefine = 5;
 		/** Max. principal curvature ratio used to eliminate line-like structures (3..10) */
-		public double rho_Max = 10.0;
+		public double rhoMax = 10.0;
 		/** Number of orientation bins in the feature descriptor (angular resolution) */
-		public int n_Orient = 36;
+		public int nOrient = 36;
 		/** Number of smoothing steps applied to the orientation histogram */
-		public int n_Smooth = 2;
+		public int nSmooth = 2;
 		/** Min. value in orientation histogram for dominant orientations (rel. to max. entry) */
-		public double t_DomOr = 0.8;
+		public double tDomOr = 0.8;
 		/** Spatial size factor of descriptor (relative to feature scale) */
-		public double s_Desc = 10.0;
+		public double sDesc = 10.0;
 		/** Number of spatial descriptor bins along each x/y axis */
-		public int n_Spat = 4;
+		public int nSpat = 4;
 		/** Number of angular descriptor bins */
-		public int n_Angl = 8;
+		public int nAngl = 8;
 		/** Max. value in normalized feature vector (0.2 recommended by Lowe) */
-		public double t_Fclip = 0.2;
+		public double tFclip = 0.2;
 		/** Scale factor for converting normalized features to byte values in [0,255] */
-		public double s_Fscale = 512.0;
+		public double sFscale = 512.0;
 		/** Set true to sort detected keypoints by response magnitude */
 		public boolean sortKeyPoints = true;
 	}
@@ -104,7 +104,7 @@ public class SiftDetector {
 		//normalize(fp);	// was destructive, delegated to ScaleLevel.getValues()
 		this.params = params;
 		this.nhSize = params.nhType.size;
-		this.G = new GaussianScaleSpace(fp, params.sigma_s, params.sigma_0, params.P, params.Q, -1, params.Q+1);
+		this.G = new GaussianScaleSpace(fp, params.sigmaS, params.sigma0, params.P, params.Q, -1, params.Q+1);
 		this.D = new DogScaleSpace(G);
 	}
 
@@ -123,7 +123,7 @@ public class SiftDetector {
 		for (KeyPoint kp : keypoints) {
 			//IJ.log("   " + (cnt++));
 			float[] oh = getOrientationHistogram(kp);
-			smoothCircular(oh,params.n_Smooth);
+			smoothCircular(oh,params.nSmooth);
 			kp.orientation_histogram = oh;	// TODO: remove, for testing only!!
 			List<Double> peakOrientations = findPeakOrientationIndices(oh);
 //			if (params.DEBUG && peakOrientations.size() == 0) {
@@ -159,7 +159,7 @@ public class SiftDetector {
 
 		if (maxh > 0.01f) { // ascertain minimum (non-zero) gradient energy
 			// collect all peaks > 80% of the maximum entry in 'oh'
-			float minh = maxh * (float) params.t_DomOr;
+			float minh = maxh * (float) params.tDomOr;
 			for (int k = 0; k < nb; k++) { // hp ~ hc ~ ha
 				// angles[k] = Float.NaN;
 				float hc = oh[k]; // center value
@@ -226,8 +226,8 @@ public class SiftDetector {
 	}
 
 	private List<KeyPoint> findExtrema(int p, int q) {
-		final float tMag = (float) params.t_Mag;
-		final float tExtrm = (float) params.t_Extrm;
+		final float tMag = (float) params.tMag;
+		final float tExtrm = (float) params.tExtrm;
 		ScaleOctave Dp = D.getOctave(p);
 		ScaleLevel Dpq = D.getScaleLevel(p, q);
 		int M = Dpq.getWidth();
@@ -262,7 +262,7 @@ public class SiftDetector {
 		ScaleOctave Dp = D.getOctave(p);
 		//ScaleLevel Dpq = Dp.getLevel(q);
 
-		final double rhoMax = params.rho_Max;
+		final double rhoMax = params.rhoMax;
 
 		final float[][][] nh = new float[3][3][3];	// 3x3x3 neighborhood nh[q][u][v]
 		final float[] grad 	 = new float[3];		// gradient (dx, dy, ds)	
@@ -271,8 +271,8 @@ public class SiftDetector {
 													// | dxx dxy dxs |
 													// | dxy dyy dys |
 													// | dxs dys dss |
-		final double tPeak = params.t_Peak;
-		final int n_max = params.n_Refine;
+		final double tPeak = params.tPeak;
+		final int n_max = params.nRefine;
 
 		final float aMax = (float) (sqr(rhoMax + 1) / rhoMax);
 		KeyPoint kr = null;							// refined keypoint
@@ -453,7 +453,7 @@ public class SiftDetector {
 	 */
 	private List<Double> getDominantOrientations(KeyPoint c) {
 		float[] h_phi = getOrientationHistogram(c);
-		smoothCircular(h_phi, params.n_Smooth);
+		smoothCircular(h_phi, params.nSmooth);
 		return findPeakOrientations(h_phi);
 	}
 
@@ -508,7 +508,7 @@ public class SiftDetector {
 	}
 
 	private float[] getOrientationHistogram(KeyPoint c) {
-		final int n_phi = params.n_Orient;
+		final int n_phi = params.nOrient;
 		final int K = params.Q;
 
 		ScaleLevel Gpq = G.getScaleLevel(c.p, c.q);
@@ -516,7 +516,7 @@ public class SiftDetector {
 		final int M = Gpq.getWidth(), N = Gpq.getHeight();
 		final double x = c.x, y = c.y;
 
-		final double sigma_w = 1.5 * params.sigma_0 * Math.pow(2,(double)c.q/K);
+		final double sigma_w = 1.5 * params.sigma0 * Math.pow(2,(double)c.q/K);
 		final double sigma_w22 = 2 * sigma_w * sigma_w;
 		final double r_w = Math.max(1, 2.5 * sigma_w);
 		final double r_w2 = r_w * r_w;
@@ -559,7 +559,7 @@ public class SiftDetector {
 		final int M = Gpq.getWidth(), N = Gpq.getHeight(), K = G.getQ();
 
 		double sigma_q = G.getSigma_0() * Math.pow(2, (double) q / K);	// = Gpq.getAbsoluteScale() ?? decimated scale
-		double w_d = params.s_Desc * sigma_q;		// descriptor width
+		double w_d = params.sDesc * sigma_q;		// descriptor width
 		double sigma_d = 0.25 * w_d;	// width of Gaussian weighting function
 		double sigma_d2 = 2 * sigma_d * sigma_d;
 		double r_d = 2.5 * sigma_d;		// limiting radius
@@ -580,8 +580,8 @@ public class SiftDetector {
 		//		Debug(logvar(y,"y") + logvar(v_min,"v_min") + logvar(v_max,"v_max"));
 
 		// create the 3D orientation histogram, initialize to zero:
-		final int n_Spat = params.n_Spat;
-		final int n_Angl = params.n_Angl;
+		final int n_Spat = params.nSpat;
+		final int n_Angl = params.nAngl;
 		double[][][] h_grad = new double[n_Spat][n_Spat][n_Angl];
 		double[] gmo = new double[2];	// gradient magnitude/orientation
 
@@ -613,8 +613,8 @@ public class SiftDetector {
 	}
 
 	private void updateGradientHistogram(double[][][] h_grad, double uu, double vv, double phi_norm, double z) {
-		final int n_Spat = params.n_Spat;
-		final int n_Angl = params.n_Angl;
+		final int n_Spat = params.nSpat;
+		final int n_Angl = params.nAngl;
 
 		final double ii = n_Spat * uu + 0.5 * (n_Spat - 1);	// continuous spatial histogram index i'
 		final double jj = n_Spat * vv + 0.5 * (n_Spat - 1);	// continuous spatial histogram index j'
@@ -668,8 +668,8 @@ public class SiftDetector {
 	}
 
 	private int[] makeFeatureVector(double[][][] h_grad) {
-		final int n_Spat = params.n_Spat;
-		final int n_Angl = params.n_Angl;
+		final int n_Spat = params.nSpat;
+		final int n_Angl = params.nAngl;
 		float[] f = new float[n_Spat * n_Spat * n_Angl];
 		// flatten 3D histogram to a 1D vector
 		// the histogram is vectorized such that k (phi) is the fastest
@@ -685,9 +685,9 @@ public class SiftDetector {
 			}
 		}
 		normalize(f);
-		clipPeaks(f, (float) params.t_Fclip);	
+		clipPeaks(f, (float) params.tFclip);	
 		normalize(f);
-		return mapToIntegers(f, (float) params.s_Fscale);
+		return mapToIntegers(f, (float) params.sFscale);
 	}
 
 	private void normalize(float[] x) {

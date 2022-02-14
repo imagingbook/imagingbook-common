@@ -23,7 +23,7 @@ public class SiftMatcher {
 		/** Specify type of distance norm */
 		public NormType norm = NormType.L2;
 		/** Max. ratio between best and second-best match */
-		public double rho_max = 0.8;
+		public double rMax = 0.8;
 		/** Set true to sort matches */
 		public boolean sort = true;
 	}
@@ -50,32 +50,36 @@ public class SiftMatcher {
 				
 		for (int i = 0; i < fA.length; i++) {
 			SiftDescriptor si = fA[i];
-			int i1 = -1;
-			int i2 = -1;
+			int i0 = -1;
+//			int i1 = -1;
+			double d0 = Double.MAX_VALUE;
 			double d1 = Double.MAX_VALUE;
-			double d2 = Double.MAX_VALUE;
 			
 			for (int j = 0; j < fB.length; j++) {
 				double d = dist(si, fB[j]);
-				if (d < d1) {	// new absolute minimum distance
-					i2 = i1;	// old best becomes second-best
-					d2 = d1;
-					i1 = j;
-					d1 = d;
+				if (d < d0) {	// new absolute minimum distance
+//					i1 = i0;	// old best becomes second-best
+					d1 = d0;
+					i0 = j;
+					d0 = d;
 				}
 				else // not a new absolute min., but possible second-best
-					if (d < d2) { // new second-best
-						i2 = j;
-						d2 = d;
+					if (d < d1) { // new second-best
+//						i1 = j;
+						d1 = d;
 					}
 			}
-			if (i2 >= 0 && d2 > 0.001 && d1/d2 < params.rho_max) {
-				SiftDescriptor s1 = fB[i1];
-				SiftMatch m = new SiftMatch(si, s1, d1);
+//			if (i1 >= 0 && d1 > 0.001 && d0/d1 < params.rho_max) 
+			if (Double.isFinite(d1) && d1 > 0.001 && d0/d1 < params.rMax) {
+				SiftDescriptor s0 = fB[i0];
+				SiftMatch m = new SiftMatch(si, s0, d0);
 				matches.add(m);
 			}
 		}
-		if (params.sort) Collections.sort(matches);  // sort matches to ascending distance d1
+		if (params.sort) {
+			Collections.sort(matches);  // sort matches to ascending distance d1
+		}
+		
 		return matches;
 	}
 	
