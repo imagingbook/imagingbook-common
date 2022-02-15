@@ -91,16 +91,26 @@ public abstract class FourierDescriptor implements Cloneable {
 		return fd2;
 	}
 
+//	public int getMaxNegHarmonic() {
+//		return -(G.length - 1)/2;
+//	}
+//
+//	public int getMaxPosHarmonic() {
+//		return G.length/2;
+//	}
+
+	
 	public int getMaxNegHarmonic() {
-		return -(G.length - 1)/2;
+		return -G.length/2;			// = -M/2
 	}
 
 	public int getMaxPosHarmonic() {
-		return G.length/2;
+		return (G.length - 1)/2;		// (M-1)/2
 	}
 
+	
 	public int getMaxCoefficientPairs() {
-		return (G.length - 1)/2;
+		return G.length / 2; // was (G.length - 1)/2;!!
 	}
 
 	// ----------------------------------------------------------------

@@ -8,9 +8,12 @@
  *******************************************************************************/
 package imagingbook.pub.fd;
 
+import java.util.Arrays;
+
 import imagingbook.lib.math.Arithmetic;
 import imagingbook.lib.math.Complex;
 import imagingbook.pub.geometry.basic.Pnt2d;
+import imagingbook.pub.geometry.basic.PntUtils;
 
 
 /**
@@ -84,29 +87,34 @@ public class FourierDescriptorUniform extends FourierDescriptor {
 	 * As above, but the length P of the resulting spectrum (signal, if inverse) 
 	 * is explicitly specified.
 	 * @param g signal vector
-	 * @param P length of the resulting  DFT spectrum
+	 * @param MM length of the resulting  DFT spectrum
 	 * @return DFT spectrum
 	 */
-	private Complex[] DFT(Complex[] g, int P) {
+	private Complex[] DFT(Complex[] g, int MM) {
 		int M = g.length;
+		if (MM > M) {
+			throw new IllegalArgumentException("truncated spectrum must be shorter than original MM=" + MM);
+		}
 //		double[] cosTable = makeCosTable(M);	// cosTable[m] == cos(2*pi*m/M)
 //		double[] sinTable = makeSinTable(M);
-		Complex[] G = new Complex[P];
+		Complex[] G = new Complex[MM];
 		double s = 1.0/M; //common scale factor (fwd/inverse differ!)
-		for (int m = P/2-P+1; m <= P/2; m++) {
+		
+//		for (int j = Mp/2-Mp+1; j <= Mp/2; j++) {
+		for (int j = -MM/2; j <= (MM-1)/2; j++) {
 			double Am = 0;
 			double Bm = 0;
 			for (int k = 0; k < M; k++) {
 				double x = g[k].re;
 				double y = g[k].im;
 				//int mk = (m * k) % M; double phi = 2 * Math.PI * mk / M;
-				double phi = 2 * Math.PI * m * k / M;	
+				double phi = 2 * Math.PI * j * k / M;	
 				double cosPhi = Math.cos(phi);
 				double sinPhi = Math.sin(phi);
 				Am = Am + x * cosPhi + y * sinPhi;
 				Bm = Bm - x * sinPhi + y * cosPhi;
 			}
-			G[Arithmetic.mod(m, P)] = new Complex(s * Am, s * Bm);
+			G[Arithmetic.mod(j, MM)] = new Complex(s * Am, s * Bm);
 		}
 		return G;
 	}
@@ -126,5 +134,22 @@ public class FourierDescriptorUniform extends FourierDescriptor {
 //		}
 //		return sinTab;
 //	}
+	
+	// ------------------------------------------------------------------------------------
+	
+	public static void main(String[] args) {
+		double[][] points = {{3,2}, {5,4}, {7,10}, {6,11}, {4, 7}};
+
+		Pnt2d[] V = PntUtils.fromDoubleArray(points);
+		
+		FourierDescriptorUniform fd1 = new FourierDescriptorUniform(V); 
+		System.out.println(Arrays.toString(fd1.getCoefficients()));
+		
+		FourierDescriptorUniform fd2 = new FourierDescriptorUniform(V, 2); 
+		System.out.println(Arrays.toString(fd2.getCoefficients()));
+		
+		
+	}
+	
 
 }
