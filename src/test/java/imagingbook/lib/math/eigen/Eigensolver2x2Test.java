@@ -85,6 +85,12 @@ public class Eigensolver2x2Test {
 	}
 	
 	@Test
+	public void testEigensolver2x2J() { // identity matrix
+		double[][] M = Matrix.idMatrix(2); 
+		runTest(M, true);
+	}
+	
+	@Test
 	public void testRandomMatrix2x2() {
 		Random RG = new Random(17);
 		final int N = 1000;
@@ -94,9 +100,10 @@ public class Eigensolver2x2Test {
 			RealEigensolver solver = new Eigensolver2x2(A);
 			if (solver.isReal()) {
 				//cnt++;
+				// check if A * x_i = lambda_i * x_i :
 				double[] eigenvals = solver.getEigenvalues();
 				for (int k = 0; k < eigenvals.length; k++) {
-					double lambda = eigenvals[k];
+					double lambda = solver.getEigenvalue(k); //eigenvals[k];
 					double[] x = solver.getEigenvector(k);
 					assertArrayEquals(Matrix.multiply(A, x), Matrix.multiply(lambda, x), 1E-6);
 				}

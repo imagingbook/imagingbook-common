@@ -9,6 +9,8 @@
 
 package imagingbook.lib.math.eigen;
 
+import static imagingbook.lib.math.Arithmetic.sqr;
+
 import imagingbook.lib.math.Matrix;
 
 
@@ -24,12 +26,12 @@ import imagingbook.lib.math.Matrix;
  * &lang;&lambda;<sub>2</sub>, x<sub>1</sub>&rang;
  * such that A&middot;x<sub>k</sub> = &lambda;<sub>k</sub>&middot;x<sub>k</sub>.
  * The resulting eigensystems are ordered such that
- * |&lambda;<sub>0</sub> &ge; |&lambda;<sub>1</sub>|.
+ * &lambda;<sub>0</sub> &ge; &lambda;<sub>1</sub>.
  * Eigenvectors are not normalized, i.e., no unit vectors
  * (any scalar multiple of an Eigenvector is an Eigenvector too).
  * Non-real eigenvalues are not handled.
- * Clients should call method {@link #isReal()} to check if the resulting eigenvalues
- * are all real or not.
+ * Clients should call method {@link #isReal()} to check if the 
+ * eigenvalue calculation was successful.
  * <p>
  * This implementation is inspired by Blinn, Jim: "Jim Blinn's Corner: 
  * Notation, Notation, Notation", Morgan Kaufmann (2002) -
@@ -44,9 +46,8 @@ import imagingbook.lib.math.Matrix;
  * available in {@link EigensolverNxN} (based on Apache Commons Math) for 2x2 matrices.
  * 
  * @author W. Burger
- * @version 2021-05-19
+ * @version 2022/02/18
  * 
- * TODO: Identity matrix returns NaN eigenvalues - CHECK!
  */
 public class Eigensolver2x2 implements RealEigensolver { // to check: http://www.akiti.ca/Eig2Solv.html
 	
@@ -85,57 +86,76 @@ public class Eigensolver2x2 implements RealEigensolver { // to check: http://www
 	}
 	
 	private boolean solve(final double a, final double b, final double c, final double d) {
-		final double r = (a + d) / 2;
-		final double s = (a - d) / 2;
-		final double rho = s * s + b * c;
+		final double R = (a + d) / 2;
+		final double S = (a - d) / 2;
+		final double rho = sqr(S) + b * c;
 		
 		if (rho < 0) {	
 			return false;		// no real-valued eigenvalues
 		}
 		
-		final double t = Math.sqrt(rho);
-		final double lambda0 = r + t;	// eigenvalue 0
-		final double lambda1 = r - t;	// eigenvalue 1
+		final double T = Math.sqrt(rho);
+		final double lambda0 = R + T;	// eigenvalue 0
+		final double lambda1 = R - T;	// eigenvalue 1
 		final double[] x0, x1;			// eigenvectors 0, 1
 		
 		if (a - d > 0) {
-			x0 = new double[] {s + t, c};
-			x1 = new double[] {b, -s - t};
+//			System.out.println("Case 1");
+			x0 = new double[] {S + T, c};
+			x1 = new double[] {b, -(S + T)};
 		}
 		else if (a - d < 0) {
-			x0 = new double[] {b, -s + t};
-			x1 = new double[] {s - t, c};
+//			System.out.println("Case 2");
+			x0 = new double[] {b, -S + T};
+			x1 = new double[] {S - T, c};
 		}
 		else {		// (A - D) == 0
+//			System.out.println("Case 3");
 			final double bA = Math.abs(b);
 			final double cA = Math.abs(c);
 			final double bcR = Math.sqrt(b * c);
 			if (bA < cA) {							// |b| < |c|
+//				System.out.println("Case 3a");
 				x0 = new double[] { bcR, c};
 				x1 = new double[] {-bcR, c};
 			}
 			else if (bA > cA) { 					// |b| > |c|
+//				System.out.println("Case 3b");
 				x0 = new double[] {b,  bcR};
 				x1 = new double[] {b, -bcR};
 			}
-			else { 				// |B| == |C|
-				x0 = new double[] { c, c};
-				x1 = new double[] {-c, c};
+			else { 	// |B| == |C| and B,C must have the same sign
+//				System.out.println("Case 3c");
+				if (cA > 0) {	// 
+					x0 = new double[] { c, c};
+					x1 = new double[] {-c, c};
+				}
+				else { // B = C = 0; any vector is an eigenvector (we don't return trivial zero vectors)
+					x0 = new double[] { 0, 1};	// pick 2 arbitrary, orthogonal vectors
+					x1 = new double[] { 1, 0};
+				}
 			}
 		}
 		
-		if (Math.abs(lambda0) >= Math.abs(lambda1)) {	// order eigenvalues by magnitude
-			eVals[0] = lambda0;
-			eVals[1] = lambda1;
-			eVecs[0] = x0;
-			eVecs[1] = x1;
-		}
-		else {
-			eVals[0] = lambda1;
-			eVals[1] = lambda0;
-			eVecs[0] = x1;
-			eVecs[1] = x0;
-		}
+		eVals[0] = lambda0;
+		eVals[1] = lambda1;
+		eVecs[0] = x0;
+		eVecs[1] = x1;
+		
+		// lambda0 >= lambda1, no need to sort by magnitude
+		
+//		if (Math.abs(lambda0) >= Math.abs(lambda1)) {	// order eigenvalues by magnitude
+//			eVals[0] = lambda0;
+//			eVals[1] = lambda1;
+//			eVecs[0] = x0;
+//			eVecs[1] = x1;
+//		}
+//		else {
+//			eVals[0] = lambda1;
+//			eVals[1] = lambda0;
+//			eVecs[0] = x1;
+//			eVecs[1] = x0;
+//		}
 		return true;	// real eigenvalues
 	}
 	
@@ -174,6 +194,17 @@ public class Eigensolver2x2 implements RealEigensolver { // to check: http://www
 		else {
 			return "<not real>";
 		}
+	}
+	
+	// ----------------------------------------------------
+	
+	public static void main(String[] args) {
+		
+		double[][] M = Matrix.multiply(0.1, Matrix.idMatrix(2)); 
+		Eigensolver2x2  es = new Eigensolver2x2(M);
+		System.out.println(Matrix.toString(es.getEigenvalues()));
+		System.out.println(Matrix.toString(es.getEigenvector(0)));
+		System.out.println(Matrix.toString(es.getEigenvector(1)));
 	}
 		
 }
