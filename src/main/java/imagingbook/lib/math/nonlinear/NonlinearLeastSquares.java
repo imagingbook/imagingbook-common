@@ -67,7 +67,7 @@ public abstract class NonlinearLeastSquares {
 		LeastSquaresProblem problem = makeProblem(V, J, z, p0);
 		LeastSquaresOptimizer optimizer = new LevenbergMarquardtOptimizer();
 		Optimum solution = optimizer.optimize(problem);
-		System.out.println("iterations = " + solution.getIterations());
+		//System.out.println("iterations = " + solution.getIterations());
 		return solution.getPoint();
 	}
 	
@@ -86,7 +86,7 @@ public abstract class NonlinearLeastSquares {
 		LeastSquaresProblem problem = makeProblem(V, J, z, p0);
 		LeastSquaresOptimizer optimizer = new GaussNewtonOptimizer();
 		Optimum solution = optimizer.optimize(problem);
-		System.out.println("iterations = " + solution.getIterations());
+		//System.out.println("iterations = " + solution.getIterations());
 		return solution.getPoint();
 	}
 	
@@ -99,7 +99,10 @@ public abstract class NonlinearLeastSquares {
 			MaxEvaluations,	MaxIterations);
 	}
 	
-	// book version  ------------------------------
+	// --------------------------------------------------------------------
+	// book version
+	// --------------------------------------------------------------------
+	
 	public static RealVector solveNLS2(
 			MultivariateVectorFunction V, 
 			MultivariateMatrixFunction J, 
@@ -110,7 +113,7 @@ public abstract class NonlinearLeastSquares {
 						MaxEvaluations,	MaxIterations);
 		LeastSquaresOptimizer optimizer = new LevenbergMarquardtOptimizer();
 		Optimum solution = optimizer.optimize(problem);
-		System.out.println("iterations = " + solution.getIterations());
+//		System.out.println("iterations = " + solution.getIterations());
 		if (solution.getIterations() > MaxIterations)
 			return null;
 		else 
