@@ -41,68 +41,71 @@ import imagingbook.pub.color.statistics.ColorHistogram;
  */
 public class MedianCutQuantizer extends ColorQuantizer {
 	
-	private final ColorNode[] imageColors;	// original (unique) image colors
-	private final ColorNode[] quantColors;	// quantized colors
+	private ColorNode[] imageColors = null;
 	
+//	private final int maxColors;
 	private final int[][] colormap;
-	private final Parameters params;
 	
-	public static class Parameters {
-		/** Maximum number of quantized colors. */
-		public int maxColors = 16;
-		
-		void check() {
-			if (maxColors < 2 || maxColors > 256) {
-				throw new IllegalArgumentException();
-			}
-		}
-	}
+//	private final Parameters params;
+	
+//	public static class Parameters {
+//		/** Maximum number of quantized colors. */
+//		public int maxColors = 16;
+//		
+//		void check() {
+//			if (maxColors < 2 || maxColors > 256) {
+//				throw new IllegalArgumentException();
+//			}
+//		}
+//	}
 
 	// quick fix, better use a lambda expression?
-	@Deprecated
-	private static Parameters makeParameters(int Kmax) {
-		Parameters p = new Parameters();
-		p.maxColors = Kmax;
-		return p;
-	}
+//	@Deprecated
+//	private static Parameters makeParameters(int Kmax) {
+//		Parameters p = new Parameters();
+//		p.maxColors = Kmax;
+//		return p;
+//	}
 	
-	@Deprecated
-	public MedianCutQuantizer(ColorProcessor ip, int Kmax) {
-		this((int[]) ip.getPixels(), makeParameters(Kmax));
-	}
+//	@Deprecated
+//	public MedianCutQuantizer(ColorProcessor ip, int Kmax) {
+//		this((int[]) ip.getPixels(), makeParameters(Kmax));
+//	}
 	
-	@Deprecated
-	public MedianCutQuantizer(int[] pixels, int Kmax) {
-		this(pixels, makeParameters(Kmax));
-	}
+//	@Deprecated
+//	public MedianCutQuantizer(int[] pixels, int Kmax) {
+//		this(pixels, makeParameters(Kmax));
+//	}
 	
 	 
-	public MedianCutQuantizer(int[] pixels, Parameters params) {
-		this.params = params;
+	public MedianCutQuantizer(int[] pixels, int maxColors) {
+//		this.maxColors = maxColors;
+//		this.params = params;
 //		System.out.println("Kmax = " + this.params.maxColors);
-		imageColors = makeImageColors(pixels);
+		makeImageColors(pixels);
 //		listColors(imageColors);
-		quantColors = findRepresentativeColors(this.params.maxColors);
+		ColorNode[] quantColors = findRepresentativeColors(maxColors);
 //		listColors(quantColors);
-		colormap = makeColorMap();
+		this.colormap = makeColorMap(quantColors);
+		this.imageColors = null;
 	}
 	
-	void listColors(ColorNode[] colors) {
-		for (ColorNode nd : colors) {
-			IJ.log(nd.toString());
-		}
-	}
+//	void listColors(ColorNode[] colors) {
+//		for (ColorNode nd : colors) {
+//			IJ.log(nd.toString());
+//		}
+//	}
 	
-	private ColorNode[] makeImageColors(int[] pixels) {
+	private void makeImageColors(int[] pixels) {
 		ColorHistogram colorHist = new ColorHistogram(pixels);
 		final int K = colorHist.getNumberOfColors();
-		ColorNode[] imgColors = new ColorNode[K];
+		this.imageColors = new ColorNode[K];
 		for (int i = 0; i < K; i++) {
 			int rgb = colorHist.getColor(i);
 			int cnt = colorHist.getCount(i);
-			imgColors[i] = new ColorNode(rgb, cnt);
+			imageColors[i] = new ColorNode(rgb, cnt);
 		}
-		return imgColors;
+		//return imgColors;
 	}
 
 	ColorNode[] findRepresentativeColors(int Kmax) {
@@ -131,7 +134,7 @@ public class MedianCutQuantizer extends ColorQuantizer {
 		}
 	}
 	
-	private int[][] makeColorMap() {
+	private int[][] makeColorMap(ColorNode[] quantColors) {
 		int[][] map = new int[quantColors.length][3];
 		for (int i = 0; i < quantColors.length; i++) {
 			map[i][0] = quantColors[i].red;
@@ -176,19 +179,7 @@ public class MedianCutQuantizer extends ColorQuantizer {
 	public int[][] getColorMap() {
 		return colormap;
 	}
-	
-	// ------- obsolete methods -----------------------
-	
-	@Deprecated
-	public int countQuantizedColors() {
-		return quantColors.length;
-	}
-	
-	@Deprecated
-	public ColorNode[] getQuantizedColors() {
-		return quantColors;
-	}
-	
+
 	// -------------- class ColorNode -------------------------------------------
 
 	private class ColorNode {
@@ -339,6 +330,7 @@ public class MedianCutQuantizer extends ColorQuantizer {
 			return new ColorNode(avgRed, avgGrn, avgBlu, n);
 		}
 
+		@Override
 		public String toString() {
 			String s = this.getClass().getSimpleName();
 			s = s + " lower=" + lower + " upper=" + upper;
@@ -358,14 +350,17 @@ public class MedianCutQuantizer extends ColorQuantizer {
 	 */
 	private enum ColorDimension {
 		RED (new Comparator<ColorNode>() {
+			@Override
 			public int compare(ColorNode colA, ColorNode colB) {
 				return colA.red - colB.red;
 			}}), 
 		GREEN (new Comparator<ColorNode>() {
+			@Override
 			public int compare(ColorNode colA, ColorNode colB) {
 				return colA.grn - colB.grn;
 			}}), 
 		BLUE (new Comparator<ColorNode>() {
+			@Override
 			public int compare(ColorNode colA, ColorNode colB) {
 				return colA.blu - colB.blu;
 			}});

@@ -1,5 +1,7 @@
 package imagingbook.pub.color.quantize;
 
+import static imagingbook.lib.math.Arithmetic.sqr;
+
 import java.awt.image.IndexColorModel;
 
 import ij.process.ByteProcessor;
@@ -30,7 +32,7 @@ public abstract class ColorQuantizer {
 	 * @return The quantized (indexed color) image.
 	 */
 	public ByteProcessor quantize(ColorProcessor cp) {
-		int[][] colormap = this.getColorMap();
+		int[][] colormap = getColorMap();
 		if (colormap.length > 256) 
 			throw new Error("cannot index to more than 256 colors");
 		int w = cp.getWidth();
@@ -39,7 +41,7 @@ public abstract class ColorQuantizer {
 		byte[] idxPixels = new byte[rgbPixels.length];
 
 		for (int i = 0; i < rgbPixels.length; i++) {
-			idxPixels[i] = (byte) this.findColorIndex(rgbPixels[i]);
+			idxPixels[i] = (byte) findColorIndex(rgbPixels[i]);
 		}
 
 		IndexColorModel idxCm = makeIndexColorModel(colormap);
@@ -136,8 +138,8 @@ public abstract class ColorQuantizer {
 		return 31 - Integer.numberOfLeadingZeros(n);
 	}
 	
-	protected int sqr(int k) {
-		return k * k;
-	}
+//	protected int sqr(int k) {
+//		return k * k;
+//	}
 
 }
