@@ -39,7 +39,7 @@ public class ColorHistogram {
 	public ColorHistogram(int[] pixelsOrig, boolean sortByFrequency) {
 		int[] pixels = new int[pixelsOrig.length];
 		for (int i = 0; i < pixels.length; i++) {
-			pixels[i] = 0xFFFFFF & pixelsOrig[i];	// remove nonzero alpha components
+			pixels[i] = 0xFFFFFF & pixelsOrig[i];	// remove alpha components
 		}
 		
 		Arrays.sort(pixels);	// this is why we need a copy of the input array

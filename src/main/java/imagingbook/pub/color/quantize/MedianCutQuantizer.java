@@ -108,7 +108,7 @@ public class MedianCutQuantizer extends ColorQuantizer {
 		//return imgColors;
 	}
 
-	ColorNode[] findRepresentativeColors(int Kmax) {
+	private ColorNode[] findRepresentativeColors(int Kmax) {
 		final int n = imageColors.length;
 		if (n <= Kmax) {// image has fewer colors than Kmax
 			return imageColors;
@@ -171,7 +171,6 @@ public class MedianCutQuantizer extends ColorQuantizer {
 		return avgColors;
 	}
 	
-
 	
 	// ------- methods required by abstract super class -----------------------
 	

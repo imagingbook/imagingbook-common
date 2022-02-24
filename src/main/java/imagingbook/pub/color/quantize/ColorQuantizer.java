@@ -133,10 +133,10 @@ public abstract class ColorQuantizer {
 	
 	// -----------------------------------------------------------------------------
 	
-	protected int log2(int n){
-		if(n <= 0) throw new IllegalArgumentException();
-		return 31 - Integer.numberOfLeadingZeros(n);
-	}
+//	protected int log2(int n){
+//		if(n <= 0) throw new IllegalArgumentException();
+//		return 31 - Integer.numberOfLeadingZeros(n);
+//	}
 	
 //	protected int sqr(int k) {
 //		return k * k;
