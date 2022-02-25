@@ -42,7 +42,7 @@ import imagingbook.lib.color.RgbUtils;
  * @author WB
  * @version 2017/01/03
  */
-public class OctreeQuantizer extends ColorQuantizer {
+public class OctreeQuantizer extends ColorQuantizerOld {
 
 //	private final static int MAX_RGB = 255;
 	private final static int MAX_NODES = 262144 - 1; // = 2^18 - 1, was 266817;

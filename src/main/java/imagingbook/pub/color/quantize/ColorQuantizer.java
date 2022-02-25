@@ -8,19 +8,18 @@ import ij.process.ByteProcessor;
 import ij.process.ColorProcessor;
 import imagingbook.lib.color.RgbUtils;
 
-public abstract class ColorQuantizer {
+public interface ColorQuantizer {
 	
-	protected final static int MAX_RGB = 255;
+	public final static int MAX_RGB = 255;
 	
 	/**
 	 * Retrieves the color map produced by this color quantizer.
-	 * The returned array is in the format int[idx][rgb], where
+	 * The returned array is in the format float[idx][rgb], where
 	 * rgb = 0 (red), 1 (green), 2 (blue) and  0 &le; idx &lt; nColors.
-	 * This method must be implemented by any derived concrete class.
 	 * 
-	 * @return The table of quantization colors.
+	 * @return The table of reference (quantization) colors.
 	 */
-	public abstract int[][] getColorMap();
+	public abstract float[][] getColorMap();
 	
 	// ---------------------------------------------------------------
 	
@@ -31,12 +30,14 @@ public abstract class ColorQuantizer {
 	 * @param cp The original full-color RGB image.
 	 * @return The quantized (indexed color) image.
 	 */
-	public ByteProcessor quantize(ColorProcessor cp) {
-		int[][] colormap = getColorMap();
+	public default ByteProcessor quantize(ColorProcessor cp) {
+		float[][] colormap = this.getColorMap();
 		if (colormap.length > 256) 
-			throw new Error("cannot index to more than 256 colors");
+			throw new RuntimeException("cannot index to more than 256 colors");
+		
 		int w = cp.getWidth();
 		int h = cp.getHeight();
+		
 		int[]  rgbPixels = (int[]) cp.getPixels();
 		byte[] idxPixels = new byte[rgbPixels.length];
 
@@ -48,49 +49,60 @@ public abstract class ColorQuantizer {
 		return new ByteProcessor(w, h, idxPixels, idxCm);
 	}
 	
-	private static IndexColorModel makeIndexColorModel(int[][] colormap) {
+	static IndexColorModel makeIndexColorModel(float[][] colormap) {
 		final int nColors = colormap.length;
 		byte[] rMap = new byte[nColors];
 		byte[] gMap = new byte[nColors];
 		byte[] bMap = new byte[nColors];
 		for (int i = 0; i < nColors; i++) {
-			rMap[i] = (byte) colormap[i][0];
-			gMap[i] = (byte) colormap[i][1];
-			bMap[i] = (byte) colormap[i][2];
+			rMap[i] = floatToUnsignedByte(colormap[i][0]);
+			gMap[i] = floatToUnsignedByte(colormap[i][1]);
+			bMap[i] = floatToUnsignedByte(colormap[i][2]);
 		}
 		return new IndexColorModel(8, nColors, rMap, gMap, bMap);
 	}
 	
-	/**
-	 * Performs color quantization on the given sequence of
-	 * ARGB-encoded color values and returns a new sequence 
-	 * of quantized colors.
-	 * 
-	 * @param origPixels The original ARGB-encoded color values.
-	 * @return The quantized ARGB-encoded color values.
-	 */
-	public int[] quantize(int[] origPixels) {
-		int[] qantPixels = new int[origPixels.length];
-		for (int i = 0; i < origPixels.length; i++) {
-			qantPixels[i] = quantize(origPixels[i]);
+	static byte floatToUnsignedByte(float x) {
+		int xi = Math.round(x);
+		if (xi < 0) {
+			xi = 0;
 		}
-		return qantPixels;
+		else if (xi > MAX_RGB) {
+			xi = MAX_RGB;
+		}
+		return (byte) (0xFF & xi);
 	}
 	
-	/**
-	 * Performs color quantization on the given ARGB-encoded color 
-	 * value and returns the associated quantized color. 
-	 * @param p The original ARGB-encoded color value.
-	 * @return The quantized ARGB-encoded color value.
-	 */
-	public int quantize(int p) {
-		int[][] colormap = getColorMap();
-		int idx = findColorIndex(p);
-		int red = colormap[idx][0];
-		int grn = colormap[idx][1];
-		int blu = colormap[idx][2];
-		return RgbUtils.rgbToInt(red, grn, blu);
-	}
+//	/**
+//	 * Performs color quantization on the given sequence of
+//	 * ARGB-encoded color values and returns a new sequence 
+//	 * of quantized colors.
+//	 * 
+//	 * @param origPixels The original ARGB-encoded color values.
+//	 * @return The quantized ARGB-encoded color values.
+//	 */
+//	public int[] quantize(int[] origPixels) {
+//		int[] qantPixels = new int[origPixels.length];
+//		for (int i = 0; i < origPixels.length; i++) {
+//			qantPixels[i] = quantize(origPixels[i]);
+//		}
+//		return qantPixels;
+//	}
+	
+//	/**
+//	 * Performs color quantization on the given ARGB-encoded color 
+//	 * value and returns the associated quantized color. 
+//	 * @param p The original ARGB-encoded color value.
+//	 * @return The quantized ARGB-encoded color value.
+//	 */
+//	public int quantize(int p) {
+//		int[][] colormap = getColorMap();
+//		int idx = findColorIndex(p);
+//		int red = colormap[idx][0];
+//		int grn = colormap[idx][1];
+//		int blu = colormap[idx][2];
+//		return RgbUtils.rgbToInt(red, grn, blu);
+//	}
 	
 	/**
 	 * Finds the color table index of the color that is "closest" to the supplied
@@ -101,17 +113,17 @@ public abstract class ColorQuantizer {
 	 * @param p Original color, encoded as an ARGB integer.
 	 * @return The associated color table index.
 	 */
-	protected int findColorIndex(int p) {
-		int[][] colormap = getColorMap();
+	default int findColorIndex(int p) {
+		float[][] colormap = getColorMap();
 		int[] rgb = RgbUtils.intToRgb(p);
 		int n = colormap.length;
-		int minD2 = Integer.MAX_VALUE;
+		float minD2 = Float.POSITIVE_INFINITY;
 		int minIdx = -1;
 		for (int i = 0; i < n; i++) {
-			final int red = colormap[i][0];
-			final int grn = colormap[i][1];
-			final int blu = colormap[i][2];
-			int d2 = sqr(red - rgb[0]) + sqr(grn - rgb[1]) + sqr(blu - rgb[2]);	// dist^2
+			final float red = colormap[i][0];
+			final float grn = colormap[i][1];
+			final float blu = colormap[i][2];
+			float d2 = sqr(red - rgb[0]) + sqr(grn - rgb[1]) + sqr(blu - rgb[2]);	// dist^2
 			if (d2 < minD2) {
 				minD2 = d2;
 				minIdx = i;
@@ -120,14 +132,14 @@ public abstract class ColorQuantizer {
 		return minIdx;
 	}
 	
-	public void listColorMap() {
-		int[][] colormap = getColorMap();
+	default void listColorMap() {
+		float[][] colormap = getColorMap();
 		int n = colormap.length;
 		for (int i = 0; i < n; i++) {
-			int red = 0xff & colormap[i][0];
-			int grn = 0xff & colormap[i][1];
-			int blu = 0xff & colormap[i][2];
-			System.out.println(String.format("i=%3d: r=%3d g=%3d b=%3d", i, red, grn, blu));
+			float red = colormap[i][0];
+			float grn = colormap[i][1];
+			float blu = colormap[i][2];
+			System.out.println(String.format("i=%3d: r=%6.1f g=%6.1f b=%6.1f", i, red, grn, blu));
 		}
 	}
 	

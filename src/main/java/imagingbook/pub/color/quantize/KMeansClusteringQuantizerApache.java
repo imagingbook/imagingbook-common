@@ -27,7 +27,7 @@ import org.apache.commons.math3.ml.clustering.KMeansPlusPlusClusterer;
  * @author WB
  * @version 2017/01/04
  */
-public class KMeansClusteringQuantizerApache extends ColorQuantizer {
+public class KMeansClusteringQuantizerApache extends ColorQuantizerOld {
 	
 	private final Parameters params;
 	private final int[][] colormap;

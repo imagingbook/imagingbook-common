@@ -44,10 +44,12 @@ import imagingbook.pub.color.statistics.ColorHistogram;
  * 
  * TODO: needs revision!
  */
-public class MedianCutQuantizer extends ColorQuantizer {
+public class MedianCutQuantizer implements ColorQuantizer {
 	
-	private final ColorNode[] imageColors;
-	private final int[][] colormap;
+	private final ColorNode[] imageColors;	// a vector of color nodes (used by inner classes)
+	private final float[][] colormap;
+	
+	// -------------------------------------------------------------------------------
 	
 	public MedianCutQuantizer(ColorProcessor ip, int K) {
 		this((int[]) ip.getPixels(), K);
@@ -66,6 +68,8 @@ public class MedianCutQuantizer extends ColorQuantizer {
 		}
 	}
 	
+	// -------------------------------------------------------------------------------
+	
 //	void listColors(ColorNode[] colors) {
 //		for (ColorNode nd : colors) {
 //			IJ.log(nd.toString());
@@ -75,13 +79,13 @@ public class MedianCutQuantizer extends ColorQuantizer {
 	private ColorNode[] getAllColors(int[] pixels) {
 		ColorHistogram colorHist = new ColorHistogram(pixels);
 		final int nc = colorHist.getNumberOfColors();
-		ColorNode[] Call = new ColorNode[nc];
+		ColorNode[] colors = new ColorNode[nc];
 		for (int i = 0; i < nc; i++) {
 			int rgb = colorHist.getColor(i);
 			int cnt = colorHist.getCount(i);
-			Call[i] = new ColorNode(rgb, cnt);
+			colors[i] = new ColorNode(rgb, cnt);
 		}
-		return Call;
+		return colors;
 	}
 
 	private ColorNode[] findReferenceColors(int K) {
@@ -113,8 +117,8 @@ public class MedianCutQuantizer extends ColorQuantizer {
 
 	}
 	
-	private int[][] makeColorMap(ColorNode[] quantColors) {
-		int[][] map = new int[quantColors.length][3];
+	private float[][] makeColorMap(ColorNode[] quantColors) {
+		float[][] map = new float[quantColors.length][3];
 		for (int i = 0; i < quantColors.length; i++) {
 			map[i][0] = quantColors[i].red;
 			map[i][1] = quantColors[i].grn;
@@ -157,15 +161,14 @@ public class MedianCutQuantizer extends ColorQuantizer {
 	// ------- methods required by abstract super class -----------------------
 	
 	@Override
-	public int[][] getColorMap() {
+	public float[][] getColorMap() {
 		return colormap;
 	}
 
 	// -------------- class ColorNode -------------------------------------------
 
 	private class ColorNode {
-		//private final int rgb;
-		private final int red, grn, blu;
+		private final float red, grn, blu;
 		private final int cnt;
 		
 		ColorNode (int rgb, int cnt) {
@@ -177,7 +180,7 @@ public class MedianCutQuantizer extends ColorQuantizer {
 			this.cnt = cnt;
 		}
 		
-		ColorNode (int red, int grn, int blu, int cnt) {
+		ColorNode (float red, float grn, float blu, int cnt) {
 			//this.rgb = Rgb.rgbToInt(red, grn, blu);
 			this.red = red;
 			this.grn = grn;
@@ -206,9 +209,9 @@ public class MedianCutQuantizer extends ColorQuantizer {
 		final int level; 		// split level of this color box
 		
 		int count = 0; 	// number of pixels represented by this color box
-		int rmin, rmax;	// range of contained colors in red dimension
-		int gmin, gmax;	// range of contained colors in green dimension
-		int bmin, bmax;	// range of contained colors in blue dimension
+		float rmin, rmax;	// range of contained colors in red dimension
+		float gmin, gmax;	// range of contained colors in green dimension
+		float bmin, bmax;	// range of contained colors in blue dimension
 		
 		ColorBox(int lower, int upper, int level) {
 			this.lower = lower;
@@ -272,13 +275,13 @@ public class MedianCutQuantizer extends ColorQuantizer {
 		 * @return The color dimension of the longest box side.
 		 */
 		ColorDimension getMaxBoxDimension() {
-			final int rLength = rmax - rmin;
-			final int gLength = gmax - gmin;
-			final int bLength = bmax - bmin;
+			final float rLength = rmax - rmin;
+			final float gLength = gmax - gmin;
+			final float bLength = bmax - bmin;
 			if (bLength >= rLength && bLength >= gLength)
-				return ColorDimension.BLUE;
+				return ColorDimension.BLU;
 			else if (gLength >= rLength && gLength >= bLength)
-				return ColorDimension.GREEN;
+				return ColorDimension.GRN;
 			else 
 				return ColorDimension.RED;
 		}
@@ -303,10 +306,18 @@ public class MedianCutQuantizer extends ColorQuantizer {
 			return k;		// k = index of median
 		}
 		
+		/**
+		 * Calculates the (linear) average of the colors contained in this color box
+		 * and returns the result as a {@link ColorNode} instance.
+		 * The components are not rounded to integers (this is why they are of type float
+		 * in the first place).
+		 * 
+		 * @return the average color in this box
+		 */
 		ColorNode getAvgColor() {
-			int rSum = 0;
-			int gSum = 0;
-			int bSum = 0;
+			double rSum = 0;
+			double gSum = 0;
+			double bSum = 0;
 			int n = 0;
 			for (int i = lower; i <= upper; i++) {
 				ColorNode cn = imageColors[i];
@@ -316,9 +327,9 @@ public class MedianCutQuantizer extends ColorQuantizer {
 				bSum = bSum + cnt * cn.blu;
 				n = n + cnt;
 			}
-			int avgRed = (rSum + (n / 2)) / n;
-			int avgGrn = (gSum + (n / 2)) / n;
-			int avgBlu = (bSum + (n / 2)) / n;
+			float avgRed = (float) (rSum / n);
+			float avgGrn = (float) (gSum / n);
+			float avgBlu = (float) (bSum / n);
 			return new ColorNode(avgRed, avgGrn, avgBlu, n);
 		}
 
@@ -337,31 +348,29 @@ public class MedianCutQuantizer extends ColorQuantizer {
 		
 	/**
 	 * The main purpose of this inner enumeration class is to associate the
-	 * color dimensions RED, GREEN, BLUE with the corresponding comparators.
-	 * Implementation uses anonymous classes.
+	 * color dimensions RED, GRN, BLU with the corresponding comparators
+	 * (for sorting along selected color dimensions).
 	 */
 	private enum ColorDimension {
 		RED (new Comparator<ColorNode>() {
 			@Override
 			public int compare(ColorNode colA, ColorNode colB) {
-				return Integer.compare(colA.red, colB.red);
-				//return colA.red - colB.red;
+				return Float.compare(colA.red, colB.red);
 			}}), 
-		GREEN (new Comparator<ColorNode>() {
+		GRN (new Comparator<ColorNode>() {
 			@Override
 			public int compare(ColorNode colA, ColorNode colB) {
-				return Integer.compare(colA.grn, colB.grn);
-				//return colA.grn - colB.grn;
+				return Float.compare(colA.grn, colB.grn);
 			}}), 
-		BLUE (new Comparator<ColorNode>() {
+		BLU (new Comparator<ColorNode>() {
 			@Override
 			public int compare(ColorNode colA, ColorNode colB) {
-				return Integer.compare(colA.blu, colB.blu);
-				//return colA.blu - colB.blu;
+				return Float.compare(colA.blu, colB.blu);
 			}});
 
 		final Comparator<ColorNode> comparator;
 
+		// constructor:
 		ColorDimension(Comparator<ColorNode> cmp) {
 			this.comparator = cmp;
 		}

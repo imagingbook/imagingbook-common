@@ -29,7 +29,7 @@ import imagingbook.pub.color.statistics.ColorHistogram;
  * @author WB
  * @version 2017/01/04
  */
-public class KMeansClusteringQuantizer extends ColorQuantizer {
+public class KMeansClusteringQuantizer extends ColorQuantizerOld {
 	
 	private final Parameters params;
 	private final int[][] colormap;
