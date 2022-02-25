@@ -16,6 +16,11 @@ import java.util.Locale;
 import java.util.Random;
 import java.util.Set;
 
+import ij.IJ;
+import ij.ImagePlus;
+import ij.process.ByteProcessor;
+import ij.process.ColorProcessor;
+import ij.process.ImageProcessor;
 import imagingbook.lib.color.RgbUtils;
 import imagingbook.pub.color.statistics.ColorHistogram;
 
@@ -29,10 +34,10 @@ import imagingbook.pub.color.statistics.ColorHistogram;
  * @author WB
  * @version 2017/01/04
  */
-public class KMeansClusteringQuantizer extends ColorQuantizerOld {
+public class KMeansClusteringQuantizer implements ColorQuantizer {
 	
 	private final Parameters params;
-	private final int[][] colormap;
+	private final float[][] colormap;
 	private final Cluster[] clusters;
 	private final double totalError;
 	
@@ -56,6 +61,10 @@ public class KMeansClusteringQuantizer extends ColorQuantizerOld {
 	}
 	
 	// --------------------------------------------------------------
+	
+	public KMeansClusteringQuantizer(ColorProcessor cp, Parameters params) {
+		this((int[]) cp.getPixels(), params);
+	}
 
 	/**
 	 * Creates a new quantizer instance from the supplied sequence
@@ -179,14 +188,14 @@ public class KMeansClusteringQuantizer extends ColorQuantizerOld {
 		return minDist;
 	}
 
-	private int[][] makeColorMap() {
-		List<int[]> colList = new LinkedList<>();
+	private float[][] makeColorMap() {
+		List<float[]> colList = new LinkedList<>();
 		for (Cluster c : clusters) {
 			if (!c.isEmpty()) {
 				colList.add(c.getCenterColor());
 			}
 		}		
-		return colList.toArray(new int[0][]);
+		return colList.toArray(new float[0][]);
 	}
 	
 	/**
@@ -212,7 +221,7 @@ public class KMeansClusteringQuantizer extends ColorQuantizerOld {
 	// ------- methods required by abstract super class -----------------------
 	
 	@Override
-	public int[][] getColorMap() {
+	public float[][] getColorMap() {
 		return colormap;
 	}
 	
@@ -232,14 +241,8 @@ public class KMeansClusteringQuantizer extends ColorQuantizerOld {
 			reset();
 		}
 
-		public int[] getCenterColor() {
-			int[] rgb = new int[] {
-					(int) Math.round(cRed),
-					(int) Math.round(cGrn),
-					(int) Math.round(cBlu)
-					};
-
-			return rgb;
+		public float[] getCenterColor() {
+			return new float[] {(float)cRed, (float)cGrn, (float)cBlu};
 		}
 
 		public boolean isEmpty() {
@@ -301,6 +304,42 @@ public class KMeansClusteringQuantizer extends ColorQuantizerOld {
 		}
 	}
 	
+	// ----------------------------------------------------------------------
+	
+	public static void main(String[] args) {
+//		String path = "D:/svn-book/Book/img/ch-color-images/alps-01s.png";
+//		String path = "D:/svn-book/Book/img/ch-color-images/desaturation-hsv/balls.jpg";
+		String path = "C:/_SVN/svn-book/Book/img/ch-color-images/desaturation-hsv/balls.jpg";
+		
+//		String path = "D:/svn-book/Book/img/ch-color-images/single-color.png";
+//		String path = "D:/svn-book/Book/img/ch-color-images/two-colors.png";
+//		String path = "D:/svn-book/Book/img/ch-color-images/random-colors.png";
+//		String path = "D:/svn-book/Book/img/ch-color-images/ramp-fire.png";
+		
+		int K = 16; 
+		System.out.println("image = " + path);
+		System.out.println("K = " + K);
+
+		ImagePlus im = IJ.openImage(path);
+		if (im == null) {
+			System.out.println("could not open: " + path);
+			return;
+		}
+		
+		ImageProcessor ip = im.getProcessor();
+		ColorProcessor cp = ip.convertToColorProcessor();
+		
+		Parameters params = new Parameters();
+		params.maxColors = K;
+		ColorQuantizer quantizer = new KMeansClusteringQuantizer(cp, params);
+		quantizer.listColorMap();
+		
+		System.out.println("quantizing image");
+		ByteProcessor qi = quantizer.quantize(cp);
+		System.out.println("showing image");
+		(new ImagePlus("quantizez", qi)).show();
+		
+	}
 	
 } 
 

@@ -17,6 +17,13 @@ import org.apache.commons.math3.ml.clustering.CentroidCluster;
 import org.apache.commons.math3.ml.clustering.DoublePoint;
 import org.apache.commons.math3.ml.clustering.KMeansPlusPlusClusterer;
 
+import ij.IJ;
+import ij.ImagePlus;
+import ij.process.ByteProcessor;
+import ij.process.ColorProcessor;
+import ij.process.ImageProcessor;
+
+
 
 /**
  * This class implements color quantization by k-means clustering
@@ -27,10 +34,10 @@ import org.apache.commons.math3.ml.clustering.KMeansPlusPlusClusterer;
  * @author WB
  * @version 2017/01/04
  */
-public class KMeansClusteringQuantizerApache extends ColorQuantizerOld {
+public class KMeansClusteringQuantizerApache implements ColorQuantizer {
 	
 	private final Parameters params;
-	private final int[][] colormap;
+	private final float[][] colormap;
 	
 //	private final Clusterer<DoublePoint> clusterer;
 	private final List<CentroidCluster<DoublePoint>> centers;
@@ -54,6 +61,10 @@ public class KMeansClusteringQuantizerApache extends ColorQuantizerOld {
 	
 	// --------------------------------------------------------------
 
+	public KMeansClusteringQuantizerApache(ColorProcessor cp, Parameters params) {
+		this((int[]) cp.getPixels(), params);
+	}
+	
 	/**
 	 * Creates a new quantizer instance from the supplied sequence
 	 * of color values (assumed to be ARGB-encoded integers). 
@@ -82,7 +93,8 @@ public class KMeansClusteringQuantizerApache extends ColorQuantizerOld {
 			points.add(new DoublePoint(intToRgbDouble(pixels[i])));
 		}
 		
-		return clusterer.cluster(points);
+		List<CentroidCluster<DoublePoint>> result = clusterer.cluster(points);
+		return result;
 	}
 	
 	// --------------------------------------------------------------
@@ -94,18 +106,18 @@ public class KMeansClusteringQuantizerApache extends ColorQuantizerOld {
 		return new double[] {red, grn, blu};
 	}
 
-	private int[][] makeColorMap() {
-		List<int[]> colList = new LinkedList<>();
+	private float[][] makeColorMap() {
+		List<float[]> colList = new LinkedList<>();
 		
 		for (CentroidCluster<DoublePoint> ctr : centers) {
 			double[] c = ctr.getCenter().getPoint();
-			int red = (int) Math.round(c[0]);
-			int grn = (int) Math.round(c[1]);
-			int blu = (int) Math.round(c[2]);
-			colList.add(new int[] {red, grn, blu});
+			float red = (float) c[0];
+			float grn = (float) c[1];
+			float blu = (float) c[2];
+			colList.add(new float[] {red, grn, blu});
 		}
 		
-		return colList.toArray(new int[0][]);
+		return colList.toArray(new float[0][]);
 	}
 	
 	/**
@@ -121,8 +133,45 @@ public class KMeansClusteringQuantizerApache extends ColorQuantizerOld {
 	// ------- methods required by abstract super class -----------------------
 	
 	@Override
-	public int[][] getColorMap() {
+	public float[][] getColorMap() {
 		return colormap;
+	}
+	
+	// ----------------------------------------------------------------------
+	
+	public static void main(String[] args) {
+//		String path = "D:/svn-book/Book/img/ch-color-images/alps-01s.png";
+//		String path = "D:/svn-book/Book/img/ch-color-images/desaturation-hsv/balls.jpg";
+		String path = "C:/_SVN/svn-book/Book/img/ch-color-images/desaturation-hsv/balls.jpg";
+		
+//		String path = "D:/svn-book/Book/img/ch-color-images/single-color.png";
+//		String path = "D:/svn-book/Book/img/ch-color-images/two-colors.png";
+//		String path = "D:/svn-book/Book/img/ch-color-images/random-colors.png";
+//		String path = "D:/svn-book/Book/img/ch-color-images/ramp-fire.png";
+		
+		int K = 16; 
+		System.out.println("image = " + path);
+		System.out.println("K = " + K);
+
+		ImagePlus im = IJ.openImage(path);
+		if (im == null) {
+			System.out.println("could not open: " + path);
+			return;
+		}
+		
+		ImageProcessor ip = im.getProcessor();
+		ColorProcessor cp = ip.convertToColorProcessor();
+		
+		Parameters params = new Parameters();
+		params.maxColors = K;
+		ColorQuantizer quantizer = new KMeansClusteringQuantizerApache(cp, params);
+		quantizer.listColorMap();
+		
+		System.out.println("quantizing image");
+		ByteProcessor qi = quantizer.quantize(cp);
+		System.out.println("showing image");
+		(new ImagePlus("quantizez", qi)).show();
+		
 	}
 	
 } 
