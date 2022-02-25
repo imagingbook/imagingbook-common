@@ -10,14 +10,19 @@
 package imagingbook.pub.color.quantize;
 
 
+import java.util.AbstractSet;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 
 import ij.IJ;
+import ij.ImagePlus;
+import ij.process.ByteProcessor;
 import ij.process.ColorProcessor;
-import imagingbook.lib.color.Rgb;
+import ij.process.ImageProcessor;
+import imagingbook.lib.color.RgbUtils;
 import imagingbook.pub.color.statistics.ColorHistogram;
 
 /**
@@ -41,53 +46,24 @@ import imagingbook.pub.color.statistics.ColorHistogram;
  */
 public class MedianCutQuantizer extends ColorQuantizer {
 	
-	private ColorNode[] imageColors = null;
-	
-//	private final int maxColors;
+	private final ColorNode[] imageColors;
 	private final int[][] colormap;
 	
-//	private final Parameters params;
-	
-//	public static class Parameters {
-//		/** Maximum number of quantized colors. */
-//		public int maxColors = 16;
-//		
-//		void check() {
-//			if (maxColors < 2 || maxColors > 256) {
-//				throw new IllegalArgumentException();
-//			}
-//		}
-//	}
-
-	// quick fix, better use a lambda expression?
-//	@Deprecated
-//	private static Parameters makeParameters(int Kmax) {
-//		Parameters p = new Parameters();
-//		p.maxColors = Kmax;
-//		return p;
-//	}
-	
-//	@Deprecated
-//	public MedianCutQuantizer(ColorProcessor ip, int Kmax) {
-//		this((int[]) ip.getPixels(), makeParameters(Kmax));
-//	}
-	
-//	@Deprecated
-//	public MedianCutQuantizer(int[] pixels, int Kmax) {
-//		this(pixels, makeParameters(Kmax));
-//	}
+	public MedianCutQuantizer(ColorProcessor ip, int K) {
+		this((int[]) ip.getPixels(), K);
+	}
 	
 	 
-	public MedianCutQuantizer(int[] pixels, int maxColors) {
-//		this.maxColors = maxColors;
-//		this.params = params;
-//		System.out.println("Kmax = " + this.params.maxColors);
-		makeImageColors(pixels);
-//		listColors(imageColors);
-		ColorNode[] quantColors = findRepresentativeColors(maxColors);
-//		listColors(quantColors);
-		this.colormap = makeColorMap(quantColors);
-		this.imageColors = null;
+	public MedianCutQuantizer(int[] pixels, int K) {
+		imageColors = getAllColors(pixels);
+		if (imageColors.length <= K) {		// not enough colors, nothing to quantize
+			colormap = null;
+			return;
+		}
+		else {
+			ColorNode[] quantColors = findReferenceColors(K);
+			colormap = makeColorMap(quantColors);
+		}
 	}
 	
 //	void listColors(ColorNode[] colors) {
@@ -96,42 +72,45 @@ public class MedianCutQuantizer extends ColorQuantizer {
 //		}
 //	}
 	
-	private void makeImageColors(int[] pixels) {
+	private ColorNode[] getAllColors(int[] pixels) {
 		ColorHistogram colorHist = new ColorHistogram(pixels);
-		final int K = colorHist.getNumberOfColors();
-		this.imageColors = new ColorNode[K];
-		for (int i = 0; i < K; i++) {
+		final int nc = colorHist.getNumberOfColors();
+		ColorNode[] Call = new ColorNode[nc];
+		for (int i = 0; i < nc; i++) {
 			int rgb = colorHist.getColor(i);
 			int cnt = colorHist.getCount(i);
-			imageColors[i] = new ColorNode(rgb, cnt);
+			Call[i] = new ColorNode(rgb, cnt);
 		}
-		//return imgColors;
+		return Call;
 	}
 
-	private ColorNode[] findRepresentativeColors(int Kmax) {
+	private ColorNode[] findReferenceColors(int K) {
 		final int n = imageColors.length;
-		if (n <= Kmax) {// image has fewer colors than Kmax
-			return imageColors;
-		}
-		else {
-			System.out.println("splitting  " + n);
-			ColorBox initialBox = new ColorBox(0, n - 1, 0);
-			List<ColorBox> colorSet = new ArrayList<ColorBox>();
-			colorSet.add(initialBox);
-			int k = 1;
-			boolean done = false;
-			while (k < Kmax && !done) {
-				ColorBox nextBox = findBoxToSplit(colorSet);
-				if (nextBox != null) {
-					ColorBox newBox = nextBox.splitBox();
-					colorSet.add(newBox);
-					k = k + 1;
-				} else {
-					done = true;
-				}
+
+		ColorBox cb0 = new ColorBox(0, n - 1, 0);
+//		List<ColorBox> B = new ArrayList<ColorBox>();
+		AbstractSet<ColorBox> B = new HashSet<ColorBox>();
+		B.add(cb0);
+		
+		int k = 1;						// number of quantized color (color boxes)
+		boolean done = false;
+		
+		while (k < K && !done) {
+			ColorBox cb = findBoxToSplit(B);
+			if (cb != null) {
+//				ColorBox newBox = cb.splitBox();
+//				B.add(newBox);
+				ColorBox[] boxes = cb.splitBox();
+				B.remove(cb);			// wasteful?
+				B.add(boxes[0]);
+				B.add(boxes[1]);
+				k = k + 1;
+			} else {
+				done = true;
 			}
-			return getAvgColors(colorSet);
 		}
+		return getAvgColors(B);
+
 	}
 	
 	private int[][] makeColorMap(ColorNode[] quantColors) {
@@ -144,31 +123,34 @@ public class MedianCutQuantizer extends ColorQuantizer {
 		return map;
 	}
 	
-	private ColorBox findBoxToSplit(List<ColorBox> colorBoxes) {
-		ColorBox boxToSplit = null;
+	private ColorBox findBoxToSplit(Iterable<ColorBox> colorBoxes) {
 		// from the set of splitable color boxes
 		// select the one with the minimum level
+		ColorBox boxToSplit = null;
 		int minLevel = Integer.MAX_VALUE;
-		for (ColorBox box : colorBoxes) {
-			if (box.colorCount() >= 2) {	// box can be split
-				if (box.level < minLevel) {
-					boxToSplit = box;
-					minLevel = box.level;
+		for (ColorBox cb : colorBoxes) {
+			if (cb.colorCount() >= 2) {	// box can be split
+				if (cb.level < minLevel) {
+					boxToSplit = cb;
+					minLevel = cb.level;
 				}
 			}
 		}
 		return boxToSplit;
 	}
 	
-	private ColorNode[] getAvgColors(List<ColorBox> colorBoxes) {
-		int n = colorBoxes.size();
-		ColorNode[] avgColors = new ColorNode[n];
+	private ColorNode[] getAvgColors(Iterable<ColorBox> colorBoxes) {
+		//int n = colorBoxes.size();
+//		ColorNode[] avgColors = new ColorNode[colorBoxes.size()];
+		List<ColorNode> avgColors = new ArrayList<>();
 		int i = 0;
 		for (ColorBox box : colorBoxes) {
-			avgColors[i] = box.getAvgColor();
+			//avgColors[i] = box.getAvgColor();
+			avgColors.add(box.getAvgColor());
 			i = i + 1;
 		}
-		return avgColors;
+//		return avgColors;
+		return avgColors.toArray(new ColorNode[0]);
 	}
 	
 	
@@ -182,13 +164,13 @@ public class MedianCutQuantizer extends ColorQuantizer {
 	// -------------- class ColorNode -------------------------------------------
 
 	private class ColorNode {
-		private final int rgb;
+		//private final int rgb;
 		private final int red, grn, blu;
 		private final int cnt;
 		
 		ColorNode (int rgb, int cnt) {
-			this.rgb = (rgb & 0xFFFFFF);
-			int[] c = Rgb.intToRgb(rgb);
+			//this.rgb = (rgb & 0xFFFFFF);
+			int[] c = RgbUtils.intToRgb(rgb);
 			this.red = c[0];
 			this.grn = c[1];
 			this.blu = c[2];
@@ -196,7 +178,7 @@ public class MedianCutQuantizer extends ColorQuantizer {
 		}
 		
 		ColorNode (int red, int grn, int blu, int cnt) {
-			this.rgb = Rgb.rgbToInt(red, grn, blu);
+			//this.rgb = Rgb.rgbToInt(red, grn, blu);
 			this.red = red;
 			this.grn = grn;
 			this.blu = blu;
@@ -205,17 +187,24 @@ public class MedianCutQuantizer extends ColorQuantizer {
 		
 		public String toString() {
 			String s = ColorNode.class.getSimpleName();
-			s = s + " red=" + red + " green=" + grn + " blue=" + blu + " rgb=" + rgb + " count=" + cnt;
+			s = s + " red=" + red + " green=" + grn + " blue=" + blu + " count=" + cnt;
 			return s;
 		}
 	}
 	
-	// -------------- inner class ColorBox -------------------------------------------
+	// -------------- non-static inner class ColorBox -----------------------------------
 
+	/**
+	 * Represents a 'color box' holding a set of colors (of type {@link ColorNode}),
+	 * which is implemented as a contiguous range of elements in array
+	 * {@link MedianCutQuantizer#imageColors}. Instances of {@link ColorBox} reference
+	 * this array directly (this is why this class is non-static).
+	 */
 	private class ColorBox { 
-		int lower; 		// lower index into 'imageColors'
-		int upper; 		// upper index into 'imageColors'
-		int level; 		// split level of this color box
+		final int lower; 		// lower index into 'imageColors'
+		final int upper; 		// upper index into 'imageColors'
+		final int level; 		// split level of this color box
+		
 		int count = 0; 	// number of pixels represented by this color box
 		int rmin, rmax;	// range of contained colors in red dimension
 		int gmin, gmax;	// range of contained colors in green dimension
@@ -228,6 +217,10 @@ public class MedianCutQuantizer extends ColorQuantizer {
 			this.trim();
 		}
 		
+		/**
+		 * Returns the number of different colors within this color box.
+		 * @return the number of different colors
+		 */
 		int colorCount() {
 			return upper - lower;
 		}
@@ -235,13 +228,13 @@ public class MedianCutQuantizer extends ColorQuantizer {
 		/**
 		 * Recalculates the boundaries and population of this color box.
 		 */
-		void trim() {
-			count = 0;	
-			rmin = gmin = bmin = MAX_RGB;	
+		private void trim() {
+			int n = 0;	
+			rmin = gmin = bmin = MAX_RGB;
 			rmax = gmax = bmax = 0;
 			for (int i = lower; i <= upper; i++) {
 				ColorNode color = imageColors[i];
-				count = count + color.cnt;
+				n = n + color.cnt;
 				rmax = Math.max(color.red, rmax);
 				rmin = Math.min(color.red, rmin);
 				gmax = Math.max(color.grn, gmax);
@@ -249,6 +242,7 @@ public class MedianCutQuantizer extends ColorQuantizer {
 				bmax = Math.max(color.blu, bmax);
 				bmin = Math.min(color.blu, bmin);
 			}
+			count = n;
 		}
 		
 		/**
@@ -257,21 +251,19 @@ public class MedianCutQuantizer extends ColorQuantizer {
 		 * box and creates a new one, which is returned.
 		 * @return A new box.
 		 */
-		ColorBox splitBox() {	
+		ColorBox[] splitBox() {	
 			if (this.colorCount() < 2)	// this box cannot be split
 				return null;
 			else {
+				int m = this.level;
 				// find longest dimension of this box:
-				ColorDimension dim = getLongestColorDimension();
-				// find median along dim
-				int med = findMedian(dim);
+				ColorDimension d = this.getMaxBoxDimension();
+				// find median along dimension d
+				int med = this.findMedian(d);
 				// now split this box at the median return the resulting new box
-				int nextLevel = level + 1;
-				ColorBox newBox = new ColorBox(med + 1, upper, nextLevel);
-				this.upper = med;
-				this.level = nextLevel;
-				this.trim();
-				return newBox;
+				ColorBox b1 = new ColorBox(lower, med, m + 1);
+				ColorBox b2 = new ColorBox(med + 1, upper, m + 1);
+				return new ColorBox[] {b1, b2};
 			}
 		}
 		
@@ -279,7 +271,7 @@ public class MedianCutQuantizer extends ColorQuantizer {
 		 * Finds the longest dimension of this color box (RED, GREEN, or BLUE)
 		 * @return The color dimension of the longest box side.
 		 */
-		ColorDimension getLongestColorDimension() {
+		ColorDimension getMaxBoxDimension() {
 			final int rLength = rmax - rmin;
 			final int gLength = gmax - gmin;
 			final int bLength = bmax - bmin;
@@ -301,13 +293,14 @@ public class MedianCutQuantizer extends ColorQuantizer {
 			// sort color in this box along dimension dim:
 			Arrays.sort(imageColors, lower, upper + 1, dim.comparator);
 			// find the median point:
-			int nPixels, median;
-			for (median = lower, nPixels = 0; median < upper; median++) {
-				nPixels = nPixels + imageColors[median].cnt;
-				if (nPixels >= count / 2)
+			int half = count / 2;
+			int k, pixCnt;
+			for (k = lower, pixCnt = 0; k < upper; k++) {
+				pixCnt = pixCnt + imageColors[k].cnt;
+				if (pixCnt >= half)
 					break;
 			}			
-			return median;
+			return k;		// k = index of median
 		}
 		
 		ColorNode getAvgColor() {
@@ -351,17 +344,20 @@ public class MedianCutQuantizer extends ColorQuantizer {
 		RED (new Comparator<ColorNode>() {
 			@Override
 			public int compare(ColorNode colA, ColorNode colB) {
-				return colA.red - colB.red;
+				return Integer.compare(colA.red, colB.red);
+				//return colA.red - colB.red;
 			}}), 
 		GREEN (new Comparator<ColorNode>() {
 			@Override
 			public int compare(ColorNode colA, ColorNode colB) {
-				return colA.grn - colB.grn;
+				return Integer.compare(colA.grn, colB.grn);
+				//return colA.grn - colB.grn;
 			}}), 
 		BLUE (new Comparator<ColorNode>() {
 			@Override
 			public int compare(ColorNode colA, ColorNode colB) {
-				return colA.blu - colB.blu;
+				return Integer.compare(colA.blu, colB.blu);
+				//return colA.blu - colB.blu;
 			}});
 
 		final Comparator<ColorNode> comparator;
@@ -371,5 +367,78 @@ public class MedianCutQuantizer extends ColorQuantizer {
 		}
 	}
 	
+	
+	// ----------------------------------------------------------------------
+	
+	public static void main(String[] args) {
+//		String path = "D:/svn-book/Book/img/ch-color-images/alps-01s.png";
+		String path = "D:/svn-book/Book/img/ch-color-images/desaturation-hsv/balls.jpg";
+//		String path = "D:/svn-book/Book/img/ch-color-images/single-color.png";
+//		String path = "D:/svn-book/Book/img/ch-color-images/two-colors.png";
+//		String path = "D:/svn-book/Book/img/ch-color-images/random-colors.png";
+//		String path = "D:/svn-book/Book/img/ch-color-images/ramp-fire.png";
+		
+		int K = 16; 
+		System.out.println("image = " + path);
+		System.out.println("K = " + K);
+
+		ImagePlus im = IJ.openImage(path);
+		if (im == null) {
+			System.out.println("could not open: " + path);
+			return;
+		}
+		
+		ImageProcessor ip = im.getProcessor();
+		ColorProcessor cp = ip.convertToColorProcessor();
+		
+		MedianCutQuantizer quantizer = new MedianCutQuantizer(cp, K);
+		quantizer.listColorMap();
+		ByteProcessor qi = quantizer.quantize(cp);
+		
+		(new ImagePlus("quantizez", qi)).show();
+		
+	}
+	
 } 
+
+/*
+image = D:/svn-book/Book/img/ch-color-images/random-colors.png
+K = 16
+i=  0: r= 74 g=116 b= 22
+i=  1: r= 24 g=226 b= 22
+i=  2: r=207 g= 31 b= 22
+i=  3: r=104 g=226 b= 22
+i=  4: r= 70 g=147 b= 63
+i=  5: r= 45 g=226 b= 61
+i=  6: r=207 g= 31 b= 89
+i=  7: r=134 g=226 b= 62
+i=  8: r= 68 g=178 b= 23
+i=  9: r= 65 g=227 b= 21
+i= 10: r=189 g=127 b= 23
+i= 11: r=163 g=225 b= 21
+i= 12: r= 68 g=148 b=114
+i= 13: r= 46 g=226 b=114
+i= 14: r=189 g=133 b= 87
+i= 15: r=133 g=227 b=114
+
+image = D:/svn-book/Book/img/ch-color-images/desaturation-hsv/balls.jpg
+K = 16
+i=  0: r= 69 g= 42 b= 44
+i=  1: r= 69 g= 65 b= 94
+i=  2: r=220 g= 87 b= 14
+i=  3: r=171 g= 73 b=102
+i=  4: r= 37 g=108 b= 38
+i=  5: r= 44 g=119 b=162
+i=  6: r=226 g=180 b=  3
+i=  7: r=191 g=133 b=139
+i=  8: r=153 g= 32 b= 45
+i=  9: r= 61 g= 84 b=131
+i= 10: r=226 g=134 b=  7
+i= 11: r=237 g= 84 b=130
+i= 12: r=145 g= 98 b= 24
+i= 13: r= 37 g=148 b=202
+i= 14: r=244 g=209 b=  1
+i= 15: r=209 g=203 b=209
+
+*/
 

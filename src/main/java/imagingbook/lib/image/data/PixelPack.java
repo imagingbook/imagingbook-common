@@ -7,7 +7,7 @@ import ij.process.ColorProcessor;
 import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
 import ij.process.ShortProcessor;
-import imagingbook.lib.color.Rgb;
+import imagingbook.lib.color.RgbUtils;
 import imagingbook.lib.filter.GenericFilter;
 import imagingbook.lib.image.access.GridIndexer2D;
 import imagingbook.lib.image.access.OutOfBoundsStrategy;
@@ -490,7 +490,7 @@ public class PixelPack {
 		final int[] pixels = (int[]) ip.getPixels();
 		final int[] rgb = new int[3];
 		for (int i = 0; i < pixels.length; i++) {
-			Rgb.intToRgb(pixels[i], rgb);
+			RgbUtils.intToRgb(pixels[i], rgb);
 			P[0][i] = rgb[0];
 			P[1][i] = rgb[1];
 			P[2][i] = rgb[2];
@@ -555,7 +555,7 @@ public class PixelPack {
 			int r = clampByte(Math.round(R[i]));
 			int g = clampByte(Math.round(G[i]));
 			int b = clampByte(Math.round(B[i]));
-			pixels[i] = Rgb.rgbToInt(r, g, b);
+			pixels[i] = RgbUtils.rgbToInt(r, g, b);
 		}
 	}
 	

@@ -16,7 +16,7 @@ import java.util.Locale;
 import java.util.Random;
 import java.util.Set;
 
-import imagingbook.lib.color.Rgb;
+import imagingbook.lib.color.RgbUtils;
 import imagingbook.pub.color.statistics.ColorHistogram;
 
 /**
@@ -225,7 +225,7 @@ public class KMeansClusteringQuantizer extends ColorQuantizer {
 		double cRed, cGrn, cBlu;	// center of this cluster
 
 		Cluster(int p) {
-			int[] rgb = Rgb.intToRgb(p);
+			int[] rgb = RgbUtils.intToRgb(p);
 			cRed = rgb[0];
 			cGrn = rgb[1];
 			cBlu = rgb[2];
@@ -254,7 +254,7 @@ public class KMeansClusteringQuantizer extends ColorQuantizer {
 		}
 		
 		void addPixel(int p) {
-			int[] rgb = Rgb.intToRgb(p);
+			int[] rgb = RgbUtils.intToRgb(p);
 			sRed += rgb[0];
 			sGrn += rgb[1];
 			sBlu += rgb[2];
@@ -287,7 +287,7 @@ public class KMeansClusteringQuantizer extends ColorQuantizer {
 		 * @return Squared distance to the cluster center
 		 */
 		double getDistance(int p) {
-			int[] rgb = Rgb.intToRgb(p);
+			int[] rgb = RgbUtils.intToRgb(p);
 			final double dR = rgb[0] - cRed;
 			final double dG = rgb[1] - cGrn;
 			final double dB = rgb[2] - cBlu;

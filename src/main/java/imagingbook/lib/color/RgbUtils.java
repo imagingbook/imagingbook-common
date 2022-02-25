@@ -1,6 +1,6 @@
 package imagingbook.lib.color;
 
-public abstract class Rgb {
+public abstract class RgbUtils {
 
 	public static int[] intToRgb(int p) {
 		int[] RGB = new int[3];
