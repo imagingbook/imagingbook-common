@@ -42,7 +42,8 @@ import imagingbook.lib.color.RgbUtils;
  * @author WB
  * @version 2017/01/03
  */
-public class OctreeQuantizer implements ColorQuantizer {
+@Deprecated
+public class OctreeQuantizerOld extends ColorQuantizerOld {
 
 //	private final static int MAX_RGB = 255;
 	private final static int MAX_NODES = 262144 - 1; // = 2^18 - 1, was 266817;
@@ -57,7 +58,7 @@ public class OctreeQuantizer implements ColorQuantizer {
 	private int nodeCnt = 0;		// counts the number of nodes in the tree
 	private int colorCnt = 0; 		// counts the number of colors in the cube (used for temp. counting)
 
-	private final float[][] colormap;
+	private final int[][] colormap;
 	private boolean quickQuantization = false;
 	
 	private final Parameters params;
@@ -77,7 +78,7 @@ public class OctreeQuantizer implements ColorQuantizer {
 
 	// -------------------------------------------------------------------------
 	
-	public OctreeQuantizer(int[] pixels, Parameters params) {
+	public OctreeQuantizerOld(int[] pixels, Parameters params) {
 		this.params = params;
 		this.maxColors = this.params.maxColors;
 		this.root = new Node(null, 0);
@@ -87,7 +88,7 @@ public class OctreeQuantizer implements ColorQuantizer {
 		this.colormap = makeColorMap();
 	}
 	
-	public OctreeQuantizer(int[] pixels) {
+	public OctreeQuantizerOld(int[] pixels) {
 		this(pixels, new Parameters());
 	}
 	
@@ -156,11 +157,11 @@ public class OctreeQuantizer implements ColorQuantizer {
 		return colorCnt;
 	}
 
-	private float[][] makeColorMap() {
-		List<float[]> colList = new LinkedList<>();
+	private int[][] makeColorMap() {
+		List<int[]> colList = new LinkedList<>();
 		colorCnt = 0;	// used to store the color index in each node
 		root.collectColors(colList);
-		return colList.toArray(new float[0][]);
+		return colList.toArray(new int[0][]);
 	}
 	
 	/**
@@ -312,7 +313,7 @@ public class OctreeQuantizer implements ColorQuantizer {
 		 * 
 		 * @param colList List of colors to add to.
 		 */
-		private void collectColors(List<float[]> colList) {
+		private void collectColors(List<int[]> colList) {
 			// visit all children first
 			if (nChilds > 0) {
 				for (Node ch : childs) {
@@ -324,10 +325,10 @@ public class OctreeQuantizer implements ColorQuantizer {
 			
 			// process this node
 			if (nUnique > 0) {			
-				float avgRed = totalRed / nUnique;
-				float avgGrn = totalGrn / nUnique;
-				float avgBlu = totalBlu / nUnique;
-				colList.add(new float[] {avgRed, avgGrn, avgBlu});
+				int avgRed = (totalRed + (nUnique / 2)) / nUnique;
+				int avgGrn = (totalGrn + (nUnique / 2)) / nUnique;
+				int avgBlu = (totalBlu + (nUnique / 2)) / nUnique;
+				colList.add(new int[] {avgRed, avgGrn, avgBlu});
 				this.colorIdx = colorCnt;	// store the color table index for this node
 				colorCnt++;
 			}
@@ -356,7 +357,7 @@ public class OctreeQuantizer implements ColorQuantizer {
 	// ------- methods required by abstract super class -----------------------
 	
 	@Override
-	public float[][] getColorMap() {
+	public int[][] getColorMap() {
 		return colormap;
 	}
 	

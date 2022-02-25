@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import ij.IJ;
 import ij.ImagePlus;
@@ -47,24 +48,22 @@ import imagingbook.pub.color.statistics.ColorHistogram;
 public class MedianCutQuantizer implements ColorQuantizer {
 	
 	private final ColorNode[] imageColors;	// a vector of color nodes (used by inner classes)
-	private final float[][] colormap;
+	private final Set<ColorBox> quantColors;
 	
 	// -------------------------------------------------------------------------------
 	
 	public MedianCutQuantizer(ColorProcessor ip, int K) {
 		this((int[]) ip.getPixels(), K);
 	}
-	
-	 
+		 
 	public MedianCutQuantizer(int[] pixels, int K) {
 		imageColors = getAllColors(pixels);
 		if (imageColors.length <= K) {		// not enough colors, nothing to quantize
-			colormap = null;
+			quantColors = null;
 			return;
 		}
 		else {
-			ColorNode[] quantColors = findReferenceColors(K);
-			colormap = makeColorMap(quantColors);
+			quantColors = findReferenceColors(K);
 		}
 	}
 	
@@ -88,11 +87,10 @@ public class MedianCutQuantizer implements ColorQuantizer {
 		return colors;
 	}
 
-	private ColorNode[] findReferenceColors(int K) {
+	private Set<ColorBox> findReferenceColors(int K) {
 		final int n = imageColors.length;
 
 		ColorBox cb0 = new ColorBox(0, n - 1, 0);
-//		List<ColorBox> B = new ArrayList<ColorBox>();
 		AbstractSet<ColorBox> B = new HashSet<ColorBox>();
 		B.add(cb0);
 		
@@ -102,10 +100,8 @@ public class MedianCutQuantizer implements ColorQuantizer {
 		while (k < K && !done) {
 			ColorBox cb = findBoxToSplit(B);
 			if (cb != null) {
-//				ColorBox newBox = cb.splitBox();
-//				B.add(newBox);
 				ColorBox[] boxes = cb.splitBox();
-				B.remove(cb);			// wasteful?
+				B.remove(cb);
 				B.add(boxes[0]);
 				B.add(boxes[1]);
 				k = k + 1;
@@ -113,16 +109,17 @@ public class MedianCutQuantizer implements ColorQuantizer {
 				done = true;
 			}
 		}
-		return getAvgColors(B);
+		return B;
 
 	}
 	
-	private float[][] makeColorMap(ColorNode[] quantColors) {
-		float[][] map = new float[quantColors.length][3];
-		for (int i = 0; i < quantColors.length; i++) {
-			map[i][0] = quantColors[i].red;
-			map[i][1] = quantColors[i].grn;
-			map[i][2] = quantColors[i].blu;
+	private float[][] makeColorMap(Set<ColorBox> quantColors) {
+		int n = quantColors.size();
+		float[][] map = new float[n][];
+		int i = 0;
+		for (ColorBox cb : quantColors) {
+			map[i] = cb.getAvgColor();
+			i++;
 		}
 		return map;
 	}
@@ -143,32 +140,32 @@ public class MedianCutQuantizer implements ColorQuantizer {
 		return boxToSplit;
 	}
 	
-	private ColorNode[] getAvgColors(Iterable<ColorBox> colorBoxes) {
-		//int n = colorBoxes.size();
-//		ColorNode[] avgColors = new ColorNode[colorBoxes.size()];
-		List<ColorNode> avgColors = new ArrayList<>();
-		int i = 0;
-		for (ColorBox box : colorBoxes) {
-			//avgColors[i] = box.getAvgColor();
-			avgColors.add(box.getAvgColor());
-			i = i + 1;
-		}
-//		return avgColors;
-		return avgColors.toArray(new ColorNode[0]);
-	}
+//	private ColorNode[] getAvgColors(Iterable<ColorBox> colorBoxes) {
+//		//int n = colorBoxes.size();
+////		ColorNode[] avgColors = new ColorNode[colorBoxes.size()];
+//		List<ColorNode> avgColors = new ArrayList<>();
+//		int i = 0;
+//		for (ColorBox box : colorBoxes) {
+//			//avgColors[i] = box.getAvgColor();
+//			avgColors.add(box.getAvgColor());
+//			i = i + 1;
+//		}
+////		return avgColors;
+//		return avgColors.toArray(new ColorNode[0]);
+//	}
 	
 	
 	// ------- methods required by abstract super class -----------------------
 	
 	@Override
 	public float[][] getColorMap() {
-		return colormap;
+		return makeColorMap(quantColors);
 	}
 
 	// -------------- class ColorNode -------------------------------------------
 
 	private class ColorNode {
-		private final float red, grn, blu;
+		private final int red, grn, blu;
 		private final int cnt;
 		
 		ColorNode (int rgb, int cnt) {
@@ -180,7 +177,7 @@ public class MedianCutQuantizer implements ColorQuantizer {
 			this.cnt = cnt;
 		}
 		
-		ColorNode (float red, float grn, float blu, int cnt) {
+		ColorNode (int red, int grn, int blu, int cnt) {
 			//this.rgb = Rgb.rgbToInt(red, grn, blu);
 			this.red = red;
 			this.grn = grn;
@@ -314,7 +311,7 @@ public class MedianCutQuantizer implements ColorQuantizer {
 		 * 
 		 * @return the average color in this box
 		 */
-		ColorNode getAvgColor() {
+		float[] getAvgColor() {
 			double rSum = 0;
 			double gSum = 0;
 			double bSum = 0;
@@ -330,7 +327,7 @@ public class MedianCutQuantizer implements ColorQuantizer {
 			float avgRed = (float) (rSum / n);
 			float avgGrn = (float) (gSum / n);
 			float avgBlu = (float) (bSum / n);
-			return new ColorNode(avgRed, avgGrn, avgBlu, n);
+			return new float[] {avgRed, avgGrn, avgBlu};
 		}
 
 		@Override
@@ -402,8 +399,10 @@ public class MedianCutQuantizer implements ColorQuantizer {
 		
 		MedianCutQuantizer quantizer = new MedianCutQuantizer(cp, K);
 		quantizer.listColorMap();
-		ByteProcessor qi = quantizer.quantize(cp);
 		
+		System.out.println("quantizing image");
+		ByteProcessor qi = quantizer.quantize(cp);
+		System.out.println("showing image");
 		(new ImagePlus("quantizez", qi)).show();
 		
 	}

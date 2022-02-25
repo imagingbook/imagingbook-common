@@ -42,7 +42,7 @@ public interface ColorQuantizer {
 		byte[] idxPixels = new byte[rgbPixels.length];
 
 		for (int i = 0; i < rgbPixels.length; i++) {
-			idxPixels[i] = (byte) findColorIndex(rgbPixels[i]);
+			idxPixels[i] = (byte) findColorIndex(rgbPixels[i], colormap);
 		}
 
 		IndexColorModel idxCm = makeIndexColorModel(colormap);
@@ -113,8 +113,8 @@ public interface ColorQuantizer {
 	 * @param p Original color, encoded as an ARGB integer.
 	 * @return The associated color table index.
 	 */
-	default int findColorIndex(int p) {
-		float[][] colormap = getColorMap();
+	default int findColorIndex(int p, float[][] colormap) {
+//		float[][] colormap = getColorMap();
 		int[] rgb = RgbUtils.intToRgb(p);
 		int n = colormap.length;
 		float minD2 = Float.POSITIVE_INFINITY;
