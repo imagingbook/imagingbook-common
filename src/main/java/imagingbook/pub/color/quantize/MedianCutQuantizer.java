@@ -11,11 +11,9 @@ package imagingbook.pub.color.quantize;
 
 
 import java.util.AbstractSet;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import ij.IJ;
@@ -49,6 +47,7 @@ public class MedianCutQuantizer implements ColorQuantizer {
 	
 	private final ColorNode[] imageColors;	// a vector of color nodes (used by inner classes)
 	private final Set<ColorBox> quantColors;
+	//private final ColorNode root;
 	
 	// -------------------------------------------------------------------------------
 	

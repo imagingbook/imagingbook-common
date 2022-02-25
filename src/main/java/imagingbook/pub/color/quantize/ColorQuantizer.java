@@ -134,6 +134,7 @@ public interface ColorQuantizer {
 	
 	default void listColorMap() {
 		float[][] colormap = getColorMap();
+		System.out.println("listColorMap: " + colormap.length);
 		int n = colormap.length;
 		for (int i = 0; i < n; i++) {
 			float red = colormap[i][0];
