@@ -45,9 +45,9 @@ import imagingbook.pub.color.statistics.ColorHistogram;
  */
 public class MedianCutQuantizer implements ColorQuantizer {
 	
-	private final ColorNode[] imageColors;	// a vector of color nodes (used by inner classes)
+	private final ColorNode[] allColors;	// a vector of color nodes (used by inner classes)
 	private final Set<ColorBox> quantColors;
-	//private final ColorNode root;
+//	private final ColorNode root;		TODO: organize color boxes in a tree
 	
 	// -------------------------------------------------------------------------------
 	
@@ -56,8 +56,8 @@ public class MedianCutQuantizer implements ColorQuantizer {
 	}
 		 
 	public MedianCutQuantizer(int[] pixels, int K) {
-		imageColors = getAllColors(pixels);
-		if (imageColors.length <= K) {		// not enough colors, nothing to quantize
+		allColors = getAllColors(pixels);
+		if (allColors.length <= K) {		// not enough colors, nothing to quantize
 			quantColors = null;
 			return;
 		}
@@ -87,7 +87,7 @@ public class MedianCutQuantizer implements ColorQuantizer {
 	}
 
 	private Set<ColorBox> findReferenceColors(int K) {
-		final int n = imageColors.length;
+		final int n = allColors.length;
 
 		ColorBox cb0 = new ColorBox(0, n - 1, 0);
 		AbstractSet<ColorBox> B = new HashSet<ColorBox>();
@@ -196,7 +196,7 @@ public class MedianCutQuantizer implements ColorQuantizer {
 	/**
 	 * Represents a 'color box' holding a set of colors (of type {@link ColorNode}),
 	 * which is implemented as a contiguous range of elements in array
-	 * {@link MedianCutQuantizer#imageColors}. Instances of {@link ColorBox} reference
+	 * {@link MedianCutQuantizer#allColors}. Instances of {@link ColorBox} reference
 	 * this array directly (this is why this class is non-static).
 	 */
 	private class ColorBox { 
@@ -232,7 +232,7 @@ public class MedianCutQuantizer implements ColorQuantizer {
 			rmin = gmin = bmin = MAX_RGB;
 			rmax = gmax = bmax = 0;
 			for (int i = lower; i <= upper; i++) {
-				ColorNode color = imageColors[i];
+				ColorNode color = allColors[i];
 				n = n + color.cnt;
 				rmax = Math.max(color.red, rmax);
 				rmin = Math.min(color.red, rmin);
@@ -290,12 +290,12 @@ public class MedianCutQuantizer implements ColorQuantizer {
 		 */
 		int findMedian(ColorDimension dim) {
 			// sort color in this box along dimension dim:
-			Arrays.sort(imageColors, lower, upper + 1, dim.comparator);
+			Arrays.sort(allColors, lower, upper + 1, dim.comparator);
 			// find the median point:
 			int half = count / 2;
 			int k, pixCnt;
 			for (k = lower, pixCnt = 0; k < upper; k++) {
-				pixCnt = pixCnt + imageColors[k].cnt;
+				pixCnt = pixCnt + allColors[k].cnt;
 				if (pixCnt >= half)
 					break;
 			}			
@@ -316,7 +316,7 @@ public class MedianCutQuantizer implements ColorQuantizer {
 			double bSum = 0;
 			int n = 0;
 			for (int i = lower; i <= upper; i++) {
-				ColorNode cn = imageColors[i];
+				ColorNode cn = allColors[i];
 				int cnt = cn.cnt;
 				rSum = rSum + cnt * cn.red;
 				gSum = gSum + cnt * cn.grn;

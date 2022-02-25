@@ -65,30 +65,28 @@ public class OctreeQuantizer implements ColorQuantizer {
 //	private final float[][] colormap;
 	private boolean quickQuantization = false;
 	
-	private final Parameters params;
 	
-	public static class Parameters {
-		/** Maximum number of quantized colors. */
-		public int maxColors = 16;
-		/** Enable/disable quick quantization */
-		public boolean quickQuantization = false;
-		
-		void check() {
-			if (maxColors < 2 || maxColors > 256) {
-				throw new IllegalArgumentException();
-			}
-		}
-	}
+//	public static class Parameters {
+//		/** Maximum number of quantized colors. */
+//		public int maxColors = 16;
+//		/** Enable/disable quick quantization */
+//		public boolean quickQuantization = false;
+//		
+//		void check() {
+//			if (maxColors < 2 || maxColors > 256) {
+//				throw new IllegalArgumentException();
+//			}
+//		}
+//	}
 
 	// -------------------------------------------------------------------------
 	
-	public OctreeQuantizer(ColorProcessor ip, Parameters params) {
-		this((int[]) ip.getPixels(), params);
+	public OctreeQuantizer(ColorProcessor ip, int K) {
+		this((int[]) ip.getPixels(), K);
 	}
 	
-	public OctreeQuantizer(int[] pixels, Parameters params) {
-		this.params = params;
-		this.maxColors = this.params.maxColors;
+	public OctreeQuantizer(int[] pixels, int K) {
+		this.maxColors = K;
 		this.root = new TreeNode(null, 0);
 		this.depth = Math.min(Math.max(log2(maxColors) - 1, 2), MAX_TREE_DEPTH);// 2 <= depth <= maxTreeDepth
 		
@@ -97,9 +95,9 @@ public class OctreeQuantizer implements ColorQuantizer {
 		this.nColors = reduceTree(initColorCnt, pixels.length);
 	}
 	
-	public OctreeQuantizer(int[] pixels) {
-		this(pixels, new Parameters());
-	}
+//	public OctreeQuantizer(int[] pixels) {
+//		this(pixels, new Parameters());
+//	}
 	
 	public void setQuickQuantization(boolean quickQuantization) {
 		this.quickQuantization = quickQuantization;
@@ -172,7 +170,6 @@ public class OctreeQuantizer implements ColorQuantizer {
 	}
 
 	private float[][] makeColorMap() {
-		System.out.println("makeColorMap() ");
 		List<float[]> colList = new LinkedList<>();
 		colorCnt = 0;	// used to store the color index in each node
 		root.collectColors(colList);
@@ -346,7 +343,7 @@ public class OctreeQuantizer implements ColorQuantizer {
 				}
 			}		
 			// process this node
-			System.out.println("collectColors " + this.id + " unique=" + this.nUnique);
+//			System.out.println("collectColors " + this.id + " unique=" + this.nUnique);
 			if (nUnique > 0) {			
 				float avgRed = (float) totalRed / nUnique;
 				float avgGrn = (float) totalGrn / nUnique;
@@ -366,8 +363,8 @@ public class OctreeQuantizer implements ColorQuantizer {
 				}
 			}
 			// bottom of recursion
-			System.out.format(makeBlanks(level) + "node level=%d unique=%d total=%d: %3d %3d %3d, \n", 
-					level, nUnique, this.nPixels, 0xFF & midRed, 0xFF & midGrn, 0xFF & midBlu); 
+//			System.out.format(makeBlanks(level) + "node level=%d unique=%d total=%d: %3d %3d %3d, \n", 
+//					level, nUnique, this.nPixels, 0xFF & midRed, 0xFF & midGrn, 0xFF & midBlu); 
 		}
 		
 		private String makeBlanks(int level) {
@@ -446,9 +443,8 @@ public class OctreeQuantizer implements ColorQuantizer {
 		ColorProcessor cp = ip.convertToColorProcessor();
 		
 		// MedianCutQuantizer quantizer = new MedianCutQuantizer(cp, K);
-		Parameters params = new Parameters();
-		params.maxColors = K;
-		OctreeQuantizer quantizer = new OctreeQuantizer(cp, params);
+
+		OctreeQuantizer quantizer = new OctreeQuantizer(cp, K);
 		quantizer.setQuickQuantization(false);
 	
 		quantizer.listColorMap();
