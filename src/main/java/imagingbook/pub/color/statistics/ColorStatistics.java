@@ -22,7 +22,7 @@ public class ColorStatistics {
 	//determine how many different colors are contained in the 24 bit full-color image cp
 	public static int countColors (ColorProcessor cp) { 
 		// duplicate pixel array and sort
-		int[] pixels = ((int[]) cp.getPixels()).clone();
+		int[] pixels = (int[]) cp.getPixelsCopy();
 		Arrays.sort(pixels);  
 		
 		int n = 1;	// image contains at least one color
@@ -37,7 +37,7 @@ public class ColorStatistics {
 	private static int countColors2 (ColorProcessor cp) { 
 		System.out.println("\ncountColors2:");
 		// duplicate pixel array and sort
-		int[] pixels = ((int[]) cp.getPixels()).clone();
+		int[] pixels = (int[]) cp.getPixelsCopy();
 		System.out.println("npixels = " + pixels.length);
 		
 		Arrays.sort(pixels);  
@@ -69,7 +69,7 @@ public class ColorStatistics {
 	private static int countColors3 (ColorProcessor cp) { 
 		System.out.println("\ncountColors3:");
 		// duplicate pixel array and sort
-		int[] pixels = ((int[]) cp.getPixels()).clone();
+		int[] pixels = (int[]) cp.getPixelsCopy();
 		System.out.println("npixels = " + pixels.length);
 		
 		Arrays.sort(pixels);  
@@ -78,13 +78,6 @@ public class ColorStatistics {
 		
 		int n = 1;	// image contains at least one color
 		for (int i = 0; i < P; i++) {
-//			if (i == P - 1 || pixels[i] != pixels[i+1]) {
-//				C.add(new int[] {pixels[i], n});
-//				n = 1;
-//			}
-//			else {		// pixels[i] == pixels[i+1]
-//				n = n + 1;	// keep counting same color
-//			}
 			if (i < P - 1 && pixels[i] == pixels[i+1]) {
 				n = n + 1;	// keep counting same color
 			}
@@ -93,7 +86,6 @@ public class ColorStatistics {
 				n = 1;
 			}
 		}
-		//C.add(new int[] {pixels[P - 1], n});
 		
 		int nc = C.size();
 		int ntotal = 0;
@@ -127,12 +119,12 @@ public class ColorStatistics {
 	// ----------------------------------------------------------------------
 	
 	public static void main(String[] args) {
-//		String path = "D:/svn-book/Book/img/ch-color-images/alps-01s.png";
+		String path = "D:/svn-book/Book/img/ch-color-images/alps-01s.png";
 //		String path = "D:/svn-book/Book/img/ch-color-images/desaturation-hsv/balls.jpg";
 //		String path = "D:/svn-book/Book/img/ch-color-images/single-color.png";
 //		String path = "D:/svn-book/Book/img/ch-color-images/two-colors.png";
 //		String path = "D:/svn-book/Book/img/ch-color-images/random-colors.png";
-		String path = "D:/svn-book/Book/img/ch-color-images/ramp-fire.png";
+//		String path = "D:/svn-book/Book/img/ch-color-images/ramp-fire.png";
 		ImagePlus im = IJ.openImage(path);
 		if (im == null) {
 			System.out.println("could not open: " + path);

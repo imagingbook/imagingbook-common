@@ -45,6 +45,7 @@ public abstract class NiblackThresholder extends AdaptiveThresholder {
 		this.params = params;
 	}
 	
+	// method to be implemented by real sub-classes:
 	protected abstract void makeMeanAndVariance(ByteProcessor I, int radius);
 	
 	@Override
