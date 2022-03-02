@@ -11,6 +11,8 @@ package imagingbook.pub.dct;
 
 /**
  * This class provides the functionality for calculating the DCT in 2D.
+ * TODO: use generic types?
+ * 
  * @author W. Burger
  * @version 2019-12-26
  */
