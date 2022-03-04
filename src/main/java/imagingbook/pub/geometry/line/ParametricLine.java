@@ -1,4 +1,4 @@
-package imagingbook.pub.geometry.lines;
+package imagingbook.pub.geometry.line;
 
 import static imagingbook.lib.math.Arithmetic.sqr;
 

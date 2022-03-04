@@ -1,4 +1,4 @@
-package imagingbook.pub.geometry.lines;
+package imagingbook.pub.geometry.line;
 
 import java.util.Locale;
 

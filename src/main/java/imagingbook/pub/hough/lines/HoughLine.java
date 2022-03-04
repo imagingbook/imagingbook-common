@@ -17,8 +17,8 @@ import java.util.Locale;
 import ij.gui.Roi;
 import ij.gui.ShapeRoi;
 import imagingbook.pub.geometry.basic.Pnt2d;
-import imagingbook.pub.geometry.lines.AlgebraicLine;
-import imagingbook.pub.geometry.lines.HessianLine;
+import imagingbook.pub.geometry.line.AlgebraicLine;
+import imagingbook.pub.geometry.line.HessianLine;
 
 /**
  * This class represents a straight line used by the Hough transform

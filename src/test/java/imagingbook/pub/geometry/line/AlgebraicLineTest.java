@@ -1,10 +1,11 @@
-package imagingbook.pub.geometry.lines;
+package imagingbook.pub.geometry.line;
 
 import org.junit.Assert;
 import org.junit.Test;
 
 import imagingbook.pub.geometry.basic.Pnt2d;
 import imagingbook.pub.geometry.basic.Pnt2d.PntInt;
+
 
 public class AlgebraicLineTest {
 	

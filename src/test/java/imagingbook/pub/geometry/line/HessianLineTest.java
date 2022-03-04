@@ -1,4 +1,4 @@
-package imagingbook.pub.geometry.lines;
+package imagingbook.pub.geometry.line;
 
 import org.junit.Assert;
 import org.junit.Test;

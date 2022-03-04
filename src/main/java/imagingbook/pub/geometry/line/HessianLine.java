@@ -6,7 +6,7 @@
  * Copyright (c) 2006-2020 Wilhelm Burger, Mark J. Burge. All rights reserved. 
  * Visit http://imagingbook.com for additional details.
  *******************************************************************************/
-package imagingbook.pub.geometry.lines;
+package imagingbook.pub.geometry.line;
 
 //import static imagingbook.lib.math.Arithmetic.sqr;
 
