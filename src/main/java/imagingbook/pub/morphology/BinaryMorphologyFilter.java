@@ -21,6 +21,8 @@ import java.util.Arrays;
 public abstract class BinaryMorphologyFilter implements BinaryMorphologyOperator {
 	
 	protected final byte[][] H; // structuring element (used by implementing classes)
+	
+	// ---- constructors --------------------------------------------------------
 
 	public BinaryMorphologyFilter() {
 		H = makeBoxKernel3x3();
@@ -88,7 +90,7 @@ public abstract class BinaryMorphologyFilter implements BinaryMorphologyOperator
 		return bA;
 	}
 	
-	protected byte[][] reflect(byte[][] H) {
+	public static byte[][] reflect(byte[][] H) {
 		// mirrors (transposes) the structuring element around the center (hot spot)
 		// used to implement erosion by a dilation
 		final int N = H.length; 		// number of rows
@@ -127,7 +129,7 @@ public abstract class BinaryMorphologyFilter implements BinaryMorphologyOperator
 	
 	// -------------------------------------------------------------
 	
-	static int[][] iA = {
+	private static int[][] iA = {
 			{0, 0, 0, 3, 0, 0, 3, 3, 0, 0, 0, 0, 3, 0, 3, 3}, 
 			{0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 3, 0, 3, 1}, 
 			{0, 0, 0, 0, 0, 0, 0, 0, 0}, 

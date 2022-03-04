@@ -12,7 +12,6 @@ import static imagingbook.lib.math.Arithmetic.isZero;
 import static imagingbook.lib.math.Arithmetic.sqr;
 
 import java.awt.Shape;
-import java.awt.geom.Rectangle2D;
 import java.util.Locale;
 
 import imagingbook.pub.geometry.basic.Pnt2d;
