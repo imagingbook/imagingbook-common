@@ -40,15 +40,15 @@
 <span class="sourceLineNo">030</span><a id="line.30"> */</a>
 <span class="sourceLineNo">031</span><a id="line.31">public abstract class GridIndexer2D implements Cloneable {</a>
 <span class="sourceLineNo">032</span><a id="line.32">        </a>
-<span class="sourceLineNo">033</span><a id="line.33">        public static final OutOfBoundsStrategy DefaultOutOfBoundsStrategy = OutOfBoundsStrategy.NEAREST_BORDER;</a>
+<span class="sourceLineNo">033</span><a id="line.33">        public static final OutOfBoundsStrategy DefaultOutOfBoundsStrategy = OutOfBoundsStrategy.NearestBorder;</a>
 <span class="sourceLineNo">034</span><a id="line.34">        </a>
 <span class="sourceLineNo">035</span><a id="line.35">        public static GridIndexer2D create(int width, int height, OutOfBoundsStrategy obs) {</a>
 <span class="sourceLineNo">036</span><a id="line.36">                obs = (obs != null) ? obs : DefaultOutOfBoundsStrategy;</a>
 <span class="sourceLineNo">037</span><a id="line.37">                switch (obs) {</a>
-<span class="sourceLineNo">038</span><a id="line.38">                case ZERO_VALUE                 : return new ZeroValueIndexer(width, height);</a>
-<span class="sourceLineNo">039</span><a id="line.39">                case NEAREST_BORDER             : return new NearestBorderIndexer(width, height);</a>
-<span class="sourceLineNo">040</span><a id="line.40">                case MIRROR_IMAGE               : return new MirrorImageIndexer(width, height);</a>
-<span class="sourceLineNo">041</span><a id="line.41">                case THROW_EXCEPTION    : return new ExceptionIndexer(width, height);</a>
+<span class="sourceLineNo">038</span><a id="line.38">                case ZeroValues                 : return new ZeroValueIndexer(width, height);</a>
+<span class="sourceLineNo">039</span><a id="line.39">                case NearestBorder              : return new NearestBorderIndexer(width, height);</a>
+<span class="sourceLineNo">040</span><a id="line.40">                case MirrorImage                : return new MirrorImageIndexer(width, height);</a>
+<span class="sourceLineNo">041</span><a id="line.41">                case ThrowException     : return new ExceptionIndexer(width, height);</a>
 <span class="sourceLineNo">042</span><a id="line.42">                }</a>
 <span class="sourceLineNo">043</span><a id="line.43">                return null;</a>
 <span class="sourceLineNo">044</span><a id="line.44">        }</a>
@@ -110,7 +110,7 @@
 <span class="sourceLineNo">100</span><a id="line.100">        public static class NearestBorderIndexer extends GridIndexer2D {</a>
 <span class="sourceLineNo">101</span><a id="line.101">                </a>
 <span class="sourceLineNo">102</span><a id="line.102">                NearestBorderIndexer(int width, int height) {</a>
-<span class="sourceLineNo">103</span><a id="line.103">                        super(width, height, OutOfBoundsStrategy.NEAREST_BORDER);</a>
+<span class="sourceLineNo">103</span><a id="line.103">                        super(width, height, OutOfBoundsStrategy.NearestBorder);</a>
 <span class="sourceLineNo">104</span><a id="line.104">                }</a>
 <span class="sourceLineNo">105</span><a id="line.105"></a>
 <span class="sourceLineNo">106</span><a id="line.106">                @Override</a>
@@ -138,7 +138,7 @@
 <span class="sourceLineNo">128</span><a id="line.128">        public static class MirrorImageIndexer extends GridIndexer2D {</a>
 <span class="sourceLineNo">129</span><a id="line.129">                </a>
 <span class="sourceLineNo">130</span><a id="line.130">                MirrorImageIndexer(int width, int height) {</a>
-<span class="sourceLineNo">131</span><a id="line.131">                        super(width, height, OutOfBoundsStrategy.MIRROR_IMAGE);</a>
+<span class="sourceLineNo">131</span><a id="line.131">                        super(width, height, OutOfBoundsStrategy.MirrorImage);</a>
 <span class="sourceLineNo">132</span><a id="line.132">                }</a>
 <span class="sourceLineNo">133</span><a id="line.133"></a>
 <span class="sourceLineNo">134</span><a id="line.134">                @Override</a>
@@ -163,7 +163,7 @@
 <span class="sourceLineNo">153</span><a id="line.153">        public static class ZeroValueIndexer extends GridIndexer2D {</a>
 <span class="sourceLineNo">154</span><a id="line.154">                </a>
 <span class="sourceLineNo">155</span><a id="line.155">                ZeroValueIndexer(int width, int height) {</a>
-<span class="sourceLineNo">156</span><a id="line.156">                        super(width, height, OutOfBoundsStrategy.ZERO_VALUE);</a>
+<span class="sourceLineNo">156</span><a id="line.156">                        super(width, height, OutOfBoundsStrategy.ZeroValues);</a>
 <span class="sourceLineNo">157</span><a id="line.157">                }</a>
 <span class="sourceLineNo">158</span><a id="line.158"></a>
 <span class="sourceLineNo">159</span><a id="line.159">                @Override</a>
@@ -184,7 +184,7 @@
 <span class="sourceLineNo">174</span><a id="line.174">        public static class ExceptionIndexer extends GridIndexer2D {</a>
 <span class="sourceLineNo">175</span><a id="line.175">                </a>
 <span class="sourceLineNo">176</span><a id="line.176">                ExceptionIndexer(int width, int height) {</a>
-<span class="sourceLineNo">177</span><a id="line.177">                        super(width, height, OutOfBoundsStrategy.THROW_EXCEPTION);</a>
+<span class="sourceLineNo">177</span><a id="line.177">                        super(width, height, OutOfBoundsStrategy.ThrowException);</a>
 <span class="sourceLineNo">178</span><a id="line.178">                }</a>
 <span class="sourceLineNo">179</span><a id="line.179"></a>
 <span class="sourceLineNo">180</span><a id="line.180">                @Override</a>

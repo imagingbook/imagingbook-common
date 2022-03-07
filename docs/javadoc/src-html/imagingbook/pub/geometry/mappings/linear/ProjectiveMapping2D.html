@@ -47,7 +47,7 @@
 <span class="sourceLineNo">037</span><a id="line.37">         */</a>
 <span class="sourceLineNo">038</span><a id="line.38">        public static ProjectiveMapping2D fromPoints(Pnt2d[] P, Pnt2d[] Q) {</a>
 <span class="sourceLineNo">039</span><a id="line.39">                ProjectiveFit2D fit = new ProjectiveFit2D(P, Q);</a>
-<span class="sourceLineNo">040</span><a id="line.40">                return new ProjectiveMapping2D(fit.getTransformationMatrix().getData());</a>
+<span class="sourceLineNo">040</span><a id="line.40">                return new ProjectiveMapping2D(fit.getTransformationMatrix());</a>
 <span class="sourceLineNo">041</span><a id="line.41">        }</a>
 <span class="sourceLineNo">042</span><a id="line.42">        </a>
 <span class="sourceLineNo">043</span><a id="line.43">//      /**</a>

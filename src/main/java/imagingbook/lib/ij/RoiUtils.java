@@ -2,10 +2,11 @@ package imagingbook.lib.ij;
 
 import java.awt.Polygon;
 
-import ij.gui.Roi;
+import ij.gui.OvalRoi;
 import ij.gui.Overlay;
 import ij.gui.PointRoi;
 import ij.gui.PolygonRoi;
+import ij.gui.Roi;
 import ij.process.FloatPolygon;
 import imagingbook.pub.geometry.basic.Pnt2d;
 

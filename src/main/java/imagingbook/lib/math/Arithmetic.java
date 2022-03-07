@@ -321,7 +321,7 @@ public abstract class Arithmetic {
 	 * @param a coefficient
 	 * @param b coefficient
 	 * @param c coefficient
-	 * @return
+	 * @return an array [x1, x2] with the two roots
 	 */
 	public static double[] getRoots(double a, double b, double c) {
 		double d = Math.sqrt(sqr(b) - 4 * a * c);

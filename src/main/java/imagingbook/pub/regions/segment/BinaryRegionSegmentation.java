@@ -147,7 +147,7 @@ public abstract class BinaryRegionSegmentation {
 	/**
 	 * Creates a (map) container of {@link BinaryRegion} objects,
 	 * collects the region pixels from the label image
-	 * and calls {@link BinaryRegion#update()} to computes 
+	 * and calls {@link SegmentationBackedRegion#update()} to compute
 	 * the statistics for each region.
 	 * Region label numbers serve as map keys.
 	 * @return a map of {@link BinaryRegion} instances.

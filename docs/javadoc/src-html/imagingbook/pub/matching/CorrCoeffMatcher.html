@@ -23,7 +23,7 @@
 <span class="sourceLineNo">013</span><a id="line.13"></a>
 <span class="sourceLineNo">014</span><a id="line.14">/**</a>
 <span class="sourceLineNo">015</span><a id="line.15"> * @author W. Burger</a>
-<span class="sourceLineNo">016</span><a id="line.16"> * @version 2014-04-20</a>
+<span class="sourceLineNo">016</span><a id="line.16"> * @version 2022/02/10</a>
 <span class="sourceLineNo">017</span><a id="line.17"> */</a>
 <span class="sourceLineNo">018</span><a id="line.18">public class CorrCoeffMatcher {</a>
 <span class="sourceLineNo">019</span><a id="line.19">        private final FloatProcessor I; // search image</a>
@@ -52,9 +52,9 @@
 <span class="sourceLineNo">042</span><a id="line.42">                double sumR2 = 0;</a>
 <span class="sourceLineNo">043</span><a id="line.43">                for (int j = 0; j &lt; NR; j++) {</a>
 <span class="sourceLineNo">044</span><a id="line.44">                        for (int i = 0; i &lt; MR; i++) {</a>
-<span class="sourceLineNo">045</span><a id="line.45">                                float aR = R.getf(i,j);</a>
-<span class="sourceLineNo">046</span><a id="line.46">                                sumR  += aR;</a>
-<span class="sourceLineNo">047</span><a id="line.47">                                sumR2 += aR * aR;</a>
+<span class="sourceLineNo">045</span><a id="line.45">                                float b = R.getf(i,j);</a>
+<span class="sourceLineNo">046</span><a id="line.46">                                sumR  += b;</a>
+<span class="sourceLineNo">047</span><a id="line.47">                                sumR2 += b * b;</a>
 <span class="sourceLineNo">048</span><a id="line.48">                        }</a>
 <span class="sourceLineNo">049</span><a id="line.49">                }</a>
 <span class="sourceLineNo">050</span><a id="line.50">                </a>
@@ -76,11 +76,11 @@
 <span class="sourceLineNo">066</span><a id="line.66">                double sumI = 0, sumI2 = 0, sumIR = 0;</a>
 <span class="sourceLineNo">067</span><a id="line.67">                for (int j = 0; j &lt; NR; j++) {</a>
 <span class="sourceLineNo">068</span><a id="line.68">                        for (int i = 0; i &lt; MR; i++) {</a>
-<span class="sourceLineNo">069</span><a id="line.69">                                float aI = I.getf(r + i, s + j);</a>
-<span class="sourceLineNo">070</span><a id="line.70">                                float aR = R.getf(i, j);</a>
-<span class="sourceLineNo">071</span><a id="line.71">                                sumI  += aI;</a>
-<span class="sourceLineNo">072</span><a id="line.72">                                sumI2 += aI * aI;</a>
-<span class="sourceLineNo">073</span><a id="line.73">                                sumIR += aI * aR;</a>
+<span class="sourceLineNo">069</span><a id="line.69">                                float a = I.getf(r + i, s + j);</a>
+<span class="sourceLineNo">070</span><a id="line.70">                                float b = R.getf(i, j);</a>
+<span class="sourceLineNo">071</span><a id="line.71">                                sumI  += a;</a>
+<span class="sourceLineNo">072</span><a id="line.72">                                sumI2 += a * a;</a>
+<span class="sourceLineNo">073</span><a id="line.73">                                sumIR += a * b;</a>
 <span class="sourceLineNo">074</span><a id="line.74">                        }</a>
 <span class="sourceLineNo">075</span><a id="line.75">                }</a>
 <span class="sourceLineNo">076</span><a id="line.76">                double meanI = sumI / K;</a>

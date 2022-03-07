@@ -49,7 +49,7 @@
 <span class="sourceLineNo">039</span><a id="line.39">        public ColorHistogram(int[] pixelsOrig, boolean sortByFrequency) {</a>
 <span class="sourceLineNo">040</span><a id="line.40">                int[] pixels = new int[pixelsOrig.length];</a>
 <span class="sourceLineNo">041</span><a id="line.41">                for (int i = 0; i &lt; pixels.length; i++) {</a>
-<span class="sourceLineNo">042</span><a id="line.42">                        pixels[i] = 0xFFFFFF &amp; pixelsOrig[i];   // remove nonzero alpha components</a>
+<span class="sourceLineNo">042</span><a id="line.42">                        pixels[i] = 0xFFFFFF &amp; pixelsOrig[i];   // remove alpha components</a>
 <span class="sourceLineNo">043</span><a id="line.43">                }</a>
 <span class="sourceLineNo">044</span><a id="line.44">                </a>
 <span class="sourceLineNo">045</span><a id="line.45">                Arrays.sort(pixels);    // this is why we need a copy of the input array</a>

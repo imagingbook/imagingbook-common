@@ -72,7 +72,7 @@ public interface ParameterBundle {
 	
 	/**
 	 * Annotation to specify the number of digits displayed when showing
-	 * numeric values in dialogs. Default is {@link DefaultNumberOfDigits}.
+	 * numeric values in dialogs.
 	 * This annotation has no effect on non-floating-point fields.
 	 */
 	@Retention(RetentionPolicy.RUNTIME)
@@ -154,13 +154,12 @@ public interface ParameterBundle {
 	 * The name of the field is used as the 'label' of the dialog item.
 	 * TODO: this could/should be private!
 	 * 
-	 * @param field
-	 * @param dialog
-	 * @throws IllegalArgumentException
-	 * @throws IllegalAccessException
+	 * @param field some field
+	 * @param dialog the dialog
+	 * @throws IllegalAccessException when field is accessed illegally
 	 */
 	default void addFieldToDialog(Field field, GenericDialog dialog) 
-			throws IllegalArgumentException, IllegalAccessException {
+			throws IllegalAccessException {
 		
 		String name = field.getName();
 		if (field.isAnnotationPresent(DialogLabel.class)) {
@@ -205,13 +204,12 @@ public interface ParameterBundle {
 	 * 
 	 * @param field	a publicly accessible {@link Field} of this object 
 	 * @param dialog a {@link GenericDialog} instance
-	 * @return
-	 * @throws IllegalArgumentException
-	 * @throws IllegalAccessException
+	 * @return true if successful
+	 * @throws IllegalAccessException illegal field access
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	default boolean getFieldFromDialog(Field field, GenericDialog dialog) 
-					throws IllegalArgumentException, IllegalAccessException {
+					throws IllegalAccessException {
 		Class<?> clazz = field.getType();
 		if  (clazz.equals(boolean.class)) {
 			field.setBoolean(this, dialog.getNextBoolean());

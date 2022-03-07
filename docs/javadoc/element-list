@@ -11,6 +11,7 @@ imagingbook.lib.image.data
 imagingbook.lib.interpolation
 imagingbook.lib.math
 imagingbook.lib.math.eigen
+imagingbook.lib.math.nonlinear
 imagingbook.lib.math.testing
 imagingbook.lib.settings
 imagingbook.lib.tuples
@@ -40,7 +41,7 @@ imagingbook.pub.geometry.delaunay.guibas
 imagingbook.pub.geometry.fitting
 imagingbook.pub.geometry.homography
 imagingbook.pub.geometry.hulls
-imagingbook.pub.geometry.lines
+imagingbook.pub.geometry.line
 imagingbook.pub.geometry.mappings
 imagingbook.pub.geometry.mappings.linear
 imagingbook.pub.geometry.mappings.nonlinear
@@ -55,6 +56,7 @@ imagingbook.pub.morphology
 imagingbook.pub.noise.hashing
 imagingbook.pub.noise.perlin
 imagingbook.pub.regions
+imagingbook.pub.regions.segment
 imagingbook.pub.regions.utils
 imagingbook.pub.sift
 imagingbook.pub.sift.scalespace

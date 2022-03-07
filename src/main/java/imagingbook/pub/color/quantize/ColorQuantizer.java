@@ -111,6 +111,7 @@ public interface ColorQuantizer {
 	 * quick indexing in the octree method.
 	 *  
 	 * @param p Original color, encoded as an ARGB integer.
+	 * @param colormap a color map (float)
 	 * @return The associated color table index.
 	 */
 	default int findColorIndex(int p, float[][] colormap) {

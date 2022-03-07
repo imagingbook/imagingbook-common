@@ -22,7 +22,7 @@ import java.util.List;
 
 /**
  * A special overlay for showing binary region contours.
- * TODO: convert to {@link CustomOverlay}
+ * TODO: convert to CustomOverlay
  * 
  * @version 2020/04/01
  */

@@ -37,7 +37,7 @@
 <span class="sourceLineNo">027</span><a id="line.27">        public int getThreshold(int[] hist) {</a>
 <span class="sourceLineNo">028</span><a id="line.28">                h = hist;</a>
 <span class="sourceLineNo">029</span><a id="line.29">                int K = h.length;</a>
-<span class="sourceLineNo">030</span><a id="line.30">                N = makeMeanTables(h);</a>
+<span class="sourceLineNo">030</span><a id="line.30">                makeMeanTables(h);</a>
 <span class="sourceLineNo">031</span><a id="line.31"></a>
 <span class="sourceLineNo">032</span><a id="line.32">                double sigma2Bmax = 0;</a>
 <span class="sourceLineNo">033</span><a id="line.33">                int qMax = -1;</a>
@@ -60,10 +60,10 @@
 <span class="sourceLineNo">050</span><a id="line.50">                return qMax;</a>
 <span class="sourceLineNo">051</span><a id="line.51">        }</a>
 <span class="sourceLineNo">052</span><a id="line.52">        </a>
-<span class="sourceLineNo">053</span><a id="line.53">        private int makeMeanTables(int[] h) {</a>
+<span class="sourceLineNo">053</span><a id="line.53">        private void makeMeanTables(int[] h) {</a>
 <span class="sourceLineNo">054</span><a id="line.54">                int K = h.length;</a>
-<span class="sourceLineNo">055</span><a id="line.55">                M0 = new double[K];</a>
-<span class="sourceLineNo">056</span><a id="line.56">                M1 = new double[K];</a>
+<span class="sourceLineNo">055</span><a id="line.55">                this.M0 = new double[K];</a>
+<span class="sourceLineNo">056</span><a id="line.56">                this.M1 = new double[K];</a>
 <span class="sourceLineNo">057</span><a id="line.57">                int n0 = 0;</a>
 <span class="sourceLineNo">058</span><a id="line.58">                long s0 = 0;</a>
 <span class="sourceLineNo">059</span><a id="line.59">                for (int q = 0; q &lt; K; q++) {</a>
@@ -72,7 +72,7 @@
 <span class="sourceLineNo">062</span><a id="line.62">                        M0[q] = (n0 &gt; 0) ? ((double) s0)/n0 : -1;</a>
 <span class="sourceLineNo">063</span><a id="line.63">                }</a>
 <span class="sourceLineNo">064</span><a id="line.64">                </a>
-<span class="sourceLineNo">065</span><a id="line.65">                int N = n0;</a>
+<span class="sourceLineNo">065</span><a id="line.65">                this.N = n0;</a>
 <span class="sourceLineNo">066</span><a id="line.66">                </a>
 <span class="sourceLineNo">067</span><a id="line.67">                int n1 = 0;</a>
 <span class="sourceLineNo">068</span><a id="line.68">                long s1 = 0;</a>
@@ -83,7 +83,7 @@
 <span class="sourceLineNo">073</span><a id="line.73">                        M1[q] = (n1 &gt; 0) ? ((double) s1)/n1 : -1;</a>
 <span class="sourceLineNo">074</span><a id="line.74">                }</a>
 <span class="sourceLineNo">075</span><a id="line.75">                </a>
-<span class="sourceLineNo">076</span><a id="line.76">                return N;</a>
+<span class="sourceLineNo">076</span><a id="line.76">//              return N;</a>
 <span class="sourceLineNo">077</span><a id="line.77">        }</a>
 <span class="sourceLineNo">078</span><a id="line.78">}</a>
 

@@ -17,7 +17,7 @@
 <span class="sourceLineNo">007</span><a id="line.7">import ij.process.FloatProcessor;</a>
 <span class="sourceLineNo">008</span><a id="line.8">import ij.process.ImageProcessor;</a>
 <span class="sourceLineNo">009</span><a id="line.9">import ij.process.ShortProcessor;</a>
-<span class="sourceLineNo">010</span><a id="line.10">import imagingbook.lib.color.Rgb;</a>
+<span class="sourceLineNo">010</span><a id="line.10">import imagingbook.lib.color.RgbUtils;</a>
 <span class="sourceLineNo">011</span><a id="line.11">import imagingbook.lib.filter.GenericFilter;</a>
 <span class="sourceLineNo">012</span><a id="line.12">import imagingbook.lib.image.access.GridIndexer2D;</a>
 <span class="sourceLineNo">013</span><a id="line.13">import imagingbook.lib.image.access.OutOfBoundsStrategy;</a>
@@ -33,7 +33,7 @@
 <span class="sourceLineNo">023</span><a id="line.23">public class PixelPack {</a>
 <span class="sourceLineNo">024</span><a id="line.24">        </a>
 <span class="sourceLineNo">025</span><a id="line.25">        /** The default out-of-bounds strategy (see {@link OutOfBoundsStrategy}). */</a>
-<span class="sourceLineNo">026</span><a id="line.26">        public static final OutOfBoundsStrategy DefaultOutOfBoundsStrategy = OutOfBoundsStrategy.NEAREST_BORDER;</a>
+<span class="sourceLineNo">026</span><a id="line.26">        public static final OutOfBoundsStrategy DefaultOutOfBoundsStrategy = OutOfBoundsStrategy.NearestBorder;</a>
 <span class="sourceLineNo">027</span><a id="line.27"></a>
 <span class="sourceLineNo">028</span><a id="line.28">        private final int depth;</a>
 <span class="sourceLineNo">029</span><a id="line.29">        private final float[][] data;</a>
@@ -500,7 +500,7 @@
 <span class="sourceLineNo">490</span><a id="line.490">                final int[] pixels = (int[]) ip.getPixels();</a>
 <span class="sourceLineNo">491</span><a id="line.491">                final int[] rgb = new int[3];</a>
 <span class="sourceLineNo">492</span><a id="line.492">                for (int i = 0; i &lt; pixels.length; i++) {</a>
-<span class="sourceLineNo">493</span><a id="line.493">                        Rgb.intToRgb(pixels[i], rgb);</a>
+<span class="sourceLineNo">493</span><a id="line.493">                        RgbUtils.intToRgb(pixels[i], rgb);</a>
 <span class="sourceLineNo">494</span><a id="line.494">                        P[0][i] = rgb[0];</a>
 <span class="sourceLineNo">495</span><a id="line.495">                        P[1][i] = rgb[1];</a>
 <span class="sourceLineNo">496</span><a id="line.496">                        P[2][i] = rgb[2];</a>
@@ -565,7 +565,7 @@
 <span class="sourceLineNo">555</span><a id="line.555">                        int r = clampByte(Math.round(R[i]));</a>
 <span class="sourceLineNo">556</span><a id="line.556">                        int g = clampByte(Math.round(G[i]));</a>
 <span class="sourceLineNo">557</span><a id="line.557">                        int b = clampByte(Math.round(B[i]));</a>
-<span class="sourceLineNo">558</span><a id="line.558">                        pixels[i] = Rgb.rgbToInt(r, g, b);</a>
+<span class="sourceLineNo">558</span><a id="line.558">                        pixels[i] = RgbUtils.rgbToInt(r, g, b);</a>
 <span class="sourceLineNo">559</span><a id="line.559">                }</a>
 <span class="sourceLineNo">560</span><a id="line.560">        }</a>
 <span class="sourceLineNo">561</span><a id="line.561">        </a>
