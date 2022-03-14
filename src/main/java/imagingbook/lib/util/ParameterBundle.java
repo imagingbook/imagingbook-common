@@ -19,9 +19,13 @@ import ij.gui.GenericDialog;
  * 
  * Current features:
  * (a) Makes parameter bundles printable by listing all eligible fields.
+ * 
  * (b) Parameter bundles can be added/modified as a whole by ImageJ's 
  * {@link GenericDialog}, supported by specific annotations.
+ * Use methods {@link #addToDialog(GenericDialog)} and 
+ * {@link #getFromDialog(GenericDialog)}.
  * 
+ * See the example in {@code DemoParameters} below.
  * Other functionality may be added in the future.
  * 
  * @author WB
@@ -40,7 +44,7 @@ public interface ParameterBundle {
 	public default void printToStream(PrintStream strm) {
 		Class<? extends ParameterBundle> clazz = this.getClass();
 		Field[] fields = clazz.getFields();		// gets only public fields
-		strm.println(clazz.getCanonicalName());
+//		strm.println(clazz.getCanonicalName());
 		for (Field field : fields) {
 			if (!isValidParameterItem(field)) {
 				continue;
@@ -89,7 +93,7 @@ public interface ParameterBundle {
 	public @interface DialogHide {
 	}
 	
-	// ------------ ImageJ dialog-related (move to another interface?) ------------------
+	// ------------ ImageJ dialog-related (TODO: move to another interface?) ------------------
 	
 	public default void addToDialog(GenericDialog gd) {
 		Class<? extends ParameterBundle> clazz = this.getClass();
@@ -144,8 +148,6 @@ public interface ParameterBundle {
 		System.out.println("synchronized = " + Modifier.isSynchronized(mod));
 		System.out.println("transient    = " + Modifier.isTransient(mod));
 		System.out.println("volatite     = " + Modifier.isVolatile(mod));
-		
-		
 	}
 	
 	/**
@@ -263,8 +265,10 @@ public interface ParameterBundle {
 		A, B, Cee
 	}
 
-	// Example parameter bundle
-	static class DemoParameters implements ParameterBundle {
+	/**
+	 * Example parameter bundle
+	 */
+	public static class DemoParameters implements ParameterBundle {
 		public static int staticInt = 44;	// currently static members are listed too!
 		
 		@DialogLabel("Make a decision:")

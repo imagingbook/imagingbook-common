@@ -27,8 +27,9 @@ import imagingbook.pub.sift.scalespace.ScaleOctave;
 
 public class SiftDetector {
 
-	/* Default parameters; a (usually modified) instance of this class
-	 * may be passed to constructor of the main class.
+	/**
+	 * Default parameters; a (usually modified) instance of this class
+	 * may be passed to constructor of {@link SiftDetector}.
 	 */
 	public static class Parameters implements ParameterBundle {
 		/** Set true to output debug information */
