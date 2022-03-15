@@ -10,11 +10,17 @@ import com.lowagie.text.pdf.BaseFont;
 import com.lowagie.text.pdf.DefaultFontMapper;
 import com.lowagie.text.pdf.FontMapper;
 
-
-public class Type1FontMapper extends DefaultFontMapper {
+/**
+ * An implementation of {@link FontMapper} that substitutes unknown
+ * fonts with embedded core fonts (Type1).
+ * 
+ * @author WB
+ *
+ */
+public class CoreFontMapper extends DefaultFontMapper {
 	
 	public static boolean VERBOSE = false;
-	private static String classname = Type1FontMapper.class.getSimpleName();
+	private static String classname = CoreFontMapper.class.getSimpleName();
 
 	static String[] namesMonospaced = {"DIALOG", "DIALOGINPUT", "MONOSPACED", "COURIER", "COURIER NEW"};
 	static String[] namesSerif = {"SERIF", "TIMES", "TIMESROMAN", "TIMES NEW ROMAN"};
@@ -22,7 +28,7 @@ public class Type1FontMapper extends DefaultFontMapper {
 	private final HashSet<String> keysMonospaced;
 	private final HashSet<String> keysSerif;
 
-	public Type1FontMapper() {
+	public CoreFontMapper() {
 		keysMonospaced = new HashSet<>(Arrays.asList(namesMonospaced));
 		keysSerif      = new HashSet<>(Arrays.asList(namesSerif));
 	}
@@ -51,10 +57,9 @@ public class Type1FontMapper extends DefaultFontMapper {
 
 	// --------------------------------------------------
 	
-	public BaseFont awtToPdf(Font font) {
-		
+	public BaseFont awtToPdf(Font font) {		
 		BaseFontParameters p = getBaseFontParameters(font.getFontName());
-		if (p != null) {
+		if (p != null) {		// font is known/registered
 			BaseFont bf = null;
 			try {
 				bf = BaseFont.createFont(p.fontName, p.encoding, p.embedded, p.cached, p.ttfAfm, p.pfb);
@@ -65,40 +70,36 @@ public class Type1FontMapper extends DefaultFontMapper {
 			return bf;
 		}
 		
-		//		String logicalName = font.getFontName();
+		// font is not known/registered
 		String logicalName = font.getName();
-		
-		
-		// extract up to first '.'
-		int pos =  logicalName.indexOf('.');
+		int pos =  logicalName.indexOf('.'); // extract up to first '.'
 		if (pos >= 0) {
 			logicalName = logicalName.substring(0, pos);	//TODO: bug in DefaultFontMapper !
 		}
-//		System.out.println("logicalName2 = " + logicalName);
 
 		boolean isIt = font.isItalic();
 		boolean isBf = font.isBold();
 
-		Type1StandardFont sf = null;
+		Type1CoreFont sf = null;
 
 		String key = logicalName.toUpperCase();
 		if (keysMonospaced.contains(key)) {
 			if (isIt)
-				sf = (isBf) ? Type1StandardFont.CourierBoldOblique : Type1StandardFont.CourierOblique;
+				sf = (isBf) ? Type1CoreFont.CourierBoldOblique : Type1CoreFont.CourierOblique;
 			else
-				sf = (isBf) ? Type1StandardFont.CourierBold : Type1StandardFont.Courier;
+				sf = (isBf) ? Type1CoreFont.CourierBold : Type1CoreFont.Courier;
 		}
 		else if (keysSerif.contains(key)) {
 			if (isIt)
-				sf = (isBf) ? Type1StandardFont.TimesBoldItalic : Type1StandardFont.TimesItalic;
+				sf = (isBf) ? Type1CoreFont.TimesBoldItalic : Type1CoreFont.TimesItalic;
 			else
-				sf = (isBf) ? Type1StandardFont.TimesBold : Type1StandardFont.TimesRoman;
+				sf = (isBf) ? Type1CoreFont.TimesBold : Type1CoreFont.TimesRoman;
 		}
 		else {
 			if (isIt)
-				sf = (isBf) ? Type1StandardFont.HelveticaBoldOblique : Type1StandardFont.HelveticaOblique;
+				sf = (isBf) ? Type1CoreFont.HelveticaBoldOblique : Type1CoreFont.HelveticaOblique;
 			else
-				sf = (isBf) ? Type1StandardFont.HelveticaBold : Type1StandardFont.Helvetica;
+				sf = (isBf) ? Type1CoreFont.HelveticaBold : Type1CoreFont.Helvetica;
 		}
 
 		if (VERBOSE) System.out.println(classname + ": mapped to Type1 font " + logicalName + " --> " + sf.toString());
@@ -116,7 +117,7 @@ public class Type1FontMapper extends DefaultFontMapper {
 	// ------------------------------------------------------------------------------------
 
 	public static void main(String[] args) {
-		FontMapper dfm = new Type1FontMapper();
+		FontMapper dfm = new CoreFontMapper();
 
 		//		java.awt.Font awtFont1 = new java.awt.Font(java.awt.Font.SANS_SERIF, java.awt.Font.PLAIN, 18);
 		java.awt.Font awtFont1 = new java.awt.Font(java.awt.Font.DIALOG, java.awt.Font.ITALIC, 18);

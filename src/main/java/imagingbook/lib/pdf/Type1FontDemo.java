@@ -49,47 +49,47 @@ public class Type1FontDemo {
 	        document.open();
 	        Phrase phrase = new Phrase();
 
-	        phrase.add(new Chunk("Courier", new Font(Type1StandardFont.Courier.getBaseFont(), fontSize)));
+	        phrase.add(new Chunk("Courier", new Font(Type1CoreFont.Courier.getBaseFont(), fontSize)));
 	        phrase.add(Chunk.NEWLINE);
 	        
-	        phrase.add(new Chunk("Courier-Bold", new Font(Type1StandardFont.CourierBold.getBaseFont(), fontSize)));
+	        phrase.add(new Chunk("Courier-Bold", new Font(Type1CoreFont.CourierBold.getBaseFont(), fontSize)));
 	        phrase.add(Chunk.NEWLINE);
 	        
-	        phrase.add(new Chunk("Courier-Oblique", new Font(Type1StandardFont.CourierOblique.getBaseFont(), fontSize)));
+	        phrase.add(new Chunk("Courier-Oblique", new Font(Type1CoreFont.CourierOblique.getBaseFont(), fontSize)));
 	        phrase.add(Chunk.NEWLINE);
 	        
-	        phrase.add(new Chunk("Courier-BoldOblique", new Font(Type1StandardFont.CourierBoldOblique.getBaseFont(), fontSize)));
+	        phrase.add(new Chunk("Courier-BoldOblique", new Font(Type1CoreFont.CourierBoldOblique.getBaseFont(), fontSize)));
 	        phrase.add(Chunk.NEWLINE);
 	        phrase.add(Chunk.NEWLINE); 
 
-	        phrase.add(new Chunk("Helvetica", new Font(Type1StandardFont.Helvetica.getBaseFont(), fontSize)));
+	        phrase.add(new Chunk("Helvetica", new Font(Type1CoreFont.Helvetica.getBaseFont(), fontSize)));
 	        phrase.add(Chunk.NEWLINE);
 	        
-	        phrase.add(new Chunk("Helvetica-Bold", new Font(Type1StandardFont.HelveticaBold.getBaseFont(), fontSize)));
+	        phrase.add(new Chunk("Helvetica-Bold", new Font(Type1CoreFont.HelveticaBold.getBaseFont(), fontSize)));
 	        phrase.add(Chunk.NEWLINE);
 	        
-	        phrase.add(new Chunk("Helvetica-BoldOblique", new Font(Type1StandardFont.HelveticaBoldOblique.getBaseFont(), fontSize)));
+	        phrase.add(new Chunk("Helvetica-BoldOblique", new Font(Type1CoreFont.HelveticaBoldOblique.getBaseFont(), fontSize)));
 	        phrase.add(Chunk.NEWLINE);
 	        phrase.add(Chunk.NEWLINE);
 	        
-	        phrase.add(new Chunk("Times", new Font(Type1StandardFont.TimesRoman.getBaseFont(), fontSize)));
+	        phrase.add(new Chunk("Times", new Font(Type1CoreFont.TimesRoman.getBaseFont(), fontSize)));
 	        phrase.add(Chunk.NEWLINE);
 	        
-	        phrase.add(new Chunk("Times-Bold", new Font(Type1StandardFont.TimesBold.getBaseFont(), fontSize)));
+	        phrase.add(new Chunk("Times-Bold", new Font(Type1CoreFont.TimesBold.getBaseFont(), fontSize)));
 	        phrase.add(Chunk.NEWLINE);
 
-	        phrase.add(new Chunk("Times-BoldItalic", new Font(Type1StandardFont.TimesBoldItalic.getBaseFont(), fontSize)));
+	        phrase.add(new Chunk("Times-BoldItalic", new Font(Type1CoreFont.TimesBoldItalic.getBaseFont(), fontSize)));
 	        phrase.add(Chunk.NEWLINE);            
 
-	        phrase.add(new Chunk("Times-Italic", new Font(Type1StandardFont.TimesItalic.getBaseFont(), fontSize)));
+	        phrase.add(new Chunk("Times-Italic", new Font(Type1CoreFont.TimesItalic.getBaseFont(), fontSize)));
 	        phrase.add(Chunk.NEWLINE);
 	        phrase.add(Chunk.NEWLINE);
 
 	        
-	        phrase.add(new Chunk("Symbol", new Font(Type1StandardFont.Symbol.getBaseFont(), fontSize)));
+	        phrase.add(new Chunk("Symbol", new Font(Type1CoreFont.Symbol.getBaseFont(), fontSize)));
 	        phrase.add(Chunk.NEWLINE); 
 	        
-	        phrase.add(new Chunk("ZapfDingbats", new Font(Type1StandardFont.ZapfDingbats.getBaseFont(), fontSize)));
+	        phrase.add(new Chunk("ZapfDingbats", new Font(Type1CoreFont.ZapfDingbats.getBaseFont(), fontSize)));
 	        phrase.add(Chunk.NEWLINE);  
 
 	        document.add(phrase);

@@ -63,6 +63,8 @@ public interface ParameterBundle {
 	}
 	
 	/**
+	 * Validates the correctness and compatibility of the
+	 * parameters in this bundle. 
 	 * Implementing classes should override this method.
 	 * @return true if all parameters are OK, false otherwise
 	 */

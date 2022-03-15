@@ -20,7 +20,7 @@ import imagingbook.lib.util.resource.ResourceLocation.Resource;
  * @author WB
  *
  */
-public enum Type1StandardFont {
+public enum Type1CoreFont {
 	
 	Courier("Courier.afm"),
 	CourierBold("Courier-Bold.afm"),
@@ -47,7 +47,7 @@ public enum Type1StandardFont {
 	 * Constructor.
 	 * @param afmName the name of the associated AFM file
 	 */
-	Type1StandardFont(String afmName) {
+	Type1CoreFont(String afmName) {
 		this.afmName = afmName;
 		this.basefont = null;	// direct initialization makes problems (exception reading reseources)
 	}
@@ -78,7 +78,7 @@ public enum Type1StandardFont {
 	
 	public static void main(String[] args) {
 		System.out.println("Anchor is in JAR: " + Resources.insideJAR());
-		for (Type1StandardFont sf : Type1StandardFont.values()) {
+		for (Type1CoreFont sf : Type1CoreFont.values()) {
 			System.out.println(sf.toString() + ": " + sf.getBaseFont().getPostscriptFontName());
 		}
 	}
