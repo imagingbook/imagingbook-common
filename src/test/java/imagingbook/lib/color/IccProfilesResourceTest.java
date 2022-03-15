@@ -9,7 +9,7 @@ import imagingbook.lib.util.resource.ResourceLocation;
 
 public class IccProfilesResourceTest {
 	
-	private ResourceLocation loc = new imagingbook.lib.color.DATA.iccProfiles.Resources();
+	private ResourceLocation loc = new imagingbook.lib.color.iccProfiles.RLOC();
 
 	@Test
 	public void test() {

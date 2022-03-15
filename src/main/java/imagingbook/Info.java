@@ -16,6 +16,10 @@ import imagingbook.lib.util.FileUtils;
 
 /**
  * This class provides version information for this library.
+ * See https://stackoverflow.com/questions/3697449/retrieve-version-from-maven-pom-xml-in-code
+ * for alternatives.
+ * 
+ * 
  * @author WB
  *
  */

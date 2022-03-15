@@ -17,11 +17,14 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.file.Path;
 import java.util.jar.Manifest;
 
 import javax.swing.JFileChooser;
 import javax.swing.LookAndFeel;
 import javax.swing.UIManager;
+
+import ij.plugin.PlugIn;
 
 
 /**
@@ -239,7 +242,8 @@ public abstract class FileUtils {
 	
 	// -----------------------------------------------------------------
 	
-	private static final String CurrentDirectoryKey = "imagingbook#currentdir";
+	private static final String DirectoryKey = "imagingbook#dir";
+	private static String DefaultUserDirectory = System.getProperty("user.dir");
 	
 	/**
 	 * Sets a system property to memorize the current directory.
@@ -249,10 +253,33 @@ public abstract class FileUtils {
 	 * 
 	 * @param pathname a directory of file path
 	 */
+	@Deprecated  // use setCurrentDirectory(Class, String) instead
 	public static void setCurrentDirectory(String pathname) {
 		File file = new File(pathname);
 		String dir = (file.isDirectory()) ? file.toString() : file.getParent();
-		System.setProperty(CurrentDirectoryKey, dir);
+		System.setProperty(DirectoryKey, dir);
+	}
+	
+	/**
+	 * Associates a current directory with the specified class by
+	 * setting a system property to make this persistent through class reloads.
+	 * Use {@link #getCurrentDirectory(Class)} to retrieve this value.
+	 * If the specified pathname is not a directory (i.e., a plain file), 
+	 * its parent directory is used.
+	 * 
+	 * @param clazz the class to associate the directory with
+	 * @param pathname a directory of file path
+	 */
+	public static void setCurrentDirectory(Class<?> clazz, String pathname) {
+		File file = new File(pathname);
+		String dir = (file.isDirectory()) ? file.toString() : file.getParent();
+		System.setProperty(makeDirectoryKey(clazz), dir);
+	}
+	
+	public static void setCurrentDirectory(Class<?> clazz, Path path) {
+		File file = path.toFile();
+		String dir = (file.isDirectory()) ? file.toString() : file.getParent();
+		System.setProperty(makeDirectoryKey(clazz), dir);
 	}
 	
 	/**
@@ -261,11 +288,31 @@ public abstract class FileUtils {
 	 * this path is returned,
 	 * otherwise the value for the "user.dir" system property.
 	 * 
+	 * @param clazz the class to associate the directory with
 	 * @return a string with the current directory path
 	 */
+	@Deprecated  // use getCurrentDirectory(Class) instead
 	public static String getCurrentDirectory() {
-		String dir = System.getProperty(CurrentDirectoryKey);
-		return (dir != null) ? dir : System.getProperty("user.dir");
+		String dir = System.getProperty(DirectoryKey);
+		return (dir != null) ? dir : DefaultUserDirectory;
+	}
+	
+	
+	/**
+	 * Returns the current directory associated with the specified class. 
+	 * (usually of type {@Code PlugIn} or {@Code PlugInFilter}).
+	 * If the directory was set with {@link #setCurrentDirectory(Class,String)} before
+	 * this path is returned, {@code null} otherwise.
+	 * 
+	 * @param clazz the class to associate the directory with
+	 * @return a string with the current directory path or null if not registered
+	 */
+	public static String getCurrentDirectory(Class<?> clazz) {
+		return System.getProperty(makeDirectoryKey(clazz));
+	}
+	
+	private static String makeDirectoryKey(Class<?> clazz) {
+		return DirectoryKey + "#" + clazz.getCanonicalName();
 	}
 	
 	// -----------------------------------------------------------------
@@ -279,6 +326,8 @@ public abstract class FileUtils {
 		
 		System.out.println("dir = " + getCurrentDirectory());
 		setCurrentDirectory("C:/tmp");
+		System.out.println("dir = " + getCurrentDirectory());
+		setCurrentDirectory("D:/tmp");
 		System.out.println("dir = " + getCurrentDirectory());
 	}
 	

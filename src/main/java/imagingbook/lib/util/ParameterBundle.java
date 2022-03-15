@@ -11,6 +11,7 @@ import java.lang.reflect.Modifier;
 
 import ij.gui.GenericDialog;
 
+
 /**
  * Interface to be implemented by local 'Parameters' classes.
  * This is part of the 'simple parameter object' scheme,
@@ -33,7 +34,7 @@ import ij.gui.GenericDialog;
  */
 public interface ParameterBundle {
 	
-	public default String printToString() {
+	default String printToString() {
 		ByteArrayOutputStream bas = new ByteArrayOutputStream();
 		try (PrintStream strm = new PrintStream(bas)) {
 			printToStream(strm);
@@ -41,7 +42,7 @@ public interface ParameterBundle {
 		return bas.toString();
 	}
 
-	public default void printToStream(PrintStream strm) {
+	default void printToStream(PrintStream strm) {
 		Class<? extends ParameterBundle> clazz = this.getClass();
 		Field[] fields = clazz.getFields();		// gets only public fields
 //		strm.println(clazz.getCanonicalName());
@@ -59,6 +60,14 @@ public interface ParameterBundle {
 //			strm.println("Field is public = " + Modifier.isPublic(modifiers));
 //			strm.println("Field is final = " + Modifier.isFinal(modifiers));
 		}
+	}
+	
+	/**
+	 * Implementing classes should override this method.
+	 * @return true if all parameters are OK, false otherwise
+	 */
+	default boolean validate() {
+		return true;
 	}
 	
 	// ---- Dialog-related annotations to be used on individual parameter fields ------
@@ -95,6 +104,14 @@ public interface ParameterBundle {
 	
 	// ------------ ImageJ dialog-related (TODO: move to another interface?) ------------------
 	
+	/**
+	 * Adds all qualified fields of this parameter bundle to the specified
+	 * {@link GenericDialog} instance, in the order of their definition.
+	 * Qualified means that the field is of suitable type and no 
+	 * {@link DialogHide} annotation is present.
+	 * 
+	 * @param gd
+	 */
 	public default void addToDialog(GenericDialog gd) {
 		Class<? extends ParameterBundle> clazz = this.getClass();
 		Field[] fields = clazz.getFields();		// gets only public fields
@@ -130,7 +147,12 @@ public interface ParameterBundle {
 		if (Modifier.isPrivate(mod) || Modifier.isFinal(mod) || Modifier.isStatic(mod)) {
 			return false;
 		}
-		return true;
+		Class<?> clazz = f.getType();
+		if (clazz == boolean.class || clazz == int.class || clazz == float.class || clazz == double.class || 
+			clazz == String.class || clazz.isEnum())
+			return true;
+		else
+			return true;
 	}
 	
 	static void printModifiers(Field f) {
@@ -160,7 +182,7 @@ public interface ParameterBundle {
 	 * @param dialog the dialog
 	 * @throws IllegalAccessException when field is accessed illegally
 	 */
-	default void addFieldToDialog(Field field, GenericDialog dialog) 
+	default void addFieldToDialog(Field field, GenericDialog dialog)
 			throws IllegalAccessException {
 		
 		String name = field.getName();
@@ -195,7 +217,8 @@ public interface ParameterBundle {
 			dialog.addEnumChoice(name, (Enum<?>) field.get(this));
 		}
 		else {
-			throw new RuntimeException("cannot handle field of type " + clazz);
+			// ignore this field
+			//throw new RuntimeException("cannot handle field of type " + clazz);
 		}
 	}
 
@@ -205,47 +228,47 @@ public interface ParameterBundle {
 	 * TODO: this could/should be private!
 	 * 
 	 * @param field	a publicly accessible {@link Field} of this object 
-	 * @param dialog a {@link GenericDialog} instance
+	 * @param gd a {@link GenericDialog} instance
 	 * @return true if successful
 	 * @throws IllegalAccessException illegal field access
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	default boolean getFieldFromDialog(Field field, GenericDialog dialog) 
+	default boolean getFieldFromDialog(Field field, GenericDialog gd) 
 					throws IllegalAccessException {
 		Class<?> clazz = field.getType();
 		if  (clazz.equals(boolean.class)) {
-			field.setBoolean(this, dialog.getNextBoolean());
+			field.setBoolean(this, gd.getNextBoolean());
 		}
 		else if (clazz.equals(int.class)) {
-			double val = dialog.getNextNumber();
+			double val = gd.getNextNumber();
 			if (Double.isNaN(val)) {
 				return false;
 			}
 			field.setInt(this, (int) val);
 		}
 		else if (clazz.equals(float.class)) {
-			double val = dialog.getNextNumber();
+			double val = gd.getNextNumber();
 			if (Double.isNaN(val)) {
 				return false;
 			}
 			field.setFloat(this, (float) val);
 		}
 		else if (clazz.equals(double.class)) {
-			double val = dialog.getNextNumber();
+			double val = gd.getNextNumber();
 			if (Double.isNaN(val)) {
 				return false;
 			}
 			field.setDouble(this, val);
 		}
 		else if (clazz.equals(String.class)) {
-			String str = dialog.getNextString();
+			String str = gd.getNextString();
 			if (str == null) {
 				return false;
 			}
 			field.set(this, str);
 		}
 		else if (clazz.isEnum()) {
-			Enum en = dialog.getNextEnumChoice((Class<Enum>) clazz);
+			Enum en = gd.getNextEnumChoice((Class<Enum>) clazz);
 			if (en == null) {
 				return false;
 			}
@@ -254,7 +277,8 @@ public interface ParameterBundle {
 //			field.set(instance, gd.getNextEnumChoice((Class<Enum>) clazz));	// works	
 		}
 		else {
-			throw new RuntimeException("cannot handle field of type " + clazz);
+			// ignore this field
+			// throw new RuntimeException("cannot handle field of type " + clazz);
 		}
 		return true;
 	}
