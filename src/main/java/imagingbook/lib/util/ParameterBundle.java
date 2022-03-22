@@ -287,48 +287,48 @@ public interface ParameterBundle {
 	
 	// ----------------------------------------------------------------------
 	
-	enum MyEnum {
-		A, B, Cee
-	}
-
-	/**
-	 * Example parameter bundle
-	 */
-	public static class DemoParameters implements ParameterBundle {
-		public static int staticInt = 44;	// currently static members are listed too!
-		
-		@DialogLabel("Make a decision:")
-		public boolean someBool = true;
-		public int someInt = 39;
-		public float someFloat = 1.99f;
-		
-		@DialogLabel("Math.PI")@DialogDigits(10)
-		public double someDouble = Math.PI;
-		public String someString = "SHOW ME";
-		
-		@DialogHide
-		public String hiddenString = "HIDE ME";
-		public MyEnum someEnum = MyEnum.B;
-	}
-	
-	public static void main(String[] args) {
-		
-		ParameterBundle params = new DemoParameters();
-		System.out.println("p1 = \n" + params.printToString());
-		
-		GenericDialog gd = new GenericDialog(ParameterBundle.class.getSimpleName());
-		gd.addNumericField("some single int", 123, 0);
-		params.addToDialog(gd);
-		
-		gd.showDialog();
-		if (gd.wasCanceled())
-			return;
-		
-		@SuppressWarnings("unused")
-		int singleInt = (int) gd.getNextNumber();
-		boolean success = params.getFromDialog(gd);
-		System.out.println("success = " + success);
-		System.out.println("p2 = \n" + params.printToString());
-	}
+//	enum MyEnum {
+//		A, B, Cee
+//	}
+//
+//	/**
+//	 * Example parameter bundle
+//	 */
+//	static class DemoParameters implements ParameterBundle {
+//		public static int staticInt = 44;	// currently static members are listed too!
+//		
+//		@DialogLabel("Make a decision:")
+//		public boolean someBool = true;
+//		public int someInt = 39;
+//		public float someFloat = 1.99f;
+//		
+//		@DialogLabel("Math.PI")@DialogDigits(10)
+//		public double someDouble = Math.PI;
+//		public String someString = "SHOW ME";
+//		
+//		@DialogHide
+//		public String hiddenString = "HIDE ME";
+//		public MyEnum someEnum = MyEnum.B;
+//	}
+//	
+//	public static void main(String[] args) {
+//		
+//		ParameterBundle params = new DemoParameters();
+//		System.out.println("p1 = \n" + params.printToString());
+//		
+//		GenericDialog gd = new GenericDialog(ParameterBundle.class.getSimpleName());
+//		gd.addNumericField("some single int", 123, 0);
+//		params.addToDialog(gd);
+//		
+//		gd.showDialog();
+//		if (gd.wasCanceled())
+//			return;
+//		
+//		@SuppressWarnings("unused")
+//		int singleInt = (int) gd.getNextNumber();
+//		boolean success = params.getFromDialog(gd);
+//		System.out.println("success = " + success);
+//		System.out.println("p2 = \n" + params.printToString());
+//	}
 	
 }

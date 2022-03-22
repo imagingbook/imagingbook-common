@@ -57,6 +57,12 @@ public class EdgeTrace implements Iterable<PntInt> {
 		return awtPoints;
 	}
 	
+	@Override
+	public String toString() {
+		return String.format("%s: start=%s length=%d", 
+				this.getClass().getSimpleName(), getPoint(0).toString(), size());
+	}
+	
 	// ---------------------------------------------------------
 	
 	public static void main(String[] args) {

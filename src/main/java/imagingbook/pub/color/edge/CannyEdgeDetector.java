@@ -13,19 +13,15 @@ import static imagingbook.lib.math.Arithmetic.sqr;
 
 import java.awt.Point;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Stack;
 
-import ij.IJ;
 import ij.plugin.filter.Convolver;
 import ij.process.ByteProcessor;
 import ij.process.ColorProcessor;
 import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
 import imagingbook.lib.filter.linear.GaussianKernel1D;
-import imagingbook.lib.math.Arithmetic;
-import imagingbook.lib.math.eigen.Eigensolver2x2;
 import imagingbook.lib.util.ParameterBundle;
 import imagingbook.pub.geometry.basic.Pnt2d.PntInt;
 
@@ -37,30 +33,33 @@ import imagingbook.pub.geometry.basic.Pnt2d.PntInt;
  * 
  * @author W. Burger
  * @version 2021/11/26
+ * @version 2022/03/22 added parameter annotations for dialogs
  */
 public class CannyEdgeDetector extends ColorEdgeDetector {
 	
 	// TODO: Document methods, use arrays instead of image processors.
 	
 	public static class Parameters implements ParameterBundle {
-		/** Gaussian sigma (scale) */
+		
+		/** Gaussian sigma (scale, default = 2) */
+		@DialogLabel("Gaussian sigma (scale)")@DialogDigits(1)
 		public double gSigma = 2.0f;
 		
-		/** High threshold (20% of max. edge magnitude) */
+		/** High threshold (defaults to 20% of maximum edge magnitude) */
+		@DialogLabel("High threshold (% of max. edge magnitude)")@DialogDigits(1)
 		public double hiThr  = 20.0f;
 		
-		/** Low threshold (5% of max. edge magnitude) */
+		/** Low threshold (defaults to 5% of maximum edge magnitude) */
+		@DialogLabel("Low threshold (% of max. edge magnitude)")@DialogDigits(1)
 		public double loThr = 5.0f;
 		
 		/** Set {@code true} to normalize gradient magnitude */
+		@DialogLabel("normalize gradient magnitude")
 		public boolean normGradMag = true;
 		
-		/**
-		 * Checks the parameter set.
-		 * @return true if any invalid condition is found
-		 */
-		public boolean isInValid () { 
-			return gSigma < 0.1f || loThr > hiThr;
+		@Override
+		public boolean validate () { 
+			return gSigma >= 0.1f && loThr < hiThr;
 		}
 	}
 	
@@ -84,7 +83,7 @@ public class CannyEdgeDetector extends ColorEdgeDetector {
 	
 	// Constructor with parameter object:
 	public CannyEdgeDetector(ImageProcessor I, Parameters params) {
-		if (params.isInValid()) throw new IllegalArgumentException();
+		if (!params.validate()) throw new IllegalArgumentException();
 		this.params = params;
 		M = I.getWidth();
 		N = I.getHeight();
