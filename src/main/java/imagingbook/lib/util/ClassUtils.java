@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -57,20 +58,26 @@ public abstract class ClassUtils {
 	 * Collects and returns the list of classes defined in the specified package.
 	 * Adapted from https://stackoverflow.com/a/58773271 
 	 * 
-	 * @param packageName the full package name, e.g., "imagingbook.lib.ij.overlay"
+	 * @param pkgName the full package name, e.g., "imagingbook.lib.ij.overlay"
 	 * @return a list of classes contained in the package
 	 */
-	public static List<Class<?>> getClassesInPackage(final String packageName) {
-		final String pkgPath = packageName.replace('.', '/');
-		URI pkgURI;
+	public static List<Class<?>> getClassesInPackage(final String pkgName) {
+		System.out.println("pkgName = " + pkgName);
+		final String pkgPath = pkgName.replace('.', '/');
+		System.out.println("pkgPath = " + pkgPath);
+		
+		URL pkgURL = ClassLoader.getSystemClassLoader().getResource(pkgPath);
+		System.out.println("URL = " + pkgURL);
+		
+		URI pkgURI = null;
 		try {
-			pkgURI = Objects.requireNonNull(ClassLoader.getSystemClassLoader().getResource(pkgPath)).toURI();
+			pkgURI = Objects.requireNonNull(pkgURL.toURI());
 		} catch (URISyntaxException e) {
 			throw new RuntimeException(e.getMessage());
 		}
 		System.out.println("URI = " + pkgURI);
 	
-		final ArrayList<Class<?>> allClasses = new ArrayList<Class<?>>();
+		
 	
 		Path root = null;
 		if (pkgURI.toString().startsWith("jar:")) {
@@ -86,6 +93,7 @@ public abstract class ClassUtils {
 			root = Paths.get(pkgURI);
 		}
 	
+		final ArrayList<Class<?>> allClasses = new ArrayList<Class<?>>();
 		try (final Stream<Path> allPaths = Files.walk(root)) {
 			allPaths.filter(Files::isRegularFile).forEach(path -> {
 				String pathName = path.toString();
@@ -94,7 +102,7 @@ public abstract class ClassUtils {
 					String className = FileUtils.stripFileExtension(pathName);
 					System.out.println("className = " + className);
 					className = className.replace(File.separatorChar, '.');
-					className = className.substring(className.indexOf(packageName));
+					className = className.substring(className.indexOf(pkgName));
 					try {           
 						allClasses.add(Class.forName(className));
 					} catch (final ClassNotFoundException | StringIndexOutOfBoundsException ignored) {
@@ -114,8 +122,11 @@ public abstract class ClassUtils {
 	 * @param clazz a {@link Class} object
 	 * @return true if a plugin type
 	 */
+	@Deprecated
 	public static boolean isIjPlugin(Class<?> clazz) {
 		return PlugIn.class.isAssignableFrom(clazz) || PlugInFilter.class.isAssignableFrom(clazz);
 	}
+	
+	// -------------------------------------------------------------------------------------------------
 
 }
