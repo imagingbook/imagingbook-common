@@ -112,7 +112,7 @@ public interface ParameterBundle {
 	 * Qualified means that the field is of suitable type and no 
 	 * {@link DialogHide} annotation is present.
 	 * 
-	 * @param gd
+	 * @param gd a generic dialog
 	 */
 	public default void addToDialog(GenericDialog gd) {
 		Class<? extends ParameterBundle> clazz = this.getClass();

@@ -288,7 +288,6 @@ public abstract class FileUtils {
 	 * this path is returned,
 	 * otherwise the value for the "user.dir" system property.
 	 * 
-	 * @param clazz the class to associate the directory with
 	 * @return a string with the current directory path
 	 */
 	@Deprecated  // use getCurrentDirectory(Class) instead
@@ -300,7 +299,7 @@ public abstract class FileUtils {
 	
 	/**
 	 * Returns the current directory associated with the specified class. 
-	 * (usually of type {@Code PlugIn} or {@Code PlugInFilter}).
+	 * (usually of type {@code PlugIn} or {@code PlugInFilter}).
 	 * If the directory was set with {@link #setCurrentDirectory(Class,String)} before
 	 * this path is returned, {@code null} otherwise.
 	 * 

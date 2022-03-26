@@ -67,41 +67,47 @@
 <span class="sourceLineNo">057</span><a id="line.57">                return awtPoints;</a>
 <span class="sourceLineNo">058</span><a id="line.58">        }</a>
 <span class="sourceLineNo">059</span><a id="line.59">        </a>
-<span class="sourceLineNo">060</span><a id="line.60">        // ---------------------------------------------------------</a>
-<span class="sourceLineNo">061</span><a id="line.61">        </a>
-<span class="sourceLineNo">062</span><a id="line.62">        public static void main(String[] args) {</a>
-<span class="sourceLineNo">063</span><a id="line.63">                EdgeTrace trace = new EdgeTrace();</a>
-<span class="sourceLineNo">064</span><a id="line.64">                trace.addPoint(PntInt.from(1,2));</a>
-<span class="sourceLineNo">065</span><a id="line.65">                trace.addPoint(PntInt.from(3,4));</a>
-<span class="sourceLineNo">066</span><a id="line.66">                trace.addPoint(PntInt.from(5,6));</a>
-<span class="sourceLineNo">067</span><a id="line.67">                </a>
-<span class="sourceLineNo">068</span><a id="line.68">                for (Pnt2d p : trace) {</a>
-<span class="sourceLineNo">069</span><a id="line.69">                        System.out.println(p);</a>
-<span class="sourceLineNo">070</span><a id="line.70">                }</a>
-<span class="sourceLineNo">071</span><a id="line.71">                </a>
-<span class="sourceLineNo">072</span><a id="line.72">                System.out.println();</a>
-<span class="sourceLineNo">073</span><a id="line.73">                trace.addPoint(PntInt.from(7,8));</a>
-<span class="sourceLineNo">074</span><a id="line.74">                </a>
-<span class="sourceLineNo">075</span><a id="line.75">                for (PntInt p : trace.getPointArray()) {</a>
-<span class="sourceLineNo">076</span><a id="line.76">                        System.out.println(p);</a>
-<span class="sourceLineNo">077</span><a id="line.77">                }</a>
-<span class="sourceLineNo">078</span><a id="line.78">                </a>
-<span class="sourceLineNo">079</span><a id="line.79">                System.out.println();</a>
-<span class="sourceLineNo">080</span><a id="line.80">                for (Point p : trace.getAwtPoints()) {</a>
-<span class="sourceLineNo">081</span><a id="line.81">                        System.out.println(p);</a>
-<span class="sourceLineNo">082</span><a id="line.82">                }</a>
-<span class="sourceLineNo">083</span><a id="line.83">                </a>
-<span class="sourceLineNo">084</span><a id="line.84">                System.out.println(trace.getPoint(3));</a>
-<span class="sourceLineNo">085</span><a id="line.85">                System.out.println(trace.getPoint(4));</a>
-<span class="sourceLineNo">086</span><a id="line.86">                </a>
-<span class="sourceLineNo">087</span><a id="line.87">                PntInt[] copy = Arrays.copyOfRange(trace.getPointArray(),0, 7);</a>
-<span class="sourceLineNo">088</span><a id="line.88">                System.out.println(copy.length);</a>
-<span class="sourceLineNo">089</span><a id="line.89">                for (PntInt p : copy) {</a>
-<span class="sourceLineNo">090</span><a id="line.90">                        System.out.println(p);</a>
-<span class="sourceLineNo">091</span><a id="line.91">                }</a>
-<span class="sourceLineNo">092</span><a id="line.92">        }</a>
-<span class="sourceLineNo">093</span><a id="line.93"></a>
-<span class="sourceLineNo">094</span><a id="line.94">}</a>
+<span class="sourceLineNo">060</span><a id="line.60">        @Override</a>
+<span class="sourceLineNo">061</span><a id="line.61">        public String toString() {</a>
+<span class="sourceLineNo">062</span><a id="line.62">                return String.format("%s: start=%s length=%d", </a>
+<span class="sourceLineNo">063</span><a id="line.63">                                this.getClass().getSimpleName(), getPoint(0).toString(), size());</a>
+<span class="sourceLineNo">064</span><a id="line.64">        }</a>
+<span class="sourceLineNo">065</span><a id="line.65">        </a>
+<span class="sourceLineNo">066</span><a id="line.66">        // ---------------------------------------------------------</a>
+<span class="sourceLineNo">067</span><a id="line.67">        </a>
+<span class="sourceLineNo">068</span><a id="line.68">        public static void main(String[] args) {</a>
+<span class="sourceLineNo">069</span><a id="line.69">                EdgeTrace trace = new EdgeTrace();</a>
+<span class="sourceLineNo">070</span><a id="line.70">                trace.addPoint(PntInt.from(1,2));</a>
+<span class="sourceLineNo">071</span><a id="line.71">                trace.addPoint(PntInt.from(3,4));</a>
+<span class="sourceLineNo">072</span><a id="line.72">                trace.addPoint(PntInt.from(5,6));</a>
+<span class="sourceLineNo">073</span><a id="line.73">                </a>
+<span class="sourceLineNo">074</span><a id="line.74">                for (Pnt2d p : trace) {</a>
+<span class="sourceLineNo">075</span><a id="line.75">                        System.out.println(p);</a>
+<span class="sourceLineNo">076</span><a id="line.76">                }</a>
+<span class="sourceLineNo">077</span><a id="line.77">                </a>
+<span class="sourceLineNo">078</span><a id="line.78">                System.out.println();</a>
+<span class="sourceLineNo">079</span><a id="line.79">                trace.addPoint(PntInt.from(7,8));</a>
+<span class="sourceLineNo">080</span><a id="line.80">                </a>
+<span class="sourceLineNo">081</span><a id="line.81">                for (PntInt p : trace.getPointArray()) {</a>
+<span class="sourceLineNo">082</span><a id="line.82">                        System.out.println(p);</a>
+<span class="sourceLineNo">083</span><a id="line.83">                }</a>
+<span class="sourceLineNo">084</span><a id="line.84">                </a>
+<span class="sourceLineNo">085</span><a id="line.85">                System.out.println();</a>
+<span class="sourceLineNo">086</span><a id="line.86">                for (Point p : trace.getAwtPoints()) {</a>
+<span class="sourceLineNo">087</span><a id="line.87">                        System.out.println(p);</a>
+<span class="sourceLineNo">088</span><a id="line.88">                }</a>
+<span class="sourceLineNo">089</span><a id="line.89">                </a>
+<span class="sourceLineNo">090</span><a id="line.90">                System.out.println(trace.getPoint(3));</a>
+<span class="sourceLineNo">091</span><a id="line.91">                System.out.println(trace.getPoint(4));</a>
+<span class="sourceLineNo">092</span><a id="line.92">                </a>
+<span class="sourceLineNo">093</span><a id="line.93">                PntInt[] copy = Arrays.copyOfRange(trace.getPointArray(),0, 7);</a>
+<span class="sourceLineNo">094</span><a id="line.94">                System.out.println(copy.length);</a>
+<span class="sourceLineNo">095</span><a id="line.95">                for (PntInt p : copy) {</a>
+<span class="sourceLineNo">096</span><a id="line.96">                        System.out.println(p);</a>
+<span class="sourceLineNo">097</span><a id="line.97">                }</a>
+<span class="sourceLineNo">098</span><a id="line.98">        }</a>
+<span class="sourceLineNo">099</span><a id="line.99"></a>
+<span class="sourceLineNo">100</span><a id="line.100">}</a>
 
 
 

@@ -8,8 +8,13 @@ import java.lang.annotation.Target;
 
 
 /**
- * Annotation to specify the menu entry (name) of the associated plugin, e.g.
- * @IjMenuEntry("Super Plugin!")
+ * Annotation to specify the menu entry (name) of the associated plugin class.
+ * Takes a {@link String} argument e.g.,
+ * <pre>
+ *  {@literal @}IjMenuEntry("My Grand Plugin")
+ * public class My_Plugin implements PlugIn {
+ *   ...
+ * }</pre>
  */
 @Retention(RUNTIME)
 @Target(TYPE)

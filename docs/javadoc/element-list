@@ -1,5 +1,6 @@
 imagingbook
 imagingbook.lib.color
+imagingbook.lib.color.iccProfiles
 imagingbook.lib.filter
 imagingbook.lib.filter.examples
 imagingbook.lib.filter.linear
@@ -13,6 +14,8 @@ imagingbook.lib.math
 imagingbook.lib.math.eigen
 imagingbook.lib.math.nonlinear
 imagingbook.lib.math.testing
+imagingbook.lib.pdf
+imagingbook.lib.pdf.fonts.type1
 imagingbook.lib.settings
 imagingbook.lib.tuples
 imagingbook.lib.util
@@ -21,6 +24,8 @@ imagingbook.lib.util.choice
 imagingbook.lib.util.progress
 imagingbook.lib.util.progress.ij
 imagingbook.lib.util.resource
+imagingbook.pluginutils
+imagingbook.pluginutils.annotations
 imagingbook.pub.color.edge
 imagingbook.pub.color.filters
 imagingbook.pub.color.image
