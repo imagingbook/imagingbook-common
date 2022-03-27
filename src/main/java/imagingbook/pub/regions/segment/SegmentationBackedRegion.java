@@ -1,11 +1,9 @@
 package imagingbook.pub.regions.segment;
 
 import java.awt.Rectangle;
-import java.util.Formatter;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 import java.util.NoSuchElementException;
 
 import imagingbook.pub.geometry.basic.Pnt2d;
@@ -15,14 +13,15 @@ import imagingbook.pub.regions.Contour;
 
 /**
  * Binary region backed by the label array of a region segmenter.
+ * A {@link SegmentationBackedRegion} instance does not have its own list or array of 
+ * contained pixel coordinates but refers to the label array of the
+ * enclosing {@link BinaryRegionSegmentation} instance.
  */
 public class SegmentationBackedRegion extends BinaryRegion {
 
 	private final int label;									// the label of this region
 	private final BinaryRegionSegmentation segmentation;		// the segmentation backing this region
 	private int size = 0;
-	private double xc = Double.NaN;
-	private double yc = Double.NaN;
 	private int left = Integer.MAX_VALUE;
 	private int right = -1;
 	private int top = Integer.MAX_VALUE;
@@ -158,12 +157,6 @@ public class SegmentationBackedRegion extends BinaryRegion {
 		innerContours.add(contr);
 	}
 
-	//		// Compare method for sorting by region size (larger regions at front)
-	//		@Override
-	//		public int compareTo(SegmentationBackedRegion r2) {
-	//			return r2.size - this.size;
-	//		}
-
 	/**
 	 * Checks if the given pixel position is contained in this
 	 * {@link SegmentationBackedRegion} instance.
@@ -176,19 +169,19 @@ public class SegmentationBackedRegion extends BinaryRegion {
 		return segmentation.getLabel(u, v) == this.label;
 	}
 	
-	@Override
-	public String toString() {
-		Formatter fm = new Formatter(new StringBuilder(), Locale.US);
-		fm.format("Region %d", label);
-		fm.format(", area = %d", size);
-		fm.format(", bounding box = (%d, %d, %d, %d)", left, top, right, bottom );
-		fm.format(", centroid = (%.2f, %.2f)", xc, yc);
-		if (innerContours != null)
-			fm.format(", holes = %d", innerContours.size());
-		String s = fm.toString();
-		fm.close();
-		return s;
-	}
+//	@Override
+//	public String toString() {
+//		Formatter fm = new Formatter(new StringBuilder(), Locale.US);
+//		fm.format("Region %d", label);
+//		fm.format(", area = %d", size);
+//		fm.format(", bounding box = (%d, %d, %d, %d)", left, top, right, bottom );
+//		fm.format(", centroid = (%.2f, %.2f)", xc, yc);
+//		if (innerContours != null)
+//			fm.format(", holes = %d", innerContours.size());
+//		String s = fm.toString();
+//		fm.close();
+//		return s;
+//	}
 
 	// --------------------------------------------------------------------------------
 

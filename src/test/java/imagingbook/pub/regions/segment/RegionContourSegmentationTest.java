@@ -151,7 +151,7 @@ public class RegionContourSegmentationTest {
 	// --------------------------------------------------------------------------------------------
 	
 	private static class TestCase {
-		String ImgName;;
+		String ImgName;
 		NeighborhoodType2D NHT;
 		int RegionCount;
 		int LargestRegionSize;

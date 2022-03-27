@@ -11,9 +11,7 @@ package imagingbook.pub.regions.segment;
 
 import static imagingbook.pub.geometry.basic.NeighborhoodType2D.N4;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;

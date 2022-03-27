@@ -1,33 +1,32 @@
 package imagingbook.pub.regions;
 
 import java.awt.Rectangle;
+import java.util.Formatter;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import imagingbook.pub.geometry.basic.Pnt2d;
 import imagingbook.pub.geometry.basic.Pnt2d.PntDouble;
-import imagingbook.pub.geometry.basic.Pnt2d.PntInt;
-import imagingbook.pub.regions.segment.BinaryRegionSegmentation;
 
 /**
+ * <p>
  * This class represents a connected component or binary region. 
- * It is implemented as a non-static inner class to {@link BinaryRegionSegmentation}
- * because it references common region labeling data.
- * A {@link BinaryRegion} instance does not have its own list or array of 
- * contained pixel coordinates but refers to the label array of the
- * enclosing {@link BinaryRegionSegmentation} instance.
  * Instances of this class support iteration over the contained pixel
  * coordinates of type {@link Pnt2d}, e.g., by
+ * </p>
  * <pre>
- * import imagingbook.pub.geometry.basic.Point;
+ * import imagingbook.pub.geometry.basic.Pnt2d;
  * 
  * BinaryRegion R = ...;
- * for (Point p : R) {
+ * for (Pnt2d p : R) {
  *    // process point p ...
  * }</pre>
+ * <p>
  * The advantage of providing iteration only is that it avoids the
  * creation of (possibly large) arrays of pixel coordinates.
+ * </p>
  */
 public abstract class BinaryRegion implements Comparable<BinaryRegion>, Iterable<Pnt2d> {
 
@@ -65,10 +64,28 @@ public abstract class BinaryRegion implements Comparable<BinaryRegion>, Iterable
 	 * @return the sum of xy-values.
 	 */
 	public abstract long getXYSum();
+	
+	/**
+	 * Calculates and returns a vector of ordinary moments:
+	 * (m10, m01, m20, m02, m11).
+	 * @return vector of ordinary moments
+	 */
+	public double[] getMoments() {
+		final int n = this.getSize();
+		if (n == 0) {
+			throw new IllegalStateException("empty region, moments are undefined");
+		}
+		double m10 = getX1Sum() / (double) n;
+		double m01 = getY1Sum() / (double) n;
+		double m20 = getX2Sum() / (double) n;
+		double m02 = getY2Sum() / (double) n;
+		double m11 = getXYSum() / (double) n;
+		return new double[] {m10, m01, m20, m02, m11};
+	}
 
 	/**
-	 * Calculates and returns a vector of (unnormalized) central moments:
-	 * (mu10, mu01, mu20, mu02, mu11).
+	 * Calculates and returns a vector of central moments:
+	 * (mu20, mu02, mu11).
 	 * @return vector of central moments
 	 */
 	public double[] getCentralMoments() {
@@ -147,7 +164,6 @@ public abstract class BinaryRegion implements Comparable<BinaryRegion>, Iterable
 	// Compare method for sorting by region size (larger regions at front)
 	@Override
 	public int compareTo(BinaryRegion other) {
-//		return other.getSize() - this.getSize();
 		return Integer.compare(other.getSize(), this.getSize());
 	}
 
@@ -216,6 +232,22 @@ public abstract class BinaryRegion implements Comparable<BinaryRegion>, Iterable
 	 */
 	public void clearProperties() {
 		properties.clear();
+	}
+	
+	@Override
+	public String toString() {
+		Pnt2d xc = this.getCenter();
+		try (Formatter fm = new Formatter(new StringBuilder(), Locale.US)) {
+			fm.format("%s:", this.getClass().getSimpleName());
+			fm.format(" area = %d", this.getSize());
+			fm.format(", bounding box = %s", this.getBoundingBox());
+			fm.format(", center = (%.2f, %.2f)", xc.getX(), xc.getY());
+	//		if (innerContours != null)
+	//			fm.format(", holes = %d", innerContours.size());
+			//String s = fm.toString();
+			return fm.toString();
+		} //fm.close();
+		//return s;
 	}
 	
 
