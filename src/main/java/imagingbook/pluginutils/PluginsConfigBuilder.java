@@ -19,14 +19,16 @@ import imagingbook.pluginutils.annotations.IjMenuEntry;
 import imagingbook.pluginutils.annotations.IjMenuPath;
 
 /**
- * The {@code main()} method of this class creates the 'plugins.config' file 
- * for a plugins project, which is to be included in the associated JAR file.
+ * <p>
+ * The {@code main()} method of this class creates the {@code plugins.config} file 
+ * for a given plugins project, which is to be included in the associated JAR file.
  * The execution is to be triggered during the Maven build or manually by
+ * </p>
  * <pre>
  * mvn exec:java -Dexec.mainClass="imagingbook.pluginutils.PluginsConfigBuilder"</pre>
  * <p>
  * (at the root of a plugins project).
- * The format of the entries in 'plugins.config' have the following structure:
+ * The format of the entries in {@code plugins.config} have the following structure:
  * </p>
  * <pre>
  * Plugins, "Plugin Name", package.classname
@@ -38,11 +40,12 @@ import imagingbook.pluginutils.annotations.IjMenuPath;
  * Plugin classes (implementing {@link PlugIn} or {@link PlugInFilter}) may be annotated
  * with {@link IjMenuPath} and {@link IjMenuEntry} to specify where in ImageJ's menu tree
  * and by which name the plugin should be installed.
- * This information is stored in the 'plugins.config' file at the root of the associated project,
+ * This information is stored in the {@code plugins.config} file at the root of the associated project,
  * which is automatically added to the project's output JAR file during the Maven build.
  * Example:
  * </p>
  * <pre>
+ * // file MySuperPlugin.java
  * import ij.plugin.filter.PlugInFilter;
  * import imagingbook.pluginutils.annotations.IjMenuEntry;
  * import imagingbook.pluginutils.annotations.IjMenuPath;
@@ -53,6 +56,9 @@ import imagingbook.pluginutils.annotations.IjMenuPath;
  * 	// plugin code ...
  * }</pre>
  * <p>
+ * In this case, plugin {@code MySuperPlugin} should be installed in ImageJ's menu tree as
+ * <pre> Plugins &gt; Mine &gt; Super Plugin</pre>
+ * <p>
  * By default (i.e., if no annotations are present), plugins in the default package are installed at the
  * top-level of 'Plugins' whereas plugins inside a named package are  installed 
  * in 'Plugins&gt;<em>package-name</em>' (see below).
@@ -62,6 +68,7 @@ import imagingbook.pluginutils.annotations.IjMenuPath;
  * for all plugins in package {@code Binary_Regions}:
  * </p>
  * <pre>
+ * // file Binary_Regions/package-info.java
  * {@literal @}IjMenuPath("Plugins&gt;Binary Regions")
  * package Binary_Regions;
  * import imagingbook.pluginutils.annotations.IjMenuPath;</pre>
@@ -71,27 +78,27 @@ import imagingbook.pluginutils.annotations.IjMenuPath;
  * <strong>Plugin <em>path</em> priority rules:</strong>
  * </p>
  * <ol>
- * <li> value of {@link IjMenuPath} annotation at class level (always overrules if exists),</li>
- * <li> value of {@link IjMenuPath} annotation at package level (if exists),</li>
- * <li> 'Plugins&gt;<em>package-name</em>' if the plugin is inside a named package, or</li>
+ * <li> Value of {@link IjMenuPath} annotation at class level (always overrules if exists).</li>
+ * <li> Value of {@link IjMenuPath} annotation at package level (if exists).</li>
+ * <li> 'Plugins&gt;<em>package-name</em>' if the plugin is inside a named package.</li>
  * <li> 'Plugins' if the plugin is in the (unnamed) default package.</li>
  * </ol>
  * <p>
  * <strong>Plugin <em>entry</em> priority rules:</strong>
  * </p>
  * <ol>
- * <li> value of {@link IjMenuEntry} annotation at class level (if exists),</li>
- * <li> simple name of the plugin class</li>
+ * <li> Value of {@link IjMenuEntry} annotation at class level (if exists).</li>
+ * <li> Simple name of the plugin class.</li>
  * </ol>
  * <p>
- * Note that, in general, the information in 'plugins.config' is only used when plugins are loaded from 
- * a JAR file!
+ * Note that, in general, ImageJ uses the information in file {@code plugins.config} 
+ * only for plugins loaded from a JAR file!
  * </p>
  * 
- * 
+ * @see IjMenuPath
+ * @see IjMenuEntry
  * 
  * @author WB
- *
  */
 public class PluginsConfigBuilder {
 	
@@ -239,9 +246,12 @@ public class PluginsConfigBuilder {
 	// ----------------------------------------------------------------------------------------------
 	
 	/**
-	 * Argument 1: project build root directory 
-	 * Argument 2: project artefact id 
-	 * @param args arguments
+	 * Method to be called from the command line. Builds the {@code plugins.config} file
+	 * from the {@code .class} files found in the specified build directory and
+	 * stores the file in the same directory.
+	 * Both arguments are optional.
+	 * If no build directory is specified, the current directory is used.
+	 * @param args {@code args[0]}: project build directory, {@code args[1]}: project artefact id
 	 */
 	public static void main(String[] args) {
 		String rootName   = (args.length > 0) ? args[0] : null;

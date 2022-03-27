@@ -1,2 +1,3 @@
 #!/bin/bash
-mvn exec:java -Dexec.mainClass="imagingbook.pluginutils.BuildPluginsConfig" -Dexec.args="First Second"
+# Example command-line usage:
+mvn exec:java -Dexec.mainClass="imagingbook.pluginutils.PluginsConfigBuilder" -Dexec.args="rootName artifactId"

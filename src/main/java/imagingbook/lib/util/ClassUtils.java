@@ -16,9 +16,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
 
-import ij.plugin.PlugIn;
-import ij.plugin.filter.PlugInFilter;
-
 public abstract class ClassUtils {
 	
 	/**
@@ -41,6 +38,8 @@ public abstract class ClassUtils {
 		}
 		return buf.toString();
 	}
+	
+	
 	
 	/**
 	 * Collects and returns the list of classes defined in the specified package.
@@ -77,8 +76,6 @@ public abstract class ClassUtils {
 		}
 		System.out.println("URI = " + pkgURI);
 	
-		
-	
 		Path root = null;
 		if (pkgURI.toString().startsWith("jar:")) {
 			root = FileSystems.getFileSystem(pkgURI).getPath(pkgPath);
@@ -114,19 +111,5 @@ public abstract class ClassUtils {
 		}
 		return allClasses;
 	}
-
-	/**
-	 * Returns true if the specified {@link Class} object is a sub-type of
-	 * {@link PlugIn} or {@link PlugInFilter}.
-	 * 
-	 * @param clazz a {@link Class} object
-	 * @return true if a plugin type
-	 */
-	@Deprecated
-	public static boolean isIjPlugin(Class<?> clazz) {
-		return PlugIn.class.isAssignableFrom(clazz) || PlugInFilter.class.isAssignableFrom(clazz);
-	}
-	
-	// -------------------------------------------------------------------------------------------------
 
 }
