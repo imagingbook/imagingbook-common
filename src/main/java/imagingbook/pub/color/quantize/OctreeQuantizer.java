@@ -55,8 +55,9 @@ public class OctreeQuantizer implements ColorQuantizer {
 
 	private final int maxColors;	// max. number of distinct colors after quantization
 	
+	@SuppressWarnings("unused")
 	private final int nColors;		// final number of colors
-	private final TreeNode root;		// root node of the tree
+	private final TreeNode root;	// root node of the tree
 	
 	private int depth;				// current depth of the tree
 	private int nodeCnt = 0;		// counts the number of nodes in the tree
@@ -105,7 +106,6 @@ public class OctreeQuantizer implements ColorQuantizer {
 	
 	// -------------------------------------------------------------------------
 	
-	@SuppressWarnings("unused")
 	private int addPixels(int[] pixels) {
 		for (int p : pixels) {
 			addPixel(p);
@@ -367,6 +367,7 @@ public class OctreeQuantizer implements ColorQuantizer {
 //					level, nUnique, this.nPixels, 0xFF & midRed, 0xFF & midGrn, 0xFF & midBlu); 
 		}
 		
+		@SuppressWarnings("unused")
 		private String makeBlanks(int level) {
 			char[] blanks = new char[3 * level];
 			Arrays.fill(blanks, '-');

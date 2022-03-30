@@ -176,6 +176,7 @@ public class MedianCutQuantizer implements ColorQuantizer {
 			this.cnt = cnt;
 		}
 		
+		@SuppressWarnings("unused")
 		ColorNode (int red, int grn, int blu, int cnt) {
 			//this.rgb = Rgb.rgbToInt(red, grn, blu);
 			this.red = red;

@@ -10,10 +10,9 @@
 package imagingbook.pub.color.image;
 
 import java.awt.color.ColorSpace;
-import java.util.Arrays;
 
-import imagingbook.lib.math.Matrix;
-import imagingbook.lib.settings.PrintPrecision;
+//import imagingbook.lib.math.Matrix;
+//import imagingbook.lib.settings.PrintPrecision;
 
 /*
  * This class implements a D65-based sRGBcolor space without performing
@@ -25,11 +24,13 @@ public class sRgb65ColorSpace extends ColorSpace {
 
 	private static final long serialVersionUID = 1L;
 	
+	@SuppressWarnings("unused")
 	private static double[][] Mrgb =    // (R,G,B) = Mrgb * (X,Y,Z)   // Poynton (ITU 709) 
 		{{3.240479, -1.537150, -0.498535},
 		 {-0.969256, 1.875992, 0.041556},
 		 {0.055648, -0.204043, 1.057311}};
 	
+	@SuppressWarnings("unused")
 	private static double[][] Mrgbi =    // (X,Y,Z) = Mrgbi * (R,G,B)   // Poynton (ITU 709) 
 		{{0.412453, 0.357580, 0.180423},
 		 {0.212671, 0.715160, 0.072169},
@@ -86,21 +87,21 @@ public class sRgb65ColorSpace extends ColorSpace {
 	
 	// ---------------------------------------------------------------------
 	
-	public static void main(String[] args) {
-		PrintPrecision.set(4);
-		ColorSpace cs = new sRgb65ColorSpace();
-		float[] red = {1, 0, 0};
-		float[] grn = {0, 1, 0};
-		float[] blu = {0, 0, 1};
-		
-		float[] rgb1 = blu;
-		
-		System.out.println("rgb2 = " + Matrix.toString(rgb1));
-		float[] xyz = cs.toCIEXYZ(rgb1);
-		System.out.println("xyz = " + Matrix.toString(xyz));
-		float[] rgb2 = cs.fromCIEXYZ(xyz);
-		System.out.println("rgb3 = " + Matrix.toString(rgb2));
-	}
+//	public static void main(String[] args) {
+//		PrintPrecision.set(4);
+//		ColorSpace cs = new sRgb65ColorSpace();
+//		float[] red = {1, 0, 0};
+//		float[] grn = {0, 1, 0};
+//		float[] blu = {0, 0, 1};
+//		
+//		float[] rgb1 = blu;
+//		
+//		System.out.println("rgb2 = " + Matrix.toString(rgb1));
+//		float[] xyz = cs.toCIEXYZ(rgb1);
+//		System.out.println("xyz = " + Matrix.toString(xyz));
+//		float[] rgb2 = cs.fromCIEXYZ(xyz);
+//		System.out.println("rgb3 = " + Matrix.toString(rgb2));
+//	}
 
 
 }
