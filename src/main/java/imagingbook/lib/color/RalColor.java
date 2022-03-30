@@ -17,7 +17,7 @@ import java.awt.*;
 // different to: https://www.ralcolorchart.com/ral-classic
 //    https://en.wikipedia.org/wiki/List_of_RAL_colors
 //    https://abes-online.com/en/colors/
-public enum RalColor {
+public enum RalColor implements ColorEnumeration {
 	RAL1000(0xBEBD7F, "Green beige"),
 	RAL1001(0xC2B078, "Beige"),
 	RAL1002(0xC6A664, "Sand yellow"),
@@ -250,41 +250,26 @@ public enum RalColor {
 		this.name = name;
 	}
 
-	public int getRed() {
-		return r;
-	}
-
-	public int getGreen() {
-		return g;
-	}
-
-	public int getBlue() {
-		return b;
-	}
-
+	@Override
 	public Color getColor() {
 		return new Color(r, g, b);
 	}
-
-	public int getRGB() {
-		return getColor().getRGB();
-	}
-
-	public String getRGBString() {
-		/*
-		 * toHexString will return "0" instead of "00" String.format will not
-		 * 0-pad Strings or Hex Have to do it manually...
-		 */
-		return String.format("#%s%s%s",
-				(r < 0x10 ? "0" : "") + Integer.toHexString(r), (g < 0x10 ? "0"
-						: "") + Integer.toHexString(g), (b < 0x10 ? "0" : "")
-						+ Integer.toHexString(b));
-	}
-		
+	
 	public String getName() {
 		return this.name;
 	}
 
+//	public String getRGBString() {
+//		/*
+//		 * toHexString will return "0" instead of "00" String.format will not
+//		 * 0-pad Strings or Hex Have to do it manually...
+//		 */
+//		return String.format("#%s%s%s",
+//				(r < 0x10 ? "0" : "") + Integer.toHexString(r), (g < 0x10 ? "0"
+//						: "") + Integer.toHexString(g), (b < 0x10 ? "0" : "")
+//						+ Integer.toHexString(b));
+//	}
+		
 	public static Color[] getColors(RalColor... wcols) {
 		Color[] rgbColors = new Color[wcols.length];
 		for (int i = 0; i < wcols.length; i++) {

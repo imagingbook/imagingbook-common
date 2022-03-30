@@ -12,7 +12,7 @@ package imagingbook.lib.color;
 import java.awt.*;
 
 // see http://davidbau.com/colors/
-public enum CssColor {
+public enum CssColor implements ColorEnumeration {
 	AliceBlue(0xF0, 0xF8, 0xFF),
 	AntiqueWhite(0xFA, 0xEB, 0xD7),
 	Aqua(0x00, 0xFF, 0xFF),
@@ -161,43 +161,29 @@ public enum CssColor {
 		this.g = g;
 		this.b = b;
 	}
-
-	public int getRed() {
-		return r;
-	}
-
-	public int getGreen() {
-		return g;
-	}
-
-	public int getBlue() {
-		return b;
-	}
-
-	public Color toColor() {
+	
+	@Override
+	public Color getColor() {
 		return new Color(r, g, b);
 	}
 
-	public int getRGB() {
-		return toColor().getRGB();
-	}
 
-	public String getRGBString() {
-		/*
-		 * toHexString will return "0" instead of "00" String.format will not
-		 * 0-pad Strings or Hex Have to do it manually...
-		 */
-		return String.format("#%s%s%s",
-				(r < 0x10 ? "0" : "") + Integer.toHexString(r), (g < 0x10 ? "0"
-						: "") + Integer.toHexString(g), (b < 0x10 ? "0" : "")
-						+ Integer.toHexString(b));
-	}
+//	public String getRGBString() {
+//		/*
+//		 * toHexString will return "0" instead of "00" String.format will not
+//		 * 0-pad Strings or Hex Have to do it manually...
+//		 */
+//		return String.format("#%s%s%s",
+//				(r < 0x10 ? "0" : "") + Integer.toHexString(r), (g < 0x10 ? "0"
+//						: "") + Integer.toHexString(g), (b < 0x10 ? "0" : "")
+//						+ Integer.toHexString(b));
+//	}
 	
-	// Added by wilbur:
-	public static Color[] getColors(CssColor ... wcols) {
-		Color[] rgbColors = new Color[wcols.length];
-		for (int i=0; i<wcols.length; i++) {
-			rgbColors[i] = wcols[i].toColor();
+
+	public static Color[] getColors(CssColor... selectColors) {
+		Color[] rgbColors = new Color[selectColors.length];
+		for (int i = 0; i < selectColors.length; i++) {
+			rgbColors[i] = selectColors[i].getColor();
 		}
 		return rgbColors;
 	}
@@ -214,7 +200,6 @@ public enum CssColor {
 					YellowGreen,
 					Magenta,
 					//OliveDrab,
-					
 					DarkCyan
 					);
 }

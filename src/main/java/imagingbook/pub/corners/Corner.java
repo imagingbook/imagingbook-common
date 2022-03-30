@@ -9,6 +9,8 @@
 
 package imagingbook.pub.corners;
 
+import java.awt.Shape;
+import java.awt.geom.Path2D;
 import java.util.Arrays;
 import java.util.Locale;
 
@@ -60,8 +62,19 @@ public class Corner implements Pnt2d, Comparable<Corner> {
 		return String.format(Locale.US, "Corner <%.3f, %.3f, %.3f>", x, y, q);
 	}
 	
-	// ----------------------------------------------------------------
 	
+	@Override
+	public Shape getShape(double size) {
+		Path2D path = new Path2D.Double();
+		path.moveTo(x - size, y);
+		path.lineTo(x + size, y);
+		path.moveTo(x, y - size);
+		path.lineTo(x, y + size);
+		return path;
+	}
+	
+	// ----------------------------------------------------------------
+
 	public static void main(String[] args) {
 		Corner c1 = new Corner(1,0,1);
 		Corner c2 = new Corner(2,0,2);

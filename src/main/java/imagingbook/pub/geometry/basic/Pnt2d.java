@@ -31,7 +31,7 @@ import org.apache.commons.math3.linear.RealVector;
  * to instantiate such point objects.
  * 
  */
-public interface Pnt2d {
+public interface Pnt2d extends ShapeProvider {
 	
 	/**
 	 * The default tolerance for matching coordinates (1E-6).
@@ -286,20 +286,18 @@ public interface Pnt2d {
 	/**
 	 * Returns a round dot ({@link Shape} instance) for drawing this point.
 	 * 
-	 * @param rad the dot radius
+	 * @param scale the dot radius
 	 * @return the shape
 	 */
-	public default Shape getShape(double rad) {
+	@Override
+	public default Shape getShape(double scale) {
+		double rad = scale * DefaultDotRadius;
 		Shape circ= new Arc2D.Double(
 			this.getX() - rad, 
 			this.getY() - rad, 
 			2 * rad, 2 * rad,
 			0, 360, Arc2D.CHORD);
 		return circ;
-	}
-	
-	public default Shape getShape() {
-		return getShape(DefaultDotRadius);
 	}
 	
 	// ----------------------------------------------------------
