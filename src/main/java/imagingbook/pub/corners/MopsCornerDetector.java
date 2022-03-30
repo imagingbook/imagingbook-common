@@ -28,20 +28,20 @@ import ij.process.ImageProcessor;
  * lambda_1, lambda_2.
  * 
  * @author W. Burger
- * @version 2020/10/05
+ * @version 2022/03/30
  */
 public class MopsCornerDetector extends GradientCornerDetector {
 	
 	public static double DEFAULT_THRESHOLD = 90;
 	
-	public static class Parameters extends GradientCornerDetector.Parameters {
-		
-		public Parameters() {
-			scoreThreshold = DEFAULT_THRESHOLD;	// individual default threshold
-		}
-	}
+//	public static class Parameters extends GradientCornerDetector.Parameters {
+//		
+//		public Parameters() {
+//			scoreThreshold = DEFAULT_THRESHOLD;	// individual default threshold
+//		}
+//	}
 
-	public MopsCornerDetector(ImageProcessor ip, Parameters params) {
+	public MopsCornerDetector(ImageProcessor ip, GradientCornerDetector.Parameters params) {
 		super(ip, params);
 	}
 	

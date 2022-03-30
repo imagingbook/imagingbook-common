@@ -31,6 +31,10 @@ import ij.gui.GenericDialog;
  * 
  * @author WB
  * @version 2022/02/02
+ * 
+ * @see DialogDigits
+ * @see DialogLabel
+ * @see DialogHide
  */
 public interface ParameterBundle {
 	
@@ -66,6 +70,7 @@ public interface ParameterBundle {
 	 * Validates the correctness and compatibility of the
 	 * parameters in this bundle. 
 	 * Implementing classes should override this method.
+	 * 
 	 * @return true if all parameters are OK, false otherwise
 	 */
 	default boolean validate() {

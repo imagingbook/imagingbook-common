@@ -30,7 +30,7 @@ import imagingbook.pub.corners.subpixel.SubpixelMaxInterpolator.Method;
  * structure tensor.
  * This is the superclass for various concrete implementations:
  * {@link HarrisCornerDetector},
- * {@link ShiTomasiDetector},
+ * {@link ShiTomasiCornerDetector},
  * {@link MopsCornerDetector}.
  * 
  * TODO: replace 'border' by ROI rectangle
@@ -44,20 +44,31 @@ public abstract class GradientCornerDetector {
 	public static boolean RETAIN_TEMPORARY_DATA = false;
 	
 	public static class Parameters implements ParameterBundle {
-		/** Set true to perform pre-filtering on the input image (before gradient calc.) */
+		@DialogLabel("Apply pre-filter")
 		public boolean doPreFilter = true;
-		/** Sigma of Gaussian filter used for smoothing gradient maps */
+		
+		@DialogLabel("Gaussian smoothing radius (\u03C3)")@DialogDigits(3)
 		public double sigma = 1.275;
-		/** Width of border region ignored in corner search */
+		
+		@DialogLabel("Border margins")
 		public int border = 20;
-		/** Set true to perform final corner cleanup */
+		
+		@DialogLabel("Clean up corners")
 		public boolean doCleanUp = true;
-		/** Min. distance between final corners */
+		
+		@DialogLabel("Min. distance between final corners")@DialogDigits(1)
 		public double dmin = 10;
-		/** If/how to perform subpixel localization */
+		
+		@DialogLabel("Subpixel localization method")
 		public Method maxLocatorMethod = Method.None;
-		/** Corner response threshold */
-		public double scoreThreshold = Double.NaN;
+		
+		@DialogLabel("Corner response threshold (th)")@DialogDigits(1)
+		public double scoreThreshold = 100;
+		
+		@Override
+		public boolean validate() {
+			return sigma > 0 && border >= 0 && dmin >= 0 && scoreThreshold > 0;
+		}
 	}
 	
 	protected static final float UndefinedScoreValue = 0;	// to be returned when corner score is undefined
@@ -72,7 +83,7 @@ public abstract class GradientCornerDetector {
 	protected final FloatProcessor Q;
 	
 	private final SubpixelMaxInterpolator maxLocator;
-	private final List<Corner> corners;
+//	private final List<Corner> corners;
 	
 	// retained mainly for debugging
 	private FloatProcessor A = null;
@@ -88,15 +99,18 @@ public abstract class GradientCornerDetector {
 		this.maxLocator = (params.maxLocatorMethod == Method.None) ? null : 
 			SubpixelMaxInterpolator.getInstance(params.maxLocatorMethod);
 		this.Q = makeCornerScores(ip);
-		this.corners = makeCorners();
+//		this.corners = makeCorners();
 	}
 	
 	/**
 	 * Calculates the corner response score for a single image position (u,v)
 	 * from the elements A, B, C of the local structure matrix.
+	 * The method should normalize the score value, such that 100
+	 * is returned for the default threshold value.
 	 * To be implemented by concrete sub-classes.
+	 * 
 	 * @see HarrisCornerDetector
-	 * @see ShiTomasiDetector
+	 * @see ShiTomasiCornerDetector
 	 * @param A = Ixx(u,v)
 	 * @param B = Iyy(u,v)
 	 * @param C = Ixy(u,v)
@@ -113,7 +127,7 @@ public abstract class GradientCornerDetector {
 		Convolver conv = new Convolver();
 		conv.setNormalize(false);
 		
-		// nothing really but a Sobel-like gradient:
+		// nothing really but a Sobel-type gradient:
 		if (params.doPreFilter) {
 //			Filter.convolveY(Ix, hp);			// pre-filter Ix vertically
 //			Filter.convolveX(Iy, hp);			// pre-filter Iy horizontally
@@ -173,8 +187,12 @@ public abstract class GradientCornerDetector {
 		return this.C;
 	}
 	
-	public List<Corner> getCorners() {	
-		return Collections.unmodifiableList(corners);
+	public List<Corner> getCorners() {
+		List<Corner> cl = collectCorners(params.scoreThreshold, params.border);
+		if (params.doCleanUp) {
+			cl = cleanupCorners(cl);
+		}
+		return cl;
 	}
 	
 	// ----------------------------------------------------------
@@ -221,20 +239,12 @@ public abstract class GradientCornerDetector {
 		}
 	}
 	
-	private List<Corner> makeCorners() {	
-		List<Corner> cl = collectCorners();
-		if (params.doCleanUp) {
-			cl = cleanupCorners(cl);
-		}
-		return cl;
-	}
-	
-	private List<Corner> collectCorners() {
-		final float th = (float) params.scoreThreshold;
-		final int border = params.border;
+	private List<Corner> collectCorners(double scoreThreshold, int borderWidth) {
+		float th = (float) scoreThreshold; //params.scoreThreshold;
+		//int border = params.border;
 		List<Corner> C = new ArrayList<>();
-		for (int v = border; v < N - border; v++) {
-			for (int u = border; u < M - border; u++) {
+		for (int v = borderWidth; v < N - borderWidth; v++) {
+			for (int u = borderWidth; u < M - borderWidth; u++) {
 				float[] qn = getNeighborhood(Q, u, v);
 				if (qn != null && qn[0] > th && isLocalMax(qn)) {
 					Corner c = makeCorner(u, v, qn);
@@ -274,7 +284,7 @@ public abstract class GradientCornerDetector {
 	 * position refinement if a {@link #maxLocator} is defined.
 	 * @param u the corner's horizontal position (int)
 	 * @param v the corner's vertical position (int)
-	 * @param qn the corner scores in the 3x3 neighborhood
+	 * @param qn the 9 corner scores in the 3x3 neighborhood
 	 * @return a new {@link Corner} instance
 	 */
 	private Corner makeCorner(int u, int v, float[] qn) {

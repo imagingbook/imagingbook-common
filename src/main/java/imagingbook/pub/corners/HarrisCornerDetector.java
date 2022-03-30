@@ -21,41 +21,39 @@ import ij.process.ImageProcessor;
  *  pp. 147–151, Manchester (1988).
  *  </blockquote>
  * This class extends {@link GradientCornerDetector} (where most
- * of the work is done) by defining a specific corner score function
- * and associated threshold.
+ * of the work is done) by defining a specific corner score function.
  *
  * @author W. Burger
- * @version 2021/10/08
+ * @version 2022/03/30
  */
 public class HarrisCornerDetector extends GradientCornerDetector {
 	
-	public static double DEFAULT_THRESHOLD = 20000;
+	public static final double DefaultAlpha = 0.05;
 
-	public static class Parameters extends GradientCornerDetector.Parameters {
-		/** Sensitivity parameter */
-		public double alpha = 0.05;
-		
-		public Parameters() {
-			scoreThreshold = DEFAULT_THRESHOLD;	// individual default threshold
-		}
-	}
-	
-	private final float alphaF;
+	private double alpha = DefaultAlpha;
 
 	// ---------------------------------------------------------------------------
 	
 	public HarrisCornerDetector(ImageProcessor ip, Parameters params) {
 		super(ip, params);
-		this.alphaF = (float) params.alpha;
+	}
+	
+	/**
+	 * Set the sensitivity parameter &alpha; (alpha) for the corner score function.
+	 * @param alpha sensitivity parameter (default is 0.05)
+	 */
+	public void setAlpha(double alpha) {
+		this.alpha = alpha;
 	}
 	
 	// ----------------------------------------------------------------------
 
 	@Override
 	protected float getCornerScore(float a, float b, float c) {
-		float det = a * b - sqr(c);
-		float trace = a + b;
-		return det - alphaF * sqr(trace);
+		double det = a * b - sqr(c);
+		double trace = a + b;
+		double score = det - alpha * sqr(trace);
+		return (float) Math.sqrt(0.5 * score);	// returns 100 for default threshold = 20000
 	}
 	
 }

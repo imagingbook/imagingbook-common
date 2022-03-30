@@ -28,20 +28,20 @@ import ij.process.ImageProcessor;
  * and associated threshold.
  * 
  * @author W. Burger
- * @version 2020/10/05
+ * @version 2022/03/30
  */
-public class ShiTomasiDetector extends GradientCornerDetector {
+public class ShiTomasiCornerDetector extends GradientCornerDetector {
 	
-	public static double DEFAULT_THRESHOLD = 180;
+//	public static double DEFAULT_THRESHOLD = 100;
+//	
+//	public static class Parameters extends GradientCornerDetector.Parameters {
+//		
+//		public Parameters() {
+//			scoreThreshold = DEFAULT_THRESHOLD;	// individual default threshold
+//		}
+//	}
 	
-	public static class Parameters extends GradientCornerDetector.Parameters {
-		
-		public Parameters() {
-			scoreThreshold = DEFAULT_THRESHOLD;	// individual default threshold
-		}
-	}
-	
-	public ShiTomasiDetector(ImageProcessor ip, Parameters params) {
+	public ShiTomasiCornerDetector(ImageProcessor ip, GradientCornerDetector.Parameters params) {
 		super(ip, params);
 	}
 	
