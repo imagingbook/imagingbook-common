@@ -9,16 +9,27 @@ public interface PeronaMalikF {
 	
 	public static class Parameters implements ParameterBundle {
 		/** Number of iterations to perform */
+		@DialogLabel("Number of iterations to perform")
 		public int iterations = 10;
+		
 		/** Update rate (alpha) */
-		public float alpha = 0.20f; 			
+		@DialogLabel("Update rate (alpha = 0,..,0.25)")@DialogDigits(2)
+		public float alpha = 0.20f; 	
+		
 		/** Smoothness parameter (kappa) */
+		@DialogLabel("Smoothness parameter (kappa)")@DialogDigits(1)
 		public float kappa = 25;
+		
 		/** Specify the type of conductance function g(d) */
+		@DialogLabel("Conductance function type g(d)")
 		public ConductanceFunction.Type conductanceFunType = ConductanceFunction.Type.g1;
+		
 		/** Specify the color mode */
+		@DialogLabel("Color mode")
 		public ColorMode colorMode = ColorMode.SeparateChannels;
+		
 		/** Out-of-bounds strategy */
+		@DialogLabel("Out-of-bounds strategy")
 		public OutOfBoundsStrategy obs = OutOfBoundsStrategy.NearestBorder;
 	}
 	
