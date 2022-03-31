@@ -80,6 +80,7 @@ public abstract class VectorAccessor extends ImageAccessor {
 //		}
 //	}
 	
+	@Override
 	protected void checkComponentIndex(int k) {
 		if (k < 0 || k >= depth) {
 			throw new IllegalArgumentException("invalid component index " + k);

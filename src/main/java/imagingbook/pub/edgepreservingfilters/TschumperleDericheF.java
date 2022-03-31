@@ -28,25 +28,28 @@ public interface TschumperleDericheF {
 		/** The alpha value applied in the first pass. */
 		@DialogHide
 		public float alpha0 = 0.5f;
-		
-//		/** Set true to apply the filter in linear RGB (assumes sRGB input) */
-//		public boolean useLinearRgb = false;
 	}
 	
-	static final float C1 = (float) (2 - Math.sqrt(2.0)) / 4;
-	static final float C2 = (float) (Math.sqrt(2.0) - 1) / 2;
+
+	abstract class Constants {
+		private static final float C1 = (float) (2 - Math.sqrt(2.0)) / 4;
+		private static final float C2 = (float) (Math.sqrt(2.0) - 1) / 2;
+
+		private static final float[][] Hdx = // gradient kernel X
+			{{-C1, 0, C1},
+			 {-C2, 0, C2},
+			 {-C1, 0, C1}};
+		
+		private static final float[][] Hdy = // gradient kernel Y
+			{{-C1, -C2, -C1},
+			 {  0,   0,   0},
+			 { C1,  C2,  C1}};
+		
+		protected static final Kernel2D kernelDx = new Kernel2D(Hdx, 1, 1, false);
+		protected static final Kernel2D kernelDy = new Kernel2D(Hdy, 1, 1, false);
+	}
 	
-	// TODO: move outside
-	static final float[][] Hdx = // gradient kernel X
-		{{-C1, 0, C1},
-		 {-C2, 0, C2},
-		 {-C1, 0, C1}};
+
 	
-	static final float[][] Hdy = // gradient kernel Y
-		{{-C1, -C2, -C1},
-		 {  0,   0,   0},
-		 { C1,  C2,  C1}};
-	
-	static final Kernel2D kernelDx = new Kernel2D(Hdx, 1, 1, false);
-	static final Kernel2D kernelDy = new Kernel2D(Hdy, 1, 1, false);
+
 }
