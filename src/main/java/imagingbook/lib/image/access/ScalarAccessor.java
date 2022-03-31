@@ -146,6 +146,7 @@ public abstract class ScalarAccessor extends ImageAccessor {
 //		this.setDefaultValue(vals[0]);
 //	}
 	
+	@Override
 	protected void checkComponentIndex(int k) {
 		if (k != 0) {
 			throw new IllegalArgumentException("invalid component index " + k);
