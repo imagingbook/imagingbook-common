@@ -36,7 +36,11 @@ import imagingbook.pub.corners.subpixel.SubpixelMaxInterpolator.Method;
  * TODO: replace 'border' by ROI rectangle
  * 
  * @author W. Burger
- * @version 2020/10/04
+ * @version 2022/03/30
+ * 
+ * @see HarrisCornerDetector
+ * @see MopsCornerDetector
+ * @see ShiTomasiCornerDetector
  */
 public abstract class GradientCornerDetector {
 	
