@@ -14,6 +14,9 @@ import ij.process.ImageProcessor;
 
 /**
  * This class provides some static utility methods for ImageJ's ImageProcessors.
+ * Unlike the built-in {@link ImageProcessor} methods, the methods below
+ * return new images and keep the original images unmodified.
+ * 
  * @version 2013/08/23: static methods converted to use generics.
  */
 public abstract class ImageMath {
@@ -57,11 +60,5 @@ public abstract class ImageMath {
 		ip3.copyBits(ip2, 0, 0, Blitter.MULTIPLY);
 		return ip3;
 	}
-	
-//	@Deprecated
-//	public static FloatProcessor multOld (FloatProcessor fp1, FloatProcessor fp2) {
-//		fp1.copyBits(fp2, 0, 0, Blitter.MULTIPLY);
-//		return fp1;
-//	}
 
 }

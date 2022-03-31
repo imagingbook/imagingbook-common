@@ -15,9 +15,12 @@ import imagingbook.lib.interpolation.InterpolationMethod;
 
 /**
  * <p>
- * This abstract class provides unified image access to all 4 types of images available in ImageJ:
+ * An 'image accessor' is a wrapper around some {@link ImageProcessor} object to allow
+ * unified (read and write) access to its pixels values.
+ * This abstract class defines unified access functionality to all 4 types of images available in ImageJ:
  * 8-bit, 16-bit, float, and color images.
- * It is used as a wrapper around an instance of ImageJ's {@link ImageProcessor} type.
+ * All pixel values are of type {@code float[]}, either containing a single element (for
+ * scalar-valued images) or three elements (for color images).
  * </p>
  * <p>
  * A generic {@link ImageAccessor} is created, e.g., by {@link #create(ImageProcessor)}, which
@@ -27,8 +30,6 @@ import imagingbook.lib.interpolation.InterpolationMethod;
  * the methods {@link #getPix(int, int)}, {@link #getPix(double, double)}
  * for retrieving pixel values and {@link #setPix(int, int, float[])}
  * to modify pixel values.
- * All pixel values are of type {@code float[]}, either containing a single element (for
- * scalar-valued images) or three elements (for color images).
  * </p>
  * <p>
  * In addition, the accessors for scalar-valued images ({@link ByteAccessor}, {@link ShortAccessor},

@@ -2,8 +2,8 @@ package imagingbook.lib.image;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.Graphics2D;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.geom.Ellipse2D;
@@ -16,13 +16,15 @@ import java.awt.image.BufferedImage;
 import ij.process.Blitter;
 import ij.process.ByteProcessor;
 import ij.process.ColorProcessor;
+import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
 import ij.process.ShortProcessor;
-import ij.process.FloatProcessor;
+import imagingbook.lib.ij.overlay.ColoredStroke;
+import imagingbook.lib.ij.overlay.ShapeOverlayAdapter;
 
 /**
- * <p>This class defines functionality for drawing anti-aliased
- * graphics on top of images of type 
+ * <p>This class defines functionality for drawing anti-aliased "pixel"
+ * graphics in images of type 
  * {@link ByteProcessor},
  * {@link ShortProcessor} or
  * {@link ColorProcessor}
@@ -59,8 +61,7 @@ import ij.process.FloatProcessor;
  * The {@link #getGraphics()} method exposes the underlying 
  * {@link Graphics2D} instance of the {@link ImageGraphics} object, which can then be used to
  * perform arbitrary graphic operations.
- * Thus, the above example can be <strong>alternatively</strong> implemented
- * as followings:
+ * Thus, the above example could <strong>alternatively</strong> be implemented as follows:
  * <pre>
  * ImageProcessor ip = ... ;   // some ByteProcessor, ShortProcessor or ColorProcessor
  * try (ImageGraphics g = new ImageGraphics(ip)) {
@@ -82,8 +83,12 @@ import ij.process.FloatProcessor;
  * imagingbook-plugins-all</a> repository shows a complete example.
  * </p>
  * 
+ * TODO: Add text drawing, merge with {@link ColoredStroke}.
+ * 
  * @author W. Burger
  * @version 2020-01-07
+ * 
+ * @see ShapeOverlayAdapter
  */
 public class ImageGraphics implements AutoCloseable {
 	
