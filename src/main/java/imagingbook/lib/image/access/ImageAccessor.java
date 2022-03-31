@@ -14,10 +14,12 @@ import ij.process.ImageProcessor;
 import imagingbook.lib.interpolation.InterpolationMethod;
 
 /**
+ * <p>
  * This abstract class provides unified image access to all 4 types of images available in ImageJ:
  * 8-bit, 16-bit, float, and color images.
  * It is used as a wrapper around an instance of ImageJ's {@link ImageProcessor} type.
- * <br>
+ * </p>
+ * <p>
  * A generic {@link ImageAccessor} is created, e.g., by {@link #create(ImageProcessor)}, which
  * returns an instance of {@link ByteAccessor}, {@link ShortAccessor}, {@link FloatAccessor} or
  * {@link RgbAccessor}.
@@ -27,7 +29,8 @@ import imagingbook.lib.interpolation.InterpolationMethod;
  * to modify pixel values.
  * All pixel values are of type {@code float[]}, either containing a single element (for
  * scalar-valued images) or three elements (for color images).
- * <br>
+ * </p>
+ * <p>
  * In addition, the accessors for scalar-valued images ({@link ByteAccessor}, {@link ShortAccessor},
  * {@link FloatAccessor}) provide the methods
  * {@link ScalarAccessor#getVal(int, int)}, {@link ScalarAccessor#getVal(double, double)} and 
@@ -36,9 +39,9 @@ import imagingbook.lib.interpolation.InterpolationMethod;
  * <br>
  * The methods {@link #getPix(double, double)} and {@link ScalarAccessor#getVal(double, double)} perform interpolation at non-integer coordinates
  * using the specified {@link InterpolationMethod}.
- * <br>
+ * </p>
  * 
- * @author W. Burger
+ * @author WB
  * @version 2020/12/27
  */
 public abstract class ImageAccessor {
@@ -231,8 +234,6 @@ public abstract class ImageAccessor {
 	 */
 	public abstract ScalarAccessor getComponentAccessor(int k);
 	
-	// -------------------------------------------------------------------------
-	
-
-	
+	protected abstract void checkComponentIndex(int k);
+		
 }
