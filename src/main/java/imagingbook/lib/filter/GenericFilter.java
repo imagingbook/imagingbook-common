@@ -1,9 +1,9 @@
 package imagingbook.lib.filter;
 
 import ij.process.ImageProcessor;
-import imagingbook.lib.filter.examples.ExampleFilterScalar;
+import imagingbook.lib.filter.examples.ExampleFilter3x3Scalar;
 import imagingbook.lib.filter.examples.FilterShowProgressExample;
-import imagingbook.lib.filter.examples.ExampleFilterVector;
+import imagingbook.lib.filter.examples.ExampleFilter3x3Vector;
 import imagingbook.lib.image.access.GridIndexer2D;
 import imagingbook.lib.image.access.OutOfBoundsStrategy;
 import imagingbook.lib.image.data.PixelPack;
@@ -47,7 +47,7 @@ import imagingbook.lib.util.progress.ij.ProgressBarMonitor;
  * value of a single image pixel (e.g., see 
  * {@link GenericFilterVector#doPixel(PixelPack, int, int)} and
  * {@link GenericFilterScalar#doPixel(PixelSlice, int, int)}).
- * See {@link ExampleFilterScalar} and {@link ExampleFilterVector} for examples.
+ * See {@link ExampleFilter3x3Scalar} and {@link ExampleFilter3x3Vector} for examples.
  * </p>
  * <p>
  * To <strong>apply</strong> as filter to a given image, the key method is 

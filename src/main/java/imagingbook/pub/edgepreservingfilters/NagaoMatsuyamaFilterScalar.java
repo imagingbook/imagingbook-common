@@ -40,9 +40,9 @@ public class NagaoMatsuyamaFilterScalar extends GenericFilterScalar implements N
 	@Override
 	protected float doPixel(PixelSlice plane, int u, int v) {
 		minVariance = Float.POSITIVE_INFINITY;
-		evalSubregion(plane, R0, u, v);
+		evalSubregion(plane, Constants.R0, u, v);
 		minVariance = minVariance - varThreshold;
-		for (int[][] Rk : SubRegions) {
+		for (int[][] Rk : Constants.SubRegions) {
 			evalSubregion(plane, Rk, u, v);
 		}
  		return minMean;

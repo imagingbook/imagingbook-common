@@ -7,19 +7,24 @@ import imagingbook.lib.util.ParameterBundle;
 public interface BilateralF {
 	
 	public static class Parameters implements ParameterBundle {
-		/** Sigma (width) of domain filter */
+
+		@DialogLabel("Sigma (domain)")
 		public double sigmaD = 2; 		
-		/** Sigma (width) of range filter */
+
+		@DialogLabel("Sigma (range)")
 		public double sigmaR = 50;
-		/** Distance norm to use between color vectors */
+		
+		@DialogLabel("Color distance norm")
 		public NormType colorNormType = NormType.L2;
-		/** Out-of-bounds strategy */
+
+		@DialogLabel("Out-of-bounds strategy")
 		public OutOfBoundsStrategy obs = OutOfBoundsStrategy.NearestBorder;
 	}
 	
 	// ------------------------------------------------------
 	
-	public static float gauss(double d, double sigmaR2) {
+	// TODO: this should be non-public (implement with Java9)
+	static float gauss(double d, double sigmaR2) {
 		return (float) Math.exp(-(d * d) / (2 * sigmaR2));
 	}
 	

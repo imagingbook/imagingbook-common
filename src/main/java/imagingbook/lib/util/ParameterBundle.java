@@ -102,7 +102,7 @@ public interface ParameterBundle {
 	}
 	
 	/**
-	 * Annotation to always hide the following parameter field in dialogs.
+	 * Annotation to hide the following parameter field in dialogs.
 	 */
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target({ElementType.FIELD})
@@ -183,7 +183,7 @@ public interface ParameterBundle {
 	 * Adds the specified {@link Field} of this object as new item to 
 	 * the {@link GenericDialog} instance.
 	 * The name of the field is used as the 'label' of the dialog item.
-	 * TODO: this could/should be private!
+	 * TODO: this method should be private (possible in Java9)!
 	 * 
 	 * @param field some field
 	 * @param dialog the dialog
@@ -232,7 +232,7 @@ public interface ParameterBundle {
 	/**
 	 * Modifies the specified {@link Field} of this object by reading the next item
 	 * from the {@link GenericDialog} instance.
-	 * TODO: this could/should be private!
+	 * TODO: this method should be private (possible in Java9)!
 	 * 
 	 * @param field	a publicly accessible {@link Field} of this object 
 	 * @param gd a {@link GenericDialog} instance
@@ -240,7 +240,7 @@ public interface ParameterBundle {
 	 * @throws IllegalAccessException illegal field access
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	default boolean getFieldFromDialog(Field field, GenericDialog gd) 
+	default boolean getFieldFromDialog(Field field, GenericDialog gd)
 					throws IllegalAccessException {
 		Class<?> clazz = field.getType();
 		if  (clazz.equals(boolean.class)) {

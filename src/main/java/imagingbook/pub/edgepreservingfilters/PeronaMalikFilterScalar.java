@@ -43,8 +43,8 @@ public class PeronaMalikFilterScalar extends GenericFilterScalar implements Pero
 	// constructor - use this version to set all parameters
 	public PeronaMalikFilterScalar (Parameters params) {
 		this.T = params.iterations;
-		this.alpha = params.alpha;
-		this.g = ConductanceFunction.get(params.conductanceFunType, params.kappa);
+		this.alpha = (float)params.alpha;
+		this.g = ConductanceFunction.get(params.conductanceFunType, (float)params.kappa);
 	}
 	
 	// ------------------------------------------------------

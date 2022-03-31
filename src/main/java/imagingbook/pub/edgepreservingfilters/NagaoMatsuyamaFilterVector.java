@@ -45,9 +45,9 @@ public class NagaoMatsuyamaFilterVector extends GenericFilterVector implements N
 	@Override
 	protected float[] doPixel(PixelPack pack, int u, int v) {
 		minVariance = Float.MAX_VALUE;
-		evalSubregionColor(pack, R0, u, v);
+		evalSubregionColor(pack, Constants.R0, u, v);
 		minVariance = minVariance - 3 * varThreshold;
-		for (int[][] Rk : SubRegions) {
+		for (int[][] Rk : Constants.SubRegions) {
 			evalSubregionColor(pack, Rk, u, v);
 		}
 		this.copyPixel(minMean, rgb);

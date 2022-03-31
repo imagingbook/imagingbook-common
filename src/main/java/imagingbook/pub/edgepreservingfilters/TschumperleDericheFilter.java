@@ -79,8 +79,8 @@ public class TschumperleDericheFilter extends GenericFilter implements Tschumper
 		this.Dx = new PixelPack(source, false);	// container for X/Y-derivatives
 		this.Dy = new PixelPack(source, false);
 		
-		this.filterDx = new LinearFilter(kernelDx);
-		this.filterDy = new LinearFilter(kernelDy);
+		this.filterDx = new LinearFilter(Constants.kernelDx);
+		this.filterDy = new LinearFilter(Constants.kernelDy);
 		
 		this.gradientBlurFilter = new GaussianFilterSeparable(params.sigmaD);	
 		this.structureBlurFilter = new GaussianFilterSeparable(params.sigmaM);
