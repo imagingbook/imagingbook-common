@@ -3,18 +3,18 @@ package imagingbook.lib.filter.examples;
 import imagingbook.lib.filter.GenericFilterScalar;
 import imagingbook.lib.image.data.PixelPack.PixelSlice;
 
-public class ExampleFilterScalar extends GenericFilterScalar //implements ReportsProgress
-{
+public class ExampleFilter3x3Scalar extends GenericFilterScalar {
 	
-	static float[][] H = {
+	private final static float[][] H = {
 			{1, 2, 1},
 			{2, 4, 2},
 			{1, 2, 1}};
 	
-	int width = 3;
-	int height = 3;
-	int xc = 1;
-	int yc = 1;
+	private final static int width = 3;
+	private final static int height = 3;
+	private final static int xc = 1;
+	private final static int yc = 1;
+	private final static float s = 16;
 	
 	@Override
 	protected float doPixel(PixelSlice plane, int u, int v) {
@@ -26,7 +26,7 @@ public class ExampleFilterScalar extends GenericFilterScalar //implements Report
 				sum = sum + plane.getVal(ui, vj) * H[i][j];
 			}
 		}
-		return sum / 16;
+		return sum / s;
 	}
 
 }

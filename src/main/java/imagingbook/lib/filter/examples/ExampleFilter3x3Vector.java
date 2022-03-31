@@ -3,20 +3,18 @@ package imagingbook.lib.filter.examples;
 import imagingbook.lib.filter.GenericFilterVector;
 import imagingbook.lib.image.data.PixelPack;
 
-public class ExampleFilterVector extends GenericFilterVector {
+public class ExampleFilter3x3Vector extends GenericFilterVector {
 
-	public ExampleFilterVector() {
-	}
-
-	int width = 3;
-	int height = 3;
-	int xc = 1;
-	int yc = 1;
-	
-	static float[][] H = {
+	private final static float[][] H = {
 			{1, 2, 1},
 			{2, 4, 2},
 			{1, 2, 1}};
+	
+	private final static int width = 3;
+	private final static int height = 3;
+	private final static int xc = 1;
+	private final static int yc = 1;
+	private final static float s = 16;
 	
 	@Override
 	protected float[] doPixel(PixelPack pack, int u, int v) {
@@ -28,7 +26,7 @@ public class ExampleFilterVector extends GenericFilterVector {
 				int ui = u + i - xc;
 				float[] p = pack.getVec(ui, vj);
 				for (int k = 0; k < depth; k++) {
-					sum[k] = sum[k] + (p[k] * H[i][j]) / 16;
+					sum[k] = sum[k] + (p[k] * H[i][j]) / s;
 				}
 			}
 		}
