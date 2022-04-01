@@ -11,6 +11,7 @@ package imagingbook.pub.sift.util;
 
 import java.awt.Color;
 
+@Deprecated
 public class Colors {
 	
 	public static Color Red = new Color(240,0,0);

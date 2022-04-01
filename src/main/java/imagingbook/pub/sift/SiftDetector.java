@@ -25,11 +25,18 @@ import imagingbook.pub.sift.scalespace.GaussianScaleSpace;
 import imagingbook.pub.sift.scalespace.ScaleLevel;
 import imagingbook.pub.sift.scalespace.ScaleOctave;
 
+/**
+ * TODO: Add description
+ * 
+ * @author WB
+ *
+ */
 public class SiftDetector {
 
 	/**
 	 * Default parameters; a (usually modified) instance of this class
 	 * may be passed to constructor of {@link SiftDetector}.
+	 * TODO: add dialog annotations
 	 */
 	public static class Parameters implements ParameterBundle {
 		/** Set true to output debug information */

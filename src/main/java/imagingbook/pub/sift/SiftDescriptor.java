@@ -10,6 +10,8 @@
 package imagingbook.pub.sift;
 
 
+import java.awt.Shape;
+import java.awt.geom.Path2D;
 import java.util.Locale;
 
 import imagingbook.pub.geometry.basic.Pnt2d;
@@ -105,6 +107,28 @@ public class SiftDescriptor implements Pnt2d, Comparable<SiftDescriptor> {
 	
 	// -----------------------------
 	
+	@Override
+	public Shape getShape(double featureScale) {
+		final double DisplayAngleOffset = -Math.PI / 2;
+		double x = this.getX(); 
+		double y = this.getY();
+		double scale = featureScale * this.getScale();
+		double orient = this.getOrientation() + DisplayAngleOffset;
+		double sin = Math.sin(orient);
+		double cos = Math.cos(orient);
+		Path2D poly = new Path2D.Double();	
+		poly.moveTo(x + (sin - cos) * scale, y - (sin + cos) * scale);
+		poly.lineTo(x + (sin + cos) * scale, y + (sin - cos) * scale);
+		poly.lineTo(x, y);
+		poly.lineTo(x - (sin - cos) * scale, y + (sin + cos) * scale);
+		poly.lineTo(x - (sin + cos) * scale, y - (sin - cos) * scale);
+		poly.closePath();
+		return poly;
+	}
+	
+	// -----------------------------
+	
+	@Override
 	public String toString() {
 		return String.format(Locale.US, 
 				"x=%.1f y=%.1f s=%.2f mag=%.4f angle=%.2f", 
@@ -112,6 +136,7 @@ public class SiftDescriptor implements Pnt2d, Comparable<SiftDescriptor> {
 	}
 
 	//used for sorting SIFT descriptors by magnitude
+	@Override
 	public int compareTo(SiftDescriptor d2) {
 		if (this.magnitude > d2.magnitude) return -1;
 		if (this.magnitude < d2.magnitude) return 1;
