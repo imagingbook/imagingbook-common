@@ -17,6 +17,7 @@ import java.util.Locale;
 import ij.gui.Roi;
 import ij.gui.ShapeRoi;
 import imagingbook.pub.geometry.basic.Pnt2d;
+import imagingbook.pub.geometry.basic.ShapeProvider;
 import imagingbook.pub.geometry.line.AlgebraicLine;
 import imagingbook.pub.geometry.line.HessianLine;
 
@@ -27,7 +28,7 @@ import imagingbook.pub.geometry.line.HessianLine;
  * {@link AlgebraicLine}.
  * It adds an arbitrary reference point and a counter for pixel votes.
  */
-public class HoughLine extends HessianLine implements Comparable<HoughLine> {
+public class HoughLine extends HessianLine implements Comparable<HoughLine>, ShapeProvider {
 	
 	private final int count;			// pixel votes for this line
 	private final double xRef, yRef;	// reference point
@@ -152,6 +153,39 @@ public class HoughLine extends HessianLine implements Comparable<HoughLine> {
 		path.lineTo(x2, y2);
 		return path;
 	}
+
+	@Override
+	public Shape getShape(double length) {
+		double xRef = this.getXref();
+		double yRef = this.getYref();
+//		double length = Math.sqrt(sqr(width) + sqr(height)); //Math.sqrt(sqr(xRef) + sqr(yRef));
+		double angle = this.getAngle();
+		double radius = this.getRadius();
+		// unit vector perpendicular to the line
+		double dx = Math.cos(angle);	
+		double dy = Math.sin(angle);
+		// calculate the line's center point (closest to the reference point)
+		double x0 = xRef + radius * dx;
+		double y0 = yRef + radius * dy;
+		// calculate the line end points (using normal vectors)
+//		float x1 = (float) (x0 + dy * length);
+//		float y1 = (float) (y0 - dx * length);
+//		float x2 = (float) (x0 - dy * length);
+//		float y2 = (float) (y0 + dx * length);
+//		float[] xpoints = { x1, x2 };
+//		float[] ypoints = { y1, y2 };
+		//Roi roi = new PolygonRoi(xpoints, ypoints, Roi.POLYLINE);
+		
+		double x1 = x0 + dy * length;
+		double y1 = y0 - dx * length;
+		double x2 = x0 - dy * length;
+		double y2 = y0 + dx * length;
+		Path2D path = new Path2D.Double();
+		path.moveTo(x1, y1);
+		path.lineTo(x2, y2);
+		return path;
+	}
+	
 
 //	/**
 //	 * Creates a vector line to be used an element in an ImageJ graphic overlay

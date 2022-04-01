@@ -8,20 +8,17 @@
  *******************************************************************************/
 package imagingbook.pub.hough;
 
-import static imagingbook.lib.math.Arithmetic.sqr;
-
-import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import ij.IJ;
+import ij.process.ByteProcessor;
 import ij.process.FloatProcessor;
-import ij.process.ImageProcessor;
-import imagingbook.lib.math.Arithmetic;
 import imagingbook.lib.util.ParameterBundle;
+import imagingbook.lib.util.progress.ProgressReporter;
+import imagingbook.pub.geometry.basic.Pnt2d;
 import imagingbook.pub.hough.lines.HoughLine;
-
 
 /**
  * This class implements the "classic" Hough Transform for straight lines.
@@ -31,19 +28,22 @@ import imagingbook.pub.hough.lines.HoughLine;
  * (radial) cells to reduce aliasing effects. Thus we accumulate non-integer
  * values and therefore the various accumulators are of type {@code float[][]}.
  *
- * 
+ * TODO: revise constructors and parameters (remove IJ progress reporting)
  * TODO: add bias correction
  * 
  * @author W. Burger
- * @version 2020/12/13
+ * @version 2022/04/01
  */
-public class HoughTransformLines {
+public class HoughTransformLines implements ProgressReporter {
 
 	public static class Parameters implements ParameterBundle {
+		
 		/** Number of angular steps over [0, pi] */
 		public int nAng = 256;
+		
 		/** Number of radial steps in each pos/neg direction (accum. size = 2 * nRad + 1) */
 		public int nRad = 128;
+		
 		public boolean showProgress = true;
 		public boolean showCheckImage = true;
 		public boolean debug = false;
@@ -73,17 +73,17 @@ public class HoughTransformLines {
 	// -------------- public constructor(s) ------------------------
 
 	/**
-	 * Creates a new Hough transform from the image I.
+	 * Creates a new Hough transform from the binary image I.
 	 * 
 	 * @param I      input image, relevant (edge) points have pixel values greater 0.
 	 * @param params parameter object.
 	 */
-	public HoughTransformLines(ImageProcessor I, Parameters params) {
+	public HoughTransformLines(ByteProcessor I, Parameters params) {
 		this(I.getWidth(), I.getHeight(), params);
 		this.process(I, accumulator);
 	}
 	
-	public HoughTransformLines(ImageProcessor I) {
+	public HoughTransformLines(ByteProcessor I) {
 		this(I, new Parameters());
 	}
 
@@ -98,12 +98,12 @@ public class HoughTransformLines {
 	 * @param height      height of the corresponding image plane.
 	 * @param params parameter object.
 	 */
-	public HoughTransformLines(Point2D[] points, int width, int height, Parameters params) {
+	public HoughTransformLines(Pnt2d[] points, int width, int height, Parameters params) {
 		this(width, height, params);
 		this.process(points, accumulator);
 	}
 
-	// Non-public constructor used by public constructors (to set up all final
+	// Non-public constructor used by public constructors (to initialize all final
 	// members variables).
 	private HoughTransformLines(int width, int height, Parameters params) {
 		this.params = (params == null) ? new Parameters() : params;
@@ -274,14 +274,14 @@ public class HoughTransformLines {
 		return sinTab;
 	}
 
-	private void process(ImageProcessor ip, float[][] acc) {
+	private void process(ByteProcessor ip, float[][] acc) {
 		if (params.showProgress)
 			IJ.showStatus("filling accumulator ...");
 		for (int v = 0; v < height; v++) {
 			if (params.showProgress)
 				IJ.showProgress(v, height);
 			for (int u = 0; u < width; u++) {
-				if ((0xFFFFFF & ip.get(u, v)) != 0) { // this is a foreground (edge) pixel - use ImageAccessor??
+				if (ip.get(u, v) != 0) { // this is a foreground (edge) pixel - use ImageAccessor??
 					processPoint(u, v, acc);
 				}
 			}
@@ -290,13 +290,13 @@ public class HoughTransformLines {
 			IJ.showProgress(1, 1);
 	}
 
-	private void process(Point2D[] points, float[][] acc) {
+	private void process(Pnt2d[] points, float[][] acc) {
 		if (params.showProgress)
 			IJ.showStatus("filling accumulator ...");
 		for (int i = 0; i < points.length; i++) {
 			if (params.showProgress && i % 50 == 0)
 				IJ.showProgress(i, points.length);
-			Point2D p = points[i];
+			Pnt2d p = points[i];
 			if (p != null) {
 				processPoint(p.getX(), p.getY(), acc);
 			}
@@ -371,6 +371,12 @@ public class HoughTransformLines {
 				accumulatorExt[accWidth + ai][ri] = accumulator[ai][accHeight - ri - 1];
 			}
 		}
+	}
+
+	@Override
+	public double getProgress() {
+		// TODO report progress state
+		return 0;
 	}
 	
 }
