@@ -2,6 +2,7 @@ package imagingbook.pub.dft;
 
 import java.util.Arrays;
 
+import ij.process.ImageProcessor;
 import imagingbook.lib.math.Matrix;
 
 /**
@@ -276,6 +277,41 @@ public abstract class Dft2d {
 				throw new IllegalArgumentException("arrays for real/imagingary parts must be of same size");
 		}
 		
+	}
+	
+	/**
+	 * Static utility method for centering a 2D DFT spectrum.
+	 * Modifies the given image by moving the origin of the image to its center
+	 * (circularly).
+	 * TODO: Check for possible bug when applied to a {@link FloatProcessor}!
+	 * 
+	 * @param ip an {@link ImageProcessor} instance
+	 */
+	public static void swapQuadrants(ImageProcessor ip) {
+		// swap quadrants Q1 <-> Q3, Q2 <-> Q4
+		// Q2 Q1
+		// Q3 Q4
+		ImageProcessor t1, t2;
+		int w = ip.getWidth();
+		int h = ip.getHeight();
+		int wc = w / 2;
+		int hc = h / 2;
+
+		ip.setRoi(wc, 0, w - wc, hc); // Q1
+		t1 = ip.crop();
+		ip.setRoi(0, hc, wc, h - hc); // Q3
+		t2 = ip.crop();
+
+		ip.insert(t1, 0, hc); // swap Q1 <-> Q3
+		ip.insert(t2, wc, 0);
+
+		ip.setRoi(0, 0, wc, hc); // Q2
+		t1 = ip.crop();
+		ip.setRoi(wc, hc, w - wc, h - hc); // Q4
+		t2 = ip.crop();
+
+		ip.insert(t1, wc, hc);
+		ip.insert(t2, 0, 0);
 	}
 
 }
