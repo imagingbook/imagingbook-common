@@ -17,7 +17,6 @@ import imagingbook.lib.ij.overlay.ShapeOverlayAdapter;
  * This (abstract) class cannot be instantiated directly but
  * is supposed to be used as the superclass for specific
  * overlay types, e.g., for displaying corners, SIFT markers etc.
- * (e.g., see {@link imagingbook.pub.sift.util.SiftOverlay}).
  * In the simplest case, the concrete subclass just needs to implement the method 
  * {@link #makeRoi(Object)}, which is only concerned with geometry.
  * Stroke width and color are handled uniformly by this class ({@link CustomOverlay}).

@@ -311,7 +311,7 @@ public class BinaryThinning implements BinaryMorphologyOperator {
 		final int M = ip.getWidth();
 		final int N = ip.getHeight();
 		final List<PntInt> D = new ArrayList<>();
-		final byte[] NH = new byte[8];
+//		final byte[] NH = new byte[8];
 		int n = 0;
 		for (int pass = 0; pass < 2; pass++) {	// make 2 passes
 			D.clear();

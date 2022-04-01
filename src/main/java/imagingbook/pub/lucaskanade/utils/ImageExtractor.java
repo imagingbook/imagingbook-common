@@ -18,7 +18,8 @@ import imagingbook.pub.geometry.mappings.linear.ProjectiveMapping2D;
 
 /**
  * Use to extract warped images for testing the Lucas-Kanade matcher.
- * @author wilbur
+ * 
+ * @author WB
  *
  */
 public class ImageExtractor {
