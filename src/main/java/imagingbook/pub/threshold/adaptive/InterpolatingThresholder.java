@@ -23,7 +23,10 @@ import imagingbook.pub.threshold.global.OtsuThresholder;
 public class InterpolatingThresholder extends AdaptiveThresholder {
 	
 	public static class Parameters implements ParameterBundle {
+		@DialogLabel("Tile size")
 		public int tileSize = 32;
+		
+		@DialogLabel("Background mode")
 		public BackgroundMode bgMode = BackgroundMode.DARK;
 	}
 	

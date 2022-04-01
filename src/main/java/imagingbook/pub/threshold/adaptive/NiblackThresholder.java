@@ -23,15 +23,24 @@ import imagingbook.pub.threshold.BackgroundMode;
  */
 public abstract class NiblackThresholder extends AdaptiveThresholder {
 	
+	public enum RegionType { Box, Disk, Gaussian }
+	
 	public static class Parameters implements ParameterBundle {
+		
+		@DialogLabel("Radius")
 		public int radius = 15;
-		public double kappa =  0.30;
+		
+		@DialogLabel("kappa")
+		public double kappa = 0.30;
+		
+		@DialogLabel("d_min")
 		public int dMin = 5;
+		
+		@DialogLabel("Background mode")
 		public BackgroundMode bgMode = BackgroundMode.DARK;
 	}
 	
 	private final Parameters params;
-	
 	protected FloatProcessor Imean;
 	protected FloatProcessor Isigma;
 
@@ -70,6 +79,17 @@ public abstract class NiblackThresholder extends AdaptiveThresholder {
 			}
 		}
 		return Q;
+	}
+	
+	// -----------------------------------------------------------------------
+	
+	public static NiblackThresholder create(RegionType regType, Parameters params) {
+		switch (regType) {
+		case Box : 		return new NiblackThresholder.Box(params);
+		case Disk : 	return new NiblackThresholder.Disk(params);
+		case Gaussian : return new NiblackThresholder.Gauss(params);
+		default : 		return null;
+		}
 	}
 	
 	// -----------------------------------------------------------------------

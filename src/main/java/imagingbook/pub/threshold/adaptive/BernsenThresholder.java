@@ -21,8 +21,13 @@ import imagingbook.pub.threshold.BackgroundMode;
 public class BernsenThresholder extends AdaptiveThresholder {
 	
 	public static class Parameters implements ParameterBundle {
+		@DialogLabel("Radius")
 		public int radius = 15;
+		
+		@DialogLabel("c_min")
 		public int cmin = 15;
+		
+		@DialogLabel("Background mode")
 		public BackgroundMode bgMode = BackgroundMode.DARK;
 	}
 	

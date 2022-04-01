@@ -40,7 +40,7 @@ public abstract class AdaptiveThresholder extends Thresholder {
 		}
 	}
 	
-	// change to use an ImageAccessor!
+	// TODO: change to use an ImageAccessor!
 	protected int getPaddedPixel(ByteProcessor bp, int u, int v) {
 		final int w = bp.getWidth();
 		final int h = bp.getHeight();

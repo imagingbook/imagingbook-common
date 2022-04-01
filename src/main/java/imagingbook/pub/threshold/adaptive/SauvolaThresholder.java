@@ -13,6 +13,7 @@ import ij.plugin.filter.RankFilters;
 import ij.process.ByteProcessor;
 import ij.process.FloatProcessor;
 import imagingbook.lib.util.ParameterBundle;
+import imagingbook.lib.util.ParameterBundle.DialogLabel;
 import imagingbook.pub.threshold.BackgroundMode;
 
 /**
@@ -23,9 +24,17 @@ import imagingbook.pub.threshold.BackgroundMode;
 public class SauvolaThresholder extends AdaptiveThresholder {
 	
 	public static class Parameters implements ParameterBundle {
+		
+		@DialogLabel("Radius")
 		public int radius = 15;
+		
+		@DialogLabel("kappa")
 		public double kappa =  0.5;
+		
+		@DialogLabel("sigma_max")
 		public double sigmaMax =  128;
+		
+		@DialogLabel("Background mode")
 		public BackgroundMode bgMode = BackgroundMode.DARK;
 	}
 		
