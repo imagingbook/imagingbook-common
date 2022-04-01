@@ -31,7 +31,7 @@ public class PerlinNoiseGen1d extends PerlinNoiseGen {
 	 */
 	public double NOISE(double x) {
 		double sum = 0;
-		for (int i=0; i<F.length; i++) {
+		for (int i = 0; i < F.length; i++) {
 			sum = sum + A[i] * noise(F[i] * x);
 		}
 		return sum;

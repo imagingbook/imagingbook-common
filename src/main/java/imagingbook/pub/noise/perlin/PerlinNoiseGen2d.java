@@ -31,7 +31,7 @@ public class PerlinNoiseGen2d extends PerlinNoiseGen {
 	 */
 	public double NOISE(double x, double y) {
 		double sum = 0;
-		for (int i=0; i<F.length; i++) {
+		for (int i = 0; i < F.length; i++) {
 			sum = sum + A[i] * noise(F[i] * x, F[i] * y);
 		}
 		return sum;
@@ -48,15 +48,15 @@ public class PerlinNoiseGen2d extends PerlinNoiseGen {
 		int px = (int) ffloor(x);
 		int py = (int) ffloor(y);
 		double[] g00 = gradient(px, py);
-		double[] g10 = gradient(px+1, py);
-		double[] g01 = gradient(px, py+1);
-		double[] g11 = gradient(px+1, py+1);
-		double x01 = x-px;	// x01 is in [0,1]
-		double y01 = y-py;	// y01 is in [0,1]
-		double w00 = g00[0]*(x01)   + g00[1]*(y01);
-		double w10 = g10[0]*(x01-1) + g10[1]*(y01);
-		double w01 = g01[0]*(x01)   + g01[1]*(y01-1);
-		double w11 = g11[0]*(x01-1) + g11[1]*(y01-1);
+		double[] g10 = gradient(px + 1, py);
+		double[] g01 = gradient(px, py + 1);
+		double[] g11 = gradient(px + 1, py + 1);
+		double x01 = x - px; // x01 is in [0,1]
+		double y01 = y - py; // y01 is in [0,1]
+		double w00 = g00[0] * (x01) + g00[1] * (y01);
+		double w10 = g10[0] * (x01 - 1) + g10[1] * (y01);
+		double w01 = g01[0] * (x01) + g01[1] * (y01 - 1);
+		double w11 = g11[0] * (x01 - 1) + g11[1] * (y01 - 1);
 		return interpolate(x01, y01, w00, w10, w01, w11);
 	}
 	
@@ -66,7 +66,7 @@ public class PerlinNoiseGen2d extends PerlinNoiseGen {
 	 * @return A pseudo-random gradient vector for the discrete position (px,py).
 	 */
 	double[] gradient(int px, int py) {
-		double[] g = hashFun.hash(px,py);	// hash() always returns a new double[] in [0,1]
+		double[] g = hashFun.hash(px, py); // hash() always returns a new double[] in [0,1]
 		g[0] = 2.0 * g[0] - 1;
 		g[1] = 2.0 * g[1] - 1;
 		return g;

@@ -91,28 +91,27 @@ public class PerlinNoiseGenNd extends PerlinNoiseGen {
 	}
 	
 	/**
-	 * Local interpolation function.
+	 * Local interpolation function (recursive).
 	 * @param X01 Interpolation position in [0,1]^N
 	 * @param WW  A vector of length 2^(N-d) with
 	 * the tangent values for the hypercube corners.
 	 * @param k The interpolation dimension (axis).
 	 * @return  The interpolated noise value at position X01.
 	 */
-	double interpolate(double[] X01, double[] WW, int k) { 
-		if (WW.length == 1) {			// (d == N)
-			return WW[0];				// done, end of recursion
-		}
-		else {							// d < N
-			double x01 = X01[k];		// select dimension d of vector X
-			double s = this.s(x01);			// blending function
-			int M = WW.length/2;
-			double[] W = new double[M];		// W is half the length of WW
-			for (int i=0; i<M; i++) {
-				double wa = WW[2*i];
-				double wb = WW[2*i+1];
-				W[i] = (1-s)*wa + s*wb;		// the actual interpolation
+	double interpolate(double[] X01, double[] WW, int k) {
+		if (WW.length == 1) { // (d == N)
+			return WW[0]; // done, end of recursion
+		} else { // d < N
+			double x01 = X01[k]; // select dimension d of vector X
+			double s = this.s(x01); // blending function
+			int M = WW.length / 2;
+			double[] W = new double[M]; // W is half the length of WW
+			for (int i = 0; i < M; i++) {
+				double wa = WW[2 * i];
+				double wb = WW[2 * i + 1];
+				W[i] = (1 - s) * wa + s * wb; // the actual interpolation
 			}
-			return interpolate(X01, W, k+1);
+			return interpolate(X01, W, k + 1);
 		}
 	}
 
