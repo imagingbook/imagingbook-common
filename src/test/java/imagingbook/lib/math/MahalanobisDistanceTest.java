@@ -1,7 +1,5 @@
 package imagingbook.lib.math;
 
-import static org.junit.Assert.*;
-
 import org.junit.Test;
 
 /**

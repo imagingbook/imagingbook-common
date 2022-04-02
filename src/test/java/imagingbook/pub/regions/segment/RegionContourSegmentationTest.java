@@ -14,9 +14,6 @@ import imagingbook.lib.util.resource.ResourceLocation.Resource;
 import imagingbook.pub.geometry.basic.NeighborhoodType2D;
 import imagingbook.pub.regions.BinaryRegion;
 import imagingbook.pub.regions.Contour;
-import imagingbook.pub.regions.Contour.Inner;
-import imagingbook.pub.regions.Contour.Outer;
-import imagingbook.pub.regions.segment.RegionContourSegmentation;
 
 public class RegionContourSegmentationTest {
 	
