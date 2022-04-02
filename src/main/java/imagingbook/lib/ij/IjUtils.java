@@ -21,6 +21,9 @@ import ij.WindowManager;
 import ij.gui.GenericDialog;
 import ij.io.OpenDialog;
 import ij.io.Opener;
+import ij.plugin.PlugIn;
+import ij.plugin.filter.PlugInFilter;
+import ij.plugin.filter.PlugInFilterRunner;
 import ij.process.ByteProcessor;
 import ij.process.ColorProcessor;
 import ij.process.FloatProcessor;
@@ -510,6 +513,60 @@ public abstract class IjUtils {
 	public static ByteProcessor convertToByteProcessor(BitMap bitmap) {
 		byte[] pixels = bitmap.getBitVector().toByteArray();
 		return new ByteProcessor(bitmap.getWidth(), bitmap.getHeight(), pixels);
+	}
+	
+	// -------------------------------------------------------------------------
+	
+	/**
+	 * Run a {@link PlugInFilter} with empty argument string.
+	 * @param clazz class of the plugin
+	 * @return true if successful
+	 */
+	public static boolean runPlugInFilter(Class<? extends PlugInFilter> clazz) {
+		return runPlugInFilter(clazz, "");
+	}
+	
+	/**
+	 * Run a {@link PlugInFilter} with its class (not only its name) is already available.
+	 * 
+	 * @param clazz class of the plugin
+	 * @param arg argument string
+	 * @return true if successful
+	 */
+	public static boolean runPlugInFilter(Class<? extends PlugInFilter> clazz, String arg) {
+		try {
+			PlugInFilter thePlugIn = clazz.newInstance();
+			new PlugInFilterRunner(thePlugIn, "", arg);
+		} catch (InstantiationException | IllegalAccessException e) {
+			return false;
+		}
+		return true;
+	}
+	
+	/**
+	 * Run a {@link PlugIn} with empty argument string.
+	 * @param clazz class of the plugin
+	 * @return true if successful
+	 */
+	public static boolean runPlugIn(Class<? extends PlugIn> clazz) {
+		return runPlugIn(clazz, "");
+	}
+	
+	/**
+	 * Run a {@link PlugIn} with its class (not only its name) is already available.
+	 * 
+	 * @param clazz class of the plugin
+	 * @param arg argument string
+	 * @return true if successful
+	 */
+	public static boolean runPlugIn(Class<? extends PlugIn> clazz, String arg) {
+		try {
+			PlugIn thePlugIn = clazz.newInstance();
+			thePlugIn.run(arg);
+		} catch (InstantiationException | IllegalAccessException e) {
+			return false;
+		}
+		return true;
 	}
 
 }
