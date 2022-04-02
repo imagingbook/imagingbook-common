@@ -24,6 +24,7 @@ public class OtsuThresholder extends GlobalThresholder {
 		super();
 	}
 	
+	@Override
 	public int getThreshold(int[] hist) {
 		h = hist;
 		int K = h.length;

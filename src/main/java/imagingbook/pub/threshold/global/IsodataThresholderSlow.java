@@ -26,6 +26,7 @@ public class IsodataThresholderSlow extends GlobalThresholder {
 		super();
 	}
 
+	@Override
 	public int getThreshold(int[] h) {
 		int K = h.length;
 		int q = (int) mean(h, 0, K-1); 	// start with the total mean

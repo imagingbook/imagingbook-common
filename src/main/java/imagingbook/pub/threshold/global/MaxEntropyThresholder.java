@@ -27,6 +27,7 @@ public class MaxEntropyThresholder extends GlobalThresholder {
 		super();
 	}
 	
+	@Override
 	public int getThreshold(int[] h) {
 		int K = h.length;	
 		double[] p = normalize(h);		// normalized histogram (probabilities)

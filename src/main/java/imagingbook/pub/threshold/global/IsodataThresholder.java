@@ -28,6 +28,7 @@ public class IsodataThresholder extends GlobalThresholder {
 		super();
 	}
 
+	@Override
 	public int getThreshold(int[] h) {
 		makeMeanTables(h);
 		int K = h.length;
