@@ -52,8 +52,7 @@ public abstract class Moments2D {
 
 
 	public static void main(String[] args) {
-		
-		double s = 1.0;
+//		double s = 1.0;
 
 		List<Pnt2d> pts = new ArrayList<>();
 		pts.add(Pnt2d.from(10, 15));

@@ -34,25 +34,25 @@ public class Handle<T> {
 	
 	// ---------------------------------------------
 	
-	private static void foo(Handle<Integer> h) {
-		h.set(33);
-	}
-
-	public static void main(String[] args) {
-		Handle<Integer> a1 = Handle.of(10);
-		Handle<Integer> a2 = Handle.<Integer>of(10);
-		
-		Handle<Double> b = new Handle<>(10.0);
-		Handle<String> s = Handle.of("prima!");
-		
-		System.out.println("orig a = " + a1.get());
-		
-		// Example 1: call by reference (foo modifies the contents of a)
-		foo(a1);
-		System.out.println("modified a = " + a1.get());
-		
-
-	}
+//	private static void foo(Handle<Integer> h) {
+//		h.set(33);
+//	}
+//
+//	public static void main(String[] args) {
+//		Handle<Integer> a1 = Handle.of(10);
+//		Handle<Integer> a2 = Handle.<Integer>of(10);
+//		
+//		Handle<Double> b = new Handle<>(10.0);
+//		Handle<String> s = Handle.of("prima!");
+//		
+//		System.out.println("orig a = " + a1.get());
+//		
+//		// Example 1: call by reference (foo modifies the contents of a)
+//		foo(a1);
+//		System.out.println("modified a = " + a1.get());
+//		
+//
+//	}
 
 
 }

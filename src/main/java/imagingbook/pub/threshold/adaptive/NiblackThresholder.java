@@ -20,6 +20,9 @@ import imagingbook.pub.threshold.BackgroundMode;
 /**
  * This version of Niblack's thresholder uses a circular support region, implemented 
  * with IJ's rank-filter methods.
+ * 
+ * @author WB
+ * @version 2022/04/02
  */
 public abstract class NiblackThresholder extends AdaptiveThresholder {
 	

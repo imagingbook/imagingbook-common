@@ -14,8 +14,6 @@ import java.awt.Shape;
 import java.awt.geom.Path2D;
 import java.util.Locale;
 
-import ij.gui.Roi;
-import ij.gui.ShapeRoi;
 import imagingbook.pub.geometry.basic.Pnt2d;
 import imagingbook.pub.geometry.basic.ShapeProvider;
 import imagingbook.pub.geometry.line.AlgebraicLine;

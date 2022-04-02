@@ -12,6 +12,10 @@ package imagingbook.pub.threshold.global;
 /**
  * Thresholder as described in N. Otsu, "A threshold selection method from gray-level histograms",
  * IEEE Transactions on Systems, Man, and Cybernetics 9(1), 62-66 (1979).
+ * 
+ * @author WB
+ * @version 2022/04/02
+ * 
  */
 public class OtsuThresholder extends GlobalThresholder {
 	

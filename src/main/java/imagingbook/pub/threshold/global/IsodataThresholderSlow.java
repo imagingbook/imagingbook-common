@@ -15,10 +15,14 @@ package imagingbook.pub.threshold.global;
  * IEEE Trans. System, Man and Cybernetics, SMC-8 (August 1978) 630-632.
  * described in Glasbey/Horgan: "Image Analysis for the Biological Sciences" (Ch. 4).
  * 
- * Slow version using explicit recomputation of background and foreground means 
+ * Slow version using explicit recalculation of background and foreground means 
  * in every iteration.
+ * 
+ * @author WB
+ * @version 2022/04/02
  */
 public class IsodataThresholderSlow extends GlobalThresholder {
+	
 	
 	private int MAX_ITERATIONS = 100;
 	

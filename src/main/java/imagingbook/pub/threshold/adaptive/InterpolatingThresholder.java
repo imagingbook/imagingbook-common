@@ -19,6 +19,9 @@ import imagingbook.pub.threshold.global.OtsuThresholder;
  * sub-images, computes the optimal threshold within each sub-image 
  * (using an Otsu thresholder) and interpolates linearly between 
  * these local thresholds.
+ * 
+ * @author WB
+ * @version 2022/04/02
  */
 public class InterpolatingThresholder extends AdaptiveThresholder {
 	

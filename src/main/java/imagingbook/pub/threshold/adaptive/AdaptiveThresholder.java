@@ -13,6 +13,11 @@ import ij.process.ByteProcessor;
 import ij.process.FloatProcessor;
 import imagingbook.pub.threshold.Thresholder;
 
+/**
+ * TODO: convert to interface.
+ * @author WB
+ * @version 2022/04/02
+ */
 public abstract class AdaptiveThresholder extends Thresholder {
 	
 	public abstract ByteProcessor getThreshold(ByteProcessor bp);

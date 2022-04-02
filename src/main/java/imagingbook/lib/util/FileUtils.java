@@ -24,8 +24,6 @@ import javax.swing.JFileChooser;
 import javax.swing.LookAndFeel;
 import javax.swing.UIManager;
 
-import ij.plugin.PlugIn;
-
 
 /**
  * This class defines various static methods for managing

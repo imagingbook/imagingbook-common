@@ -13,13 +13,15 @@ import ij.plugin.filter.RankFilters;
 import ij.process.ByteProcessor;
 import ij.process.FloatProcessor;
 import imagingbook.lib.util.ParameterBundle;
-import imagingbook.lib.util.ParameterBundle.DialogLabel;
 import imagingbook.pub.threshold.BackgroundMode;
 
 /**
  * Adaptive thresholder as proposed in J. Sauvola and M. Pietikäinen, 
  * "Adaptive document image binarization", Pattern Recognition 33(2), 
  * 1135-1143 (2000).
+ * 
+ * @author WB
+ * @version 2022/04/02
  */
 public class SauvolaThresholder extends AdaptiveThresholder {
 	

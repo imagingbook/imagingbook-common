@@ -11,6 +11,9 @@ package imagingbook.pub.threshold.global;
 
 /**
  * Minimum Error thresholder after Kittler and Illingworth (1986).
+ * 
+ * @author WB
+ * @version 2022/04/02
  */
 public class MinErrorThresholder extends GlobalThresholder {
 	

@@ -9,6 +9,11 @@
 
 package imagingbook.pub.threshold.global;
 
+/**
+ * @author WB
+ * @version 2022/04/02
+ *
+ */
 public class QuantileThresholder extends GlobalThresholder {
 	
 	private double b = 0.5;	// quantile of expected background pixels

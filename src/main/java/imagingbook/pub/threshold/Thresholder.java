@@ -9,19 +9,26 @@
 
 package imagingbook.pub.threshold;
 
+/**
+ * 
+ * TODO: convert to interface.
+ * @author WB
+ * @version 2022/04/02
+ *
+ */
 public abstract class Thresholder {
 	
 	// compute the sum of a histogram array
 	protected int sum(int[] h) {
 		int cnt = 0;
-		for (int i=0; i<h.length; i++) {
+		for (int i = 0; i < h.length; i++) {
 			cnt += h[i];
 		}
 		return cnt;
 	}
 	
 	protected int count(int[] h) {
-		return count(h,0,h.length-1);
+		return count(h, 0, h.length - 1);
 	}
 	
 	// compute the population of a histogram from index lo...hi
@@ -40,17 +47,19 @@ public abstract class Thresholder {
 	}
 	
 	protected double mean(int[] h, int lo, int hi) {
-		if (lo < 0) lo = 0;
-		if (hi >= h.length) hi = h.length-1;
+		if (lo < 0)
+			lo = 0;
+		if (hi >= h.length)
+			hi = h.length - 1;
 		long cnt = 0;
 		long sum = 0;
-		for (int i=lo; i<=hi; i++) {
+		for (int i = lo; i <= hi; i++) {
 			cnt = cnt + h[i];
 			sum = sum + i * h[i];
 		}
 		if (cnt > 0)
-			return ((double)sum) / cnt;
-		else 
+			return ((double) sum) / cnt;
+		else
 			return 0;
 	}
 	
@@ -77,20 +86,22 @@ public abstract class Thresholder {
 	
 	// fast version
 	protected double sigma2(int[] h, int lo, int hi) {
-		if (lo < 0) lo = 0;
-		if (hi >= h.length) hi = h.length-1;
+		if (lo < 0)
+			lo = 0;
+		if (hi >= h.length)
+			hi = h.length - 1;
 		long A = 0;
 		long B = 0;
 		long N = 0;
-		for (int i=lo; i<=hi; i++) {
+		for (int i = lo; i <= hi; i++) {
 			int ni = h[i];
 			A = A + i * ni;
 			B = B + i * i * ni;
 			N = N + ni;
 		}
 		if (N > 0)
-			return ((double)B - (double)A*A / N) / N;
-		else 
+			return ((double) B - (double) A * A / N) / N;
+		else
 			return 0;
 	}
 	
@@ -110,34 +121,34 @@ public abstract class Thresholder {
 		}
 		return i;
 	}
-	
+
 	public double[] normalize(int[] h) {
 		int K = h.length;
 		int N = count(h);
 		double[] nh = new double[K];
-		for (int i=0; i<K; i++) {
+		for (int i = 0; i < K; i++) {
 			nh[i] = ((double) h[i]) / N;
 		}
 		return nh;
 	}
-	
+
 	public double[] normalize(double[] h) {
 		double[] nh = new double[h.length];
 		double hmax = max(h);
-		for (int i=0; i<h.length; i++) {
-			nh[i] =  (double) h[i] / hmax;
+		for (int i = 0; i < h.length; i++) {
+			nh[i] = (double) h[i] / hmax;
 		}
 		return nh;
 	}
-	
+
 	public double max(double[] h) {
 		double hmax = Double.NEGATIVE_INFINITY;
-		for (int i=0; i<h.length; i++) {
+		for (int i = 0; i < h.length; i++) {
 			double n = h[i];
-			if (n>hmax) hmax = n;
+			if (n > hmax)
+				hmax = n;
 		}
 		return hmax;
-	
 	}
-	
+
 }

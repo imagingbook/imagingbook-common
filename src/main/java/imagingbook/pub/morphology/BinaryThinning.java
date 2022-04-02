@@ -336,6 +336,7 @@ public class BinaryThinning implements BinaryMorphologyOperator {
 		return n;
 	}
 	
+	@SuppressWarnings("unused")
 	private void get8Neighborhood(ByteProcessor I, int u, int v, byte[] NH) {
 		NH[0] =  binarize(I.getPixel(u+1, v));
 		NH[1] =  binarize(I.getPixel(u+1, v-1));
@@ -347,6 +348,7 @@ public class BinaryThinning implements BinaryMorphologyOperator {
 		NH[7] =  binarize(I.getPixel(u+1, v+1));
 	}
 	
+	@SuppressWarnings("unused")
 	private int get8NeighborhoodIndex(byte[] NH) {
 //		int c = 0;
 //		for (int i = 0; i < 8; i++) {
@@ -376,6 +378,7 @@ public class BinaryThinning implements BinaryMorphologyOperator {
 	// --------------------------------------------------------------
 	
 	// only used once to calculate Q
+	@SuppressWarnings("unused")
 	private static boolean[][] makeDeletionCodeTable() {
 		boolean[][] Q = new boolean[256][2];
 		for (int i = 0; i < 256; i++) {

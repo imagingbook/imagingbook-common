@@ -12,6 +12,12 @@ package imagingbook.pub.threshold.global;
 import ij.process.ByteProcessor;
 import imagingbook.pub.threshold.Thresholder;
 
+/**
+ * TODO: convert to interface.
+ * @author WB
+ * @version 2022/04/02
+ *
+ */
 public abstract class GlobalThresholder extends Thresholder {
 	
 	// must be implemented by concrete subclasses

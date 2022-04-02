@@ -58,6 +58,7 @@ public class ChamferMatcher {
 		return q;
 	}  	
 
+	@SuppressWarnings("unused")
 	private float getMatchScore(int[][] R, int r, int s) {
 		float q = 0.0f;
 		for (int i = 0; i < R.length; i++) {

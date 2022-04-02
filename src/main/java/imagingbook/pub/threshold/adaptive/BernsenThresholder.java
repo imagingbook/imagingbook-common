@@ -17,6 +17,9 @@ import imagingbook.pub.threshold.BackgroundMode;
 /**
  * This implementation of Bernsen's thresholder uses a circular support region,
  * implemented with ImageJ's built-in rank-filter methods.
+ * 
+ * @author WB
+ * @version 2022/04/02
  */
 public class BernsenThresholder extends AdaptiveThresholder {
 	

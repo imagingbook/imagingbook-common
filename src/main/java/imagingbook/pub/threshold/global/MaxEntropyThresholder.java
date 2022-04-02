@@ -11,6 +11,9 @@ package imagingbook.pub.threshold.global;
 
 /**
  * Maximum entropy thresholder modeled after Kapur et al. (1985).
+ * 
+ * @author WB
+ * @version 2022/04/02
  */
 public class MaxEntropyThresholder extends GlobalThresholder {
 	

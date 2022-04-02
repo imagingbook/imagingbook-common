@@ -16,6 +16,9 @@ package imagingbook.pub.threshold.global;
  * described in Glasbey/Horgan: "Image Analysis for the Biological Sciences" (Ch. 4).
  * 
  * Fast version using tables of background and foreground means.
+ * 
+ * @author WB
+ * @version 2022/04/02
  */
 public class IsodataThresholder extends GlobalThresholder {
 	
