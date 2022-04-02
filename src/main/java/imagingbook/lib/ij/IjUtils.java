@@ -535,9 +535,9 @@ public abstract class IjUtils {
 	 */
 	public static boolean runPlugInFilter(Class<? extends PlugInFilter> clazz, String arg) {
 		try {
-			PlugInFilter thePlugIn = clazz.newInstance();
+			PlugInFilter thePlugIn = clazz.getDeclaredConstructor().newInstance(); //clazz.newInstance();
 			new PlugInFilterRunner(thePlugIn, "", arg);
-		} catch (InstantiationException | IllegalAccessException e) {
+		} catch (Exception e) {
 			return false;
 		}
 		return true;
@@ -561,9 +561,9 @@ public abstract class IjUtils {
 	 */
 	public static boolean runPlugIn(Class<? extends PlugIn> clazz, String arg) {
 		try {
-			PlugIn thePlugIn = clazz.newInstance();
+			PlugIn thePlugIn = clazz.getDeclaredConstructor().newInstance(); //clazz.newInstance();
 			thePlugIn.run(arg);
-		} catch (InstantiationException | IllegalAccessException e) {
+		} catch (Exception e) {
 			return false;
 		}
 		return true;

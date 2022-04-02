@@ -200,8 +200,8 @@ public interface Choices {
 	public static <E> E getInstance(Class<? extends E> choiceClass) { 
 		E instance = null;
 		try {
-			instance = choiceClass.newInstance();
-		} catch (InstantiationException | IllegalAccessException e) {
+			instance = choiceClass.getDeclaredConstructor().newInstance(); //choiceClass.newInstance();
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return instance;
