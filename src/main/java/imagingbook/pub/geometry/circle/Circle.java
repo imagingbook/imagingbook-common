@@ -1,6 +1,6 @@
 package imagingbook.pub.geometry.circle;
 
-public interface Circle {
+public interface Circle {	// TODO: add extends ShapeProvider
 	
 	public double[] getParameters();
 

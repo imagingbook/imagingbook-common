@@ -10,20 +10,19 @@ import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Path2D;
-import java.awt.geom.Rectangle2D;
 import java.util.Locale;
 
-import ij.gui.ShapeRoi;
 import imagingbook.lib.math.Arithmetic;
 import imagingbook.lib.settings.PrintPrecision;
 import imagingbook.pub.geometry.basic.Pnt2d;
+import imagingbook.pub.geometry.basic.ShapeProvider;
 
 /**
  * Represents an ellipse shape with arbitrary orientation.
  * @author WB
  *
  */
-public class GeometricEllipse implements Ellipse {
+public class GeometricEllipse implements Ellipse, ShapeProvider {
 	
 	public final double ra, rb, xc, yc, theta;
 	private final OrthogonalEllipseProjector projector;
@@ -132,10 +131,8 @@ public class GeometricEllipse implements Ellipse {
 	public GeometricEllipse disturb(double dra, double drb, double dxc, double dyc, double dtheta) {
 		return new GeometricEllipse(ra + dra, rb + drb, xc + dxc, yc + dyc, theta + dtheta);
 	}
-	
 		
 	// ---------------------------------------------------------------------------------
-	
 
     /**
 	 * Returns the mean squared error between this ellipse 
@@ -160,9 +157,23 @@ public class GeometricEllipse implements Ellipse {
 		return p.distanceSq(getClosestPoint(p));
 	}
 	
-	
 	// ------------------------------------------------------------------------------------------
 	
+	@Override
+	public Shape getShape(double scale) {
+		return this.getOuterShape();
+	}
+	
+	@Override
+	public Shape[] getShapes(double scale) {
+		return new Shape[] {
+				getOuterShape(),
+				getCenterShape(scale),
+				getAxisShape()
+		};
+	}
+	
+	@Deprecated	// TODO: should be private
 	public Shape getOuterShape() {
 		Ellipse2D oval = new Ellipse2D.Double(-ra, -rb, 2 * ra, 2 * rb);
 		AffineTransform trans = new AffineTransform();
@@ -171,8 +182,9 @@ public class GeometricEllipse implements Ellipse {
 		return trans.createTransformedShape(oval);
 	}
 	
+	@Deprecated	// TODO: should be private
 	public Shape getCenterShape(double radius) {
-		double dxa = 2 * radius * cos(theta);
+		double dxa = 2 * radius * cos(theta);	// major axis is drawn longer
 		double dya = 2 * radius * sin(theta);
 		double dxb = 1 * radius * cos(theta + PI/2);
 		double dyb = 1 * radius * sin(theta + PI/2);
@@ -188,6 +200,7 @@ public class GeometricEllipse implements Ellipse {
 		return path;
 	}
 	
+	@Deprecated	// TODO: should be private
 	public Shape getAxisShape() {
 		double dxa = ra * cos(theta);
 		double dya = ra * sin(theta);
@@ -201,24 +214,12 @@ public class GeometricEllipse implements Ellipse {
 		return path;
 	}
 	
+	@Deprecated
 	public Pnt2d getLeftAxisPoint() {
 		return Pnt2d.from(xc - ra * cos(theta), yc - ra * sin(theta));
 	}
 	
-	@Deprecated
-	public ShapeRoi getRoi() {
-		return getRoi(true);
-	}
-	
-	@Deprecated
-	public ShapeRoi getRoi(boolean autoOffset) {
-		ShapeRoi roi =  new ShapeRoi(getOuterShape());
-		Rectangle2D rect = roi.getFloatBounds();
-		// correct 0.5 pixel offset:
-		double offset = (autoOffset) ? 0.5 : 0.0;
-		roi.setLocation(rect.getX() + offset, rect.getY() + offset);
-		return roi;
-	}
+	// -------------------------------
 	
 	@Override
 	public String toString() {
