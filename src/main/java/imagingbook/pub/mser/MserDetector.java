@@ -5,27 +5,50 @@ import java.util.LinkedList;
 import java.util.List;
 
 import ij.process.ByteProcessor;
+import imagingbook.lib.util.ParameterBundle;
 import imagingbook.pub.mser.components.Component;
 import imagingbook.pub.mser.components.ComponentTree;
 import imagingbook.pub.mser.components.ComponentTree.Method;
 import imagingbook.pub.mser.components.PixelMap.Pixel;
 
 /**
- * Performs MSER detection on gray-level images. 
+ * Performs MSER detection on gray-level images.
+ * TODO: add JavaDoc
+ * 
  * @author WB
  */
 public class MserDetector {
 
-	public static class Parameters {
+	public static class Parameters implements ParameterBundle {
+		
+		@DialogLabel("Component tree method")
 		public Method method = Method.LinearTime;
+		
+		@DialogLabel("Delta")
 		public int delta = 5;							// = \Delta
+		
+		@DialogLabel("Min component size (pixels)")
 		public int minAbsComponentArea = 3;
+		
+		@DialogLabel("Min rel. component size")
 		public double minRelCompSize = 0.0001;		// = \alpha_{\min}
+		
+		@DialogLabel("Max rel. component size")
 		public double maxRelCompSize = 0.25;		// = \alpha_{\max}
+		
+		@DialogLabel("Max component size variation")
 		public double maxSizeVariation = 0.25;
+		
+		@DialogLabel("Min component diversity")
 		public double minDiversity = 0.50;
+		
+		@DialogLabel("Constrain ellipse size")
 		public boolean constrainEllipseSize = true;
-		public double minCompactness = 0.2;		
+		
+		@DialogLabel("Min region compactness")
+		public double minCompactness = 0.2;
+		
+		@DialogLabel("Validate component tree")@DialogHide
 		public boolean validateComponentTree = false;
 	}
 
