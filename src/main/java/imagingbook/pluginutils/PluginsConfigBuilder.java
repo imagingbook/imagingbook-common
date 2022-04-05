@@ -15,8 +15,8 @@ import java.util.stream.Stream;
 import ij.plugin.PlugIn;
 import ij.plugin.filter.PlugInFilter;
 import imagingbook.lib.util.FileUtils;
-import imagingbook.pluginutils.annotations.IjMenuEntry;
-import imagingbook.pluginutils.annotations.IjMenuPath;
+import imagingbook.pluginutils.annotations.IjPluginName;
+import imagingbook.pluginutils.annotations.IjPluginPath;
 
 /**
  * <p>
@@ -31,14 +31,16 @@ import imagingbook.pluginutils.annotations.IjMenuPath;
  * The format of the entries in {@code plugins.config} have the following structure:
  * </p>
  * <pre>
- * Plugins, "Plugin Name", package.classname
- * Plugins&gt;Level1&gt;Level2, "Plugin Name", package.classname</pre>
+ * menu-level, "plugin-name", package.classname</pre>
+ * for example:
+ * <pre>
+ * Plugins&gt;Binary&gt;Regions, "Convex Hull Demo", Binary_Regions.Convex_Hull_Demo</pre>
  * <p>Note that, technically, menu paths may be more than 2 levels deep, but this 
  * does not seem useful.
  * </p>
  * <p>
  * Plugin classes (implementing {@link PlugIn} or {@link PlugInFilter}) may be annotated
- * with {@link IjMenuPath} and {@link IjMenuEntry} to specify where in ImageJ's menu tree
+ * with {@link IjPluginPath} and {@link IjPluginName} to specify where in ImageJ's menu tree
  * and by which name the plugin should be installed.
  * This information is stored in the {@code plugins.config} file at the root of the associated project,
  * which is automatically added to the project's output JAR file during the Maven build.
@@ -47,11 +49,11 @@ import imagingbook.pluginutils.annotations.IjMenuPath;
  * <pre>
  * // file MySuperPlugin.java
  * import ij.plugin.filter.PlugInFilter;
- * import imagingbook.pluginutils.annotations.IjMenuEntry;
- * import imagingbook.pluginutils.annotations.IjMenuPath;
+ * import imagingbook.pluginutils.annotations.IjPluginName;
+ * import imagingbook.pluginutils.annotations.IjPluginPath;
  * ...
- * {@literal @}IjMenuPath("Plugins&gt;Mine")
- * {@literal @}IjMenuEntry("Super Plugin")
+ * {@literal @}IjPluginPath("Plugins&gt;Mine")
+ * {@literal @}IjPluginName("Super Plugin")
  * public class MySuperPlugin implements PlugInFilter {
  * 	// plugin code ...
  * }</pre>
@@ -62,32 +64,32 @@ import imagingbook.pluginutils.annotations.IjMenuPath;
  * By default (i.e., if no annotations are present), plugins in the default package are installed at the
  * top-level of 'Plugins' whereas plugins inside a named package are  installed 
  * in 'Plugins&gt;<em>package-name</em>' (see below).
- * A {@link IjMenuPath} annotation may also be attached to a whole package
+ * A {@link IjPluginPath} annotation may also be attached to a whole package
  * in the associated {@code package-info.java} file. The following
  * example specifies {@code Plugins>Binary Regions} as the default menu path
  * for all plugins in package {@code Binary_Regions}:
  * </p>
  * <pre>
  * // file Binary_Regions/package-info.java
- * {@literal @}IjMenuPath("Plugins&gt;Binary Regions")
+ * {@literal @}IjPluginPath("Plugins&gt;Binary Regions")
  * package Binary_Regions;
- * import imagingbook.pluginutils.annotations.IjMenuPath;</pre>
+ * import imagingbook.pluginutils.annotations.IjPluginPath;</pre>
  * <p>
  * Individual plugins may override the menu path specified for the containing package, as summarized below:
  * <p>
- * <strong>Plugin <em>path</em> priority rules:</strong>
+ * <strong>Plugin <em>path</em> priority rules summary:</strong>
  * </p>
  * <ol>
- * <li> Value of {@link IjMenuPath} annotation at class level (always overrules if exists).</li>
- * <li> Value of {@link IjMenuPath} annotation at package level (if exists).</li>
- * <li> 'Plugins&gt;<em>package-name</em>' if the plugin is inside a named package.</li>
- * <li> 'Plugins' if the plugin is in the (unnamed) default package.</li>
+ * <li> Value of a {@code @IjPluginPath} annotation at class level (always overrules if exists).</li>
+ * <li> Value of a {@code @IjPluginPath} annotation at package level (if exists).</li>
+ * <li> {@link #DefaultMenuPath} + {@literal ">"} + <em>package-name</em> if the plugin is inside a named package.</li>
+ * <li> {@link #DefaultMenuPath} if the plugin is in the (unnamed) default package.</li>
  * </ol>
  * <p>
- * <strong>Plugin <em>entry</em> priority rules:</strong>
+ * <strong>Plugin <em>entry</em> priority rules summary:</strong>
  * </p>
  * <ol>
- * <li> Value of {@link IjMenuEntry} annotation at class level (if exists).</li>
+ * <li> Value of {@link IjPluginName} annotation at class level (if exists).</li>
  * <li> Simple name of the plugin class.</li>
  * </ol>
  * <p>
@@ -95,14 +97,16 @@ import imagingbook.pluginutils.annotations.IjMenuPath;
  * only for plugins loaded from a JAR file!
  * </p>
  * 
- * @see IjMenuPath
- * @see IjMenuEntry
+ * @see IjPluginPath
+ * @see IjPluginName
  * 
  * @author WB
  */
 public class PluginsConfigBuilder {
 	
-	static String DefaultMenuPath = "Plugins";
+	static String DefaultMenuPath = "Plugins";	// can be overridden by package or class annotation @IjPluginPath
+//	static String DefaultEntryPrefix = "B&B ";
+			
 	static String ConfigFileName = "plugins.config";
 	static String INFO = "[INFO] ";
 	
@@ -114,6 +118,11 @@ public class PluginsConfigBuilder {
 	private final String artifactId;
 	private final String rootPath;
 	
+	/**
+	 * Constructor (private), only called from the main() method.
+	 * @param rootName the project's root (output) directory
+	 * @param artifactId the project's Maven artifact id 
+	 */
 	private PluginsConfigBuilder(String rootName, String artifactId) {
 		this.artifactId = artifactId;		
 		File rootDir = (rootName != null) ?
@@ -180,20 +189,20 @@ public class PluginsConfigBuilder {
 			if (pkg != null) {
 				// see if 'package-info.java' contains specifies a menu path for this package
 				// TODO: warn if package nesting is deeper than 1
-				IjMenuPath packageMenuPathAnn = pkg.getDeclaredAnnotation(IjMenuPath.class);
+				IjPluginPath packageMenuPathAnn = pkg.getDeclaredAnnotation(IjPluginPath.class);
 				String pkgName = (ReplaceUndescoresInPackageNames) ? 
 						pkg.getName().replace('_', ' ') : pkg.getName();
 				menuPath = (packageMenuPathAnn != null) ? 
 						packageMenuPathAnn.value() : DefaultMenuPath + ">" + pkgName;
 			}
 			// see if clazz specifies a menu path for this package (overrules package specification)
-			IjMenuPath classMenuPathAnn = clazz.getDeclaredAnnotation(IjMenuPath.class);
+			IjPluginPath classMenuPathAnn = clazz.getDeclaredAnnotation(IjPluginPath.class);
 			if (classMenuPathAnn != null) {
 				menuPath = classMenuPathAnn.value(); 	
 			}
 			
 			// configure menu entry:
-			IjMenuEntry classMenuEntryAnn = clazz.getDeclaredAnnotation(IjMenuEntry.class);
+			IjPluginName classMenuEntryAnn = clazz.getDeclaredAnnotation(IjPluginName.class);
 			String className = (ReplaceUndescoresInClassNames) ?
 					clazz.getSimpleName().replace('_', ' ') : clazz.getSimpleName();
 			String menuEntry = (classMenuEntryAnn != null) ? classMenuEntryAnn.value() : className;
@@ -246,12 +255,18 @@ public class PluginsConfigBuilder {
 	// ----------------------------------------------------------------------------------------------
 	
 	/**
+	 * <p>
 	 * Method to be called from the command line. Builds the {@code plugins.config} file
 	 * from the {@code .class} files found in the specified build directory and
 	 * stores the file in the same directory.
-	 * Both arguments are optional.
+	 * Takes two (optional) arguments:
+	 * </p>
+	 * <ol> 
+	 * <li>The project's build (output) directory (where .class files reside).</li>
+	 * <li> The project's Maven artifact id.</li>
+	 * </ol>
 	 * If no build directory is specified, the current directory is used.
-	 * @param args {@code args[0]}: project build directory, {@code args[1]}: project artefact id
+	 * @param args {@code args[0]}: project build (output) directory, {@code args[1]}: project artefact id
 	 */
 	public static void main(String[] args) {
 		String rootName   = (args.length > 0) ? args[0] : null;
@@ -261,6 +276,7 @@ public class PluginsConfigBuilder {
 		
 		PluginsConfigBuilder builder = new PluginsConfigBuilder(rootName, artifactId);
 		String configPath = builder.buildfile();
+		
 		if (configPath != null) {
 			System.out.println(INFO + "Config file written: " + configPath);
 		}
