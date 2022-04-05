@@ -26,6 +26,6 @@ import java.lang.annotation.Target;
  */
 @Retention(RUNTIME)
 @Target({ TYPE, PACKAGE })
-public @interface IjMenuPath {
+public @interface IjPluginPath {
 	public String value();
 }

@@ -18,6 +18,6 @@ import java.lang.annotation.Target;
  */
 @Retention(RUNTIME)
 @Target(TYPE)
-public @interface IjMenuEntry {
+public @interface IjPluginName {
 	public String value();
 }
