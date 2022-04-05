@@ -48,6 +48,9 @@ public interface ParameterBundle {
 
 	default void printToStream(PrintStream strm) {
 		Class<? extends ParameterBundle> clazz = this.getClass();
+		if (!Modifier.isPublic(clazz.getModifiers())) {
+			strm.print("[WARNING] class " + clazz.getSimpleName() + " should be declared public or protected!\n");
+		}
 		Field[] fields = clazz.getFields();		// gets only public fields
 //		strm.println(clazz.getCanonicalName());
 		for (Field field : fields) {
@@ -58,7 +61,9 @@ public interface ParameterBundle {
 			strm.print(field.getName() + " = ");
 			try {
 				strm.print(field.get(this).toString());
-			} catch (IllegalArgumentException | IllegalAccessException e) {	}	
+			} catch (IllegalArgumentException | IllegalAccessException e) {	
+				strm.print("FIELD VALUE UNREADABLE!");
+			}	
 			strm.println();
 //			int modifiers = field.getModifiers();
 //			strm.println("Field is public = " + Modifier.isPublic(modifiers));
@@ -128,7 +133,9 @@ public interface ParameterBundle {
 			}
 			try {
 				addFieldToDialog(f, gd);
-			} catch (IllegalArgumentException | IllegalAccessException e) {	}
+			} catch (IllegalArgumentException | IllegalAccessException e) {
+				throw new RuntimeException(e.getMessage());	// TODO: refine exception handling!
+			}
 		}
 	}
 	
@@ -144,7 +151,9 @@ public interface ParameterBundle {
 				if (!getFieldFromDialog(f, gd)) {
 					errorCount++;
 				}
-			} catch (IllegalArgumentException | IllegalAccessException e) {	}
+			} catch (IllegalArgumentException | IllegalAccessException e) {	
+				throw new RuntimeException(e.getMessage()); // TODO: refine exception handling!
+			}
 		}
 		return (errorCount == 0);
 	}
@@ -159,7 +168,7 @@ public interface ParameterBundle {
 			clazz == String.class || clazz.isEnum())
 			return true;
 		else
-			return true;
+			return false;
 	}
 	
 	static void printModifiers(Field f) {
