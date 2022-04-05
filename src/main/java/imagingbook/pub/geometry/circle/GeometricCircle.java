@@ -15,9 +15,10 @@ import ij.gui.Roi;
 import ij.gui.ShapeRoi;
 import imagingbook.lib.math.Arithmetic;
 import imagingbook.pub.geometry.basic.Pnt2d;
+import imagingbook.pub.geometry.basic.ShapeProvider;
 
 
-public class GeometricCircle implements Circle {
+public class GeometricCircle implements Circle, ShapeProvider {
 	
 	static int DefaultSteps = 200;
 	
@@ -347,6 +348,16 @@ public class GeometricCircle implements Circle {
 		return new Arc2D.Double(xc - r, yc - r, 2 * r, 2 * r, 0, 360, Arc2D.OPEN);
 	}
 	
+	@Override
+	public Shape getShape(double scale) {
+		return getOuterShape() ;
+	}
+	
+	@Override
+	public Shape[] getShapes(double scale) {
+		return new Shape[] {getOuterShape(), getCenterShape(scale)};
+	}
+	
 	// ---------------------------------------------------------------------------------
 	
 	@Deprecated
@@ -375,5 +386,7 @@ public class GeometricCircle implements Circle {
 		System.out.println("cg = " + cg);
 		// cg = GeometricCircle [xc=0.769231, yc=-1.923077, r=1.876356]
 	}
+
+
 
 }

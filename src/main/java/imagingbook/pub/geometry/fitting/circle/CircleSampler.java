@@ -22,13 +22,10 @@ public class CircleSampler {
 	 * Generate coordinates of a circular arc using Gaussian noise.
 	 * x/y positions are disturbed by additive Gaussian noise.
 	 *
-	 * @param xc         x-center
-	 * @param yc         y-center
-	 * @param r          circle radius
-	 * @param startAngle initial angle
-	 * @param endAngle   final angle
 	 * @param n          number of points
-	 * @param noise      Add noise of intensity 'noise'
+	 * @param startAngle initial angle (radians)
+	 * @param endAngle   final angle (radians)
+	 * @param sigma      Add noise of intensity 'noise'
 	 *
 	 * @return
 	 */

@@ -35,21 +35,22 @@ public class CircleFitHyper extends CircleFitAlgebraic {
 		}
 		
 		double[][] Xa = new double[n][];
-		double xx = 0;
-		double yy = 0;
-		double zz = 0;	// mean of z_i
+		double xSum = 0;
+		double ySum = 0;
+		double zSum = 0;
 		for (int i = 0; i < n; i++) {
 			double x = pts[i].getX();
 			double y = pts[i].getY();
 			double z = sqr(x) + sqr(y);
 			Xa[i] = new double[] {z, x, y, 1};
-			xx = xx + x;
-			yy = yy + y;
-			zz = zz + z;
+			xSum = xSum + x;
+			ySum = ySum + y;
+			zSum = zSum + z;
 		}
-		xx = xx / n;	// mean of x_i
-		yy = yy / n;	// mean of y_i
-		zz = zz / n;	// mean of z_i
+		
+		double xMean = xSum / n;	// mean of x_i
+		double yMean = ySum / n;	// mean of y_i
+		double zMean = zSum / n;	// mean of z_i
 
 		RealMatrix X = MatrixUtils.createRealMatrix(Xa);
 		SingularValueDecomposition svd = new SingularValueDecomposition(X);
@@ -75,9 +76,9 @@ public class CircleFitHyper extends CircleFitAlgebraic {
 //			IJ.log("Hyper fitter: non-singular");
 						
 			RealMatrix N = MatrixUtils.createRealMatrix(new double[][]
-					{{ 8 * zz, 4 * xx, 4 * yy, 2 },
-					 { 4 * xx,    1  ,   0   , 0 },
-					 { 4 * yy,    0  ,   1   , 0 },
+					{{ 8 * zMean, 4 * xMean, 4 * yMean, 2 },
+					 { 4 * xMean,    1  ,   0   , 0 },
+					 { 4 * yMean,    0  ,   1   , 0 },
 					 {   2   ,    0  ,   0   , 0 }});
 //			IJ.log("N = \n" + Matrix.toString(N.getData()));
 			
