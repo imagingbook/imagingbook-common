@@ -164,8 +164,20 @@ public class ShapeOverlayAdapter {
 		overlay.add(shapeToRoi(s, this.stroke));
 	}
 	
+	public void addShapes(Shape[] shapes) {
+		for (Shape s : shapes) {
+			overlay.add(shapeToRoi(s, this.stroke));
+		}
+	}
+	
 	public void addShape(Shape s, ColoredStroke stroke) {
 		overlay.add(shapeToRoi(s, stroke));
+	}
+	
+	public void addShapes(Shape[] shapes, ColoredStroke stroke) {
+		for (Shape s : shapes) {
+			overlay.add(shapeToRoi(s, stroke));
+		}
 	}
 	
 	// TODO: check font/color settings
