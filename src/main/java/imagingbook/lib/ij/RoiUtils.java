@@ -3,7 +3,6 @@ package imagingbook.lib.ij;
 import java.awt.Polygon;
 
 import ij.gui.OvalRoi;
-import ij.gui.Overlay;
 import ij.gui.PointRoi;
 import ij.gui.PolygonRoi;
 import ij.gui.Roi;
@@ -30,7 +29,7 @@ public class RoiUtils {
 	 * @param roi the ROI
 	 * @return the ROI's polygon coordinates
 	 */
-	public static Pnt2d[] getPolygonPointsInts(Roi roi) {
+	public static Pnt2d[] getPolygonPointsInt(Roi roi) {
 		Polygon pgn = roi.getPolygon();
 		Pnt2d[] pts = new Pnt2d[pgn.npoints];
 		for (int i = 0; i < pgn.npoints; i++) {
@@ -57,22 +56,6 @@ public class RoiUtils {
 			pts[i] = Pnt2d.PntDouble.from(pgn.xpoints[i], pgn.ypoints[i]);
 		}
 		return pts;
-	}
-	
-	/**
-	 * Returns a new overlay produced by joining two existing
-	 * overlays, which remain unchanged. All involved ROIs are cloned.
-	 * 
-	 * @param olyA the first overlay
-	 * @param olyB the second overlay
-	 * @return the new overlay
-	 */
-	public static Overlay join(Overlay olyA, Overlay olyB) {
-		Overlay oly = olyA.duplicate();
-		for (Roi roi : olyB) {
-			oly.add((Roi)roi.clone());
-		}
-		return oly;
 	}
 	
 }
