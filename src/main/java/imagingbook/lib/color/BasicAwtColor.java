@@ -1,6 +1,8 @@
 package imagingbook.lib.color;
 
 import java.awt.Color;
+import java.util.EnumSet;
+import java.util.Iterator;
 
 /**
  * Enum-types for the pre-defined AWT colors.
@@ -8,7 +10,7 @@ import java.awt.Color;
  * @author WB
  *
  */
-public enum BasicAwtColor implements ColorEnumeration {
+public enum BasicAwtColor implements ColorEnumeration<BasicAwtColor> {
 	Black(Color.black),
 	Blue(Color.blue),
 	Cyan(Color.cyan),
@@ -38,4 +40,8 @@ public enum BasicAwtColor implements ColorEnumeration {
 		return this.color;
 	}
 
+	@Override
+	public Iterator<BasicAwtColor> getIterator() {
+		return EnumSet.allOf(BasicAwtColor.class).iterator();
+	}
 }

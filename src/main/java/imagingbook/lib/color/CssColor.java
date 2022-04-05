@@ -10,9 +10,12 @@
 package imagingbook.lib.color;
 
 import java.awt.*;
+import java.util.EnumSet;
+import java.util.Iterator;
+import java.util.Set;
 
 // see http://davidbau.com/colors/
-public enum CssColor implements ColorEnumeration {
+public enum CssColor implements ColorEnumeration<CssColor> {
 	AliceBlue(0xF0, 0xF8, 0xFF),
 	AntiqueWhite(0xFA, 0xEB, 0xD7),
 	Aqua(0x00, 0xFF, 0xFF),
@@ -202,4 +205,27 @@ public enum CssColor implements ColorEnumeration {
 					//OliveDrab,
 					DarkCyan
 					);
+
+	@Override
+	public Iterator<CssColor> getIterator() {
+		return EnumSet.allOf(CssColor.class).iterator();
+	}
+	
+	// ----------------------------------------------------------
+	
+	public static void main(String[] args) {
+		
+		Set<CssColor> colorSet = EnumSet.allOf(CssColor.class);
+//		for (CssColor c : colorSet) {
+//			System.out.println(c.toString());
+//		}
+		
+		
+		Iterator<CssColor> iterator = colorSet.iterator();
+		while (iterator.hasNext()) {
+			System.out.println(iterator.next().toString());
+		}
+		
+		
+	}
 }
