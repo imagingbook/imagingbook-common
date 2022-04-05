@@ -10,6 +10,7 @@
 package imagingbook.lib.ij;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.LinkedList;
@@ -30,6 +31,8 @@ import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
 import ij.process.ShortProcessor;
 import imagingbook.lib.util.bits.BitMap;
+import imagingbook.pub.geometry.basic.Pnt2d;
+import imagingbook.pub.geometry.basic.Pnt2d.PntInt;
 
 
 /**
@@ -439,6 +442,30 @@ public abstract class IjUtils {
 		
 		return flat;
 	}
+	
+	/**
+	 * Collects all image coordinates with non-zero pixel values into an array
+	 * of 2D points ({@link Pnt2d}).
+	 * 
+	 * @param ip an image (of any type)
+	 * @return an array of 2D points
+	 */
+	public static Pnt2d[] collectPoints(ImageProcessor ip) {
+		List<Pnt2d> points = new ArrayList<>();
+		int M = ip.getWidth();
+		int N = ip.getHeight();
+		for (int v = 0; v < N; v++) {
+			for (int u = 0; u < M; u++) {
+				int val = 0x007FFFFF & ip.get(u, v); // = mantissa in case of float
+				if (val != 0) {
+					points.add(PntInt.from(u, v));
+				}
+			}
+		}
+		return points.toArray(new Pnt2d[0]);
+	}
+	
+	// -----------------------------------------------------------------
 	
 	public static final double DefaultMatchTolerance = 1E-6;
 	
