@@ -1,4 +1,4 @@
-package imagingbook.lib.color;
+package imagingbook.lib.color.sets;
 
 import java.awt.Color;
 

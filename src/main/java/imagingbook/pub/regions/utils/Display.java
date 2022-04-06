@@ -3,7 +3,7 @@ package imagingbook.pub.regions.utils;
 import ij.process.ColorProcessor;
 import ij.process.ImageProcessor;
 import ij.process.ShortProcessor;
-import imagingbook.lib.color.RandomColorGenerator;
+import imagingbook.lib.color.iterate.RandomHueGenerator;
 import imagingbook.pub.regions.segment.BinaryRegionSegmentation;
 
 public abstract class Display {
@@ -23,10 +23,10 @@ public abstract class Display {
 		int minLabel = segmentation.getMinLabel();
 		int maxLabel = segmentation.getMaxLabel();
 		int[] colorLUT = new int[maxLabel+1];
-		RandomColorGenerator rcg = new RandomColorGenerator();
+		RandomHueGenerator rcg = new RandomHueGenerator();
 		
 		for (int i = minLabel; i <= maxLabel; i++) {
-			colorLUT[i] = rcg.nextColor().getRGB(); //makeRandomColor();
+			colorLUT[i] = rcg.next().getRGB(); //makeRandomColor();
 		}
 		
 		int width = segmentation.getWidth();

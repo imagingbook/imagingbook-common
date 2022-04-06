@@ -7,9 +7,11 @@
  * Visit http://imagingbook.com for additional details.
  *******************************************************************************/
 
-package imagingbook.lib.color;
+package imagingbook.lib.color.iterate;
 
-public class CssColorSequencer extends ColorSequencer {
+import imagingbook.lib.color.sets.CssColor;
+
+public class CssColorSequencer extends FiniteRandomColorSequencer {
 	
 	public CssColorSequencer() {
 		super(CssColor.PreferredColors);

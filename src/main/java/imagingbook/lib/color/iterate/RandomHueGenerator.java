@@ -7,7 +7,7 @@
  * Visit http://imagingbook.com for additional details.
  *******************************************************************************/
 
-package imagingbook.lib.color;
+package imagingbook.lib.color.iterate;
 
 import java.awt.Color;
 import java.util.Random;
@@ -18,28 +18,30 @@ import java.util.Random;
  * TODO: Add color type/saturation/pastel ...
  * 
  * @author WB
+ * @version 2022/04/06
  *
  */
-public class RandomColorGenerator {
+public class RandomHueGenerator implements ColorSequencer {
 	
 	private float h = 0.0f;
 	private float s = 0.9f;
 	private float b = 0.9f;
-	Random rnd; 
+	private final Random rnd; 
 
-	public RandomColorGenerator() {
+	public RandomHueGenerator() {
 		rnd = new Random();
 	}
 	
-	public RandomColorGenerator(int seed) {
+	public RandomHueGenerator(long seed) {
 		rnd = new Random(seed);
 	}
 	
-	public Color nextColor() {
+	@Override
+	public Color next() {
 		//h = (h + 0.8f + 0.3f * (float)rnd.nextGaussian()) % 1.0f;
 		//h = (float) (h + rnd.nextGaussian()) % 1.0f;
 		h = (h + 0.1f + 0.8f * rnd.nextFloat()) % 1.0f;
 		return Color.getHSBColor(h, s, b); 
 	}
-	
+
 }
