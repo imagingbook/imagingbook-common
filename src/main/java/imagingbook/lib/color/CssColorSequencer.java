@@ -9,25 +9,10 @@
 
 package imagingbook.lib.color;
 
-import java.awt.Color;
-
-public class CssColorSequencer {
-	
-	private int nextColorIndex = 0;
-	
-	static Color[] ColorSet = CssColor.PreferredColors;
+public class CssColorSequencer extends ColorSequencer {
 	
 	public CssColorSequencer() {
-	}
-	
-	public CssColorSequencer(int firstIndex) {
-		nextColorIndex = firstIndex % ColorSet.length;
-	}
-	
-	public Color nextColor() {
-		Color c = ColorSet[nextColorIndex];
-		nextColorIndex = (nextColorIndex + 1) % ColorSet.length;
-		return c;
+		super(CssColor.PreferredColors);
 	}
 	
 }

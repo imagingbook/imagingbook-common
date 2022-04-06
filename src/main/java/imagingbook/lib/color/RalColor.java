@@ -9,9 +9,8 @@
 
 package imagingbook.lib.color;
 
-import java.awt.*;
-import java.util.EnumSet;
-import java.util.Iterator;
+import java.awt.Color;
+
 
 // Experimental!
 // from https://gist.github.com/lunohodov/1995178 CORRECT??
@@ -19,7 +18,7 @@ import java.util.Iterator;
 // different to: https://www.ralcolorchart.com/ral-classic
 //    https://en.wikipedia.org/wiki/List_of_RAL_colors
 //    https://abes-online.com/en/colors/
-public enum RalColor implements ColorEnumeration<RalColor> {
+public enum RalColor implements ColorEnumeration {
 	RAL1000(0xBEBD7F, "Green beige"),
 	RAL1001(0xC2B078, "Beige"),
 	RAL1002(0xC6A664, "Sand yellow"),
@@ -291,8 +290,4 @@ public enum RalColor implements ColorEnumeration<RalColor> {
 					RAL8004
 					);
 	
-	@Override
-	public Iterator<RalColor> getIterator() {
-		return EnumSet.allOf(RalColor.class).iterator();
-	}
 }
