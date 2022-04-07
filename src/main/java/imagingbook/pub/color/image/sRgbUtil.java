@@ -9,6 +9,9 @@
 
 package imagingbook.pub.color.image;
 
+import java.util.Locale;
+import java.util.Random;
+
 /**
  * This is a utility class with static methods for gamma correction
  * used by LabColorSpace and LuvColorSpace color spaces.
@@ -19,19 +22,31 @@ package imagingbook.pub.color.image;
 public abstract class sRgbUtil {
 	
 	// specs according to official sRGB standard:
-	static final double s = 12.92;
-	static final double a0 = 0.0031308;
-	static final double b0 = s * a0;	// 0.040449936
-	static final double d = 0.055;
-	static final double gamma = 2.4;
+	private static final double s = 12.92;
+	private static final double a0 = 0.0031308;
+	private static final double b0 = s * a0;	// 0.040449936
+	private static final double d = 0.055;
+	private static final double gamma = 2.4;
 	
-    public static double gammaFwd(double lc) {	// input: linear RGB component value in [0,1]
+	/**
+	 * Forward Gamma correction (from linear to non-linear component values) for sRGB.
+	 * 
+	 * @param lc linear component value in [0,1]
+	 * @return gamma-corrected (non-linear) component value
+	 */
+    public static double gammaFwd(double lc) {
 		return (lc <= a0) ?
 			(lc * s) :
 			((1 + d) * Math.pow(lc, 1 / gamma) - d);
     }
     
-    public static double gammaInv(double nc) {	// input: nonlinear sRGB component value in [0,1]
+    /**
+	 * Inverse Gamma correction (from non-linear to linear component values) for sRGB.
+	 * 
+	 * @param nc non-linear (Gamma-corrected) component value in [0,1]
+	 * @return linear component value
+	 */
+    public static double gammaInv(double nc) {
     	return (nc <= b0) ?
     		(nc / s) :
 			Math.pow((nc + d) / (1 + d), gamma);
@@ -51,12 +66,14 @@ public abstract class sRgbUtil {
 		return new float[] { sR, sG, sB };
 	}
     
-    
+    // -------------------------------------------------------------------------
+	
 	public static void main(String[] args) {
+		Random rg = new Random();
 		for (int i = 0; i < 20; i++) {
-			double lc = Math.random();
+			double lc = rg.nextDouble();
 			double nc = gammaFwd(lc);
-			System.out.format("lc = %.8f,  nc = %.8f, check = %.8f\n", lc, nc, lc-gammaInv(nc));
+			System.out.format(Locale.US, "lc = %.8f,  nc = %.8f, check = %.8f\n", lc, nc, lc-gammaInv(nc));
 		}
 		System.out.println("" + (s * a0));
 
