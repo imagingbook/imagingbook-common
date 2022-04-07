@@ -29,7 +29,7 @@ public class RoiUtils {
 	 * @param roi the ROI
 	 * @return the ROI's polygon coordinates
 	 */
-	public static Pnt2d[] getPolygonPointsInt(Roi roi) {
+	public static Pnt2d[] getOutlinePointsInt(Roi roi) {
 		Polygon pgn = roi.getPolygon();
 		Pnt2d[] pts = new Pnt2d[pgn.npoints];
 		for (int i = 0; i < pgn.npoints; i++) {
@@ -49,13 +49,21 @@ public class RoiUtils {
 	 * @param roi the ROI
 	 * @return the ROI's polygon coordinates
 	 */
-	public static Pnt2d[] getPolygonPointsFloat(Roi roi) {
+	public static Pnt2d[] getOutlinePointsFloat(Roi roi) {
 		FloatPolygon pgn = roi.getFloatPolygon();
 		Pnt2d[] pts = new Pnt2d[pgn.npoints];
 		for (int i = 0; i < pgn.npoints; i++) {
 			pts[i] = Pnt2d.PntDouble.from(pgn.xpoints[i], pgn.ypoints[i]);
 		}
 		return pts;
+	}
+	
+	public static PointRoi toPointRoi(Pnt2d[] points) {
+		PointRoi roi = new PointRoi();
+		for (Pnt2d p : points) {
+			roi.addPoint(p.getX(), p.getY());
+		}
+		return roi;
 	}
 	
 }
