@@ -23,13 +23,17 @@ public class CircleSampler {
 	 * x/y positions are disturbed by additive Gaussian noise.
 	 *
 	 * @param n          number of points
-	 * @param startAngle initial angle (radians)
-	 * @param endAngle   final angle (radians)
+	 * @param startAngle initial angle (in degrees)
+	 * @param endAngle   final angle (in degrees)
 	 * @param sigma      Add noise of intensity 'noise'
 	 *
 	 * @return
 	 */
-	public Pnt2d[] getPoints(int n, double startAngle, double endAngle, double sigma) {	
+	public Pnt2d[] getPoints(int n, double startAngleD, double endAngleD, double sigma) {
+		// convert degrees to radians:
+		double startAngle = Math.toRadians(startAngleD);
+		double endAngle = Math.toRadians(endAngleD);
+		
 		double xc = circle.getXc();
 		double yc = circle.getYc();
 		double r = circle.getR();
