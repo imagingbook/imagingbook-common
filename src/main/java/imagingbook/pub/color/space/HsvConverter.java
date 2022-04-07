@@ -6,7 +6,7 @@
  * Copyright (c) 2006-2020 Wilhelm Burger, Mark J. Burge. All rights reserved. 
  * Visit http://imagingbook.com for additional details.
  *******************************************************************************/
-package imagingbook.pub.color.image;
+package imagingbook.pub.color.space;
 
 import static imagingbook.lib.math.Arithmetic.max;
 import static imagingbook.lib.math.Arithmetic.min;

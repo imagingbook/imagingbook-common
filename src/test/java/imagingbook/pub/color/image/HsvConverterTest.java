@@ -6,6 +6,8 @@ import java.util.Random;
 
 import org.junit.Test;
 
+import imagingbook.pub.color.space.HsvConverter;
+
 public class HsvConverterTest {
 
 	@Test

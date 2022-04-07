@@ -1,13 +1,17 @@
 package imagingbook.pub.color.image;
 
-import static imagingbook.pub.color.image.Illuminant.D50;
-import static imagingbook.pub.color.image.Illuminant.D65;
+import static imagingbook.pub.color.space.Illuminant.D50;
+import static imagingbook.pub.color.space.Illuminant.D65;
 import static org.junit.Assert.assertArrayEquals;
 
 import java.awt.color.ColorSpace;
 import java.util.Random;
 
 import org.junit.Test;
+
+import imagingbook.pub.color.space.ChromaticAdaptation;
+import imagingbook.pub.color.space.XYZscalingAdaptation;
+import imagingbook.pub.color.space.sRgb65ColorSpace;
 
 public class XYZscalingAdaptationTest {
 

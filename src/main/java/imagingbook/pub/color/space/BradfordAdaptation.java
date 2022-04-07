@@ -7,7 +7,7 @@
  * Visit http://imagingbook.com for additional details.
  *******************************************************************************/
 
-package imagingbook.pub.color.image;
+package imagingbook.pub.color.space;
 
 import static imagingbook.lib.math.Matrix.multiply;
 

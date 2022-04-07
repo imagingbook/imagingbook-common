@@ -7,9 +7,9 @@
  * Visit http://imagingbook.com for additional details.
  *******************************************************************************/
 
-package imagingbook.pub.color.image;
+package imagingbook.pub.color.space;
 
-import static imagingbook.pub.color.image.Illuminant.D65;
+import static imagingbook.pub.color.space.Illuminant.D65;
 
 import java.awt.color.ColorSpace;
 

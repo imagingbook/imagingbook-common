@@ -7,7 +7,7 @@
  * Visit http://imagingbook.com for additional details.
  *******************************************************************************/
 
-package imagingbook.pub.color.image;
+package imagingbook.pub.color.space;
 
 public enum Illuminant {
 	E	(1/3.0, 1/3.0),						// 5400K, Equal energy
