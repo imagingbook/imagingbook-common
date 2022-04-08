@@ -149,7 +149,7 @@ public class AlgebraicEllipse implements Ellipse {
 	
 	public static void main(String[] args) {
 		PrintPrecision.set(9);
-		GeometricEllipse eg  = new GeometricEllipse(150, 150, 150, 50, 0.5);
+		GeometricEllipse eg  = new GeometricEllipse(150, 50, 150, 150, 0.5);
 		System.out.println("eg = " + eg);
 		AlgebraicEllipse ea = AlgebraicEllipse.from(eg);
 		System.out.println("ea = " + ea);

@@ -19,16 +19,16 @@ import imagingbook.pub.geometry.basic.ShapeProvider;
 
 /**
  * Represents an ellipse shape with arbitrary orientation.
- * TODO: change ordering in parameter vector to (xc, yc, ra, rb, theta)
+ * 
  * @author WB
  *
  */
 public class GeometricEllipse implements Ellipse, ShapeProvider {
 	
-	public final double xc, yc, ra, rb, theta;	// TODO: make private!
+	public final double ra, rb, xc, yc, theta;	// TODO: make private!
 	private final OrthogonalEllipseProjector projector;
 	
-	public GeometricEllipse(double xc, double yc, double ra, double rb, double theta) {
+	public GeometricEllipse(double ra, double rb, double xc, double yc, double theta) {
 		this.xc = xc;
 		this.yc = yc;
 		if (ra >= rb) {	// make sure ra is always the longer axis!
@@ -37,7 +37,7 @@ public class GeometricEllipse implements Ellipse, ShapeProvider {
 			this.theta = Arithmetic.mod(theta, PI);	// theta = 0,...,pi always
 		}
 		else {
-			this.ra = rb;
+			this.ra = rb; // swap ra/rb
 			this.rb = ra;
 			this.theta = Arithmetic.mod(theta + PI/2, PI);	// theta = 0,...,pi always
 		}
@@ -48,13 +48,13 @@ public class GeometricEllipse implements Ellipse, ShapeProvider {
 		}
 	}
 	
-	public GeometricEllipse(double xc, double yc, double ra, double rb) {
-		this(xc, yc, ra, rb, 0.0);
+	public GeometricEllipse(double ra, double rb, double xc, double yc) {
+		this(ra, rb, xc, yc, 0.0);
 	}
 	
 	// TODO: reorder parameters
 	public GeometricEllipse(double[] p) {
-		this(p[2], p[3], p[0], p[1], p[4]);
+		this(p[0], p[1], p[2], p[3], p[4]);
 	}
 	
 	public GeometricEllipse(AlgebraicEllipse ae) {
@@ -62,7 +62,7 @@ public class GeometricEllipse implements Ellipse, ShapeProvider {
 	}
 	
 	public GeometricEllipse scale(double scaleFactor) {
-		return new GeometricEllipse(xc, yc, ra * scaleFactor, rb * scaleFactor, theta);
+		return new GeometricEllipse(ra * scaleFactor, rb * scaleFactor, xc, yc, theta);
 	}
 	
 //	public static GeometricEllipse from(double[] p) {
@@ -165,7 +165,7 @@ public class GeometricEllipse implements Ellipse, ShapeProvider {
 	}
 	
 	public GeometricEllipse disturb(double dra, double drb, double dxc, double dyc, double dtheta) {
-		return new GeometricEllipse(xc + dxc, yc + dyc, ra + dra, rb + drb, theta + dtheta);
+		return new GeometricEllipse(ra + dra, rb + drb, xc + dxc, yc + dyc, theta + dtheta);
 	}
 		
 	// ---------------------------------------------------------------------------------
@@ -278,7 +278,7 @@ public class GeometricEllipse implements Ellipse, ShapeProvider {
 //		AlgebraicEllipse a2 = AlgebraicEllipse.from(e2);
 //		System.out.println("a2 = " + a2.toString());
 		
-		GeometricEllipse ell = new GeometricEllipse(0, 0, 6, 5, 0);
+		GeometricEllipse ell = new GeometricEllipse(6, 5, 0, 0, 0);
 		
 		Pnt2d x = Pnt2d.from(0, -0.000000001);
 		System.out.println("x  = " + x);
@@ -290,7 +290,7 @@ public class GeometricEllipse implements Ellipse, ShapeProvider {
 		
 //		Ellipse eg = new Ellipse(120, 50, 200, 200, 0.4);
 //		Ellipse eg = new Ellipse(120, 50, 200, 200, 0.0);
-		GeometricEllipse eg1 = new GeometricEllipse(200, 200, 120, 50, Math.PI/2);
+		GeometricEllipse eg1 = new GeometricEllipse(120, 50, 200, 200, Math.PI/2);
 		System.out.println("eg1 = " + eg1.toString());
 		System.out.println("eg = " + eg1.toString());
 		AlgebraicEllipse ea = AlgebraicEllipse.from(eg1);

@@ -301,7 +301,7 @@ public class EllipseGeometricFitDist extends EllipseFitGeometric {
     	System.out.println("*** Testing "  + EllipseGeometricFitDist.class.getSimpleName() + " ***");
     	PrintPrecision.set(9);
     	
-    	GeometricEllipse realEllipse = new GeometricEllipse(params.xc, params.yc, params.ra, params.rb, 
+    	GeometricEllipse realEllipse = new GeometricEllipse(params.ra, params.rb, params.xc, params.yc, 
 				Math.toRadians(params.theta));
     	
     	EllipseSampler sampler = new EllipseSampler(realEllipse, 17);
@@ -332,7 +332,7 @@ public class EllipseGeometricFitDist extends EllipseFitGeometric {
     	}
     	
     	// check analytic/synthetic Jacobians:
-    	GeometricEllipse eTest = new GeometricEllipse (50, -30, 100, 120, 0.25);
+    	GeometricEllipse eTest = new GeometricEllipse (100, 120, 50, -30, 0.25);
     	Pnt2d xi = Pnt2d.from(110, -70);
     	Pnt2d[] pts = {xi};
     	
