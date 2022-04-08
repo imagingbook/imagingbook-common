@@ -27,10 +27,13 @@ import org.apache.commons.math3.util.Pair;
 
 import imagingbook.lib.math.Matrix;
 import imagingbook.lib.settings.PrintPrecision;
+import imagingbook.lib.util.ParameterBundle;
 import imagingbook.pub.geometry.basic.Pnt2d;
 import imagingbook.pub.geometry.ellipse.GeometricEllipse;
+import imagingbook.pub.geometry.fitting.ellipse.EllipseSampler;
 import imagingbook.pub.geometry.fitting.ellipse.algebraic.EllipseFitAlgebraic;
 import imagingbook.pub.geometry.fitting.ellipse.algebraic.EllipseFitFitzgibbonStable;
+
 
 /**
  * "Distance-based" geometric ellipse fitter using iterative minimization with
@@ -211,9 +214,102 @@ public class EllipseGeometricFitDist extends EllipseFitGeometric {
     
     // -------------------------------------------------------------------
     
+//    public static void main(String[] args) {
+//    	PrintPrecision.set(9);
+//    	Pnt2d[] points = null;
+//    	//Pnt2d[] points = CircleMaker.makeTestCircle(XC, YC, R, 100, Angle0, Angle1, SigmaNoise);
+//    	//Pnt2d[] points = CircleMaker.makeTestCircle(XC, YC, R, 4, Angle0, Angle1, 0.1);
+//    	//Pnt2d[] points = CircleSampler.makeTestGander(30);
+//    	//Pnt2d[] points = CircleSampler.make3Points(30);
+//    		
+//    	EllipseFitAlgebraic fitA = new EllipseFitFitzgibbonStable(points);
+//    	
+//    	GeometricEllipse ellipseA = GeometricEllipse.from(fitA.getEllipse());
+//    	System.out.println("ellipseA = " + ellipseA);
+//    	System.out.println("errorA = " + ellipseA.getMeanSquareError(points));
+//		
+//    	EllipseGeometricFitDist fitG = new EllipseGeometricFitDist(points, ellipseA);
+//    	GeometricEllipse ellipseG = fitG.getEllipse();
+//    	System.out.println("ellipseG = " + ellipseG);
+//    	System.out.println("errorG = " + ellipseG.getMeanSquareError(points));
+//    	System.out.println("iterations = " + fitG.getIterations());
+//    	
+//    	for (double[] p : fitG.getHistory()) {
+//    		System.out.println("   " + Matrix.toString(p));
+//    	}
+//    	
+//    	// check analytic/synthetic Jacobians:
+//    	GeometricEllipse eTest = new GeometricEllipse (50, -30, 100, 120, 0.25);
+//    	Pnt2d xi = Pnt2d.from(110, -70);
+//    	Pnt2d[] pts = {xi};
+//    	
+//    	{
+//    		EllipseGeometricFitDist fit = new EllipseGeometricFitDist(pts, eTest);
+//    		MultivariateJacobianFunction model = fit.new AnalyticModel();
+//	    	Pair<RealVector, RealMatrix> result = model.value(Matrix.makeRealVector(eTest.getParameters()));
+//	    	RealMatrix J = result.getSecond();
+//	    	System.out.println("J analytic = \n" + Matrix.toString(J.getData()));
+//    	}
+//    	
+//    	{
+//    		EllipseGeometricFitDist fit = new EllipseGeometricFitDist(pts, eTest);
+//    		MultivariateJacobianFunction model = fit.new SyntheticModel();
+//	    	Pair<RealVector, RealMatrix> result = model.value(Matrix.makeRealVector(eTest.getParameters()));
+//	    	RealMatrix J = result.getSecond();
+//	    	System.out.println("J synthetic = \n" + Matrix.toString(J.getData()));
+//    	}
+//    }
+	
+	// -------------------------------------------------------------------
+	// -------------------------------------------------------------------
+	
+	public static class Parameters implements ParameterBundle {
+		
+		@DialogLabel("number of points")
+		public int n = 20;
+		
+		@DialogLabel("ellipse center (xc)")
+		public double xc = 200;
+		
+		@DialogLabel("ellipsecenter (yc)")
+		public double yc = 190;
+		
+		@DialogLabel("major axis radius (ra)")
+		public double ra = 170;
+		
+		@DialogLabel("minor axis radius (rb)")
+		public double rb = 120;
+		
+		@DialogLabel("start angle (deg)")
+		public double angle0 = 0;
+		
+		@DialogLabel("stop angle (deg)")
+		public double angle1 = 180; // was Math.PI/4;
+		
+		@DialogLabel("ellipse orientation (deg)")
+		public double theta = 45;
+		
+		@DialogLabel("x/y noise (sigma)")
+		public double sigma = 5.0; //2.0;
+	};
+	
+	private static Parameters params = new Parameters();
+	
+      
     public static void main(String[] args) {
+    	
+    	System.out.println("*** Testing "  + EllipseGeometricFitDist.class.getSimpleName() + " ***");
     	PrintPrecision.set(9);
-    	Pnt2d[] points = null;
+    	
+    	GeometricEllipse realEllipse = new GeometricEllipse(params.xc, params.yc, params.ra, params.rb, 
+				Math.toRadians(params.theta));
+    	
+    	EllipseSampler sampler = new EllipseSampler(realEllipse, 17);
+    	
+    	Pnt2d[] points = sampler.getPoints(params.n, 
+				Math.toRadians(params.angle0), Math.toRadians(params.angle1), params.sigma);
+    	
+//    	Pnt2d[] points = null;
     	//Pnt2d[] points = CircleMaker.makeTestCircle(XC, YC, R, 100, Angle0, Angle1, SigmaNoise);
     	//Pnt2d[] points = CircleMaker.makeTestCircle(XC, YC, R, 4, Angle0, Angle1, 0.1);
     	//Pnt2d[] points = CircleSampler.makeTestGander(30);
@@ -221,7 +317,7 @@ public class EllipseGeometricFitDist extends EllipseFitGeometric {
     		
     	EllipseFitAlgebraic fitA = new EllipseFitFitzgibbonStable(points);
     	
-    	GeometricEllipse ellipseA = GeometricEllipse.from(fitA.getEllipse());
+    	GeometricEllipse ellipseA = new GeometricEllipse(fitA.getEllipse());
     	System.out.println("ellipseA = " + ellipseA);
     	System.out.println("errorA = " + ellipseA.getMeanSquareError(points));
 		
@@ -241,15 +337,15 @@ public class EllipseGeometricFitDist extends EllipseFitGeometric {
     	Pnt2d[] pts = {xi};
     	
     	{
-    		EllipseGeometricFitDist fit = new EllipseGeometricFitDist(pts, eTest);
-    		MultivariateJacobianFunction model = fit.new AnalyticModel();
+    		EllipseGeometricFitDist fit = new EllipseGeometricFitDist(pts, ellipseA);
+	    	MultivariateJacobianFunction model = fit.new AnalyticModel();
 	    	Pair<RealVector, RealMatrix> result = model.value(Matrix.makeRealVector(eTest.getParameters()));
 	    	RealMatrix J = result.getSecond();
 	    	System.out.println("J analytic = \n" + Matrix.toString(J.getData()));
     	}
     	
     	{
-    		EllipseGeometricFitDist fit = new EllipseGeometricFitDist(pts, eTest);
+    		EllipseGeometricFitDist fit = new EllipseGeometricFitDist(pts, ellipseA);
     		MultivariateJacobianFunction model = fit.new SyntheticModel();
 	    	Pair<RealVector, RealMatrix> result = model.value(Matrix.makeRealVector(eTest.getParameters()));
 	    	RealMatrix J = result.getSecond();

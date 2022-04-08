@@ -22,14 +22,11 @@ import org.apache.commons.math3.linear.RealVector;
 import org.apache.commons.math3.optim.SimpleVectorValueChecker;
 import org.apache.commons.math3.util.Pair;
 
-
 import imagingbook.lib.math.Matrix;
 import imagingbook.lib.settings.PrintPrecision;
 import imagingbook.lib.util.ParameterBundle;
-import imagingbook.lib.util.ParameterBundle.DialogLabel;
 import imagingbook.pub.geometry.basic.Pnt2d;
 import imagingbook.pub.geometry.ellipse.GeometricEllipse;
-import imagingbook.pub.geometry.fitting.circle.CircleSampler;
 import imagingbook.pub.geometry.fitting.ellipse.EllipseSampler;
 import imagingbook.pub.geometry.fitting.ellipse.algebraic.EllipseFitAlgebraic;
 import imagingbook.pub.geometry.fitting.ellipse.algebraic.EllipseFitFitzgibbonStable;
@@ -301,6 +298,9 @@ public class EllipseGeometricFitCoord extends EllipseFitGeometric {
 	
       
     public static void main(String[] args) {
+    	
+    	System.out.println("*** Testing "  + EllipseGeometricFitCoord.class.getSimpleName() + " ***");
+    	
     	PrintPrecision.set(9);
     	
     	GeometricEllipse realEllipse = new GeometricEllipse(params.xc, params.yc, params.ra, params.rb, 
