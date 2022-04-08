@@ -25,7 +25,7 @@ public abstract class Utils {
 		double rb = 2 * Math.sqrt(es.getEigenvalue(1) / n);
 		double[] x0 = es.getEigenvector(0);
 		double theta = Math.atan2(x0[1], x0[0]);
-		return new GeometricEllipse(ra, rb, xc.getX(), xc.getY(), theta);
+		return new GeometricEllipse(xc.getX(), xc.getY(), ra, rb, theta);
 	}
 
 }

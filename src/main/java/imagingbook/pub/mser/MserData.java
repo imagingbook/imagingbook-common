@@ -104,7 +104,7 @@ public class MserData {
 		double rb = 2 * Math.sqrt(es.getEigenvalue(1) / n);
 		double[] x1 = es.getEigenvector(0);
 		double theta = Math.atan2(x1[1], x1[0]);
-		this.ellipse = new GeometricEllipse(ra, rb, mu10, mu01, theta);
+		this.ellipse = new GeometricEllipse(mu10, mu01, ra, rb, theta);
 	}
 	
 //	/**
