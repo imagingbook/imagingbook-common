@@ -27,8 +27,8 @@ public class EllipseSampler {
 	 * @param rb second axis length
 	 * @param theta angle of rotation
 	 * @param n number of points
-	 * @param startAngle initial angle
-	 * @param arcAngle arc angle
+	 * @param startAngle initial angle (radians)
+	 * @param arcAngle arc angle (radians)
 	 * @param sigma intensity of random noise
 	 * @return
 	 */

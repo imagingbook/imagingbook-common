@@ -29,7 +29,6 @@ import imagingbook.lib.math.Matrix;
 import imagingbook.lib.settings.PrintPrecision;
 import imagingbook.pub.geometry.basic.Pnt2d;
 import imagingbook.pub.geometry.ellipse.GeometricEllipse;
-import imagingbook.pub.geometry.fitting.circle.CircleSampler;
 import imagingbook.pub.geometry.fitting.ellipse.algebraic.EllipseFitAlgebraic;
 import imagingbook.pub.geometry.fitting.ellipse.algebraic.EllipseFitFitzgibbonStable;
 
@@ -138,7 +137,7 @@ public class EllipseGeometricFitDist extends EllipseFitGeometric {
 				double[] xy = XY.toDoubleArray();
 				double x = xy[0], y = xy[1];
 				double[] uv = Rt.operate(subtract(xy, xyc));					// target point in canon. coordinates
-				double u = uv[0],  v = uv[1];								// = (u_i, v_i)
+				double u = uv[0],  v = uv[1];									// = (u_i, v_i)
 
 				double[] xyp = XYp.toDoubleArray();								// ellipse point closest to Xi
 				double xp = xyp[0], yp = xyp[1];								// = (\breve{x}_i, \breve{y}_i)
@@ -214,21 +213,22 @@ public class EllipseGeometricFitDist extends EllipseFitGeometric {
     
     public static void main(String[] args) {
     	PrintPrecision.set(9);
+    	Pnt2d[] points = null;
     	//Pnt2d[] points = CircleMaker.makeTestCircle(XC, YC, R, 100, Angle0, Angle1, SigmaNoise);
     	//Pnt2d[] points = CircleMaker.makeTestCircle(XC, YC, R, 4, Angle0, Angle1, 0.1);
-    	Pnt2d[] points = CircleSampler.makeTestGander(30);
+    	//Pnt2d[] points = CircleSampler.makeTestGander(30);
     	//Pnt2d[] points = CircleSampler.make3Points(30);
     		
     	EllipseFitAlgebraic fitA = new EllipseFitFitzgibbonStable(points);
     	
     	GeometricEllipse ellipseA = GeometricEllipse.from(fitA.getEllipse());
     	System.out.println("ellipseA = " + ellipseA);
-    	System.out.println("errorA = " + ellipseA.getError(points));
+    	System.out.println("errorA = " + ellipseA.getMeanSquareError(points));
 		
     	EllipseGeometricFitDist fitG = new EllipseGeometricFitDist(points, ellipseA);
     	GeometricEllipse ellipseG = fitG.getEllipse();
     	System.out.println("ellipseG = " + ellipseG);
-    	System.out.println("errorG = " + ellipseG.getError(points));
+    	System.out.println("errorG = " + ellipseG.getMeanSquareError(points));
     	System.out.println("iterations = " + fitG.getIterations());
     	
     	for (double[] p : fitG.getHistory()) {
@@ -236,7 +236,7 @@ public class EllipseGeometricFitDist extends EllipseFitGeometric {
     	}
     	
     	// check analytic/synthetic Jacobians:
-    	GeometricEllipse eTest = new GeometricEllipse (100, 120, 50, -30, 0.25);
+    	GeometricEllipse eTest = new GeometricEllipse (50, -30, 100, 120, 0.25);
     	Pnt2d xi = Pnt2d.from(110, -70);
     	Pnt2d[] pts = {xi};
     	

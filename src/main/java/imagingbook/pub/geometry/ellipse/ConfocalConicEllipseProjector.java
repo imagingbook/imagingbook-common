@@ -43,7 +43,7 @@ public class ConfocalConicEllipseProjector extends EllipseProjector {
 //		Pnt2d p = Pnt2d.from(100, 110);
 		
 		// critical case: 
-		 GeometricEllipse ell = new GeometricEllipse(353613.76725979, 987.23614032, 353503.20032614, -9010.22308359, 3.11555492);
+		 GeometricEllipse ell = new GeometricEllipse(353503.20032614, -9010.22308359, 353613.76725979, 987.23614032, 3.11555492);
 		 Pnt2d p = Pnt2d.from(30.000000000, 210.000000000);
 		
 		EllipseProjector projector = 

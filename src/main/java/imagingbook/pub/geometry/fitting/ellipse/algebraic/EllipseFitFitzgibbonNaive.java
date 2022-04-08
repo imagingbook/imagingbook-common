@@ -45,7 +45,6 @@ public class EllipseFitFitzgibbonNaive implements EllipseFitAlgebraic {
 	}
 	
 	private double[] fit(Pnt2d[] points) {
-		IJ.log("**** " + this.getClass().getSimpleName());
 		final int n = points.length;
 
 		// create design matrix X:
@@ -78,7 +77,6 @@ public class EllipseFitFitzgibbonNaive implements EllipseFitAlgebraic {
 //		IJ.log("Si = \n" + Matrix.toString(Si.getData()));
 		
 		RealMatrix SiB = Si.multiply(C);
-		IJ.log("SiB = (X^T * X)^-1\n" + Matrix.toString(SiB.getData()));
 		
 //		SingularValueDecomposition svdSiB = new SingularValueDecomposition(SiB);
 //		IJ.log("rank(SiB) = " + svdSiB.getRank());

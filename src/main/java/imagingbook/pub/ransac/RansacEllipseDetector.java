@@ -68,7 +68,7 @@ public class RansacEllipseDetector {
 			}
 			
 			GeometricEllipse eg = GeometricEllipse.from(ellipse);
-			double err = eg.getError(draw);
+			double err = eg.getMeanSquareError(draw);
 			if (err > 2) {
 				continue;
 			}

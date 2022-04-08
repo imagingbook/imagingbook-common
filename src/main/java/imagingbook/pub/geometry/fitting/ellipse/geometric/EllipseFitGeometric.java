@@ -29,12 +29,14 @@ public abstract class EllipseFitGeometric {
 	public abstract int getIterations();
 	public abstract List<double[]> getHistory();
 	
+	
 	/**
-	 * Returns a geometric Ellipse
-	 * @return
+	 * Returns a geometric Ellipse or {@code null} if the fit was unsuccessful.
+	 * @return the geometric ellipse or {@code null}
 	 */
 	public GeometricEllipse getEllipse() {
-		return GeometricEllipse.from(getParameters());
+		double[] p = getParameters();
+		return (p != null) ? new GeometricEllipse(p) : null;
 	}
 
 }
