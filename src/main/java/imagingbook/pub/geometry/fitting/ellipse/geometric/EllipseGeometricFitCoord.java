@@ -22,11 +22,15 @@ import org.apache.commons.math3.linear.RealVector;
 import org.apache.commons.math3.optim.SimpleVectorValueChecker;
 import org.apache.commons.math3.util.Pair;
 
+
 import imagingbook.lib.math.Matrix;
 import imagingbook.lib.settings.PrintPrecision;
+import imagingbook.lib.util.ParameterBundle;
+import imagingbook.lib.util.ParameterBundle.DialogLabel;
 import imagingbook.pub.geometry.basic.Pnt2d;
 import imagingbook.pub.geometry.ellipse.GeometricEllipse;
 import imagingbook.pub.geometry.fitting.circle.CircleSampler;
+import imagingbook.pub.geometry.fitting.ellipse.EllipseSampler;
 import imagingbook.pub.geometry.fitting.ellipse.algebraic.EllipseFitAlgebraic;
 import imagingbook.pub.geometry.fitting.ellipse.algebraic.EllipseFitFitzgibbonStable;
 
@@ -260,11 +264,54 @@ public class EllipseGeometricFitCoord extends EllipseFitGeometric {
 		
 	}
 	
-    // -------------------------------------------------------------------
-    
+	// -------------------------------------------------------------------
+	// -------------------------------------------------------------------
+	
+	public static class Parameters implements ParameterBundle {
+		
+		@DialogLabel("number of points")
+		public int n = 20;
+		
+		@DialogLabel("ellipse center (xc)")
+		public double xc = 200;
+		
+		@DialogLabel("ellipsecenter (yc)")
+		public double yc = 190;
+		
+		@DialogLabel("major axis radius (ra)")
+		public double ra = 170;
+		
+		@DialogLabel("minor axis radius (rb)")
+		public double rb = 120;
+		
+		@DialogLabel("start angle (deg)")
+		public double angle0 = 0;
+		
+		@DialogLabel("stop angle (deg)")
+		public double angle1 = 180; // was Math.PI/4;
+		
+		@DialogLabel("ellipse orientation (deg)")
+		public double theta = 45;
+		
+		@DialogLabel("x/y noise (sigma)")
+		public double sigma = 5.0; //2.0;
+	};
+	
+	private static Parameters params = new Parameters();
+	
+      
     public static void main(String[] args) {
     	PrintPrecision.set(9);
-    	Pnt2d[] points = null;
+    	
+    	GeometricEllipse realEllipse = new GeometricEllipse(params.xc, params.yc, params.ra, params.rb, 
+				Math.toRadians(params.theta));
+    	
+    	EllipseSampler sampler = new EllipseSampler(realEllipse, 17);
+    	
+    	Pnt2d[] points = sampler.getPoints(params.n, 
+				Math.toRadians(params.angle0), Math.toRadians(params.angle1), params.sigma);
+    	
+//    	Pnt2d[] points = null;
     	//Pnt2d[] points = CircleMaker.makeTestCircle(XC, YC, R, 100, Angle0, Angle1, SigmaNoise);
     	//Pnt2d[] points = CircleMaker.makeTestCircle(XC, YC, R, 4, Angle0, Angle1, 0.1);
     	//Pnt2d[] points = CircleSampler.makeTestGander(30);
@@ -272,7 +319,7 @@ public class EllipseGeometricFitCoord extends EllipseFitGeometric {
     		
     	EllipseFitAlgebraic fitA = new EllipseFitFitzgibbonStable(points);
     	
-    	GeometricEllipse ellipseA = GeometricEllipse.from(fitA.getEllipse());
+    	GeometricEllipse ellipseA = new GeometricEllipse(fitA.getEllipse());
     	System.out.println("ellipseA = " + ellipseA);
     	System.out.println("errorA = " + ellipseA.getMeanSquareError(points));
 		

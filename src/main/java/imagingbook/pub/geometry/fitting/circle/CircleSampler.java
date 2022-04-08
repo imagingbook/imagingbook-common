@@ -10,12 +10,18 @@ import imagingbook.pub.geometry.circle.GeometricCircle;
 
 public class CircleSampler {
 	
-	static int RandomSeed = 11;
+	private final Random rg;
 	
 	private final GeometricCircle circle;
 	
 	public CircleSampler(GeometricCircle circle) {
 		this.circle = circle;
+		this.rg = new Random();
+	}
+	
+	public CircleSampler(GeometricCircle circle, long seed) {
+		this.circle = circle;
+		this.rg = new Random(seed);
 	}
 	
 	/**
@@ -34,7 +40,7 @@ public class CircleSampler {
 		double yc = circle.getYc();
 		double r = circle.getR();
 
-		Random rd= new Random(RandomSeed);
+		
 		Pnt2d[] pts = new Pnt2d[n];
 		
 		startAngle = mod(startAngle, 2 * PI);
@@ -45,8 +51,8 @@ public class CircleSampler {
 		
 		for (int i = 0; i < n; i++) {
 			double alpha = startAngle + dAngle * i / n;
-			double x = xc + r * Math.cos(alpha) + sigma * rd.nextGaussian();
-			double y = yc + r * Math.sin(alpha) + sigma * rd.nextGaussian();
+			double x = xc + r * Math.cos(alpha) + sigma * rg.nextGaussian();
+			double y = yc + r * Math.sin(alpha) + sigma * rg.nextGaussian();
 			pts[i] = Pnt2d.from(x, y);
 		}
 		return pts;
@@ -140,17 +146,17 @@ public class CircleSampler {
 //	}
 //
 //
-//	public static Pnt2d[] makeTestGander(double s) {
-//		Pnt2d[] points = {
-//				Pnt2d.from(s*1, s*7),
-//				Pnt2d.from(s*2, s*6),
-//				Pnt2d.from(s*8, s*8),
-//				Pnt2d.from(s*7, s*7),
-//				Pnt2d.from(s*9, s*5),
-//				Pnt2d.from(s*3, s*7)
-//		};
-//		return points;
-//	}
+	public static Pnt2d[] makeTestGander(double s) {
+		Pnt2d[] points = {
+				Pnt2d.from(s*1, s*7),
+				Pnt2d.from(s*2, s*6),
+				Pnt2d.from(s*8, s*8),
+				Pnt2d.from(s*7, s*7),
+				Pnt2d.from(s*9, s*5),
+				Pnt2d.from(s*3, s*7)
+		};
+		return points;
+	}
 //	
 //	public static Pnt2d[] make3Points(double s) {
 //		Pnt2d[] points = {

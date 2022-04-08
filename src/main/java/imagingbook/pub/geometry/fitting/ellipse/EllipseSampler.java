@@ -10,12 +10,18 @@ import imagingbook.pub.geometry.ellipse.GeometricEllipse;
 
 public class EllipseSampler {
 	
-	static int RandomSeed = 11;
+	private final Random rg;
 	
 	private final GeometricEllipse ellipse;
 	
 	public EllipseSampler(GeometricEllipse ellipse) {
 		this.ellipse = ellipse;
+		this.rg = new Random();
+	}
+	
+	public EllipseSampler(GeometricEllipse ellipse, long seed) {
+		this.ellipse = ellipse;
+		this.rg = new Random(seed);
 	}
 	
 	/**
@@ -34,8 +40,7 @@ public class EllipseSampler {
 	 */
 	public Pnt2d[] getPoints(int n, double startAngle, double arcAngle, double sigma) {
 		Pnt2d[] points = new Pnt2d[n];
-		Random rd= new Random(RandomSeed);
-		
+				
 		double xc = ellipse.xc;
 		double yc = ellipse.yc;
 		double ra = ellipse.ra;
@@ -64,8 +69,8 @@ public class EllipseSampler {
 		
 		for (int i = 0; i < n; i++) {
 			double alpha = startAngle + arcAngle * i / n;
-			double x0 = ra * Math.cos(alpha) + sigma * rd.nextGaussian();
-			double y0 = rb * Math.sin(alpha) + sigma * rd.nextGaussian();
+			double x0 = ra * Math.cos(alpha) + sigma * rg.nextGaussian();
+			double y0 = rb * Math.sin(alpha) + sigma * rg.nextGaussian();
 			double x = x0 * cosTh - y0 * sinTh + xc;
 			double y = x0 * sinTh + y0 * cosTh + yc;
 			points[i] = Pnt2d.from(x, y);
