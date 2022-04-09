@@ -1,141 +1,122 @@
 package imagingbook.pub.geometry.ellipse;
 
+import static imagingbook.lib.math.Arithmetic.isZero;
 import static imagingbook.lib.math.Arithmetic.sqr;
-import static java.lang.Math.abs;
-import static java.lang.Math.max;
-import static java.lang.Math.pow;
 
+import imagingbook.lib.math.Arithmetic;
 import imagingbook.lib.settings.PrintPrecision;
 import imagingbook.pub.geometry.basic.Pnt2d;
 
 
 /**
+ * <p>
  * Calculates orthogonal projections of points onto an ellipse.
- * @author WB
- *
+ * Robust algorithm, based on
+ * </p>
+ * <blockquote>
+ * D. Eberly: "Distance from a point to an ellipse, an ellipsoid, or a hyperellipsoid",
+ * Technical Report, Geometric Tools, www.geometrictools.com, Redmont, WA (June 2013).
+ * </blockquote>
+ * <p>
+ * In contrast to the Newton-based algorithm, his version returns valid results for
+ * points close to the x- and y-axis but requires significantly more iterations to 
+ * converge.
+ * </p>
+ * @version 2022/04/09
  */
 public class OrthogonalEllipseProjector extends EllipseProjector {
 	
-	private static double NewtonMinStep = 1e-6;
-	private static int MaxIterations = 100;
+	private static final int MaxIterations = 150;
+	private static final double Epsilon = 1e-6;
 	
-	private int lastIterationCount = -1;	// number of Newton iterations performed in last projection
-	private int totalIterationCount = -1;	// number of Newton iterations performed since instance was created
-	
+	private final double ra, rb, rab;
+	private int lastIterationCount = 0;	// number of root-finding iterations performed in last projection
 	
 	public OrthogonalEllipseProjector(GeometricEllipse ellipse) {
 		super(ellipse);
+		this.ra = ellipse.ra;
+		this.rb = ellipse.rb;
+		this.rab = sqr(ra / rb);	// ratio of squared axes lengths
 	}
 	
 	@Override
 	protected double[] projectCanonical(double[] u1) {
-		// coordinates of p (mapped to first quadrant)
-		final double u = u1[0];	
-		final double v = u1[1]; 
+		// coordinates of p (mapped to first quadrant of canonical coordinates)
+		final double u = u1[0];	// u,v are both positive
+		final double v = u1[1];
 		
-		double[] ub = null;	// the unknown ellipse point
-
-		if (u + v < 1e-6) {	// (u,v) is very close to the ellipse center; u,v >= 0
-			ub = new double[] {0, rb};
-		}
-		else {						
-			double t = max(ra * u - ra2, rb * v - rb2);
-			double gprev = Double.POSITIVE_INFINITY;
-			double deltaT, deltaG;
-			int k = 0;
-			do {
-				k = k + 1;
-				double g  = sqr((ra * u) / (t + ra2)) + sqr((rb * v) / (t + rb2)) - 1;
-				double dg = 2 * (sqr(ra * u) / pow(t + ra2, 3) + sqr(rb * v) / pow(t + rb2, 3));
-				deltaT = g / dg;
-				t = t + deltaT; 			// Newton iteration
-				
-				// in rare cases g(t) is very flat and checking deltaT is not enough for convergence!
-				deltaG = g - gprev;			// change of g value
-				gprev = g;	
-				
-			}  while(abs(deltaT) > NewtonMinStep && abs(deltaG) > NewtonMinStep && k < MaxIterations);
-			
-			lastIterationCount = k;		// remember iteration count
-			totalIterationCount += k;
-			
-			if (k >= MaxIterations) {
-				throw new RuntimeException("max. mumber of iterations exceeded");
+		double[] ub = null;	// the ellipse contact point (in canonical coordinates)
+		lastIterationCount = 0;
+		
+		if (v > 0) {
+			if (u > 0) {
+				double uu = u / ra;
+				double vv = v / rb;
+				double ginit = sqr(uu) + sqr(vv) - 1;
+				if (!isZero(ginit)) {
+					double s = getRoot(uu, vv, ginit);
+					ub = new double[] {rab * u / (s + rab), v / (s + 1)};
+				}
+				else {
+					ub = new double[] {u, v};
+				}
 			}
-			
-			ub = new double[] {ra2 * u / (t + ra2), rb2 * v / (t + rb2)};
+			else {	// u = 0
+				ub = new double[] {0, rb};
+			}
+		}	
+		else {	// v = 0
+			double numer0 = ra * u;
+			double denom0 = sqr(ra) - sqr(rb);
+			if (numer0 < denom0) {
+				double xde0 = numer0 / denom0;
+				ub = new double[] {ra * xde0, rb * Math.sqrt(1 - sqr(xde0))};
+			}
+			else {
+				ub = new double[] {ra, 0};
+			}
 		}
 		return ub;
 	}
-	
 
-	// for statistics only
-	
-	public int getLastIterationCount() {
-		if (lastIterationCount < 0) {
-			throw new IllegalStateException("no projection calculated yet");
+	// Find the root of function
+	// G(s) = [(rab * uu) / (s + rab)]^2 + [vv / (s + 1)]^2 - 1
+	// using the bisection method.
+	private double getRoot(double uu, double vv, double g0) {
+		double s0 = vv - 1;
+		double s1 = (g0 < 0) ? 0 : Math.hypot(rab * uu, vv) - 1;
+		double s = 0;
+		
+		int i;
+		for (i = 0; i < MaxIterations; i++) {
+			s = (s0 + s1) / 2;
+			if (Arithmetic.equals(s, s0) || Arithmetic.equals(s, s1)) {
+				break;
+			}
+			double g = sqr((rab * uu)/(s + rab)) + sqr(vv/(s + 1)) - 1; // = G(s)
+			if (g > Epsilon) {			// G(s) is positive
+				s0 = s;
+			}
+			else if (g < -Epsilon) {	// G(s) is negative
+				s1 = s;
+			}
+			else {						// G(s) ~ 0 (done)
+				break;
+			}
 		}
+		if (i >= MaxIterations) {
+			throw new RuntimeException(this.getClass().getSimpleName() + 
+					": max. iteration count exceeded");
+		}
+		lastIterationCount = i;
+		return s;
+	}
+	
+	// for statistics only
+	public int getLastIterationCount() {
 		return this.lastIterationCount;
 	}
 	
-	public int getTotalIterationCount() {
-		if (totalIterationCount < 0) {
-			throw new IllegalStateException("no projection calculated yet");
-		}
-		return this.totalIterationCount;
-	}
-	
-
-	
-	// Alternative solution ---------------------------------------
-	// from BoofCV (georegression.fitting.curves.ClosestPointEllipseAngle_F64
-	// (does not converge either in critical case) 
-	
-	public static Pnt2d project2(Pnt2d point, GeometricEllipse ellipse) {
-		final int maxIterations = 100;
-		final double tol = 1e-8;
-		
-		final double Ct = Math.cos(ellipse.theta);
-		final double St = Math.sin(ellipse.theta);
-		
-		// put point into ellipse's coordinate system
-		final double xc = point.getX() - ellipse.xc;
-		final double yc = point.getY() - ellipse.yc;
-//
-		double u =  Ct*xc + St*yc;
-		double v = -St*xc + Ct*yc;
-
-		// initial guess for the angle
-		double alpha = Math.atan2( ellipse.ra*v , ellipse.rb*u);
-		
-		double a2_m_b2 = ellipse.ra*ellipse.ra - ellipse.rb*ellipse.rb;
-
-		// use Newton's Method to find the solution
-		int i = 0;
-		for(; i < maxIterations; i++ ) {
-			double Ca = Math.cos(alpha);
-			double Sa = Math.sin(alpha);
-
-			double f = a2_m_b2*Ca*Sa - u*ellipse.ra*Sa + v*ellipse.rb*Ca;
-			if( Math.abs(f) < tol )
-				break;
-
-			double d = a2_m_b2*(Ca*Ca - Sa*Sa) - u*ellipse.ra*Ca - v*ellipse.rb*Sa;
-			alpha = alpha - f/d;
-		}
-		System.out.println("iter = " + i);
-		
-		// compute solution in ellipse coordinate frame
-		u = ellipse.ra*Math.cos(alpha);
-		v = ellipse.rb*Math.sin(alpha);
-
-		// put back into original coordinate system
-		double closestx = Ct*u - St*v + ellipse.xc;
-		double closesty = St*u + Ct*v + ellipse.yc;
-		return Pnt2d.from(closestx, closesty);
-	}
-	
-
 	// -------------------------------------------------
 
 	public static void main(String[] args) {
@@ -145,18 +126,23 @@ public class OrthogonalEllipseProjector extends EllipseProjector {
 //		Pnt2d p = Pnt2d.from(6, 1);
 		
 		// critical case: 
-		 GeometricEllipse ell = new GeometricEllipse(353613.76725979, 987.23614032, 353503.20032614, -9010.22308359, 3.11555492);
-		 Pnt2d p = Pnt2d.from(30.000000000, 210.000000000);
+//		GeometricEllipse ell = new GeometricEllipse(353613.76725979, 987.23614032, 353503.20032614, -9010.22308359, 3.11555492);
+//		Pnt2d p = Pnt2d.from(30.000000000, 210.000000000);
 		
-		EllipseProjector projector = 
-				new OrthogonalEllipseProjector(ell);
+		GeometricEllipse ell = new GeometricEllipse(6, 5, 0, 0, 0);
+//		Pnt2d p = Pnt2d.from(1, 0);
+//		Pnt2d p = Pnt2d.from(6, 0);
+		Pnt2d p = Pnt2d.from(0.1, 0.1);
+		
+		OrthogonalEllipseProjector projector = new OrthogonalEllipseProjector(ell);
 		
 		System.out.println("p  = " + p);
 		
 		Pnt2d p0 = projector.project(p);
 		System.out.println("p0 = " + p0);
+		System.out.println("iterations  = " + projector.getLastIterationCount());
 		
-		System.out.println("dist = " + projector.getDistance(p.toDoubleArray()));
+//		System.out.println("dist = " + projector.getDistance(p.toDoubleArray()));
 	}
 
 }

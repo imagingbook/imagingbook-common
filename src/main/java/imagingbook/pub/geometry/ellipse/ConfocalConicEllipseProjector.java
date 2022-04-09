@@ -8,14 +8,20 @@ import imagingbook.pub.geometry.basic.Pnt2d;
 
 
 /**
- * Finds an approximate closest point on the ellipse
+ * Finds an approximate closest point on the ellipse.
  * @author WB
  *
  */
 public class ConfocalConicEllipseProjector extends EllipseProjector {
 	
+	private final double ra, rb, ra2, rb2;
+	
 	public ConfocalConicEllipseProjector(GeometricEllipse ellipse) {
 		super(ellipse);
+		this.ra = ellipse.ra;
+		this.rb = ellipse.rb;
+		this.ra2 = sqr(ra);
+		this.rb2 = sqr(rb);
 	}
 	
 	// ellipse projection in quadrant 1 of u/v space
@@ -43,11 +49,13 @@ public class ConfocalConicEllipseProjector extends EllipseProjector {
 //		Pnt2d p = Pnt2d.from(100, 110);
 		
 		// critical case: 
-		 GeometricEllipse ell = new GeometricEllipse(353613.76725979, 987.23614032, 353503.20032614, -9010.22308359, 3.11555492);
-		 Pnt2d p = Pnt2d.from(30.000000000, 210.000000000);
+//		GeometricEllipse ell = new GeometricEllipse(353613.76725979, 987.23614032, 353503.20032614, -9010.22308359, 3.11555492);
+//		Pnt2d p = Pnt2d.from(30.000000000, 210.000000000);
 		
-		EllipseProjector projector = 
-				new ConfocalConicEllipseProjector(ell);
+		GeometricEllipse ell = new GeometricEllipse(6, 5, 0, 0, 0);
+		Pnt2d p = Pnt2d.from(0,0);
+		
+		EllipseProjector projector = new ConfocalConicEllipseProjector(ell);
 		
 		
 		System.out.println("p  = " + p);

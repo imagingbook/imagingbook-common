@@ -53,8 +53,8 @@ public class GeometricEllipseTest {
 		}
 		{
 			Pnt2d x = Pnt2d.from(-1, 0);
-			Pnt2d xp = Pnt2d.from(-6, 0);
-			assertEquals(xp, ell.getClosestPoint(x));	// TODO: this fails!!
+			Pnt2d xp = Pnt2d.from(-3.2727272727272725, 4.190702026042222);
+			assertEquals(xp, ell.getClosestPoint(x));
 		}
 		
 		
