@@ -11,13 +11,7 @@ import imagingbook.pub.geometry.basic.PntUtils;
 import imagingbook.pub.geometry.circle.GeometricCircle;
 import imagingbook.pub.geometry.fitting.circle.algebraic.CircleFit3Points;
 import imagingbook.pub.geometry.fitting.circle.algebraic.CircleFitAlgebraic;
-import imagingbook.pub.geometry.fitting.circle.algebraic.CircleFitHyper;
-import imagingbook.pub.geometry.fitting.circle.algebraic.CircleFitKasaA;
-import imagingbook.pub.geometry.fitting.circle.algebraic.CircleFitKasaB;
-import imagingbook.pub.geometry.fitting.circle.algebraic.CircleFitKasa;
 import imagingbook.pub.geometry.fitting.circle.algebraic.CircleFitPratt;
-import imagingbook.pub.geometry.fitting.circle.geometric.CircleFitGeometric;
-import imagingbook.pub.geometry.fitting.circle.geometric.CircleFitGeometricDist;
 
 
 public class RansacCircleDetector {

@@ -459,13 +459,7 @@ public class CircleFitPratt extends CircleFitAlgebraic {
 //			GeometricCircle circle = fit.getGeometricCircle();
 //			System.out.println("circle = " + circle);
 //		}
-		
-		
-//		System.out.println("-------------- PRATT (SVD Doube) -----------------------------");
-//		{
-//			double[] p = FitCircle.prattSVD(PA);
-//			System.out.println("p = " + Arrays.toString(p));
-//		}
-	}
+//		
+//	}
 		
 }
