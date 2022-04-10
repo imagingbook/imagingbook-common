@@ -42,30 +42,30 @@ public class ConfocalConicEllipseProjector extends EllipseProjector {
 	
 	// -------------------------------------------------
 
-	public static void main(String[] args) {
-		PrintPrecision.set(8);
-		
-//		Ellipse ell = new Ellipse(150, 80, 0, 0, 0);
-//		Pnt2d p = Pnt2d.from(100, 110);
-		
-		// critical case: 
-//		GeometricEllipse ell = new GeometricEllipse(353613.76725979, 987.23614032, 353503.20032614, -9010.22308359, 3.11555492);
-//		Pnt2d p = Pnt2d.from(30.000000000, 210.000000000);
-		
-		GeometricEllipse ell = new GeometricEllipse(6, 5, 0, 0, 0);
-		Pnt2d p = Pnt2d.from(0,0);
-		
-		EllipseProjector projector = new ConfocalConicEllipseProjector(ell);
-		
-		
-		System.out.println("p  = " + p);
-		
-		Pnt2d p0 = projector.project(p);
-		System.out.println("p0 = " + p0);
-		
-		System.out.println("dist = " + projector.getDistance(p.toDoubleArray()));
-
-	}
+//	public static void main(String[] args) {
+//		PrintPrecision.set(8);
+//		
+////		Ellipse ell = new Ellipse(150, 80, 0, 0, 0);
+////		Pnt2d p = Pnt2d.from(100, 110);
+//		
+//		// critical case: 
+////		GeometricEllipse ell = new GeometricEllipse(353613.76725979, 987.23614032, 353503.20032614, -9010.22308359, 3.11555492);
+////		Pnt2d p = Pnt2d.from(30.000000000, 210.000000000);
+//		
+//		GeometricEllipse ell = new GeometricEllipse(6, 5, 0, 0, 0);
+//		Pnt2d p = Pnt2d.from(0.1 , 0.1);
+//		
+//		EllipseProjector projector = new ConfocalConicEllipseProjector(ell);
+//		
+//		
+//		System.out.println("p  = " + p);
+//		
+//		Pnt2d p0 = projector.project(p);
+//		System.out.println("p0 = " + p0);
+//		
+//		System.out.println("dist = " + projector.getDistance(p.toDoubleArray()));
+//
+//	}
 	
 
 }
