@@ -7,8 +7,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import imagingbook.lib.math.eigen.Eigensolver2x2;
 import imagingbook.pub.geometry.basic.Pnt2d;
 import imagingbook.pub.geometry.basic.Pnt2d.PntDouble;
+import imagingbook.pub.geometry.ellipse.GeometricEllipse;
 
 /**
  * <p>
@@ -144,6 +146,26 @@ public abstract class BinaryRegion implements Comparable<BinaryRegion>, Iterable
 		return PntDouble.from(((double)this.getX1Sum())/n, ((double)this.getY1Sum())/n);
 	}
 
+	/**
+	 * Calculates and returns this region's equivalent ellipse.
+	 * @return the equivalent elipse
+	 */
+	public GeometricEllipse getEquivalentEllipse() {
+		final double n = this.getSize();
+		Pnt2d xc = this.getCenter();
+		double[] moments = this.getCentralMoments(); // = (mu20, mu02, mu11)
+		final double mu20 = moments[0];
+		final double mu02 = moments[1];
+		final double mu11 = moments[2];
+		
+		Eigensolver2x2 solver = new Eigensolver2x2(mu20, mu11, mu11, mu02);
+		double ra = 2 * Math.sqrt(solver.getEigenvalue(0) / n);
+		double rb = 2 * Math.sqrt(solver.getEigenvalue(1) / n);
+		double[] e0 = solver.getEigenvector(0);
+		double theta = Math.atan2(e0[1], e0[0]);
+		return new GeometricEllipse(ra, rb, xc.getX(), xc.getY(), theta);
+	}
+	
 	public abstract void setOuterContour(Contour.Outer contr);
 
 	/**
