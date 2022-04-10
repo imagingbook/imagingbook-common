@@ -447,17 +447,18 @@ public class CircleFitPratt extends CircleFitAlgebraic {
 			{105, 174}};
 
 	
-	public static void main(String[] args) {
-		
-		System.out.println("-------------- PRATT (WB) -----------------------------");
-		{
-			Pnt2d[] pnts = PntUtils.fromDoubleArray(PA);
-			CircleFitPratt fit = new CircleFitPratt(pnts);
-			double[] p = fit.getParameters();
-			System.out.println("p = " + Arrays.toString(p));
-			GeometricCircle circle = fit.getGeometricCircle();
-			System.out.println("circle = " + circle);
-		}
+//	public static void main(String[] args) {
+//		
+//		System.out.println("-------------- PRATT (WB) -----------------------------");
+//		{
+//			Pnt2d[] pnts = PntUtils.fromDoubleArray(PA);
+//			CircleFitPratt fit = new CircleFitPratt(pnts);
+//			double[] p = fit.getParameters();
+//			System.out.println("p = " + Arrays.toString(p));
+//			
+//			GeometricCircle circle = fit.getGeometricCircle();
+//			System.out.println("circle = " + circle);
+//		}
 		
 		
 //		System.out.println("-------------- PRATT (SVD Doube) -----------------------------");
