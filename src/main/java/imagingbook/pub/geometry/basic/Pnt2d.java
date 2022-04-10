@@ -672,10 +672,17 @@ public interface Pnt2d extends ShapeProvider {
 					getClass().getSimpleName(), x, y);
 		}
 		
+//		@Override
+//		public int hashCode() {
+//			return (17 + this.x) * 37 + this.y;	
+//		}
+		
 		@Override
-		public int hashCode() {
-			return (17 + this.x) * 37 + this.y;	
-		}
+	    public int hashCode() {
+	        long bits = java.lang.Double.doubleToLongBits(getX());
+	        bits ^= java.lang.Double.doubleToLongBits(getY()) * 31;
+	        return (((int) bits) ^ ((int) (bits >> 32)));
+	    }
 		
 		
 		/**
@@ -707,6 +714,5 @@ public interface Pnt2d extends ShapeProvider {
 //		System.out.println(" b = " + b.getClass());
 //		System.out.println("dist1 = " + a.distL1(b));
 //		System.out.println("dist2 = " + a.distL1(b));
-//		
 //	}
 }
