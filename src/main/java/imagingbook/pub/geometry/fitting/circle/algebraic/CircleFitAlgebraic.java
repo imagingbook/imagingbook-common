@@ -25,7 +25,7 @@ public abstract class CircleFitAlgebraic {
 		case KasaOrig: 	return new CircleFitKasa(points);
 		case Pratt: 	return new CircleFitPratt(points);
 		case Taubin: 	return new CircleFitTaubin(points);
-		default: throw new RuntimeException("unknown algebraic fit type: " + type);
+		default: return null;
 		}
 	}
 	
