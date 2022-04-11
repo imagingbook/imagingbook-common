@@ -1,7 +1,6 @@
 package imagingbook.pub.ransac;
 
 
-
 import static imagingbook.lib.math.Arithmetic.sqr;
 
 import java.util.ArrayList;
@@ -13,6 +12,12 @@ import imagingbook.pub.geometry.fitting.line.LineFit;
 import imagingbook.pub.geometry.fitting.line.OrthogonalLineFitEigen;
 import imagingbook.pub.geometry.line.AlgebraicLine;
 
+/**
+ * RANSAC straight line detector.
+ * 
+ * @author WB
+ *
+ */
 public class RansacLineDetector {
 	
 	private int maxIterations = 2000;
@@ -110,9 +115,6 @@ public class RansacLineDetector {
 		}
 		return pList.toArray(new Pnt2d[0]);
 	}
-	
-	
-	
 	
 	// -----------------------------------------------------
 	
