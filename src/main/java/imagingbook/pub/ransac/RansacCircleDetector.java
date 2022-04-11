@@ -13,12 +13,13 @@ import imagingbook.pub.geometry.fitting.circle.algebraic.CircleFit3Points;
 import imagingbook.pub.geometry.fitting.circle.algebraic.CircleFitAlgebraic;
 import imagingbook.pub.geometry.fitting.circle.algebraic.CircleFitPratt;
 
-
+@Deprecated  // replaced by generic version
 public class RansacCircleDetector {
 	
 	private int maxIterations = 2000;
 	private double distanceThreshold = 2.5;
-	private int minSupportCount = 20;
+	private int minSupportCount = 20;	
+	
 	
 	private Random rand = new Random(17);
 	

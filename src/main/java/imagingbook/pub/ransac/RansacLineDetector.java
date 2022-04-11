@@ -18,6 +18,7 @@ import imagingbook.pub.geometry.line.AlgebraicLine;
  * @author WB
  *
  */
+@Deprecated
 public class RansacLineDetector {
 	
 	private int maxIterations = 2000;
@@ -95,7 +96,7 @@ public class RansacLineDetector {
 	private int countInliers(AlgebraicLine line, Pnt2d[] points) {
 		int count = 0;
 		for (Pnt2d p : points) {
-			if (p != null && Math.abs(line.getDistance(p)) < distanceThreshold) {
+			if (p != null && line.getDistance(p) < distanceThreshold) {
 				count++;
 			}
 		}
@@ -106,7 +107,7 @@ public class RansacLineDetector {
 		List<Pnt2d> pList = new ArrayList<>();
 		for (int i = 0; i < points.length; i++) {
 			Pnt2d p = points[i];
-			if (p != null && Math.abs(line.getDistance(p)) < distanceThreshold) {
+			if (p != null && line.getDistance(p) < distanceThreshold) {
 				pList.add(p);
 				if (remove) {
 					points[i] = null;

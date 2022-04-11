@@ -18,7 +18,7 @@ import imagingbook.pub.geometry.fitting.ellipse.algebraic.EllipseFit5Points;
 import imagingbook.pub.geometry.fitting.ellipse.algebraic.EllipseFitAlgebraic;
 import imagingbook.pub.geometry.fitting.ellipse.algebraic.EllipseFitFitzgibbonStable;
 
-
+@Deprecated
 public class RansacEllipseDetector {
 	
 	private int maxIterations = 1000;

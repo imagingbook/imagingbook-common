@@ -13,6 +13,7 @@ import imagingbook.pub.geometry.basic.Pnt2d;
  * x = s + t v, where s is a start point on the line,
  * v is a direction vector, and t is a real variable.
  * Instances are immutable.
+ * TODO: add implementation of Curve2d
  *
  */
 public class ParametricLine {

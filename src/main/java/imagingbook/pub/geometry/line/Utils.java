@@ -19,7 +19,7 @@ public abstract class Utils {
 		for (int u = 0; u < w; u++) {
 			for (int v = 0; v < h; v++) {
 				// get the distance between (u,v) and the line hl:
-				double d = Math.abs(line.getDistance(u, v));
+				double d = line.getDistance(u, v);
 				if (d <= dmax) {
 					ip.drawPixel(u, v);
 				}

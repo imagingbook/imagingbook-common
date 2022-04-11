@@ -9,6 +9,7 @@ import java.util.Locale;
 /**
  * Represents an algebraic circle of the form
  * A * (x^2 + y^2) + B * x + C * y + D = 0.
+ * TODO: add implementation of Curve2d
  * 
  * @author WB
  *

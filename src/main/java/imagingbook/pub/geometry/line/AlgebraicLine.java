@@ -14,6 +14,7 @@ import static imagingbook.lib.math.Arithmetic.sqr;
 import java.awt.Shape;
 import java.util.Locale;
 
+import imagingbook.pub.geometry.basic.Curve2d;
 import imagingbook.pub.geometry.basic.Pnt2d;
 import imagingbook.pub.geometry.basic.Pnt2d.PntDouble;
 import imagingbook.pub.hough.lines.HoughLine;
@@ -24,7 +25,7 @@ import imagingbook.pub.hough.lines.HoughLine;
  * @author WB
  *
  */
-public class AlgebraicLine {
+public class AlgebraicLine implements Curve2d {
 	
 	private final double A, B, C;
 	
@@ -121,20 +122,40 @@ public class AlgebraicLine {
 	 * @return The perpendicular distance between this line and the point (x, y).
 	 */
 	public double getDistance(double x, double y) {
-		return (A * (x - this.getXref()) + B * (y - this.getYref()) + C);
+		return Math.abs(getSignedDistance(x, y));
+//		return (A * (x - this.getXref()) + B * (y - this.getYref()) + C);
 	}
 	
 	/**
-	 * Returns the perpendicular distance between this line and the point p. The
-	 * result may be positive or negative, depending on which side of the line p is
-	 * located.
+	 * Returns the orthogonal (unsigned) distance between this line and the point p. The
+	 * result is always non-negative.
 	 * 
 	 * @param p point position.
 	 * @return The perpendicular distance between this line and the point p.
 	 */
+	@Override
 	public double getDistance(Pnt2d p) {
-		return getDistance(p.getX(), p.getY());
+		return Math.abs(getSignedDistance(p));
 	}
+	
+	/**
+	 * Returns the perpendicular (signed) distance between this line and the point (x, y).
+	 * The result may be positive or negative, depending on which side of the line
+	 * (x, y) is located. It is assumed that the line is normalized, i.e.,
+	 * ||(A,B)|| = 1.
+	 * 
+	 * @param x x-coordinate of point position.
+	 * @param y y-coordinate of point position.
+	 * @return The perpendicular distance between this line and the point (x, y).
+	 */
+	public double getSignedDistance(double x, double y) {
+		return (A * (x - this.getXref()) + B * (y - this.getYref()) + C);
+	}
+	
+	public double getSignedDistance(Pnt2d p) {
+		return getSignedDistance(p.getX(), p.getY());
+	}
+	
 	
 	/**
 	 * Returns the point on the line that is closest to the specified

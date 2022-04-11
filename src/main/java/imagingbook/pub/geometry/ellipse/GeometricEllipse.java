@@ -14,6 +14,7 @@ import java.util.Locale;
 
 import imagingbook.lib.math.Arithmetic;
 import imagingbook.lib.settings.PrintPrecision;
+import imagingbook.pub.geometry.basic.Curve2d;
 import imagingbook.pub.geometry.basic.Pnt2d;
 import imagingbook.pub.geometry.basic.ShapeProvider;
 
@@ -23,7 +24,7 @@ import imagingbook.pub.geometry.basic.ShapeProvider;
  * @author WB
  *
  */
-public class GeometricEllipse implements Ellipse, ShapeProvider {
+public class GeometricEllipse implements Ellipse, ShapeProvider, Curve2d {
 	
 	public final double ra, rb, xc, yc, theta;	// TODO: make private!
 	private final OrthogonalEllipseProjector projector;
@@ -189,6 +190,7 @@ public class GeometricEllipse implements Ellipse, ShapeProvider {
 	 * @param p
 	 * @return
 	 */
+	@Override
 	public double getDistance(Pnt2d p) {
 		return p.distance(getClosestPoint(p));
 	}

@@ -14,11 +14,12 @@ import ij.IJ;
 import ij.gui.Roi;
 import ij.gui.ShapeRoi;
 import imagingbook.lib.math.Arithmetic;
+import imagingbook.pub.geometry.basic.Curve2d;
 import imagingbook.pub.geometry.basic.Pnt2d;
 import imagingbook.pub.geometry.basic.ShapeProvider;
 
 
-public class GeometricCircle implements Circle, ShapeProvider {
+public class GeometricCircle implements Circle, ShapeProvider, Curve2d {
 	
 	static int DefaultSteps = 200;
 	
@@ -108,16 +109,28 @@ public class GeometricCircle implements Circle, ShapeProvider {
 //	}
 	
 	/**
-	 * Returns the (signed) distance between the specified point
+	 * Returns the (unsigned) distance between the specified point
+	 * and this circle. The result is always non-negative.
+	 * 
+	 * @param p a 2D point
+	 * @return the point's distance from the circle
+	 */
+	@Override
+	public double getDistance(Pnt2d p) {
+		return Math.abs(getSignedDistance(p));
+	}
+	
+	/**
+	 * Returns the signed distance between the specified point
 	 * and this circle. The result is positive for points outside
 	 * the circle, negative inside.
 	 * 
-	 * @param point a 2D point
-	 * @return the signed distance from the circle
+	 * @param p a 2D point
+	 * @return the point's signed distance from the circle
 	 */
-	public double getDistance(Pnt2d point) {
-		double dx = point.getX() - this.xc;
-		double dy = point.getY() - this.yc;
+	public double getSignedDistance(Pnt2d p) {
+		double dx = p.getX() - this.xc;
+		double dy = p.getY() - this.yc;
 		double rp = Math.hypot(dx, dy);
 		return rp - this.r;
 	}

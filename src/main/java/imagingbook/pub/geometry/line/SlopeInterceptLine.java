@@ -9,6 +9,7 @@ import imagingbook.pub.geometry.basic.Pnt2d;
  * This class represents a line in slope-intercept form: y = k x + d.
  * Instances are immutable. Not all possible lines in the 2D plane
  * can be represented.
+ * TODO: add implementation of Curve2d
  */
 public class SlopeInterceptLine {
 	

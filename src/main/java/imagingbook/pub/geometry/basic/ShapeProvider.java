@@ -6,7 +6,7 @@ import imagingbook.pub.geometry.ellipse.GeometricEllipse;
 
 /**
  * Implementing classes know how to create an AWT {@link Shape}.
- * 
+ * TODO: Rename to ShapeProducer?
  * @author WB
  *
  */
