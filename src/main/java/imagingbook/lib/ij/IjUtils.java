@@ -9,6 +9,7 @@
 
 package imagingbook.lib.ij;
 
+import java.net.URI;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -344,15 +345,15 @@ public abstract class IjUtils {
 	}
 	
 	/**
-	 * Opens the image from the specified path and returns it
+	 * Opens the image from the specified {@link URI} and returns it
 	 * as a {@link ImagePlus} instance.
 	 * 
-	 * @param path The simple name of the image file (including extension)
+	 * @param uri the URI leading to the image (including extension)
 	 * @return A new {@link ImagePlus} instance or {@code null} if not found
 	 */
-	public static ImagePlus openImage(Path path) {
-		Objects.requireNonNull(path);
-		return new Opener().openImage(path.toString());
+	public static ImagePlus openImage(URI uri) {
+		Objects.requireNonNull(uri);
+		return new Opener().openImage(uri.toString());
 	}
 	
 	
