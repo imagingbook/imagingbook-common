@@ -6,7 +6,8 @@ import java.net.URL;
 import ij.ImagePlus;
 import ij.io.Opener;
 
-public abstract class TestImages {
+@Deprecated		// experimental (too slow for testing)!!
+public abstract class TestImagesFetchFromGitHub {
 	
 	public static final String RepositoryUrl = "https://raw.github.com/imagingbook/imagingbook-test-images/master/img/";
 	
