@@ -9,8 +9,8 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import ij.process.ByteProcessor;
-import imagingbook.DATA.images.RLOC;
-import imagingbook.lib.util.resource.ResourceLocation.Resource;
+import imagingbook.DATA.GeneralTestImage;
+import imagingbook.core.resource.ImageResource;
 import imagingbook.pub.geometry.basic.NeighborhoodType2D;
 import imagingbook.pub.regions.BinaryRegion;
 import imagingbook.pub.regions.Contour;
@@ -21,7 +21,7 @@ public class RegionContourSegmentationTest {
 	public void testSimpleN4() {
 		TestCase tc = new TestCase();
 		// -----------------------------------------------------------------
-		tc.ImgName = "simple-test-grid-img.png";
+		tc.imgResource =  GeneralTestImage.SimpleTestGridImg;
 		tc.NHT = N4;
 		tc.RegionCount = 6;
 		tc.LargestRegionSize = 64;
@@ -36,7 +36,7 @@ public class RegionContourSegmentationTest {
 	public void testSimpleN8() {
 		TestCase tc = new TestCase();
 		// -----------------------------------------------------------------
-		tc.ImgName = "simple-test-grid-img.png";
+		tc.imgResource =  GeneralTestImage.SimpleTestGridImg;
 		tc.NHT = N8;
 		tc.RegionCount = 3;
 		tc.LargestRegionSize = 75;
@@ -53,7 +53,7 @@ public class RegionContourSegmentationTest {
 	public void testSmallN4() {
 		TestCase tc = new TestCase();
 		// -----------------------------------------------------------------
-		tc.ImgName = "segmentation-small.png";
+		tc.imgResource =  GeneralTestImage.SegmentationSmall;
 		tc.NHT = N4;
 		tc.RegionCount = 26;
 		tc.LargestRegionSize = 1000;
@@ -68,7 +68,7 @@ public class RegionContourSegmentationTest {
 	public void testSmallN8() {
 		TestCase tc = new TestCase();
 		// -----------------------------------------------------------------
-		tc.ImgName = "segmentation-small.png";
+		tc.imgResource =  GeneralTestImage.SegmentationSmall;
 		tc.NHT = N8;
 		tc.RegionCount = 9;
 		tc.LargestRegionSize = 1000;
@@ -85,7 +85,7 @@ public class RegionContourSegmentationTest {
 	public void testMedN4() {
 		TestCase tc = new TestCase();
 		// -----------------------------------------------------------------
-		tc.ImgName = "segmentation-med.png";
+		tc.imgResource =  GeneralTestImage.SegmentationMed;
 		tc.NHT = N4;
 		tc.RegionCount = 88;
 		tc.LargestRegionSize = 16352;
@@ -100,7 +100,7 @@ public class RegionContourSegmentationTest {
 	public void testMedN8() {
 		TestCase tc = new TestCase();
 		// -----------------------------------------------------------------
-		tc.ImgName = "segmentation-med.png";
+		tc.imgResource =  GeneralTestImage.SegmentationMed;
 		tc.NHT = N8;
 		tc.RegionCount = 9;
 		tc.LargestRegionSize = 16352;
@@ -117,7 +117,7 @@ public class RegionContourSegmentationTest {
 	public void testBigN4() {
 		TestCase tc = new TestCase();
 		// -----------------------------------------------------------------
-		tc.ImgName = "rhino-big-crop.png";
+		tc.imgResource =  GeneralTestImage.RhinoBigCrop;
 		tc.NHT = N4;
 		tc.RegionCount = 10254;
 		tc.LargestRegionSize = 562365;
@@ -132,7 +132,7 @@ public class RegionContourSegmentationTest {
 	public void testBigN8() {
 		TestCase tc = new TestCase();
 		// -----------------------------------------------------------------
-		tc.ImgName = "rhino-big-crop.png";
+		tc.imgResource =  GeneralTestImage.RhinoBigCrop;
 		tc.NHT = N8;
 		tc.RegionCount = 9382;
 		tc.LargestRegionSize = 564659;
@@ -148,7 +148,7 @@ public class RegionContourSegmentationTest {
 	// --------------------------------------------------------------------------------------------
 	
 	private static class TestCase {
-		String ImgName;
+		ImageResource imgResource;
 		NeighborhoodType2D NHT;
 		int RegionCount;
 		int LargestRegionSize;
@@ -157,8 +157,8 @@ public class RegionContourSegmentationTest {
 		int FirstInnerContourLength;
 		
 		void run() {
-			RegionContourSegmentation segmentation = 
-					new RegionContourSegmentation(openImage(ImgName), NHT);
+			ByteProcessor bp = (ByteProcessor)imgResource.getImage().getProcessor();
+			RegionContourSegmentation segmentation = new RegionContourSegmentation(bp, NHT);
 			
 			// check region count:
 			List<BinaryRegion> regions = segmentation.getRegions(true);
@@ -192,11 +192,6 @@ public class RegionContourSegmentationTest {
 //			} catch (InterruptedException e) {}
 		}
 		
-	}
-	
-	private static ByteProcessor openImage(String imgName) {
-		Resource path = new RLOC().getResource(imgName);
-		return (ByteProcessor) path.openAsImage().getProcessor();
 	}
 	
 	private static int findFirstRegionWithHole(List<BinaryRegion> regions) {

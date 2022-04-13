@@ -5,23 +5,23 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 import ij.process.ImageProcessor;
+import imagingbook.DATA.GeneralTestImage;
+import imagingbook.core.resource.ImageResource;
 import imagingbook.lib.image.access.OutOfBoundsStrategy;
 import imagingbook.lib.math.VectorNorm.NormType;
-import imagingbook.lib.util.resource.ResourceLocation;
-import imagingbook.lib.util.resource.ResourceLocation.Resource;
 import imagingbook.testutils.ImageTests;
 
 public class ColorMedianFilterTest {
 	
-	private final ResourceLocation loc = new imagingbook.DATA.images.RLOC();
-
+	ImageResource resA = GeneralTestImage.Clown;
+	
 	@Test
 	public void testScalarMedianFilter() {
 		
-		Resource pathA = loc.getResource("clown.png");
-		Resource pathB = loc.getResource("clown-median-scalar-3.png");
-		ImageProcessor ipA = pathA.openAsImage().getProcessor();
-		ImageProcessor ipB = pathB.openAsImage().getProcessor();
+		ImageResource resB = GeneralTestImage.ClownMedianScalar3;
+		
+		ImageProcessor ipA = resA.getImage().getProcessor();
+		ImageProcessor ipB = resB.getImage().getProcessor();
 		
 		ScalarMedianFilter.Parameters params = new ScalarMedianFilter.Parameters();
 		params.radius = 3.0;
@@ -34,10 +34,9 @@ public class ColorMedianFilterTest {
 	
 	@Test
 	public void testVectorMedianFilter() {
-		Resource pathA = loc.getResource("clown.png");
-		Resource pathB = loc.getResource("clown-median-vector-3-L1.png");
-		ImageProcessor ipA = pathA.openAsImage().getProcessor();
-		ImageProcessor ipB = pathB.openAsImage().getProcessor();
+		ImageResource resB = GeneralTestImage.ClownMedianVector3L1;
+		ImageProcessor ipA = resA.getImage().getProcessor();
+		ImageProcessor ipB = resB.getImage().getProcessor();
 		
 		VectorMedianFilter.Parameters params = new VectorMedianFilter.Parameters();
 		params.radius = 3.0;
@@ -51,10 +50,9 @@ public class ColorMedianFilterTest {
 	
 	@Test
 	public void testVectorMedianFilterSharpen() {
-		Resource pathA = loc.getResource("clown.png");
-		Resource pathB = loc.getResource("clown-median-vectorsharpen-3-L1.png");
-		ImageProcessor ipA = pathA.openAsImage().getProcessor();
-		ImageProcessor ipB = pathB.openAsImage().getProcessor();
+		ImageResource resB = GeneralTestImage.ClownMedianVectorsharpen3L1;
+		ImageProcessor ipA = resA.getImage().getProcessor();
+		ImageProcessor ipB = resB.getImage().getProcessor();
 		
 		VectorMedianFilterSharpen.Parameters params = new VectorMedianFilterSharpen.Parameters();
 		params.radius = 3.0;

@@ -96,6 +96,7 @@ import imagingbook.lib.util.FileUtils;
  * @author WB
  * @version 2021/07/28
  */
+@Deprecated
 public abstract class ResourceLocation {
 	
 	private final boolean injar;

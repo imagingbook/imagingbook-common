@@ -7,15 +7,14 @@ import java.util.List;
 import org.junit.Test;
 
 import ij.process.ByteProcessor;
-import imagingbook.lib.util.resource.ResourceLocation;
-import imagingbook.lib.util.resource.ResourceLocation.Resource;
+import imagingbook.core.resource.ImageResource;
 import imagingbook.pub.mser.MserDetector.Parameters;
 import imagingbook.pub.mser.components.Component;
 import imagingbook.pub.mser.components.ComponentTree.Method;
 
-public class MserDetectorTest {
+import static imagingbook.DATA.MserTestImage.*;
 
-	static ResourceLocation loc = new imagingbook.DATA.mserTestImages.RLOC();
+public class MserDetectorTest {
 
 	private Parameters params = null;
 	MserDetector detector = null;
@@ -39,30 +38,29 @@ public class MserDetectorTest {
 		params.validateComponentTree =	false;
 
 		detector = new MserDetector(params);
-
-		//System.out.println(Arrays.toString(loc.getResourceNames()));
-		run1("blob1.png", 3);
-		run1("blob2.png", 6);
-		run1("blob3.png", 9);
-		run1("blob-level-test.png", 2);
-		run1("blob-level-test-noise.png", 2);
-		run1("blob-oriented.png", 3);
-		run1("blobs-in-white.png", 3);
-		run1("boats-tiny.png", 21);
-		run1("boats-tiny-b.png", 22);
-		run1("boats-tiny-bw.png", 1);
-		run1("boats-tiny-w.png", 21);
-		run1("boats-tiny-w2.png", 22);
-		run1("all-black.png", 0);
-		run1("all-white.png", 0);
+		
+		runMser(Blob1, 3);
+		runMser(Blob2, 6);
+		runMser(Blob3, 9);
+		runMser(BlobLevelTest, 2);
+		runMser(BlobLevelTestNoise, 2);
+		runMser(BlobOriented, 3);
+		runMser(BlobsInWhite, 3);
+		runMser(BoatsTiny, 21);
+		runMser(BoatsTinyB, 22);
+		runMser(BoatsTinyBW, 1);
+		runMser(BoatsTinyW, 21);
+		runMser(BoatsTinyW2, 22);
+		runMser(AllBlack, 0);
+		runMser(AllWhite, 0);
 	}
 
-	private void run1(String name, int mserExpected) {
-		Resource resource = loc.getResource(name);
-		ByteProcessor ip = (ByteProcessor) resource.openAsImage().getProcessor();
+	private void runMser(ImageResource res, int mserExpected) {
+//		System.out.println("running " + res);
+		ByteProcessor ip = (ByteProcessor) res.getImage().getProcessor();
 		List<Component<MserData>> msers = detector.applyTo((ByteProcessor) ip);
-		//System.out.println(msers.size());
-		assertEquals("detected MSER components (" + name + ")", mserExpected, msers.size());
+//		System.out.println(msers.size());
+		assertEquals("detected MSER components (" + res + ")", mserExpected, msers.size());
 	}
 
 }

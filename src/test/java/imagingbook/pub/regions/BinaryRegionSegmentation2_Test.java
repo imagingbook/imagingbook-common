@@ -9,8 +9,8 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import ij.process.ByteProcessor;
-import imagingbook.DATA.images.RLOC;
-import imagingbook.lib.util.resource.ResourceLocation.Resource;
+import imagingbook.DATA.GeneralTestImage;
+import imagingbook.core.resource.ImageResource;
 import imagingbook.pub.regions.segment.BinaryRegionSegmentation;
 import imagingbook.pub.regions.segment.BreadthFirstSegmentation;
 import imagingbook.pub.regions.segment.DepthFirstSegmentation;
@@ -26,18 +26,11 @@ import imagingbook.pub.regions.segment.SequentialSegmentation;
  */
 public class BinaryRegionSegmentation2_Test {
 	
-	static String ImgName = "cat-skeleton.png";
-	static int RegionCount_N4 = 46;
-	static int RegionCount_N8 = 1;
+	private static int RegionCount_N4 = 46;
+	private static int RegionCount_N8 = 1;
 	
-	final Resource path;
-	final ByteProcessor bp;
-	
-	public BinaryRegionSegmentation2_Test() {
-		path = new RLOC().getResource(ImgName);
-		bp = (ByteProcessor) path.openAsImage().getProcessor();
-		Assert.assertNotNull(bp);
-	}
+	private ImageResource path = GeneralTestImage.CatSkeleton;
+	private ByteProcessor bp = (ByteProcessor) path.getImage().getProcessor();
 
 	@Test
 	public void testSegmentationBreadthFirst() {
