@@ -9,6 +9,7 @@
 
 package imagingbook.lib.ij;
 
+import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -451,7 +452,7 @@ public abstract class IjUtils {
 	 * @param ip an image (of any type)
 	 * @return an array of 2D points
 	 */
-	public static Pnt2d[] collectPoints(ImageProcessor ip) {
+	public static Pnt2d[] collectNonzeroPoints(ImageProcessor ip) {
 		List<Pnt2d> points = new ArrayList<>();
 		int M = ip.getWidth();
 		int N = ip.getHeight();
@@ -546,55 +547,109 @@ public abstract class IjUtils {
 	// -------------------------------------------------------------------------
 	
 	/**
-	 * Run a {@link PlugInFilter} with empty argument string.
-	 * @param clazz class of the plugin
-	 * @return true if successful
+	 * Runs the given {@link PlugInFilter} instance with empty argument string.
+	 * @param pluginfilter an instance of {@link PlugInFilter} 
+	 * @return true if no exception was thrown
+	 */
+	public static boolean run(PlugInFilter pluginfilter) {
+		return run(pluginfilter, "");
+	}
+	
+	/**
+	 * Runs the given {@link PlugInFilter} instance.
+	 * @param pluginfilter an instance of {@link PlugInFilter} 
+	 * @param arg argument passed to {@link PlugInFilter#setup(String, ImagePlus)}
+	 * @return true if no exception was thrown
+	 */
+	public static boolean run(PlugInFilter pluginfilter, String arg) {
+		try {
+			new PlugInFilterRunner(pluginfilter, pluginfilter.getClass().getSimpleName(), arg);
+		} catch (Exception e) {
+			return false;
+		}
+		return true;
+	}
+	
+	/**
+	 * Runs the given {@link PlugIn} instance with empty argument string.
+	 * @param plugin an instance of {@link PlugIn}
+	 * @return true if no exception was thrown
+	 */
+	public static boolean run(PlugIn plugin) {
+		return run(plugin, "");
+	}
+	
+	/**
+	 * Runs the given {@link PlugIn} instance.
+	 * @param plugin an instance of {@link PlugIn}
+	 * @param arg argument passed to {@link PlugIn#run(String)}
+	 * @return true if no exception was thrown
+	 */
+	public static boolean run(PlugIn plugin, String arg) {
+		try {
+			plugin.run(arg);
+		} catch (Exception e) {
+			return false;
+		}
+		return true;
+	}
+	
+	// ------------------------------------------------------------------
+	
+	/**
+	 * Run a {@link PlugInFilter} from the associated class with empty argument string.
+	 * If the plugin's constructor is available, use method {@link #run(PlugInFilter)} instead.
+	 * @param clazz class of the pluginfilter
+	 * @return true if no exception was thrown
 	 */
 	public static boolean runPlugInFilter(Class<? extends PlugInFilter> clazz) {
 		return runPlugInFilter(clazz, "");
 	}
 	
 	/**
-	 * Run a {@link PlugInFilter} with its class (not only its name) is already available.
-	 * 
+	 * Run a {@link PlugInFilter} from the associated class.
+	 * If the plugin's constructor is available, use method {@link #run(PlugInFilter, String)} instead.
 	 * @param clazz class of the plugin
 	 * @param arg argument string
-	 * @return true if successful
+	 * @return true if no exception was thrown
 	 */
 	public static boolean runPlugInFilter(Class<? extends PlugInFilter> clazz, String arg) {
+		PlugInFilter thePlugIn = null;
 		try {
-			PlugInFilter thePlugIn = clazz.getDeclaredConstructor().newInstance(); //clazz.newInstance();
-			new PlugInFilterRunner(thePlugIn, "", arg);
-		} catch (Exception e) {
-			return false;
+			thePlugIn = clazz.getDeclaredConstructor().newInstance();
+		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
+				| InvocationTargetException | NoSuchMethodException | SecurityException e) {
+			throw new RuntimeException(e.getMessage());	// should never happen
 		}
-		return true;
+		return run(thePlugIn, arg);
 	}
 	
 	/**
-	 * Run a {@link PlugIn} with empty argument string.
+	 * Run a {@link PlugIn} from the associated class with empty argument string.
+	 * If the plugin's constructor is available, use method {@link #run(PlugIn)} instead.
 	 * @param clazz class of the plugin
-	 * @return true if successful
+	 * @return true if no exception was thrown
 	 */
 	public static boolean runPlugIn(Class<? extends PlugIn> clazz) {
 		return runPlugIn(clazz, "");
 	}
 	
 	/**
-	 * Run a {@link PlugIn} with its class (not only its name) is already available.
-	 * 
+	 * Run a {@link PlugIn} from the associated class.
+	 * If the plugin's constructor is available, use method {@link #run(PlugIn, String)} instead.
 	 * @param clazz class of the plugin
 	 * @param arg argument string
-	 * @return true if successful
+	 * @return true if no exception was thrown
 	 */
 	public static boolean runPlugIn(Class<? extends PlugIn> clazz, String arg) {
+		PlugIn thePlugIn = null;
 		try {
-			PlugIn thePlugIn = clazz.getDeclaredConstructor().newInstance(); //clazz.newInstance();
-			thePlugIn.run(arg);
-		} catch (Exception e) {
-			return false;
+			thePlugIn = clazz.getDeclaredConstructor().newInstance();
+		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
+				| InvocationTargetException | NoSuchMethodException | SecurityException e) {
+			throw new RuntimeException(e.getMessage());	// should never happen
 		}
-		return true;
+		return run(thePlugIn, arg);
 	}
 
 }
