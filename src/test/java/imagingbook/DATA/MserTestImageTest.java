@@ -17,7 +17,7 @@ public class MserTestImageTest {
 	@Test
 	public void test1() {
 	for (ImageResource ir : MserTestImage.values()) {
-		assertNotNull("could not find URI for resource " + ir.toString(), ir.getURI());
+		assertNotNull("could not find URL for resource " + ir.toString(), ir.getURL());
 		assertNotNull("could not open image for resource " + ir,  ir.getImage());
 	}
 }

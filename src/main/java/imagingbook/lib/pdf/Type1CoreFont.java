@@ -5,9 +5,7 @@ import java.io.IOException;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.pdf.BaseFont;
 
-import imagingbook.lib.pdf.fonts.type1.RLOC;
-import imagingbook.lib.util.resource.ResourceLocation;
-import imagingbook.lib.util.resource.ResourceLocation.Resource;
+import imagingbook.core.resource.NamedResource;
 
 /**
  * This class collects the set of 14 Type-1 standard fonts that every
@@ -20,7 +18,7 @@ import imagingbook.lib.util.resource.ResourceLocation.Resource;
  * @author WB
  *
  */
-public enum Type1CoreFont {
+public enum Type1CoreFont implements NamedResource {
 	
 	Courier("Courier.afm"),
 	CourierBold("Courier-Bold.afm"),
@@ -38,22 +36,31 @@ public enum Type1CoreFont {
 	ZapfDingbats("ZapfDingbats.afm")
 	;
 	
-	private final String afmName;
-	private BaseFont basefont;
+	private static final String BASEDIR = "fonts/type1/";
 	
-	private static ResourceLocation Resources = new RLOC();	// location of font resources
+	private final String relPath;
+	private BaseFont basefont = null;		// cached BaseFont instance
 
 	/**
 	 * Constructor.
 	 * @param afmName the name of the associated AFM file
 	 */
 	Type1CoreFont(String afmName) {
-		this.afmName = afmName;
-		this.basefont = null;	// direct initialization makes problems (exception reading reseources)
+		this.relPath = BASEDIR + afmName;
+	}
+	
+	@Override
+	public String getRelativePath() {
+		return relPath;
+	}
+	
+	
+	private String getFontPath() {
+		return getURL().toString();
 	}
 	
 	/** 
-	 * Returns the {@link BaseFont} instance associatedwith this enum element.
+	 * Returns the {@link BaseFont} instance associated with this enum element.
 	 * The font is created when this method is called the first time.
 	 * 
 	 * @return the {@link BaseFont} instance associated with this font
@@ -61,7 +68,7 @@ public enum Type1CoreFont {
 	public BaseFont getBaseFont() {
 		if (basefont == null) {
 			try {
-				basefont = BaseFont.createFont(getFontPath(this.afmName), "", BaseFont.EMBEDDED);
+				basefont = BaseFont.createFont(getFontPath(), "", BaseFont.EMBEDDED);
 			} catch (DocumentException | IOException e) { 
 				System.out.println("Trouble: " + e);
 			}
@@ -69,18 +76,21 @@ public enum Type1CoreFont {
 		return basefont;
 	}
 
-	static String getFontPath(String fileName) {
-		Resource res = Resources.getResource(fileName);
-		return res.getPath().toString();
-	}
-	
 	// -----------------------------------------------
 	
 	public static void main(String[] args) {
-		System.out.println("Anchor is in JAR: " + Resources.insideJAR());
+		System.out.println("Anchor is in JAR: " + Type1CoreFont.Courier.isInsideJar());
 		for (Type1CoreFont sf : Type1CoreFont.values()) {
+//			System.out.println(sf.getRelativePath());
+//			System.out.println(sf.getURL());
+//			System.out.println(sf.getURI());
+//			System.out.println(sf.getStream());
+//			System.out.println(sf.getFontPath());
+//			System.out.println(sf.getBaseFont());
 			System.out.println(sf.toString() + ": " + sf.getBaseFont().getPostscriptFontName());
 		}
 	}
+
+
 }
 

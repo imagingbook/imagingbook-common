@@ -29,7 +29,7 @@ import ij.IJ;
  * @author WB
  *
  */
-public class Type1FontDemo {
+public class Type1FontPdfDemo {
 	
 	static float fontSize = 14f;
 
