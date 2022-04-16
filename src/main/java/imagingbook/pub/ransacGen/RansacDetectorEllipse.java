@@ -6,22 +6,29 @@ import imagingbook.pub.geometry.ellipse.GeometricEllipse;
 import imagingbook.pub.geometry.fitting.ellipse.algebraic.EllipseFit5Points;
 import imagingbook.pub.geometry.fitting.ellipse.algebraic.EllipseFitAlgebraic;
 import imagingbook.pub.geometry.fitting.ellipse.algebraic.EllipseFitFitzgibbonStable;
+import imagingbook.pub.ransacGen.RansacDetector.RansacParameters;
 
 // Generic version of RANSAC ellipse detector
 public class RansacDetectorEllipse extends RansacDetector<GeometricEllipse>{
 	
-	public static final int DefaultMaxIterations = 1000;
-	public static final double DefaultDistanceThreshold = 2.0;
-	public static final int DefaultMinSupportCount = 100;
+	public static class Parameters extends RansacParameters {
+		
+		public Parameters() {
+			this.maxIterations = 1000;
+			this.distanceThreshold = 2.0;
+			this.minSupportCount = 100;
+		}
+		
+	}
 	
 	// constructors ------------------------------------
 	
-	public RansacDetectorEllipse(int maxIterations, double distanceThreshold, int minSupportCount) {
-		super(maxIterations, distanceThreshold, minSupportCount);
+	public RansacDetectorEllipse(Parameters params) {
+		super(params);
 	}
 	
 	public RansacDetectorEllipse() {
-		this(DefaultMaxIterations, DefaultDistanceThreshold, DefaultMinSupportCount);
+		this(new Parameters());
 	}
 	
 	// ----------------------------------------------------------------
@@ -45,10 +52,10 @@ public class RansacDetectorEllipse extends RansacDetector<GeometricEllipse>{
 		return (ellipse == null) ?  null : new GeometricEllipse(ellipse);
 	}
 
-	@Override
-	protected RansacSolGeneric<GeometricEllipse> createSolution(
-			Pnt2d[] drawnPoints, GeometricEllipse curve, double score, Pnt2d[] inliers) {
-		return new RansacSolGeneric<GeometricEllipse>(drawnPoints, curve, score, inliers);
-	}
+//	@Override
+//	protected RansacResult<GeometricEllipse> createSolution(
+//			Pnt2d[] drawnPoints, GeometricEllipse curve, double score, Pnt2d[] inliers) {
+//		return new RansacResult<GeometricEllipse>(drawnPoints, curve, score, inliers);
+//	}
 
 }

@@ -544,6 +544,17 @@ public abstract class IjUtils {
 		return new ByteProcessor(bitmap.getWidth(), bitmap.getHeight(), pixels);
 	}
 	
+	public static void drawPoints(ImageProcessor ip, Pnt2d[] points, int value) {
+		for (int i = 0; i < points.length; i++) {
+			Pnt2d p = points[i];
+			if (p != null) {
+				int u = p.getXint();
+				int v = p.getYint();
+				ip.putPixel(u, v, value);
+			}
+		}
+	}
+	
 	// -------------------------------------------------------------------------
 	
 	/**

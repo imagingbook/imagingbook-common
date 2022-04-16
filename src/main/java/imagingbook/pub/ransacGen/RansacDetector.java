@@ -4,21 +4,30 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import imagingbook.lib.util.ParameterBundle;
 import imagingbook.pub.geometry.basic.Curve2d;
 import imagingbook.pub.geometry.basic.Pnt2d;
 
 public abstract class RansacDetector<T extends Curve2d> {
 	
-	protected int maxIterations = 2000;
-	protected double distanceThreshold = 2.5;
-	protected int minSupportCount = 20;	
-	protected Random rand = new Random();
+	public static class RansacParameters implements ParameterBundle {
+		
+		@DialogLabel("Max. iterations")
+		public int maxIterations = 1000;
+		
+		@DialogLabel("Distance threshold")
+		public double distanceThreshold = 2.0;
+		
+		@DialogLabel("Min. support count")
+		public int minSupportCount = 100;
+
+	}
 	
-	// only to be called by inheriting classes
-	protected RansacDetector(int maxIterations, double distanceThreshold, int minSupportCount) {
-		this.maxIterations = maxIterations;
-		this.distanceThreshold = distanceThreshold;
-		this.minSupportCount = minSupportCount;
+	private final RansacParameters params;
+	protected Random rand = new Random();	// should be private, provide method!
+	
+	protected RansacDetector(RansacParameters params) {
+		this.params = params;
 	}
 	
 	// -----------------------------------------------------------
@@ -40,7 +49,7 @@ public abstract class RansacDetector<T extends Curve2d> {
 		for (Pnt2d p : points) {
 			if (p != null) {
 				double d = curve.getDistance(p);
-				if (d < distanceThreshold) {
+				if (d < params.distanceThreshold) {
 					count++;
 				}
 			}
@@ -54,7 +63,7 @@ public abstract class RansacDetector<T extends Curve2d> {
 			Pnt2d p = points[i];
 			if (p != null) {
 				double d = curve.getDistance(p);
-				if (d < distanceThreshold) {
+				if (d < params.distanceThreshold) {
 					pList.add(p);
 					if (removeInliers) {
 						points[i] = null;
@@ -65,36 +74,40 @@ public abstract class RansacDetector<T extends Curve2d> {
 		return pList.toArray(new Pnt2d[0]);
 	}
 	
-	public RansacSolGeneric<T> getNextSolution(Pnt2d[] points) {
+	public RansacResult<T> getNextSolution(Pnt2d[] points) {
 		return getNextSolution(points, true);
 	}
 			
-	public RansacSolGeneric<T> getNextSolution(Pnt2d[] points, boolean removeInliers) {
-		double bestScore = -1;
-		RansacSolGeneric<T> bestsolution = null;
+	public RansacResult<T> getNextSolution(Pnt2d[] points, boolean removeInliers) {
+		Pnt2d[] drawInit = null;
+		double scoreInit = -1;
+		T primitiveInit = null;
 		
-		for (int i = 0; i < maxIterations; i++) {
-			Pnt2d[] drawnPoints = drawRandomPoints(points);
-			T curve = fitInitial(drawnPoints);
-			if (curve == null) {
+		for (int i = 0; i < params.maxIterations; i++) {
+			Pnt2d[] draw = drawRandomPoints(points);
+			T primitive = fitInitial(draw);
+			if (primitive == null) {
 				continue;
 			}
-			double score = countInliers(curve, points);
-//			IJ.log("   iteration " + i + ": score=" + score);
-			if (score >= minSupportCount && score > bestScore) {
-				bestScore = score;
-				bestsolution = createSolution(drawnPoints, curve, score, null);
+			double score = countInliers(primitive, points);
+			if (score >= params.minSupportCount && score > scoreInit) {
+				scoreInit = score;
+				drawInit = draw;
+				primitiveInit = primitive;
 			}
 		}
 		
-		if (bestsolution == null) {
+		if (primitiveInit == null) {
 			return null;
 		}
 		else {
-			// refit the curve to all inliers:
-			Pnt2d[] inliers = collectInliers(bestsolution.getCurve(), points, removeInliers);
-			T curveFinal = fitFinal(inliers);			
-			return createSolution(bestsolution.getDraw(), curveFinal, bestsolution.getScore(), inliers);
+			// refit the primitive to all inliers:
+			Pnt2d[] inliers = collectInliers(primitiveInit, points, removeInliers);
+			T primitiveFinal = fitFinal(inliers);	
+			if (primitiveFinal != null)
+				return new RansacResult<T>(drawInit, primitiveInit, primitiveFinal, scoreInit, inliers);
+			else
+				throw new RuntimeException("final fit failed!");
 		}
 	}
 	
@@ -115,6 +128,5 @@ public abstract class RansacDetector<T extends Curve2d> {
 	protected abstract Pnt2d[] drawRandomPoints(Pnt2d[] points);
 	protected abstract T fitInitial(Pnt2d[] draw);
 	protected abstract T fitFinal(Pnt2d[] inliers);
-	protected abstract RansacSolGeneric<T> createSolution(Pnt2d[] drawPts, T curve, double score, Pnt2d[] inliers);
 	
 }

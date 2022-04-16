@@ -15,6 +15,9 @@ import java.util.NoSuchElementException;
 
 /**
  * This utility class implements a basic iterator for arbitrary arrays.
+ * Does not care about array elements being null.
+ * 
+ * TODO: skip null elements
  */
 public class ArrayIterator<T> implements Iterator<T> {
 

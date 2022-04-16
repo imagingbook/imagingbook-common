@@ -4,23 +4,31 @@ import imagingbook.pub.geometry.basic.Pnt2d;
 import imagingbook.pub.geometry.circle.GeometricCircle;
 import imagingbook.pub.geometry.fitting.circle.algebraic.CircleFit3Points;
 import imagingbook.pub.geometry.fitting.circle.algebraic.CircleFitAlgebraic;
-import imagingbook.pub.geometry.fitting.circle.algebraic.CircleFitPratt;
+import imagingbook.pub.geometry.fitting.circle.algebraic.CircleFitHyper;
 
 // Generic version of RANSAC circle detector
 public class RansacDetectorCircle extends RansacDetector<GeometricCircle>{
 	
-	public static final int DefaultMaxIterations = 1000;
-	public static final double DefaultDistanceThreshold = 2.0;
-	public static final int DefaultMinSupportCount = 100;
+//	public static final int DefaultMaxIterations = 1000;
+//	public static final double DefaultDistanceThreshold = 2.0;
+//	public static final int DefaultMinSupportCount = 100;
+	
+	public static class Parameters extends RansacParameters {
+		public Parameters() {
+			this.maxIterations = 1000;
+			this.distanceThreshold = 2.0;
+			this.minSupportCount = 70;
+		}
+	}
 	
 	// constructors ------------------------------------
-	
-	public RansacDetectorCircle(int maxIterations, double distanceThreshold, int minSupportCount) {
-		super(maxIterations, distanceThreshold, minSupportCount);
+
+	public RansacDetectorCircle(Parameters params) {
+		super(params);
 	}
 	
 	public RansacDetectorCircle() {
-		this(DefaultMaxIterations, DefaultDistanceThreshold, DefaultMinSupportCount);
+		this(new Parameters());
 	}
 	
 	// ----------------------------------------------------------------
@@ -53,18 +61,10 @@ public class RansacDetectorCircle extends RansacDetector<GeometricCircle>{
 	
 	@Override
 	protected GeometricCircle fitFinal(Pnt2d[] inliers) {
-//		CircleFitAlgebraic fit2 = new CircleFitKasaA(inliers);	// works
-//		CircleFitAlgebraic fit2 = new CircleFitKasaB(inliers);	// works
-//		CircleFitAlgebraic fit2 = new CircleFitKasaOrig(inliers);	// fails
-		CircleFitAlgebraic fit2 = new CircleFitPratt(inliers);	// fails
-//		CircleFitAlgebraic fit2 = new CircleFitHyper(inliers);	// works
+//		CircleFitAlgebraic fit2 = new CircleFitPratt(inliers);	// fails
+		CircleFitAlgebraic fit2 = new CircleFitHyper(inliers);
+		if (fit2.getParameters() == null) 
+			throw new RuntimeException("circle fitFinal() failed!");
 		return fit2.getGeometricCircle();
 	}
-
-	@Override
-	protected RansacSolGeneric<GeometricCircle> createSolution(
-			Pnt2d[] drawnPoints, GeometricCircle curve, double score, Pnt2d[] inliers) {
-		return new RansacSolGeneric<GeometricCircle>(drawnPoints, curve, score, inliers);
-	}
-
 }

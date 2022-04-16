@@ -10,22 +10,35 @@ import imagingbook.pub.geometry.line.AlgebraicLine;
 // Generic version of RANSAC line detector
 public class RansacDetectorLine extends RansacDetector<AlgebraicLine>{
 	
-	public static final int DefaultMaxIterations = 1000;
-	public static final double DefaultDistanceThreshold = 2.0;
-	public static final int DefaultMinSupportCount = 100;
-	public static final double DefaultMinPairDistance = 25;
+//	public static final int DefaultMaxIterations = 1000;
+//	public static final double DefaultDistanceThreshold = 2.0;
+//	public static final int DefaultMinSupportCount = 100;
+//	public static final double DefaultMinPairDistance = 25;
 	
-	private double minPairDistance;
+	private final Parameters params;
+	
+	public static class Parameters extends RansacParameters {
+		
+		@DialogLabel("Min. distance between pairs")
+		public int minPairDistance;
+		
+		public Parameters() {
+			this.maxIterations = 1000;
+			this.distanceThreshold = 2.0;
+			this.minSupportCount = 100;
+			this.minPairDistance = 25;
+		}	
+	}
 	
 	// constructors ------------------------------------
 	
-	public RansacDetectorLine(int maxIterations, double distanceThreshold, int minSupportCount, double minPairDistance) {
-		super(maxIterations, distanceThreshold, minSupportCount);
-		this.minPairDistance = minPairDistance;
+	public RansacDetectorLine(Parameters params) {
+		super(params);
+		this.params = params;
 	}
 	
 	public RansacDetectorLine() {
-		this(DefaultMaxIterations, DefaultDistanceThreshold, DefaultMinSupportCount, DefaultMinPairDistance);
+		this(new Parameters());
 	}
 	
 	// ----------------------------------------------------------------
@@ -38,7 +51,7 @@ public class RansacDetectorLine extends RansacDetector<AlgebraicLine>{
 		}
 		
 		Pnt2d p2 = points[rand.nextInt(points.length)];
-		while (p2 == null || p1.distanceSq(p2) < sqr(minPairDistance)) {
+		while (p2 == null || p1.distanceSq(p2) < sqr(params.minPairDistance)) {
 			p2 = points[rand.nextInt(points.length)];
 		}
 		return new Pnt2d[] {p1, p2};
@@ -55,10 +68,10 @@ public class RansacDetectorLine extends RansacDetector<AlgebraicLine>{
 		return fit.getLine();
 	}
 
-	@Override
-	protected RansacSolGeneric<AlgebraicLine> createSolution(
-			Pnt2d[] drawnPoints, AlgebraicLine curve, double score, Pnt2d[] inliers) {
-		return new RansacSolGeneric<AlgebraicLine>(drawnPoints, curve, score, inliers);
-	}
+//	@Override
+//	protected RansacResult<AlgebraicLine> createSolution(
+//			Pnt2d[] drawnPoints, AlgebraicLine curve, double score, Pnt2d[] inliers) {
+//		return new RansacResult<AlgebraicLine>(drawnPoints, curve, score, inliers);
+//	}
 
 }
