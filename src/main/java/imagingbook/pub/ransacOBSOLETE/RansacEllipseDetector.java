@@ -1,4 +1,4 @@
-package imagingbook.pub.ransac;
+package imagingbook.pub.ransacOBSOLETE;
 
 import static imagingbook.lib.math.Arithmetic.sqr;
 

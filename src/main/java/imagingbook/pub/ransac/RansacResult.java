@@ -1,4 +1,4 @@
-package imagingbook.pub.ransacGen;
+package imagingbook.pub.ransac;
 
 import imagingbook.pub.geometry.basic.Curve2d;
 import imagingbook.pub.geometry.basic.Pnt2d;

@@ -1,4 +1,4 @@
-package imagingbook.pub.ransacGen;
+package imagingbook.pub.ransac;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,10 +8,19 @@ import imagingbook.lib.util.ParameterBundle;
 import imagingbook.pub.geometry.basic.Curve2d;
 import imagingbook.pub.geometry.basic.Pnt2d;
 
+/**
+ * Generic RANSAC detector.
+ * @author WB
+ * 
+ * @see RansacDetectorLine
+ * @see RansacDetectorCircle
+ * @see RansacDetectorEllipse
+ *
+ * @param <T> primitive type
+ */
 public abstract class RansacDetector<T extends Curve2d> {
 	
 	public static class RansacParameters implements ParameterBundle {
-		
 		@DialogLabel("Max. iterations")
 		public int maxIterations = 1000;
 		
@@ -20,26 +29,32 @@ public abstract class RansacDetector<T extends Curve2d> {
 		
 		@DialogLabel("Min. support count")
 		public int minSupportCount = 100;
-
 	}
 	
-	private final RansacParameters params;
-	protected Random rand = new Random();	// should be private, provide method!
+	// -----------------------------------------------------------
 	
-	protected RansacDetector(RansacParameters params) {
+	private final RansacParameters params;
+	private final int K;						// number of points to draw
+	private final Random rand;					// random number generator
+	private final RandomDraw<Pnt2d> randomDraw;	// 
+	
+	protected RansacDetector(int K, RansacParameters params) {
+		this.K = K;
 		this.params = params;
+		this.rand = new Random();
+		this.randomDraw = new RandomDraw<>(this.K, rand);
 	}
 	
 	// -----------------------------------------------------------
 	
 	/**
-	 * Resets the internal random number generator to use the
-	 * specified seed. This is useful to obtain repeatable results.
+	 * Returns this detector's random generator. This can be used, e.g.,
+	 * to set its seed (by {@link Random#setSeed(long)}).
 	 * 
-	 * @param seed seed for new {@link Random} instance
+	 * @return the random generator
 	 */
-	public void setRandomSeed(long seed) {
-		rand = new Random(seed);
+	public Random getRandom() {
+		return this.rand;
 	}
 	
 	// ----------------------------------------------------------
@@ -74,7 +89,7 @@ public abstract class RansacDetector<T extends Curve2d> {
 		return pList.toArray(new Pnt2d[0]);
 	}
 	
-	public RansacResult<T> getNextSolution(Pnt2d[] points) {
+	public RansacResult<T> findNext(Pnt2d[] points) {
 		return getNextSolution(points, true);
 	}
 			
@@ -111,21 +126,12 @@ public abstract class RansacDetector<T extends Curve2d> {
 		}
 	}
 	
-	protected Pnt2d[] drawRandomPoints(Pnt2d[] points, int k) {
-		Pnt2d[] draw = new Pnt2d[k];
-		for (int i = 0; i < draw.length; i++) {
-			do {
-				draw[i] = points[rand.nextInt(points.length)];
-			}
-			while (draw[i] == null);	// TODO: shaky!
-		}
-
-		return draw;
+	
+	protected Pnt2d[] drawRandomPoints(Pnt2d[] points) {	
+		return randomDraw.drawFrom(points);
 	}
 	
-	// abstract methods to be implemented by specific sub-classes -----------------------
-
-	protected abstract Pnt2d[] drawRandomPoints(Pnt2d[] points);
+	// abstract methods to be implemented by specific sub-classes: -----------------------
 	protected abstract T fitInitial(Pnt2d[] draw);
 	protected abstract T fitFinal(Pnt2d[] inliers);
 	

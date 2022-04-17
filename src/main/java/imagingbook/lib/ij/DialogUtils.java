@@ -30,6 +30,8 @@ public class DialogUtils {
 		return String.join("\n", lines);
 	}
 	
+	// ----------------------------------------------------
+	
 	public static void main(String[] args) {
 		String html = makeHtmlString(
 	            "Get busy living or",

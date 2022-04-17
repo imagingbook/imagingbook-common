@@ -1,4 +1,4 @@
-package imagingbook.pub.ransac;
+package imagingbook.pub.ransacOBSOLETE;
 
 import java.util.ArrayList;
 import java.util.List;

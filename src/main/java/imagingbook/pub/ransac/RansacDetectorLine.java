@@ -1,4 +1,4 @@
-package imagingbook.pub.ransacGen;
+package imagingbook.pub.ransac;
 
 import static imagingbook.lib.math.Arithmetic.sqr;
 
@@ -7,21 +7,24 @@ import imagingbook.pub.geometry.fitting.line.LineFit;
 import imagingbook.pub.geometry.fitting.line.OrthogonalLineFitEigen;
 import imagingbook.pub.geometry.line.AlgebraicLine;
 
-// Generic version of RANSAC line detector
+/**
+ * RANSAC detector for straight lines.
+ * 
+ * @author WB
+ * 
+ * @see AlgebraicLine
+ * @see RansacDetector
+ *
+ */
 public class RansacDetectorLine extends RansacDetector<AlgebraicLine>{
-	
-//	public static final int DefaultMaxIterations = 1000;
-//	public static final double DefaultDistanceThreshold = 2.0;
-//	public static final int DefaultMinSupportCount = 100;
-//	public static final double DefaultMinPairDistance = 25;
 	
 	private final Parameters params;
 	
 	public static class Parameters extends RansacParameters {
-		
-		@DialogLabel("Min. distance between pairs")
+		@DialogLabel("Min. distance between sample points")
 		public int minPairDistance;
 		
+		// default parameters can be set here
 		public Parameters() {
 			this.maxIterations = 1000;
 			this.distanceThreshold = 2.0;
@@ -33,7 +36,7 @@ public class RansacDetectorLine extends RansacDetector<AlgebraicLine>{
 	// constructors ------------------------------------
 	
 	public RansacDetectorLine(Parameters params) {
-		super(params);
+		super(2, params);
 		this.params = params;
 	}
 	
@@ -43,18 +46,16 @@ public class RansacDetectorLine extends RansacDetector<AlgebraicLine>{
 	
 	// ----------------------------------------------------------------
 	
-	@Override
+	@Override // override default method to check for min pair distance
 	protected Pnt2d[] drawRandomPoints(Pnt2d[] points) {
-		Pnt2d p1 = points[rand.nextInt(points.length)];
-		while (p1 == null) {
-			p1 = points[rand.nextInt(points.length)];
+		final int MaxTries = 20;
+		int i = 0;
+		Pnt2d[] draw = super.drawRandomPoints(points);
+		while (draw[0].distanceSq(draw[1]) < sqr(params.minPairDistance) && i < MaxTries) {
+			draw = super.drawRandomPoints(points);
+			i++;
 		}
-		
-		Pnt2d p2 = points[rand.nextInt(points.length)];
-		while (p2 == null || p1.distanceSq(p2) < sqr(params.minPairDistance)) {
-			p2 = points[rand.nextInt(points.length)];
-		}
-		return new Pnt2d[] {p1, p2};
+		return (i < MaxTries) ? draw : null;
 	}
 
 	@Override
@@ -67,11 +68,5 @@ public class RansacDetectorLine extends RansacDetector<AlgebraicLine>{
 		LineFit fit = new OrthogonalLineFitEigen(inliers);
 		return fit.getLine();
 	}
-
-//	@Override
-//	protected RansacResult<AlgebraicLine> createSolution(
-//			Pnt2d[] drawnPoints, AlgebraicLine curve, double score, Pnt2d[] inliers) {
-//		return new RansacResult<AlgebraicLine>(drawnPoints, curve, score, inliers);
-//	}
 
 }
