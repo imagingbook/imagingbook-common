@@ -13,10 +13,10 @@ import imagingbook.pub.geometry.line.AlgebraicLine;
  * @author WB
  * 
  * @see AlgebraicLine
- * @see RansacDetector
+ * @see GenericRansacDetector
  *
  */
-public class RansacDetectorLine extends RansacDetector<AlgebraicLine>{
+public class RansacDetectorLine extends GenericRansacDetector<AlgebraicLine>{
 	
 	private final Parameters params;
 	

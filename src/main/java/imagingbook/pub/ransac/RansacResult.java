@@ -4,7 +4,14 @@ import imagingbook.pub.geometry.basic.Curve2d;
 import imagingbook.pub.geometry.basic.Pnt2d;
 
 
-
+/**
+ * Represents a single detection result returned by an implementation of 
+ * {@link GenericRansacDetector}.
+ * 
+ * @author WB
+ *
+ * @param <T>
+ */
 public class RansacResult<T extends Curve2d> {
 	
 	private final T primitiveInit;
@@ -22,13 +29,9 @@ public class RansacResult<T extends Curve2d> {
 		this.inliers = inliers;
 	}
 	
-//	// special constructor used to add inliers to an existing solution after final fitting
-//	public RansacResult(RansacResult<T> solution, Pnt2d[] inliers) {
-//		this(solution.getDraw(), solution.getPrimitiveInit(), solution.getScore(), inliers);
-//	}
-	
 	/**
-	 * Returns the initial primitive (e.g., a circle) obtained from the random draw.
+	 * Returns the initial primitive (e.g., a circle) obtained from the randomly 
+	 * drawn points.
 	 * @return the initial primitive
 	 */
 	public T getPrimitiveInit() {
@@ -36,7 +39,7 @@ public class RansacResult<T extends Curve2d> {
 	}
 	
 	/**
-	 * Returns the final primitive obtained by fitting to all inliers.
+	 * Returns the final primitive obtained by fitting to all inlier points.
 	 * @return the final primitive
 	 */
 	public T getPrimitiveFinal() {

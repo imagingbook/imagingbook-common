@@ -13,9 +13,9 @@ import imagingbook.pub.geometry.fitting.ellipse.algebraic.EllipseFitFitzgibbonSt
  * @author WB
  * 
  * @see GeometricEllipse
- * @see RansacDetector
+ * @see GenericRansacDetector
  */
-public class RansacDetectorEllipse extends RansacDetector<GeometricEllipse>{
+public class RansacDetectorEllipse extends GenericRansacDetector<GeometricEllipse>{
 	
 	// default parameters can be set here
 	public static class Parameters extends RansacParameters {

@@ -12,9 +12,9 @@ import imagingbook.pub.geometry.fitting.circle.algebraic.CircleFitHyper;
  * @author WB
  * 
  * @see GeometricCircle
- * @see RansacDetector
+ * @see GenericRansacDetector
  */
-public class RansacDetectorCircle extends RansacDetector<GeometricCircle>{
+public class RansacDetectorCircle extends GenericRansacDetector<GeometricCircle>{
 	
 	// default parameters can be set here
 	public static class Parameters extends RansacParameters {

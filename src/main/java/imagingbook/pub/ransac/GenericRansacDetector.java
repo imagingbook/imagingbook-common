@@ -4,12 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import imagingbook.lib.random.RandomDraw;
 import imagingbook.lib.util.ParameterBundle;
 import imagingbook.pub.geometry.basic.Curve2d;
 import imagingbook.pub.geometry.basic.Pnt2d;
 
 /**
- * Generic RANSAC detector.
+ * Generic RANSAC detector. This abstract class defines the core RANSAC
+ * functionality used by all derived (concrete) classes.
+ * 
  * @author WB
  * 
  * @see RansacDetectorLine
@@ -18,8 +21,13 @@ import imagingbook.pub.geometry.basic.Pnt2d;
  *
  * @param <T> primitive type
  */
-public abstract class RansacDetector<T extends Curve2d> {
+public abstract class GenericRansacDetector<T extends Curve2d> {
 	
+	/**
+	 * Parameters used by all RANSAC types.
+	 * @author WB
+	 *
+	 */
 	public static class RansacParameters implements ParameterBundle {
 		@DialogLabel("Max. iterations")
 		public int maxIterations = 1000;
@@ -38,7 +46,7 @@ public abstract class RansacDetector<T extends Curve2d> {
 	private final Random rand;					// random number generator
 	private final RandomDraw<Pnt2d> randomDraw;	// 
 	
-	protected RansacDetector(int K, RansacParameters params) {
+	protected GenericRansacDetector(int K, RansacParameters params) {
 		this.K = K;
 		this.params = params;
 		this.rand = new Random();
@@ -89,11 +97,30 @@ public abstract class RansacDetector<T extends Curve2d> {
 		return pList.toArray(new Pnt2d[0]);
 	}
 	
+	/**
+	 * Performs a single RANSAC step on the supplied point set and removes
+	 * all associated inlier points.
+	 * 
+	 * @param points an array of {@link Pnt2d} instances (modified)
+	 * @return the detected primitive (of generic type T) or {@code null} if unsuccessful
+	 * 
+	 * @see #findNext(Pnt2d[], boolean)
+	 */
 	public RansacResult<T> findNext(Pnt2d[] points) {
-		return getNextSolution(points, true);
+		return findNext(points, true);
 	}
-			
-	public RansacResult<T> getNextSolution(Pnt2d[] points, boolean removeInliers) {
+	
+	/**
+	 * Performs a single RANSAC step on the supplied point set. Optionally,
+	 * all associated inlier points are removed from the point set by setting
+	 * array elements to {@code null}.
+	 * 
+	 * 
+	 * @param points an array of {@link Pnt2d} instances (modified)
+	 * @param removeInliers set true to remove inliers are from the point set
+	 * @return the detected primitive (of generic type T) or {@code null} if unsuccessful
+	 */
+	public RansacResult<T> findNext(Pnt2d[] points, boolean removeInliers) {
 		Pnt2d[] drawInit = null;
 		double scoreInit = -1;
 		T primitiveInit = null;
@@ -126,13 +153,36 @@ public abstract class RansacDetector<T extends Curve2d> {
 		}
 	}
 	
-	
+	/**
+	 * Randomly selects {@link #K} unique points from the supplied {@link Pnt2d} array.
+	 * Inheriting classes may override this method to enforce specific constraints 
+	 * on the selected points (e.g., see {@link RansacDetectorLine}).
+	 * 
+	 * @param points an array of {@link Pnt2d} instances
+	 * @return an array of {@link #K} unique points
+	 */
 	protected Pnt2d[] drawRandomPoints(Pnt2d[] points) {	
 		return randomDraw.drawFrom(points);
 	}
 	
 	// abstract methods to be implemented by specific sub-classes: -----------------------
+	
+	/**
+	 * Fits an initial primitive to the {@link #K} specified points.
+	 * This abstract method must be implemented by inheriting classes.
+	 * 
+	 * @param draw an array of exactly {@link #K} points
+	 * @return a new primitive of type T
+	 */
 	protected abstract T fitInitial(Pnt2d[] draw);
+	
+	/**
+	 * Fits a primitive to the specified points.
+	 * This abstract method must be implemented by inheriting classes.
+	 * 
+	 * @param inliers an array of at least {@link #K} points
+	 * @return a new primitive of type T
+	 */
 	protected abstract T fitFinal(Pnt2d[] inliers);
 	
 }
