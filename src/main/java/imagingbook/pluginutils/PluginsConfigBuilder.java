@@ -273,6 +273,11 @@ public class PluginsConfigBuilder {
 		String artifactId = (args.length > 1) ? args[1] : null;
 		System.out.println(INFO);
 		System.out.println(INFO + "--- Building plugins.config file for " + artifactId + " ---");
+		for (String arg : args) {
+			System.out.println(INFO + "    arg = |" + arg + "|");
+		}
+		// future use to specify general plugins path from POM:
+		// using property <pluginPrefix>"Plugins&gt;B&amp;B "</pluginPrefix>
 		
 		PluginsConfigBuilder builder = new PluginsConfigBuilder(rootName, artifactId);
 		String configPath = builder.buildfile();
