@@ -1,10 +1,8 @@
 package imagingbook.lib.math.testing;
 
 import imagingbook.lib.math.Matrix;
+import imagingbook.lib.math.PrintPrecision;
 import imagingbook.lib.math.eigen.Eigensolver2x2;
-//import imagingbook.lib.math.Eigensolver2x2;
-//import imagingbook.lib.math.Matrix;
-import imagingbook.lib.settings.PrintPrecision;
 
 /**
  * This is a small demo program to show the use of the
@@ -16,6 +14,7 @@ import imagingbook.lib.settings.PrintPrecision;
  * @author WB
  *@version 2020/03/25
  */
+@Deprecated 			// move to tests!
 public class Eigensolver2x2Demo {
 	
 	public static void main(String[] args) {

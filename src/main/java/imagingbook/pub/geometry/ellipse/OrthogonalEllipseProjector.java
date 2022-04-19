@@ -4,7 +4,7 @@ import static imagingbook.lib.math.Arithmetic.isZero;
 import static imagingbook.lib.math.Arithmetic.sqr;
 
 import imagingbook.lib.math.Arithmetic;
-import imagingbook.lib.settings.PrintPrecision;
+import imagingbook.lib.math.PrintPrecision;
 import imagingbook.pub.geometry.basic.Pnt2d;
 
 

@@ -9,7 +9,7 @@
 package imagingbook.pub.dct;
 
 import imagingbook.lib.math.Matrix;
-import imagingbook.lib.settings.PrintPrecision;
+import imagingbook.lib.math.PrintPrecision;
 
 public class DctMatrixTest {
 

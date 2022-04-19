@@ -23,7 +23,7 @@ import org.apache.commons.math3.optim.SimpleVectorValueChecker;
 import org.apache.commons.math3.util.Pair;
 
 import imagingbook.lib.math.Matrix;
-import imagingbook.lib.settings.PrintPrecision;
+import imagingbook.lib.math.PrintPrecision;
 import imagingbook.lib.util.ParameterBundle;
 import imagingbook.pub.geometry.basic.Pnt2d;
 import imagingbook.pub.geometry.ellipse.GeometricEllipse;

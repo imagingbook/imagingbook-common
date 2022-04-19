@@ -27,7 +27,6 @@ import org.apache.commons.math3.linear.SingularMatrixException;
 
 import imagingbook.lib.math.Arithmetic.DivideByZeroException;
 import imagingbook.lib.math.eigen.RealEigensolver;
-import imagingbook.lib.settings.PrintPrecision;
 
 /**
  * <p>This class defines a set of static methods for calculations

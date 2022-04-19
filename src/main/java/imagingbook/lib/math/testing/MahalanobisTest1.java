@@ -7,6 +7,7 @@ import imagingbook.lib.math.MahalanobisDistance;
 import imagingbook.lib.math.Matrix;
 import imagingbook.lib.math.VectorNorm;
 
+@Deprecated 			// move to tests!
 public class MahalanobisTest1 {
 
 	public static void main(String[] args) {

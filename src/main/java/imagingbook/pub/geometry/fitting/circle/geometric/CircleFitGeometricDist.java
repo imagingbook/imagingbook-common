@@ -21,7 +21,7 @@ import org.apache.commons.math3.optim.SimpleVectorValueChecker;
 import org.apache.commons.math3.util.Pair;
 
 import ij.IJ;
-import imagingbook.lib.settings.PrintPrecision;
+import imagingbook.lib.math.PrintPrecision;
 import imagingbook.pub.geometry.basic.Pnt2d;
 import imagingbook.pub.geometry.circle.GeometricCircle;
 import imagingbook.pub.geometry.fitting.circle.algebraic.CircleFitPratt;

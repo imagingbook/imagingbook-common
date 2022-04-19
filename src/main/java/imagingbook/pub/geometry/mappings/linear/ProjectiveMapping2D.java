@@ -11,7 +11,7 @@ package imagingbook.pub.geometry.mappings.linear;
 
 import imagingbook.lib.math.Arithmetic;
 import imagingbook.lib.math.Matrix;
-import imagingbook.lib.settings.PrintPrecision;
+import imagingbook.lib.math.PrintPrecision;
 import imagingbook.pub.geometry.basic.Pnt2d;
 import imagingbook.pub.geometry.basic.Pnt2d.PntDouble;
 import imagingbook.pub.geometry.fitting.ProjectiveFit2D;

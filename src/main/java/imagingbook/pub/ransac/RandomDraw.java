@@ -1,7 +1,7 @@
-package imagingbook.lib.random;
+package imagingbook.pub.ransac;
 
 import java.util.Arrays;
-import java.util.HashSet;
+//import java.util.HashSet;
 import java.util.Random;
 
 /**
@@ -16,26 +16,40 @@ import java.util.Random;
  */
 public class RandomDraw<T> {
 	
-	private final int k;
+	private static final int MaxTries = 1000;	// worst case number of tries before exception is thrown
 	private final Random rand;
-	private final int[] idx;	// index array
 	
 	// -------------------------------------------------------------
 	
-	public RandomDraw(int k, Random rand) {
-		this.k = k;
-		this.rand = rand;
-		this.idx = new int[k];
+	public RandomDraw(Random rand) {
+		this.rand = (rand == null) ? new Random() : rand;
 	}
 	
-	public RandomDraw(int k) {
-		this(k, new Random());
+	public RandomDraw() {
+		this(new Random());
 	}
 	
 	// -------------------------------------------------------------
 	
-	public T[] drawFrom(T[] items) {	// WORKS
-		drawRandomIndex(items);
+	// version using a HashSet (slower)
+//	public T[] drawFrom(T[] items, int k) {
+//		if (k < 1) throw new IllegalArgumentException("k must be greater or equal 1");
+//		 HashSet<T> hs = new HashSet<>(k);
+//		int i = 0;
+//		while (i < k) {	// TODO: avoid infinite loop!
+//			int j = rand.nextInt(items.length);	// next random index
+//			T item = items[j];
+//			if (item != null && hs.add(item)) {
+//				i++;
+//			}
+//		}
+//		return hs.toArray(Arrays.copyOf(items, k));
+//	}
+	
+	
+	public T[] drawFrom(T[] items, int k) {
+		if (k < 1) throw new IllegalArgumentException("k must be greater or equal 1");
+		int[] idx = drawRandomIndexes(items, k);
 		T[] draw = Arrays.copyOf(items, k);	// trick to create an array of generic type T
 		for (int i = 0; i < k; i++) {
 			draw[i] = items[idx[i]];
@@ -43,56 +57,27 @@ public class RandomDraw<T> {
 		return draw;
 	}
 	
-//	public T[] drawFrom(T[] items) {	// DOES NOT WORK!
-//	drawRandomIndex(items);
-//	@SuppressWarnings("unchecked")
-//	T[] draw = (T[]) new Object[k];		// this creates an incompatible array!
-//	for (int i = 0; i < k; i++) {
-//		draw[i] = items[idx[i]];
-//	}
-//	return draw;
-//}
-	
-//	@SuppressWarnings("unchecked")	
-//	public T[] drawFrom(T[] items) { 	// WORKS TOO
-//		drawRandomIndex(items);
-//		List<T> theList = new ArrayList<>(items.length);
-//		for (int i = 0; i < k; i++) {
-//			theList.add(items[idx[i]]);
-//		}
-//		
-//		return (T[]) theList.toArray();
-//	}
-	
-//	@SuppressWarnings("unchecked")	
-//	public T[] drawFrom(T[] items) { 	// WORKS TOO
-//		drawRandomIndex(items);
-//		List<T> theList = new ArrayList<>(items.length);
-//		for (int i = 0; i < k; i++) {
-//			theList.add(items[idx[i]]);
-//		}
-//		
-//		return theList.toArray(Arrays.copyOf(items, k));
-//	}
-		
-	
-	private void drawRandomIndex(T[] items) {
-//		Arrays.fill(idx, -1);	// clear idx array
-		// perform k unique draws (all indexes must be different):
+	// draw k unique integers (all must be different):
+	private int[] drawRandomIndexes(T[] items, int k) {
+		int[] indexes = new int[k];
 		for (int d = 0; d < k; d++) {
-			int i = rand.nextInt(items.length);	// next index
-			while (items[i] == null || wasPickedBefore(d, i)) {
+			int j = 0;							// count tries
+			int i = rand.nextInt(items.length);
+			while (items[i] == null || wasPickedBefore(indexes, d, i)) {
 				i = rand.nextInt(items.length);
+				if (j++ > MaxTries) {
+					throw new RuntimeException("max. tries exceeded: " + j);
+				}
 			}
-			
-			idx[d] = i;
+			indexes[d] = i;
 		}
+		return indexes;
 	}
 
 	// Checks if idx[0],...,idx[d-1] contains i.
-	private boolean wasPickedBefore(int d, int i) {
+	private boolean wasPickedBefore(int[] indexes, int d, int i) {
 		for (int j = 0; j < d; j++) {
-			if (i == idx[j]) {
+			if (i == indexes[j]) {
 				return true;
 			}
 		}	
@@ -100,48 +85,52 @@ public class RandomDraw<T> {
 	}
 	
 	/**
-	 * Checks for duplicate ("equals") elements in the result (for testing only).
-	 * @param arr array of objects
+	 * Checks for duplicate ("==") elements in the result (simple, for testing only).
+	 * @param items array of objects
 	 * @return true if any object is null or contained more than once
 	 */
-	public boolean hasDuplicates(T[] arr) {
-		HashSet<T> set = new HashSet<>();
-		for (T elem : arr) {
-			if (elem == null) {
-//				throw new RuntimeException("null found in " + Arrays.toString(arr));
+	public static <Q> boolean hasDuplicates(Q[] items) {
+		for (int i = 0; i < items.length; i++) {
+			Q x = items[i];
+			if (x == null)
 				return true;
+			for (int j = 0; j < i; j++) {
+				if (x == items[j]) {
+					return true;
+				}
 			}
-			if (set.contains(elem)) {
-				return true;
-			}
-			set.add(elem);
 		}
-		
 		return false;
 	}
 	
+	
 	// --------------------------------------------------------------------
 	
-//	public static void main(String[] args) {
-//		Integer[] numbers = { null, 1, 2, null, 3, 4, 5, 6, 7, null, null, null, 8, 9, 10 , null};
-////		Integer[] numbers = { 1,2,3,4,5,6,7,8};
-//		int N = 1000000;
-//		RandomDraw<Integer> rd = new RandomDraw<>(2);
-//		
-////		Object[] x = rd.drawFrom(numbers);
-////		System.out.println("x = " + x.getClass());
-////		for(Object o : x) {
-////			System.out.println(o.getClass());
-////		}
-//		
-//		for (int i = 0; i < N; i++) {
-//			Integer[] draw = rd.drawFrom(numbers);
-////			System.out.println(Arrays.toString(draw));
-//			if (rd.hasDuplicates(draw)) {
-//				throw new RuntimeException("duplicates found in " + Arrays.toString(draw));
-//			}
+	public static void main(String[] args) {
+		Integer[] numbers = { null, 1, 2, null, 3, 4, 5, 6, 7, null, null, null, 8, 9, 10 , null};
+//		Integer[] numbers = { 1,2,3,4,5,6,7,8};
+		int N = 1000000;
+		RandomDraw<Integer> rd = new RandomDraw<>();
+		
+//		Object[] x = rd.drawFrom(numbers);
+//		System.out.println("x = " + x.getClass());
+//		for(Object o : x) {
+//			System.out.println(o.getClass());
 //		}
-//		System.out.println("done " + N);
+		
+		for (int i = 0; i < N; i++) {
+			Integer[] draw = rd.drawFrom(numbers, 2);
+//			System.out.println(Arrays.toString(draw));
+			if (hasDuplicates(draw)) {
+				throw new RuntimeException("duplicates found in " + Arrays.toString(draw));
+			}
+		}
+		System.out.println("done " + N);
+	}
+	
+//	public static void main(String[] args) {
+//		Integer[] numbers = { 1, 2, 2};
+//		System.out.println("hasDuplicates " + RandomDraw.hasDuplicates2(numbers));
 //	}
 	
 }

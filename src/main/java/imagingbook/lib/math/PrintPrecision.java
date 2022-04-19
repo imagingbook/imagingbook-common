@@ -6,7 +6,7 @@
  * Copyright (c) 2006-2020 Wilhelm Burger, Mark J. Burge. All rights reserved. 
  * Visit http://imagingbook.com for additional details.
  *******************************************************************************/
-package imagingbook.lib.settings;
+package imagingbook.lib.math;
 
 /**
  * This class holds various settings for the imagingbook library.

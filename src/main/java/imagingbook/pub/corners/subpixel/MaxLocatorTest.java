@@ -1,7 +1,7 @@
 package imagingbook.pub.corners.subpixel;
 
 import imagingbook.lib.math.Matrix;
-import imagingbook.lib.settings.PrintPrecision;
+import imagingbook.lib.math.PrintPrecision;
 import imagingbook.pub.corners.subpixel.SubpixelMaxInterpolator.Method;
 
 class MaxLocatorTest {

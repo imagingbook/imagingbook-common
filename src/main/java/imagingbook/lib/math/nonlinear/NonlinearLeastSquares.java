@@ -18,7 +18,7 @@ import org.apache.commons.math3.linear.RealVector;
 import org.apache.commons.math3.optim.SimpleVectorValueChecker;
 
 import imagingbook.lib.math.Matrix;
-import imagingbook.lib.settings.PrintPrecision;
+import imagingbook.lib.math.PrintPrecision;
 
 /**
  * Static utility methods for simplified access to nonlinear least-squares

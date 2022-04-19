@@ -13,7 +13,7 @@ import java.awt.geom.Path2D;
 import java.util.Locale;
 
 import imagingbook.lib.math.Arithmetic;
-import imagingbook.lib.settings.PrintPrecision;
+import imagingbook.lib.math.PrintPrecision;
 import imagingbook.pub.geometry.basic.Curve2d;
 import imagingbook.pub.geometry.basic.Pnt2d;
 import imagingbook.pub.geometry.basic.ShapeProvider;

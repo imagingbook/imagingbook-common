@@ -9,10 +9,10 @@
 
 package imagingbook.lib.util;
 
-import imagingbook.lib.settings.PrintPrecision;
-
 import java.util.Formatter;
 import java.util.Locale;
+
+import imagingbook.lib.math.PrintPrecision;
 
 /**
  * This class provides some static methods for formatting

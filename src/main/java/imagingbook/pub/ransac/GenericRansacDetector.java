@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import imagingbook.lib.random.RandomDraw;
 import imagingbook.lib.util.ParameterBundle;
 import imagingbook.pub.geometry.basic.Curve2d;
 import imagingbook.pub.geometry.basic.Pnt2d;
@@ -12,6 +11,7 @@ import imagingbook.pub.geometry.basic.Pnt2d;
 /**
  * Generic RANSAC detector. This abstract class defines the core RANSAC
  * functionality used by all derived (concrete) classes.
+ * TODO: Consider moving {@link RandomDraw} here.
  * 
  * @author WB
  * 
@@ -50,7 +50,7 @@ public abstract class GenericRansacDetector<T extends Curve2d> {
 		this.K = K;
 		this.params = params;
 		this.rand = new Random();
-		this.randomDraw = new RandomDraw<>(this.K, rand);
+		this.randomDraw = new RandomDraw<>(rand);
 	}
 	
 	// -----------------------------------------------------------
@@ -162,7 +162,7 @@ public abstract class GenericRansacDetector<T extends Curve2d> {
 	 * @return an array of {@link #K} unique points
 	 */
 	protected Pnt2d[] drawRandomPoints(Pnt2d[] points) {	
-		return randomDraw.drawFrom(points);
+		return randomDraw.drawFrom(points, K);
 	}
 	
 	// abstract methods to be implemented by specific sub-classes: -----------------------

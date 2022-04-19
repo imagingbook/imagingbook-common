@@ -9,6 +9,7 @@ import imagingbook.lib.math.MahalanobisDistance;
 import imagingbook.lib.math.Matrix;
 import imagingbook.lib.math.Statistics;
 
+@Deprecated 			// move to tests!
 public class MahalanobisTest2 {
 		
 	static final int N = 1000;

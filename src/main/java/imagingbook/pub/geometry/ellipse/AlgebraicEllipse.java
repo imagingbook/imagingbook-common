@@ -9,7 +9,7 @@ import static java.lang.Math.sin;
 import java.util.Locale;
 
 import imagingbook.lib.math.Matrix;
-import imagingbook.lib.settings.PrintPrecision;
+import imagingbook.lib.math.PrintPrecision;
 import imagingbook.pub.geometry.basic.Pnt2d;
 
 public class AlgebraicEllipse implements Ellipse {

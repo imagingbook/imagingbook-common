@@ -3,7 +3,7 @@ package imagingbook.pub.geometry.ellipse;
 import static imagingbook.lib.math.Arithmetic.sqr;
 import static java.lang.Math.sqrt;
 
-import imagingbook.lib.settings.PrintPrecision;
+import imagingbook.lib.math.PrintPrecision;
 import imagingbook.pub.geometry.basic.Pnt2d;
 
 

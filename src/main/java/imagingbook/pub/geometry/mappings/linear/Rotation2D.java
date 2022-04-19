@@ -10,7 +10,7 @@
 package imagingbook.pub.geometry.mappings.linear;
 
 import imagingbook.lib.math.Matrix;
-import imagingbook.lib.settings.PrintPrecision;
+import imagingbook.lib.math.PrintPrecision;
 
 /**
  * This class represents a pure 2D rotation about the coordinate origin 

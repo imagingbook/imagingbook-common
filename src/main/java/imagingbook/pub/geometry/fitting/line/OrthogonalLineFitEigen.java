@@ -3,9 +3,9 @@ package imagingbook.pub.geometry.fitting.line;
 import static imagingbook.lib.math.Arithmetic.sqr;
 
 import imagingbook.lib.math.Matrix;
+import imagingbook.lib.math.PrintPrecision;
 import imagingbook.lib.math.eigen.EigensolverNxN;
 import imagingbook.lib.math.eigen.RealEigensolver;
-import imagingbook.lib.settings.PrintPrecision;
 import imagingbook.pub.geometry.basic.Pnt2d;
 import imagingbook.pub.geometry.basic.PntUtils;
 import imagingbook.pub.geometry.line.AlgebraicLine;
