@@ -10,7 +10,6 @@ import org.junit.Test;
 
 import ij.process.ByteProcessor;
 import imagingbook.DATA.GeneralTestImage;
-import imagingbook.common.regions.BinaryRegion;
 import imagingbook.common.regions.segment.BinaryRegionSegmentation;
 import imagingbook.common.regions.segment.BreadthFirstSegmentation;
 import imagingbook.common.regions.segment.DepthFirstSegmentation;

@@ -3,9 +3,6 @@ package imagingbook.common.geometry.ellipse;
 import static imagingbook.common.math.Arithmetic.sqr;
 import static java.lang.Math.sqrt;
 
-import imagingbook.common.geometry.basic.Pnt2d;
-import imagingbook.common.math.PrintPrecision;
-
 
 /**
  * Finds an approximate closest point on the ellipse.

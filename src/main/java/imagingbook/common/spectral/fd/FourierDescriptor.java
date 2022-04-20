@@ -7,7 +7,7 @@
  * Visit http://imagingbook.com for additional details.
  *******************************************************************************/
 
-package imagingbook.common.fd;
+package imagingbook.common.spectral.fd;
 
 import java.awt.geom.Path2D;
 

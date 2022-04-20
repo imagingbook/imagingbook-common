@@ -8,7 +8,6 @@ import org.junit.Test;
 
 import ij.process.ByteProcessor;
 import ij.process.FloatProcessor;
-import imagingbook.common.ij.IjUtils;
 import imagingbook.testutils.ImageTests;
 
 public class IjUtilsTest {

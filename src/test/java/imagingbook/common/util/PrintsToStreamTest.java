@@ -7,8 +7,6 @@ import java.io.PrintStream;
 import org.junit.Assert;
 import org.junit.Test;
 
-import imagingbook.common.util.PrintsToStream;
-
 public class PrintsToStreamTest {
 
 	@Test

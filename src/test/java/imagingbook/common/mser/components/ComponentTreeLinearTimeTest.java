@@ -23,8 +23,6 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import ij.process.ByteProcessor;
-import imagingbook.common.mser.components.Component;
-import imagingbook.common.mser.components.ComponentTree;
 import imagingbook.common.mser.components.ComponentTree.Method;
 import imagingbook.core.resource.ImageResource;
 

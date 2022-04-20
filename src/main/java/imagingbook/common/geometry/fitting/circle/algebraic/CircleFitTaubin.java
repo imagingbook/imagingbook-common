@@ -8,7 +8,6 @@ import org.apache.commons.math3.linear.SingularValueDecomposition;
 
 import imagingbook.common.geometry.basic.Pnt2d;
 import imagingbook.common.geometry.basic.PntUtils;
-import imagingbook.common.geometry.circle.GeometricCircle;
 import imagingbook.common.math.Matrix;
 
 /**

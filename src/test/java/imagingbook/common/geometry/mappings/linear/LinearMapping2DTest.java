@@ -2,7 +2,6 @@ package imagingbook.common.geometry.mappings.linear;
 
 import org.junit.Test;
 
-import imagingbook.common.geometry.mappings.linear.LinearMapping2D;
 import imagingbook.common.math.Matrix;
 import imagingbook.testutils.ArrayTests;
 

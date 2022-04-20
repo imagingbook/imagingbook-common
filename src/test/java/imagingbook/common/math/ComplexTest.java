@@ -5,8 +5,6 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
-import imagingbook.common.math.Complex;
-
 public class ComplexTest {
 	
 	Complex z1 = new Complex(0.3, 0.6);

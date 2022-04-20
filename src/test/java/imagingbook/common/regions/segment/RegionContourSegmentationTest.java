@@ -13,7 +13,6 @@ import imagingbook.DATA.GeneralTestImage;
 import imagingbook.common.geometry.basic.NeighborhoodType2D;
 import imagingbook.common.regions.BinaryRegion;
 import imagingbook.common.regions.Contour;
-import imagingbook.common.regions.segment.RegionContourSegmentation;
 import imagingbook.core.resource.ImageResource;
 
 public class RegionContourSegmentationTest {

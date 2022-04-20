@@ -1,4 +1,4 @@
-package imagingbook.common.dft;
+package imagingbook.common.spectral.dft;
 
 import org.jtransforms.fft.DoubleFFT_1D;
 import org.jtransforms.fft.FloatFFT_1D;

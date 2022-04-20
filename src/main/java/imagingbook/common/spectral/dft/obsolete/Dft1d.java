@@ -7,7 +7,7 @@
  * Visit http://imagingbook.com for additional details.
  *******************************************************************************/
 
-package imagingbook.common.dft.obsolete;
+package imagingbook.common.spectral.dft.obsolete;
 
 import imagingbook.common.math.Complex;
 

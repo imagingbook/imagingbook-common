@@ -3,9 +3,6 @@ package imagingbook.common.image.access;
 import org.junit.Assert;
 import org.junit.Test;
 
-import imagingbook.common.image.access.GridIndexer2D;
-import imagingbook.common.image.access.OutOfBoundsStrategy;
-
 public class PixelIndexerTest {
 	
 	static int W = 300;

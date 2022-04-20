@@ -6,8 +6,6 @@ import org.junit.Test;
 
 import ij.process.ColorProcessor;
 import ij.process.ImageProcessor;
-import imagingbook.common.image.access.ImageAccessor;
-import imagingbook.common.image.access.OutOfBoundsStrategy;
 
 /**
  * Test default values (reading from coordinates outside the image boundaries)

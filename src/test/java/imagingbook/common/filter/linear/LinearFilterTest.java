@@ -6,8 +6,6 @@ import org.junit.Test;
 
 import ij.process.ImageProcessor;
 import imagingbook.DATA.GeneralTestImage;
-import imagingbook.common.filter.linear.Kernel2D;
-import imagingbook.common.filter.linear.LinearFilter;
 import imagingbook.common.image.access.OutOfBoundsStrategy;
 import imagingbook.core.resource.ImageResource;
 import imagingbook.testutils.ImageTests;

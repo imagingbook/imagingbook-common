@@ -4,7 +4,6 @@ import org.junit.Test;
 
 import ij.process.ByteProcessor;
 import ij.process.ImageProcessor;
-import imagingbook.common.matching.DistanceTransform;
 import imagingbook.common.matching.DistanceTransform.Norm;
 import imagingbook.testutils.ArrayTests;
 

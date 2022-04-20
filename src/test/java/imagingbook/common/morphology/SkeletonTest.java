@@ -9,7 +9,6 @@ import org.junit.Test;
 import ij.process.ByteProcessor;
 import ij.process.ImageProcessor;
 import imagingbook.DATA.GeneralTestImage;
-import imagingbook.common.morphology.BinaryThinning;
 import imagingbook.core.resource.ImageResource;
 
 public class SkeletonTest {

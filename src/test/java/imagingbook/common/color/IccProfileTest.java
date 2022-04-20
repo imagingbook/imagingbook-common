@@ -1,10 +1,9 @@
 package imagingbook.common.color;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
 
 import org.junit.Test;
 
-import imagingbook.common.color.IccProfile;
 import imagingbook.core.resource.NamedResource;
 
 public class IccProfileTest {

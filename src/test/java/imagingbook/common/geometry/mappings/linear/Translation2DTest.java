@@ -4,7 +4,6 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import imagingbook.common.geometry.basic.Pnt2d;
-import imagingbook.common.geometry.mappings.linear.Translation2D;
 
 public class Translation2DTest {
 

@@ -1,8 +1,8 @@
 package imagingbook.common.random;
 
-import static org.junit.Assert.assertFalse;
 import static imagingbook.common.ransac.RandomDraw.hasDuplicates;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 import java.util.Arrays;
 import java.util.Random;

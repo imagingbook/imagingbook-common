@@ -1,4 +1,4 @@
-package imagingbook.common.dft;
+package imagingbook.common.spectral.dft;
 
 /**
  * Scaling mode used for the DFT.

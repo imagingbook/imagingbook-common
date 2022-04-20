@@ -1,4 +1,4 @@
-package imagingbook.common.dft;
+package imagingbook.common.spectral.dft;
 
 import java.util.Arrays;
 

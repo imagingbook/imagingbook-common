@@ -7,9 +7,7 @@ import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.RealVector;
 
-import ij.IJ;
 import imagingbook.common.geometry.basic.Pnt2d;
-import imagingbook.common.math.Matrix;
 
 /**
  * Works by matrix inversion  (naive).

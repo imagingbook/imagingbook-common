@@ -1,4 +1,4 @@
-package imagingbook.common.dct;
+package imagingbook.common.spectral.dct;
 
 /**
  * Interface specifying all one-dimensional DCT implementations.

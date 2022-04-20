@@ -1,5 +1,19 @@
 package imagingbook.common.mser;
 
+import static imagingbook.DATA.MserTestImage.AllBlack;
+import static imagingbook.DATA.MserTestImage.AllWhite;
+import static imagingbook.DATA.MserTestImage.Blob1;
+import static imagingbook.DATA.MserTestImage.Blob2;
+import static imagingbook.DATA.MserTestImage.Blob3;
+import static imagingbook.DATA.MserTestImage.BlobLevelTest;
+import static imagingbook.DATA.MserTestImage.BlobLevelTestNoise;
+import static imagingbook.DATA.MserTestImage.BlobOriented;
+import static imagingbook.DATA.MserTestImage.BlobsInWhite;
+import static imagingbook.DATA.MserTestImage.BoatsTiny;
+import static imagingbook.DATA.MserTestImage.BoatsTinyB;
+import static imagingbook.DATA.MserTestImage.BoatsTinyBW;
+import static imagingbook.DATA.MserTestImage.BoatsTinyW;
+import static imagingbook.DATA.MserTestImage.BoatsTinyW2;
 import static org.junit.Assert.assertEquals;
 
 import java.util.List;
@@ -7,14 +21,10 @@ import java.util.List;
 import org.junit.Test;
 
 import ij.process.ByteProcessor;
-import imagingbook.common.mser.MserData;
-import imagingbook.common.mser.MserDetector;
 import imagingbook.common.mser.MserDetector.Parameters;
 import imagingbook.common.mser.components.Component;
 import imagingbook.common.mser.components.ComponentTree.Method;
 import imagingbook.core.resource.ImageResource;
-
-import static imagingbook.DATA.MserTestImage.*;
 
 public class MserDetectorTest {
 

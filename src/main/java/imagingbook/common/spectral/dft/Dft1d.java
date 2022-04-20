@@ -1,4 +1,4 @@
-package imagingbook.common.dft;
+package imagingbook.common.spectral.dft;
 
 /**
  * Interface specifying all one-dimensional DFT/FFT implementations.

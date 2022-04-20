@@ -7,7 +7,6 @@ import org.junit.Test;
 import imagingbook.common.geometry.basic.Pnt2d;
 import imagingbook.common.geometry.basic.Pnt2d.PntInt;
 import imagingbook.common.geometry.line.AlgebraicLine;
-import imagingbook.common.hough.lines.HoughLine;
 
 public class HoughLineTest {
 	

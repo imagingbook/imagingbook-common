@@ -6,9 +6,6 @@ import org.junit.Test;
 
 import ij.process.ImageProcessor;
 import imagingbook.DATA.GeneralTestImage;
-import imagingbook.common.color.filters.ScalarMedianFilter;
-import imagingbook.common.color.filters.VectorMedianFilter;
-import imagingbook.common.color.filters.VectorMedianFilterSharpen;
 import imagingbook.common.image.access.OutOfBoundsStrategy;
 import imagingbook.common.math.VectorNorm.NormType;
 import imagingbook.core.resource.ImageResource;

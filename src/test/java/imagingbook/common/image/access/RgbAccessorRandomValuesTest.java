@@ -10,7 +10,6 @@ import org.junit.Test;
 
 import ij.process.ColorProcessor;
 import ij.process.ImageProcessor;
-import imagingbook.common.image.access.ImageAccessor;
 
 public class RgbAccessorRandomValuesTest {
 	

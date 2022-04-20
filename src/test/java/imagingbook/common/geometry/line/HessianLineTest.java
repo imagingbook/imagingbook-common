@@ -5,7 +5,6 @@ import org.junit.Test;
 
 import imagingbook.common.geometry.basic.Pnt2d;
 import imagingbook.common.geometry.basic.Pnt2d.PntInt;
-import imagingbook.common.geometry.line.HessianLine;
 
 public class HessianLineTest {
 	

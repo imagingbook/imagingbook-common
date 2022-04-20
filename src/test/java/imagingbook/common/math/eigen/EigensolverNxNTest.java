@@ -9,8 +9,6 @@ import java.util.Random;
 import org.junit.Test;
 
 import imagingbook.common.math.Matrix;
-import imagingbook.common.math.eigen.EigensolverNxN;
-import imagingbook.common.math.eigen.RealEigensolver;
 
 public class EigensolverNxNTest {
 

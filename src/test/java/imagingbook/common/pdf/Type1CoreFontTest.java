@@ -4,8 +4,6 @@ import static org.junit.Assert.assertNotNull;
 
 import org.junit.Test;
 
-import imagingbook.common.pdf.Type1CoreFont;
-
 public class Type1CoreFontTest {
 
 	@Test

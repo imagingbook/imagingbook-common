@@ -3,8 +3,6 @@ package imagingbook.common.corners.subpixel;
 import org.junit.Assert;
 import org.junit.Test;
 
-import imagingbook.common.corners.subpixel.SubpixelMaxInterpolator;
-
 public class SubpixelMaxInterpolatorTest {
 	
 	static float DELTA = 1E-6f;

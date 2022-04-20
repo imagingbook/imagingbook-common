@@ -6,7 +6,7 @@
  * Copyright (c) 2006-2020 Wilhelm Burger, Mark J. Burge. All rights reserved. 
  * Visit http://imagingbook.com for additional details.
  *******************************************************************************/
-package imagingbook.common.dct;
+package imagingbook.common.spectral.dct;
 
 import imagingbook.common.math.Matrix;
 import imagingbook.common.math.PrintPrecision;

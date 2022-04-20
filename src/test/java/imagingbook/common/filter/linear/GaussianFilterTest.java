@@ -6,7 +6,6 @@ import org.junit.Test;
 
 import ij.process.ImageProcessor;
 import imagingbook.DATA.GeneralTestImage;
-import imagingbook.common.filter.linear.GaussianFilter;
 import imagingbook.core.resource.ImageResource;
 import imagingbook.testutils.ImageTests;
 

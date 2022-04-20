@@ -2,7 +2,6 @@ package imagingbook.common.math;
 
 import org.junit.Test;
 
-import imagingbook.common.math.Statistics;
 import imagingbook.testutils.ArrayTests;
 
 public class StatisticsTest extends Statistics {

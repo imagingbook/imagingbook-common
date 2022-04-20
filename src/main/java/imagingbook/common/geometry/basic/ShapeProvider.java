@@ -6,7 +6,7 @@ import imagingbook.common.geometry.ellipse.GeometricEllipse;
 
 /**
  * Implementing classes know how to create an AWT {@link Shape}.
- * TODO: Rename to ShapeProducer?
+ * TODO: Rename to ShapeProducer or merge with {@link Curve2d}?
  * @author WB
  *
  */

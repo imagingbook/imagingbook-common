@@ -3,13 +3,11 @@ package imagingbook.common.geometry.fitting.circle.algebraic;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-
 import org.junit.Test;
 
 import imagingbook.common.geometry.basic.Pnt2d;
 import imagingbook.common.geometry.basic.PntUtils;
 import imagingbook.common.geometry.circle.GeometricCircle;
-import imagingbook.common.geometry.fitting.circle.algebraic.CircleFitAlgebraic;
 import imagingbook.common.geometry.fitting.circle.algebraic.CircleFitAlgebraic.FitType;
 
 public class CircleFitAlgebraicTest {
