@@ -8,7 +8,7 @@
  *******************************************************************************/
 
 /**
- * Classes for elementary operations used by demo plugins and 
- * library classes in the {@literal imagingbook.pub} package.
+ * This package holds the common library for the {@literal imagingbook}
+ * software suite.
  */
 package imagingbook.common;
