@@ -11,7 +11,7 @@ import ij.process.ColorProcessor;
 import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
 import ij.process.ShortProcessor;
-import imagingbook.lib.ij.IjUtils;
+import imagingbook.common.ij.IjUtils;
 
 
 public class ImageTests {

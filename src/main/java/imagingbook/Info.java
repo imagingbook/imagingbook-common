@@ -12,7 +12,7 @@ package imagingbook;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
-import imagingbook.lib.util.FileUtils;
+import imagingbook.common.util.FileUtils;
 
 /**
  * This class provides version information for this library.

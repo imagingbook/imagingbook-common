@@ -14,7 +14,7 @@ import java.util.stream.Stream;
 
 import ij.plugin.PlugIn;
 import ij.plugin.filter.PlugInFilter;
-import imagingbook.lib.util.FileUtils;
+import imagingbook.common.util.FileUtils;
 import imagingbook.pluginutils.annotations.IjPluginName;
 import imagingbook.pluginutils.annotations.IjPluginPath;
 
