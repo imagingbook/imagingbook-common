@@ -1,4 +1,4 @@
-# imagingbook-common
+# imagingbook-common (OBSOLETE, see `imagingbook-public`)
 
 This repository provides Java source code supplementing
 the digital image processing books by W. Burger & M. J. Burge
