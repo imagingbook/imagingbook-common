@@ -1,1 +1,0 @@
-package imagingbook.common.spectral;
